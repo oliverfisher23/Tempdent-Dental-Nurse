@@ -1,1 +1,1 @@
-- [Try-day content conventions](try-day-content.md) — spec copy verbatim (incl. done-when/complication); completed tasks frozen; rules in simulation.ts; logo never recoloured; host postMessage contract is an assumption.
+- [Try-day conventions](try-day-content.md) — approved copy, frozen sign-offs, brand rules, and guidance that simplifies navigation without doing students’ practical work.

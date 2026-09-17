@@ -31,7 +31,7 @@ export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
   return (
     <AnimatePresence>
       {notepadOpen && (
-        <div className="fixed inset-0 z-50 flex pointer-events-auto" role="dialog" aria-modal="true" aria-label="Your notepad">
+        <div className="fixed inset-0 z-50 flex pointer-events-auto" role="dialog" aria-modal="true" aria-label="Your notebook">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -56,12 +56,12 @@ export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
           >
             <div className="flex items-center justify-between p-4 border-b border-primary/20 bg-[#F5EFE6]">
               <h2 className="font-bold text-lg font-mono flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-primary" /> Notepad
+                <BookOpen className="w-5 h-5 text-primary" /> Notebook
               </h2>
               <button
                 onClick={() => { kitchenAudio.play('page'); closeNotepad(); }}
                 className="p-2 -mr-2 rounded-full hover:bg-black/5 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none"
-                aria-label="Close notepad"
+                aria-label="Close your notebook"
               >
                 <X className="w-5 h-5 text-foreground/70" />
               </button>
@@ -70,7 +70,7 @@ export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
             <div className="flex-1 overflow-y-auto p-4 pt-2">
               {currentEntries.length === 0 ? (
                 <p className="text-foreground/50 italic text-center mt-10" style={{ fontFamily: 'cursive' }}>
-                  Nothing jotted down yet...
+                  Nothing written down yet.
                 </p>
               ) : (
                 <ul className="space-y-4">
@@ -86,7 +86,7 @@ export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
                       <button
                         onClick={() => { kitchenAudio.play('write'); unjot(entry.id); }}
                         className="absolute right-0 top-1/2 -translate-y-1/2 p-2 text-destructive opacity-0 group-hover:opacity-100 hover:bg-destructive/10 rounded transition-all focus-visible:opacity-100 outline-none focus-visible:ring-2 focus-visible:ring-destructive"
-                        aria-label="Cross out note"
+                        aria-label="Cross this out"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>

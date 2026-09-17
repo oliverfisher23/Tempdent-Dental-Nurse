@@ -13,12 +13,23 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
   **Why:** People Brand guide rules; the first design pass inverted it on the dark-blue close page and had to be redone.
   **How to apply:** on dark floods, put the logo in a cream header strip; ask the client for a reversed version if one is ever needed.
 - Host integration (`postMessage` with `gate:complete`) is an assumed contract; the Springpod App Registry MCP server was unreachable when built (Sept 2026). Confirm the event shape before the client embeds the iframe.
+  **Why:** no host capability handshake has been verified. Do not invent an LMS resize/launch message or use top-window navigation as a fullscreen substitute.
+  **How to apply:** use user-initiated browser fullscreen when permitted; retain a usable in-frame path when unavailable. Keep host permissions under LMS control.
 - Verification approach that worked: drive each task end to end with playwright-core (chromium at `/repl/tools/bin/chromium`, `--no-sandbox`) against the running dev server, seeding localStorage to reach later tasks. Screenshots alone missed wiring bugs.
 - The frozen-task contract is enforced in the progress store itself (task updates, jots and unjots for a completed task are no-ops) and the finished scene is made `inert`; do not rely on overlay z-index or hidden buttons to protect signed-off paperwork.
   **Why:** a review found the read-only blocker shared `z-40` with the HUD, so the map and notepad still worked and late timers could rewrite a completed task.
   **How to apply:** any new write path in the store must check `prev.completed` first; any new overlay/HUD control must be hidden when `finished`.
-- Overlays portaled to `document.body` must sit below the fixed 56 px header with `top-14 bottom-0`, not `inset-0` plus a margin (that overflows the viewport and clips the bottom of the paper, e.g. the fridge "Jot it down" button).
+- Portaled workspaces must reserve the entire navigation area, including the responsive step guide, not assume a fixed header height or add a margin to a full-height overlay.
+  **Why:** the previous overlay approach clipped paperwork controls; reserving only the header also covers the student's next-step control.
+  **How to apply:** keep the guide visible above paperwork and include it in keyboard navigation when a workspace is open.
 - Playwright screenshots taken straight after opening a framer-motion overlay or crossfading a scene capture the mid-fade frame and look translucent or empty; wait about 600 ms (2–4 s after a walk) before judging a screenshot as a bug.
 - Parallel subagents must never share a file: two agents "fixing" `scenes/chill/bench.tsx` at once re-introduced a bad import twice. Give each agent one task's folders only and keep framework files for the main agent. An agent given a whole-frame rebuild in one go ran out of context and ended without a report; scope one surface per run.
 - Renaming a visible button label (sentence-case sweeps included) breaks the e2e scripts in `/tmp/e2e/task{1..5}-kitchen.mjs`, which select by accessible name; update them in the same change.
 
+- Copy rules live in `artifacts/try-day/COPY.md`; the user's complaint was that labels read "very AI-generated" ("what does walk to goods-in mean"). Kitchen words get a plain gloss the first time; the student's tool is a "notebook", never "notepad"/"jot".
+  **How to apply:** hand COPY.md to any subagent doing UI text, and tell it to change label *content* in the content files, not to hard-code strings in components (one agent replaced a `c.label` loop with an inline ternary, dropping the reasoning from a decision's options).
+- E2E lesson: a Playwright `div:has-text("Name") >> button` selector matches the outermost container and can click the wrong row while the run "passes". Give repeated controls unique accessible names ("Poached pear for Priya Nair"), select by role + name, and assert the outcome (URL / stored state), never just "no exception". The scripts live in `/tmp/e2e` and vanish with the container.
+- A scene that works on desktop can still hide a control on a phone (the HUD column sits over the top-right of the stage; a hotspot there was unreachable for a whole round while desktop tests passed). Run every e2e pass at both viewports.
+- Distinguish navigating to the work from doing the work. Guide students directly to the next workspace, but leave the measuring, pouring, decisions and signatures to them.
+  **Why:** the user wanted less click-through activity, then found the immersive version too difficult to navigate. Hiding where to go is not the intended learning challenge.
+  **How to apply:** preserve practical interactions and validation while removing mandatory map searches, repeated paperwork trips and automatic tool interruptions.

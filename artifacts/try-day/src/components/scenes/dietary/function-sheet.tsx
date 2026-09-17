@@ -72,7 +72,7 @@ export function FunctionSheetCloseUp({
                 const jotted = notepad.entryFor('guestId', g.id);
 
                 return (
-                  <div key={g.id} className="bg-zinc-50 border border-zinc-200 p-4 rounded-sm shadow-sm relative group">
+                  <div key={g.id} role="group" aria-label={`${g.name}, table ${g.table}`} className="bg-zinc-50 border border-zinc-200 p-4 rounded-sm shadow-sm relative group">
                     <div className="font-bold text-lg mb-1 flex flex-wrap items-center justify-between gap-2">
                       <span>{g.name} <span className="font-normal text-zinc-500">(Table {g.table})</span></span>
                       {!jotted && (
@@ -80,12 +80,12 @@ export function FunctionSheetCloseUp({
                           onClick={() => handleJot(g)} 
                           className="text-xs bg-white border border-zinc-300 px-2 py-1 rounded shadow-sm hover:bg-zinc-100 flex items-center gap-1 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity focus:opacity-100"
                         >
-                          <PenTool className="w-3 h-3" /> Jot needs
+                          <PenTool className="w-3 h-3" /> Note this guest
                         </button>
                       )}
                       {jotted && (
                         <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">
-                          Jotted
+                          Noted
                         </span>
                       )}
                     </div>
@@ -105,6 +105,8 @@ export function FunctionSheetCloseUp({
                                 key={opt}
                                 onClick={() => { kitchenAudio.play('write'); onAssignGuest(g.id, 'main', opt); }}
                                 disabled={!chartChecked}
+                                aria-label={`${dish.name.split(',')[0]} for ${g.name}`}
+                                aria-pressed={assign.main === opt}
                                 className={cn(
                                   "w-full text-left p-2 text-xs border rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
                                   assign.main === opt ? "bg-zinc-800 text-white border-zinc-800 shadow-inner" : "bg-white hover:border-zinc-400"
@@ -126,6 +128,8 @@ export function FunctionSheetCloseUp({
                                 key={opt}
                                 onClick={() => { kitchenAudio.play('write'); onAssignGuest(g.id, 'dessert', opt); }}
                                 disabled={!chartChecked}
+                                aria-label={`${dish.name.split(',')[0]} for ${g.name}`}
+                                aria-pressed={assign.dessert === opt}
                                 className={cn(
                                   "w-full text-left p-2 text-xs border rounded transition-colors disabled:opacity-50 disabled:cursor-not-allowed",
                                   assign.dessert === opt ? "bg-zinc-800 text-white border-zinc-800 shadow-inner" : "bg-white hover:border-zinc-400"

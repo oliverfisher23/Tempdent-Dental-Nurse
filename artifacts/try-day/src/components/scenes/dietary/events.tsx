@@ -12,6 +12,7 @@ import { Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { boardNoteIsUseful } from '@/lib/simulation';
 import { FunctionSheetCloseUp } from './function-sheet';
+import { useKitchenAction } from '../../kitchen/kitchen-context';
 
 export function EventsScene({
   stateChart,
@@ -46,6 +47,17 @@ export function EventsScene({
   const [sheetOpen, setSheetOpen] = useState(false);
   const [activeCard, setActiveCard] = useState(0);
 
+  const openWorkspace = (workspace: 'chart' | 'board' | 'sheet') => {
+    setCardsOpen(false);
+    setChartOpen(workspace === 'chart');
+    setBoardOpen(workspace === 'board');
+    setSheetOpen(workspace === 'sheet');
+  };
+
+  useKitchenAction('dietary.open-chart', () => openWorkspace('chart'));
+  useKitchenAction('dietary.open-board', () => openWorkspace('board'));
+  useKitchenAction('dietary.open-function-sheet', () => openWorkspace('sheet'));
+
   const backdrop = PLACES['events'].backdrop;
 
   return (
@@ -56,7 +68,7 @@ export function EventsScene({
       <Hotspot 
         x={35} 
         y={55} 
-        label="Recipe cards box" 
+        label="Look at the recipe cards" 
         state="todo" 
         onClick={() => { kitchenAudio.play('tap'); setCardsOpen(true); }} 
       />
@@ -64,7 +76,7 @@ export function EventsScene({
       <Hotspot 
         x={65} 
         y={40} 
-        label="Allergen chart" 
+        label="Fill in the allergen chart" 
         state={chartChecked ? 'done' : 'active'} 
         onClick={() => { kitchenAudio.play('page'); setChartOpen(true); }} 
       />
@@ -72,7 +84,7 @@ export function EventsScene({
       <Hotspot 
         x={80} 
         y={35} 
-        label="Evening board" 
+        label="Write on the evening board" 
         state={boardPosted ? 'done' : (chartChecked && allGuestsSafe ? 'active' : 'todo')} 
         onClick={() => { kitchenAudio.play('page'); setBoardOpen(true); }} 
       />
@@ -80,7 +92,7 @@ export function EventsScene({
       <Hotspot 
         x={15} 
         y={25} 
-        label="Function sheet (in your pocket)" 
+        label="Check the function sheet" 
         state="active" 
         onClick={() => { kitchenAudio.play('page'); setSheetOpen(true); }} 
       />
@@ -98,7 +110,7 @@ export function EventsScene({
         <div className="bg-zinc-100 p-6 md:p-8 rounded-lg shadow-2xl flex flex-col md:flex-row gap-6 h-[75vh]">
           {/* Card list */}
           <div className="w-full md:w-1/3 flex flex-col gap-2 overflow-y-auto pr-2">
-            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2 pl-1">Recipe Box</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-2 pl-1">Recipe box</div>
             {DISHES.map((dish, i) => (
               <button 
                 key={dish.id}
@@ -134,7 +146,7 @@ export function EventsScene({
                   </ul>
                   {DISHES[activeCard].note && (
                     <div className="mt-10 p-5 bg-yellow-50 text-yellow-800 text-sm font-medium border-l-4 border-yellow-400 rounded-r shadow-sm">
-                      <span className="uppercase tracking-wider font-bold text-xs block mb-1">Chef's Note</span>
+                      <span className="uppercase tracking-wider font-bold text-xs block mb-1">Chef's note</span>
                       {DISHES[activeCard].note}
                     </div>
                   )}
@@ -269,7 +281,7 @@ export function EventsScene({
                 </div>
               ) : (
                 <Button onClick={() => { kitchenAudio.play('tap'); onCheckChart(); }} className="px-8 py-6 text-base font-bold shadow-md">
-                  Read it through with Marcus
+                  Go through it with Marcus
                 </Button>
               )}
             </div>
@@ -287,14 +299,14 @@ export function EventsScene({
               value={boardNote}
               onChange={(e) => onBoardNoteChange(e.target.value)}
               disabled={!chartChecked || boardPosted}
-              placeholder={chartChecked ? "Write changes for the evening team here..." : "Verify the allergen chart first..."}
+              placeholder={chartChecked ? "Write the evening change here" : "Go through the allergen chart first"}
               className="flex-1 kitchen-input text-2xl resize-none bg-transparent border-0 p-4 leading-relaxed focus-visible:ring-0 placeholder:text-zinc-300"
               style={{ fontFamily: 'cursive' }}
             />
 
             <div className="mt-6 pt-6 border-t border-zinc-200 flex flex-col items-center gap-4">
               <p className="text-sm text-zinc-500 font-medium bg-zinc-50 px-4 py-2 rounded border border-zinc-200">
-                Mention Priya or table 3, and that the dish is poached pear.
+                Name the guest or her table, and the dish she is getting.
               </p>
               <Button 
                 onClick={() => { kitchenAudio.play('write'); onPostBoard(); }}

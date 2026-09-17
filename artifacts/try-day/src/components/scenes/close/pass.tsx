@@ -12,6 +12,17 @@ import { Textarea } from '@/components/ui/textarea';
 import { BookOpen, PenTool } from 'lucide-react';
 import { CLOSE_SCENE } from '@/content/scenes/close';
 import { weightIsRight } from '@/lib/simulation';
+import { useKitchenAction, usePresent } from '../../kitchen/kitchen-context';
+
+function ElenaPortrait() {
+  usePresent('elena', 4);
+
+  return (
+    <div className="absolute left-[60%] bottom-[15%] w-[35%] pointer-events-none z-0">
+      <img src={PEOPLE.find(p => p.id === 'elena')?.portrait || ''} alt="" className="w-full h-auto drop-shadow-2xl opacity-90 animate-in fade-in duration-1000" />
+    </div>
+  );
+}
 
 export function PassScene({ 
   onHandover, 
@@ -27,6 +38,9 @@ export function PassScene({
   const chillState = progress.tasks['chill-the-event-batch'];
   
   const [activeCloseUp, setActiveCloseUp] = useState<'waste' | 'clipboard' | 'chill' | null>(null);
+  useKitchenAction('close.open-waste', () => setActiveCloseUp('waste'));
+  useKitchenAction('close.open-clipboard', () => setActiveCloseUp('clipboard'));
+  useKitchenAction('close.open-elena', () => setActiveCloseUp('chill'));
 
   // Waste Station State
   const [selectedBin, setSelectedBin] = useState<string | null>(null);
@@ -126,9 +140,7 @@ export function PassScene({
 
       {state.handedOver && (
         <>
-          <div className="absolute left-[60%] bottom-[15%] w-[35%] pointer-events-none z-0">
-             <img src={PEOPLE.find(p=>p.id==='elena')?.portrait || ''} alt="" className="w-full h-auto drop-shadow-2xl opacity-90 animate-in fade-in duration-1000" />
-          </div>
+          <ElenaPortrait />
           <Hotspot
             x={75} y={45}
             label={CLOSE_SCENE.elena}
@@ -139,9 +151,9 @@ export function PassScene({
       )}
 
       {/* CloseUps */}
-      <CloseUp isOpen={activeCloseUp === 'waste'} onClose={() => setActiveCloseUp(null)} title="Waste station" className="bg-zinc-950">
+      <CloseUp isOpen={activeCloseUp === 'waste'} onClose={() => setActiveCloseUp(null)} title="Waste bins and scales" className="bg-zinc-950">
         <div className="p-4 md:p-8 max-w-4xl mx-auto h-[80vh] flex flex-col items-center justify-center">
-           <h2 className="text-2xl font-bold text-zinc-100 mb-12 tracking-widest uppercase">Floor Scales</h2>
+           <h2 className="text-2xl font-bold text-zinc-100 mb-12 tracking-widest uppercase">Floor scales</h2>
            
            <div className="w-64 h-20 bg-black rounded-lg border-4 border-zinc-800 flex items-center justify-center shadow-[0_0_50px_rgba(0,0,0,0.5)] mb-16 relative overflow-hidden">
              <div className="absolute inset-0 bg-gradient-to-b from-black/0 to-white/5 pointer-events-none"></div>
@@ -181,23 +193,23 @@ export function PassScene({
                   onClick={() => handleWeighConfirm(selectedBin)}
                   className="bg-white text-black px-8 py-4 rounded-full font-bold shadow-xl hover:bg-zinc-200 transition-all animate-in zoom-in-95 flex items-center gap-3 uppercase tracking-widest text-sm hover:scale-105"
                 >
-                  <PenTool className="w-4 h-4" /> Jot down weight
+                   <PenTool className="w-4 h-4" /> Write it in your notebook
                 </button>
              )}
            </div>
         </div>
       </CloseUp>
 
-      <CloseUp isOpen={activeCloseUp === 'clipboard'} onClose={() => setActiveCloseUp(null)} title="Handover clipboard" className="bg-zinc-950">
+      <CloseUp isOpen={activeCloseUp === 'clipboard'} onClose={() => setActiveCloseUp(null)} title="Handover sheet" className="bg-zinc-950">
         <div className="flex flex-col lg:flex-row gap-6 max-w-6xl mx-auto h-[90vh] p-4 lg:p-6">
           {/* Left Column: Notepad & Prompts */}
           <div className="w-full lg:w-80 shrink-0 bg-zinc-900 border border-zinc-700 p-5 rounded-xl text-zinc-100 overflow-y-auto shadow-2xl flex flex-col gap-8">
             <div>
               <h3 className="font-bold uppercase tracking-widest text-xs text-zinc-400 mb-4 flex items-center gap-2">
-                <BookOpen className="w-4 h-4" /> Shift Notes
+                 <BookOpen className="w-4 h-4" /> Shift notes
               </h3>
               <p className="text-xs text-zinc-500 mb-4 leading-relaxed">
-                Tap notes to drop them into the handover sheet. You can edit them once they're in.
+                 Click a note to add it to the sheet. You can change the words once it's there.
               </p>
               <div className="space-y-6">
                 {HANDOVER_FIELDS.map(f => (
@@ -221,10 +233,10 @@ export function PassScene({
             
             <div className="border-t border-zinc-800 pt-8">
               <h3 className="font-bold uppercase tracking-widest text-xs text-zinc-400 mb-4 flex items-center gap-2">
-                <PenTool className="w-4 h-4" /> Your Notepad
+                 <PenTool className="w-4 h-4" /> Your notebook
               </h3>
               {progress.notepad.length === 0 ? (
-                <div className="text-xs text-zinc-600 italic">No notes taken today.</div>
+                 <div className="text-xs text-zinc-600 italic">No notes taken today</div>
               ) : (
                 <div className="space-y-2">
                   {progress.notepad.map(n => (
@@ -284,7 +296,7 @@ export function PassScene({
                                   }}
                                   className="text-[10px] bg-primary/10 text-primary font-bold px-3 py-1 rounded-sm shadow-sm hover:bg-primary/20 transition-colors uppercase tracking-wider"
                                 >
-                                  From notepad
+                                  Use my note
                                 </button>
                               )}
                             </div>
@@ -310,7 +322,7 @@ export function PassScene({
                           value={state.handover[field.id] || ''}
                           onChange={e => handleHandoverInput(field.id, e.target.value)}
                           onFocus={() => setFocusedField(field.id)}
-                          placeholder="Tap notes on the left or type here..."
+                          placeholder="Use your notes or type here"
                           className="kitchen-input min-h-[80px] resize-none text-base border-b-2 border-zinc-200 border-t-0 border-l-0 border-r-0 rounded-none px-0 py-2 focus-visible:ring-0 focus-visible:border-primary shadow-none bg-transparent hover:border-zinc-300 transition-colors"
                           style={{ fontFamily: 'cursive' }}
                         />
@@ -328,7 +340,7 @@ export function PassScene({
                       disabled={!weightsDone || state.handedOver}
                       className="w-full md:w-auto bg-black text-white font-bold px-8 py-4 rounded shadow-lg hover:bg-zinc-800 disabled:opacity-50 transition-all uppercase tracking-wider text-sm hover:scale-[1.02] active:scale-[0.98]"
                     >
-                      {state.handedOver ? "Handed to Evening Team" : "Give to Evening Team"}
+                      Hand the kitchen on
                     </button>
                   </div>
                 </section>
@@ -338,7 +350,7 @@ export function PassScene({
         </div>
       </CloseUp>
 
-      <CloseUp isOpen={activeCloseUp === 'chill'} onClose={() => setActiveCloseUp(null)} title="Close with Elena" className="bg-zinc-950">
+      <CloseUp isOpen={activeCloseUp === 'chill'} onClose={() => setActiveCloseUp(null)} title="Elena, at the pass" className="bg-zinc-950">
         <div className="flex flex-col md:flex-row gap-6 max-w-5xl mx-auto h-[85vh] p-4 lg:p-6">
           {/* Left: Chill Record Sheet */}
           <div className="flex-1 overflow-y-auto pb-8">
@@ -453,7 +465,7 @@ export function PassScene({
                    }}
                    className="w-full bg-white text-black font-bold py-4 rounded-lg shadow-xl hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-widest text-xs"
                  >
-                   Elena signs record
+                    Elena signs the record
                  </button>
               </div>
             )}

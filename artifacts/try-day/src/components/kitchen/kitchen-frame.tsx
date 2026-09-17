@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, ReactNode, Suspense } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState, ReactNode, Suspense } from 'react';
 import { useLocation, Link } from 'wouter';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TaskId, TASK_ORDER, Line } from '@/content/activities';
@@ -6,39 +6,85 @@ import { getTask, taskIndex, nextTaskId, complicationRevealed } from '@/lib/simu
 import { useProgress } from '@/lib/progress-store';
 import { kitchenAudio } from '@/lib/audio';
 import { KitchenProvider, useKitchen } from './kitchen-context';
-import { TASK_ROUTES } from '@/content/kitchen';
-import { KitchenMap, MiniMap } from './kitchen-map';
+import { TASK_ROUTES, PLACES } from '@/content/kitchen';
+import { KitchenMap } from './kitchen-map';
 import { NotepadDrawer } from './notepad';
-import { Speech } from './speech';
+import { DialogueBar, CharacterSpot } from './dialogue-bar';
 import { SoundToggle } from './sound-toggle';
-import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, ClipboardList, X, Lock } from 'lucide-react';
+import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, ClipboardList, X, Lock, Map as MapIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from './use-focus-trap';
 import logoImg from '@/assets/be-logo.svg';
+import type { StepGuide } from '@/content/step-guide';
+import { StepGuideBar } from './step-guide-bar';
+import { ExperienceSizeControl } from '@/components/experience-size-control';
 
 interface KitchenFrameProps {
   id: TaskId;
   scenes: Record<string, ReactNode>;
   dialogue: Line | null;
+  /** What the student should do next, in one short line ("Portion the beef into the trays"). */
+  now?: string;
+  guide?: StepGuide;
+  /** A choice the student is being asked to make, shown under the words in the dialogue bar. */
+  choices?: ReactNode;
 }
 
-export function KitchenFrame({ id, scenes, dialogue }: KitchenFrameProps) {
+export function KitchenFrame(props: KitchenFrameProps) {
   return (
-    <KitchenProvider taskId={id} frozen={useProgress().progress.completed.includes(id)}>
-      <KitchenFrameInner id={id} scenes={scenes} dialogue={dialogue} />
+    <KitchenProvider taskId={props.id} frozen={useProgress().progress.completed.includes(props.id)}>
+      <KitchenFrameInner {...props} />
     </KitchenProvider>
   );
 }
 
-function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
+/** One of the three tools in the header: job card, map, notebook. */
+function HeaderTool({
+  label,
+  icon,
+  badge,
+  onClick,
+  paper,
+}: {
+  label: string;
+  icon: ReactNode;
+  badge?: number;
+  onClick: () => void;
+  paper?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'relative flex h-10 items-center gap-1.5 rounded border px-2 text-primary shadow-sm transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none md:px-3',
+        paper ? 'border-[#D9D0C1] bg-[#F5EFE6] hover:bg-[#EBE4DA]' : 'border-border bg-white hover:bg-muted',
+      )}
+      aria-label={label}
+    >
+      {icon}
+      <span className="hidden text-[11px] font-bold uppercase tracking-widest text-foreground/70 md:inline">
+        {label.replace(/^Open (the |your )?/, '')}
+      </span>
+      {badge !== undefined && (
+        <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+          {badge}
+        </span>
+      )}
+    </button>
+  );
+}
+
+function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFrameProps) {
   const task = getTask(id);
   const { progress, evaluations, completeTask, isUnlocked, currentTaskId, setClock } = useProgress();
-  const { place, light, travelling, openNotepad } = useKitchen();
+  const { place, light, mapOpen, pendingAction, openWorkspace, openNotepad, openMap } = useKitchen();
+  const [dialogueHeight, setDialogueHeight] = useState(0);
+  const onDialogueHeight = useCallback((px: number) => setDialogueHeight(Math.round(px)), []);
   const [, setLocation] = useLocation();
   const [jobCardOpen, setJobCardOpen] = useState(false);
-  const [hasOpenedJobCard, setHasOpenedJobCard] = useState(false);
-  const jobCardTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const navigationRef = useRef<HTMLDivElement>(null);
   const jobCardRef = useRef<HTMLDivElement>(null);
   useFocusTrap(jobCardRef, jobCardOpen);
 
@@ -48,6 +94,19 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
   const showComplication = finished || complicationRevealed(id, progress.tasks);
   const evaluation = evaluations[id];
   const stepNumber = taskIndex(id) + 1;
+
+  useLayoutEffect(() => {
+    const el = navigationRef.current;
+    if (!el) return;
+    const report = () => document.documentElement.style.setProperty('--kitchen-top', `${el.getBoundingClientRect().bottom}px`);
+    report();
+    const observer = new ResizeObserver(report);
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty('--kitchen-top');
+    };
+  }, [unlocked]);
 
   useEffect(() => {
     if (!unlocked) {
@@ -60,14 +119,7 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
        }
     }
     kitchenAudio.setPlace(TASK_ROUTES[id].start);
-    // Open job card automatically the first time a task loads
-    if (!hasOpenedJobCard && !finished) {
-       jobCardTimer.current = setTimeout(() => setJobCardOpen(true), 1000);
-       setHasOpenedJobCard(true);
-    }
-  }, [unlocked, named, id, currentTaskId, setLocation, hasOpenedJobCard, finished, task.time, progress.clock, progress.tasks, setClock]);
-
-  useEffect(() => () => { if (jobCardTimer.current) clearTimeout(jobCardTimer.current); }, []);
+  }, [unlocked, named, id, currentTaskId, setLocation, finished, task.time, progress.clock, progress.tasks, setClock]);
 
   useEffect(() => {
     if (!jobCardOpen) return;
@@ -106,11 +158,12 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
 
   return (
     <div className="fixed inset-0 flex flex-col bg-black text-white overflow-hidden select-none">
+      <div ref={navigationRef} className="relative z-40 shrink-0">
       {/* HUD - Top Bar (Always z-40 so it floats above scenes but below dialogs) */}
       <header className="relative z-40 bg-[#F9F6F4] text-foreground shadow-md shrink-0 border-b border-border h-14">
         <div className="px-4 md:px-6 h-full flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <Link href="/" aria-label="Back to brief" className="shrink-0 block bg-white px-3 py-1.5 rounded-sm shadow-sm border border-border/50">
+            <Link href="/" aria-label="Back to the start" className="shrink-0 block bg-white px-3 py-1.5 rounded-sm shadow-sm border border-border/50">
               <img src={logoImg} alt="Be" className="h-4 sm:h-5" />
             </Link>
             <div className="h-5 w-px bg-border hidden sm:block shrink-0" />
@@ -122,38 +175,74 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
             </div>
           </div>
           
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-            {/* Checklist progress strip */}
-            <div className="hidden md:flex items-center gap-1.5 px-3 py-1 bg-white rounded shadow-sm border border-border text-sm font-medium">
-               <CheckCircle2 className="w-4 h-4 text-primary" />
-               <span>{ticksCompleted} / {totalTicks}</span>
-            </div>
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {/* The three tools live up here so the room itself has nothing floating over it */}
+            {!finished && (
+              <div className="flex items-center gap-1.5 sm:gap-2 mr-1 sm:mr-2">
+                <HeaderTool
+                  label="Open the job card"
+                  icon={<ClipboardList className="w-5 h-5" />}
+                  badge={ticksCompleted < totalTicks ? ticksCompleted : undefined}
+                  onClick={() => { kitchenAudio.play('page'); setJobCardOpen(true); }}
+                />
+                <HeaderTool
+                  label="Open the map"
+                  icon={<MapIcon className="w-5 h-5" />}
+                  onClick={() => { kitchenAudio.play('page'); openMap(); }}
+                />
+                <HeaderTool
+                  label="Open your notebook"
+                  icon={<BookOpen className="w-5 h-5" />}
+                  onClick={() => { kitchenAudio.play('page'); openNotepad(); }}
+                  paper
+                />
+              </div>
+            )}
 
-            <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-white rounded shadow-sm border border-border">
+            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-white rounded shadow-sm border border-border">
               <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               <span className="font-mono font-bold text-sm">{progress.clock}</span>
             </div>
-            <div className="hidden sm:flex items-center gap-2 px-3 py-1 bg-white rounded shadow-sm border border-border">
+            <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-white rounded shadow-sm border border-border">
               <MapPin className="w-4 h-4 text-muted-foreground" />
-              <span className="font-medium text-sm max-w-[120px] truncate">
-                {place.charAt(0).toUpperCase() + place.slice(1).replace('-', ' ')}
+              <span className="font-medium text-sm max-w-[140px] truncate">
+                {PLACES[place].name}
               </span>
             </div>
-            
-            {/* Sound Toggle is handled in floating HUD on small screens, top bar on large */}
-            <div className="hidden sm:flex items-center ml-1">
+
+            <div className="flex items-center">
                <SoundToggle />
+               <ExperienceSizeControl />
             </div>
 
-            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold text-[10px] sm:text-xs shadow-sm ml-1">
+            <div className="hidden sm:flex w-8 h-8 rounded-full bg-primary text-primary-foreground items-center justify-center font-bold text-xs shadow-sm ml-1">
               {progress.initials}
             </div>
           </div>
         </div>
       </header>
+      {!finished && guide && (
+        <div data-step-navigation>
+          <StepGuideBar
+            guide={guide}
+            done={evaluation.done}
+            lastTask={!nextTaskId(id)}
+            busy={mapOpen || !!pendingAction}
+            onNext={handleNext}
+            onAction={() => {
+              setJobCardOpen(false);
+              openWorkspace(guide.place, guide.action);
+            }}
+          />
+        </div>
+      )}
+      </div>
 
       {/* Main Stage */}
-      <main className="relative flex-1 bg-zinc-900 overflow-hidden perspective-[1000px]">
+      <main
+        className="relative min-h-0 flex-1 overflow-clip bg-zinc-900"
+        style={{ '--dialogue-h': `${finished ? 0 : dialogueHeight}px` } as React.CSSProperties}
+      >
         {/* Stage Content / Scene */}
         <AnimatePresence mode="wait">
           <motion.div
@@ -174,59 +263,24 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
           </motion.div>
         </AnimatePresence>
 
-        {/* Dialogue Bubble */}
-        {!finished && dialogue && <Speech line={dialogue} />}
+        {/* The person you are working with, and what they say */}
+        {!finished && <CharacterSpot line={dialogue} />}
+        {!finished && dialogue && <DialogueBar line={dialogue} choices={choices} onHeight={onDialogueHeight} />}
 
         {/* Read-only blocker */}
         {finished && (
           <div className="absolute inset-0 z-40 flex flex-col items-center justify-center bg-black/40 pointer-events-auto">
              <div className="bg-white text-foreground p-6 rounded shadow-2xl max-w-md text-center border-t-4 border-primary">
                <Lock className="w-8 h-8 mx-auto text-primary mb-3" />
-               <h2 className="text-xl font-bold mb-2">This task is signed off</h2>
-               <p className="text-muted-foreground mb-6">Your paperwork here stands as you left it. Carry on with the day from where you are.</p>
+               <h2 className="text-xl font-bold mb-2">You've signed this off</h2>
+               <p className="text-muted-foreground mb-6">It stays as you left it. You can look, but nothing here can be changed now.</p>
                <Button asChild size="lg" className="w-full">
                  <Link href={currentTaskId ? `/task/${currentTaskId}` : "/close"}>
-                   {currentTaskId ? `Go to next task` : "Go to the close of day"}
+                   {currentTaskId ? "Back to where you were" : "Back to the end of the day"}
                  </Link>
                </Button>
              </div>
           </div>
-        )}
-
-        {/* Floating Controls Overlay (HUD); hidden once the task is signed off so nothing can be changed */}
-        {!finished && (
-        <div className="absolute top-4 right-4 z-40 flex flex-col gap-3 pointer-events-none">
-          <div className="pointer-events-auto flex flex-col gap-3">
-             <button
-               onClick={() => { kitchenAudio.play('page'); setJobCardOpen(true); }}
-               className="relative w-16 h-16 rounded bg-white border border-border shadow-md flex flex-col items-center justify-center text-primary hover:bg-muted transition-colors focus-visible:ring-2 focus-visible:ring-primary"
-               aria-label="Open job card"
-             >
-               <ClipboardList className="w-6 h-6 mb-1" />
-               <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/70">The job</span>
-               {ticksCompleted < totalTicks && (
-                  <div className="absolute -top-2 -right-2 w-5 h-5 bg-primary text-primary-foreground font-bold text-[10px] flex items-center justify-center rounded-full">
-                    {ticksCompleted}
-                  </div>
-               )}
-             </button>
-
-             <MiniMap />
-             
-             <button
-               onClick={() => { kitchenAudio.play('page'); openNotepad(); }}
-               className="relative w-16 h-16 rounded bg-[#F5EFE6] border border-[#D9D0C1] shadow-md flex flex-col items-center justify-center text-primary hover:bg-[#EBE4DA] transition-colors focus-visible:ring-2 focus-visible:ring-primary"
-               aria-label="Open notepad"
-             >
-               <BookOpen className="w-6 h-6 mb-1" />
-               <span className="text-[10px] font-bold uppercase tracking-widest text-foreground/70">Notes</span>
-             </button>
-             
-             <div className="sm:hidden mt-2 bg-white rounded-full p-1 shadow flex items-center justify-center">
-               <SoundToggle />
-             </div>
-          </div>
-        </div>
         )}
 
         {/* Job Card Slide-in Panel (Right Side) */}
@@ -249,15 +303,15 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
                 tabIndex={-1}
                 role="dialog"
                 aria-modal="true"
-                aria-label="The job"
+                aria-label="Job card"
                 className="absolute right-0 top-0 bottom-0 z-40 w-full max-w-sm bg-white text-foreground shadow-2xl border-l-4 border-primary pointer-events-auto flex flex-col outline-none"
               >
                 <div className="p-4 border-b border-border bg-muted/30 shrink-0 flex items-center justify-between">
-                   <h2 className="font-bold text-sm uppercase tracking-widest">The job</h2>
+                   <h2 className="font-bold text-sm uppercase tracking-widest">Job card</h2>
                    <button 
                      onClick={() => setJobCardOpen(false)}
                      className="p-2 hover:bg-black/5 rounded-full transition-colors"
-                     aria-label="Close job card"
+                     aria-label="Close the job card"
                    >
                      <X className="w-5 h-5" />
                    </button>
@@ -272,7 +326,7 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
                   {showComplication && (
                     <div className="bg-primary/10 border border-primary/30 p-3 rounded-sm space-y-1">
                       <h3 className="flex items-center gap-1.5 font-bold text-xs uppercase tracking-wider text-primary">
-                        <AlertTriangle className="w-3.5 h-3.5" /> What has come up
+                        <AlertTriangle className="w-3.5 h-3.5" /> What's come up
                       </h3>
                       <p className="text-foreground/85 leading-snug">{task.complication}</p>
                     </div>
@@ -298,7 +352,7 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
                   </div>
 
                   <div className="space-y-2 pt-2 border-t border-border text-xs text-muted-foreground">
-                    <p><strong>With:</strong> {task.interaction}</p>
+                    <p><strong>Who you're working with:</strong> {task.interaction}</p>
                   </div>
                 </div>
 
@@ -310,12 +364,12 @@ function KitchenFrameInner({ id, scenes, dialogue }: KitchenFrameProps) {
                           {task.whatHappensNext}
                         </p>
                         <Button onClick={handleNext} className="w-full font-bold shadow-lg">
-                          {nextTaskId(id) ? "Move on to the next task" : "Close the day"}
+                          {nextTaskId(id) ? "On to the next job" : "Finish the day"}
                         </Button>
                       </div>
                     ) : (
                       <Button variant="outline" className="w-full text-xs font-medium bg-muted text-muted-foreground cursor-not-allowed border-dashed">
-                        Finish checklist to continue
+                        Tick everything off to move on
                       </Button>
                     )}
                   </div>

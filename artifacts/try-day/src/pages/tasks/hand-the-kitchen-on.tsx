@@ -4,6 +4,7 @@ import { PassScene } from "@/components/scenes/close/pass";
 import { useProgress } from "@/lib/progress-store";
 import { CLOSE_LINES, ELENA_QUESTION, Line } from "@/content/activities";
 import { kitchenAudio } from "@/lib/audio";
+import { getCloseGuide } from "@/content/guides/dietary-close";
 
 export default function HandoverKitchenTask() {
   const { progress, updateTask } = useProgress();
@@ -59,6 +60,7 @@ export default function HandoverKitchenTask() {
   return (
     <KitchenFrame
       id="hand-the-kitchen-on"
+      guide={getCloseGuide(state, progress.tasks["chill-the-event-batch"])}
       dialogue={dialogue}
       scenes={{
         pass: (

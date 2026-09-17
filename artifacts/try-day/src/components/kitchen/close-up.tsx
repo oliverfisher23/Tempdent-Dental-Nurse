@@ -30,7 +30,7 @@ export function CloseUp({ isOpen, onClose, title, children, className }: CloseUp
     return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [isOpen, onClose]);
 
-  useFocusTrap(contentRef, isOpen);
+  useFocusTrap(contentRef, isOpen, true);
 
   if (typeof document === 'undefined') return null;
 
@@ -38,9 +38,10 @@ export function CloseUp({ isOpen, onClose, title, children, className }: CloseUp
     <AnimatePresence>
       {isOpen && (
         <div
-          className="fixed inset-x-0 top-14 bottom-0 z-50 flex flex-col items-center justify-center p-4 sm:p-8"
+          className="fixed inset-x-0 bottom-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6"
+          style={{ top: 'var(--kitchen-top, 56px)' }}
           role="dialog"
-          aria-modal="true"
+          aria-modal="false"
           aria-label={title || "Close up view"}
         >
           {/* Plain semi-transparent background */}

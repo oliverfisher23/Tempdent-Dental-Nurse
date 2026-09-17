@@ -1,8 +1,19 @@
-import { ReactNode } from 'react';
-import { motion } from 'framer-motion';
+import { useMemo } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 import { kitchenAudio } from '@/lib/audio';
 import { Check } from 'lucide-react';
+import { useKitchen } from './kitchen-context';
+
+/** Objects appear one after another once the student is in the room (ms after arrival). */
+export const OBJECTS_APPEAR_AFTER_MS = 1100;
+export const OBJECT_STAGGER_MS = 140;
+
+/** Seconds until something that arrives `index`-th in the room should show, measured from now. */
+export function arrivalDelay(arrivedAt: number, index: number, reduceMotion: boolean | null) {
+  if (reduceMotion || !arrivedAt) return 0;
+  return Math.max(0, arrivedAt + OBJECTS_APPEAR_AFTER_MS + index * OBJECT_STAGGER_MS - Date.now()) / 1000;
+}
 
 interface HotspotProps {
   x: number; // percentage
@@ -16,7 +27,13 @@ interface HotspotProps {
 
 export function Hotspot({ x, y, label, hint, state = 'todo', onClick, className }: HotspotProps) {
   const isClickable = state !== 'locked' && onClick;
-  
+  const { arrivedAt, claimArrivalIndex } = useKitchen();
+  const reduceMotion = useReducedMotion();
+  // Each object takes the next place in the room's arrival order the first time it renders after an arrival.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const index = useMemo(() => claimArrivalIndex(), [arrivedAt]);
+  const delay = arrivalDelay(arrivedAt, index, reduceMotion);
+
   const handleClick = () => {
     if (!isClickable) return;
     kitchenAudio.play('tap');
@@ -24,9 +41,14 @@ export function Hotspot({ x, y, label, hint, state = 'todo', onClick, className 
   };
 
   return (
-    <div
+    <motion.div
+      key={arrivedAt}
+      initial={{ opacity: 0, scale: 0.6 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay, duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
       className={cn("absolute group z-10", className)}
-      style={{ left: `${x}%`, top: `${y}%`, transform: 'translate(-50%, -50%)' }}
+      // y is a share of the room above the dialogue bar, so nothing ends up under it
+      style={{ left: `${x}%`, top: `calc(${y}% - ${y / 100} * var(--dialogue-h, 0px))`, x: '-50%', y: '-50%' }}
     >
       <button
         type="button"
@@ -63,6 +85,6 @@ export function Hotspot({ x, y, label, hint, state = 'todo', onClick, className 
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 }

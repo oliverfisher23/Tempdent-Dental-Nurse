@@ -1,9 +1,10 @@
 import { PLACES, PEOPLE } from '@/content/kitchen';
 import { Hotspot } from '@/components/kitchen/hotspot';
-import { useKitchen } from '@/components/kitchen/kitchen-context';
+import { useKitchen, usePresent } from '@/components/kitchen/kitchen-context';
 import { SCENE_LABELS } from '@/content/scenes/delivery';
 
 export function PassScene({ hasRadio, onTakeRadio }: { hasRadio: boolean, onTakeRadio: () => void }) {
+  usePresent('marcus', 34);
   const { goTo } = useKitchen();
   const backdrop = PLACES['pass'].backdrop;
   const marcus = PEOPLE.find(p => p.id === 'marcus')!;
@@ -22,7 +23,7 @@ export function PassScene({ hasRadio, onTakeRadio }: { hasRadio: boolean, onTake
         <Hotspot
           x={65}
           y={55}
-          label={SCENE_LABELS.radioOnCharger}
+          label={SCENE_LABELS.pickUpRadio}
           state="active"
           onClick={onTakeRadio}
         />
@@ -30,7 +31,8 @@ export function PassScene({ hasRadio, onTakeRadio }: { hasRadio: boolean, onTake
         <Hotspot
           x={85}
           y={40}
-          label={SCENE_LABELS.walkToGoodsIn}
+          label={SCENE_LABELS.goToBackDoor}
+          hint={SCENE_LABELS.backDoorHint}
           state="active"
           onClick={() => goTo('goods-in')}
         />

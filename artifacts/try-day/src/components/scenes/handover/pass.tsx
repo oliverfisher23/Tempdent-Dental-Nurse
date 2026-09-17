@@ -6,14 +6,25 @@ import { Hotspot } from '../../kitchen/hotspot';
 import { Clipboard } from '../../kitchen/paper';
 import { CloseUp } from '../../kitchen/close-up';
 import { kitchenAudio } from '@/lib/audio';
-import { useKitchen } from '../../kitchen/kitchen-context';
+import { useKitchen, useKitchenAction, usePresent } from '../../kitchen/kitchen-context';
 import { cn } from '@/lib/utils';
 import portraitMarcus from '@/assets/kitchen/portrait-marcus.png';
 import portraitPorter from '@/assets/kitchen/portrait-porter.png';
 
+function PorterPresence() {
+  usePresent('porter', 40);
+  return <img src={portraitPorter} className="h-[58%] object-contain -ml-24 drop-shadow-2xl opacity-90 transition-opacity duration-1000" alt="" />;
+}
+
+function MarcusPresence() {
+  usePresent('marcus', 40);
+  return <img src={portraitMarcus} className="h-[62%] object-contain ml-16 drop-shadow-2xl opacity-100 transition-opacity duration-1000 animate-in fade-in" alt="" />;
+}
+
 export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) => void, logRead: string[] }) {
   const [clipboardOpen, setClipboardOpen] = useState(false);
   const { goTo } = useKitchen();
+  useKitchenAction('handover:log', () => setClipboardOpen(true));
 
   const backdrop = PLACES['pass'].backdrop;
   const allRead = logRead.length >= OVERNIGHT_LOG.length;
@@ -32,9 +43,9 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
       {/* Characters - Presences in scene */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-end justify-center">
         {!allRead ? (
-          <img src={portraitPorter} className="h-[58%] object-contain -ml-24 drop-shadow-2xl opacity-90 transition-opacity duration-1000" alt="" />
+          <PorterPresence />
         ) : (
-          <img src={portraitMarcus} className="h-[62%] object-contain ml-16 drop-shadow-2xl opacity-100 transition-opacity duration-1000 animate-in fade-in" alt="" />
+          <MarcusPresence />
         )}
       </div>
 
@@ -42,8 +53,7 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
       <Hotspot 
         x={65} 
         y={55} 
-        label="Overnight log" 
-        hint="On the clipboard"
+        label="Read the overnight log" 
         state={allRead ? 'done' : 'active'}
         onClick={() => {
           kitchenAudio.play('page');
@@ -55,15 +65,14 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
          <Hotspot 
            x={85} 
            y={50} 
-           label="Fridge corridor" 
-           hint="Walk to the back"
+           label="Go to the fridges" 
            state="active"
            onClick={() => goTo('corridor')} 
          />
       )}
 
       {/* Close up modal for Clipboard */}
-      <CloseUp isOpen={clipboardOpen} onClose={() => setClipboardOpen(false)} title="Overnight log clipboard" className="max-w-3xl mx-auto">
+      <CloseUp isOpen={clipboardOpen} onClose={() => setClipboardOpen(false)} title="Overnight log" className="max-w-3xl mx-auto">
         <Clipboard>
           <div className="p-8 pb-12 bg-white text-foreground">
             <div className="border-b-2 border-foreground pb-4 mb-6">
@@ -97,7 +106,7 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
                       {entry.time}
                     </div>
                     <div className={cn("text-lg", !isRead && "font-medium text-foreground")}>
-                      {isRead ? entry.text : <span className="opacity-50 italic">Read entry...</span>}
+                      {isRead ? entry.text : <span className="opacity-50 italic">Read this entry</span>}
                     </div>
                   </button>
                 );

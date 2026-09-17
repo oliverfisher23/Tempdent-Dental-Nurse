@@ -19,6 +19,7 @@ import {
 import { useProgress } from "@/lib/progress-store";
 import { Button } from "@/components/ui/button";
 import logoImg from "@/assets/be-logo.svg";
+import { ExperienceSizeControl } from "@/components/experience-size-control";
 
 export default function Close() {
   const { progress, reset, dayComplete, currentTaskId } = useProgress();
@@ -73,7 +74,10 @@ export default function Close() {
     <div className="min-h-[100dvh] bg-background flex flex-col">
       <header className="max-w-5xl mx-auto w-full px-6 md:px-10 pt-8 flex items-center justify-between">
         <img src={logoImg} alt="Be | Marriott Bonvoy" className="h-8 md:h-10" />
-        <span className="font-mono text-sm font-bold text-foreground">{FRAME.shift.end}</span>
+        <div className="flex items-center gap-3">
+          <span className="font-mono text-sm font-bold text-foreground">{FRAME.shift.end}</span>
+          <ExperienceSizeControl />
+        </div>
       </header>
 
       <main className="flex-1">

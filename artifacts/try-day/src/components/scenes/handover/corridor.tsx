@@ -10,6 +10,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Thermometer, PenTool, ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
+import { useKitchenAction } from '../../kitchen/kitchen-context';
+
+function GuideAction({ action, open }: { action: string; open: () => void }) {
+  useKitchenAction(action, open);
+  return null;
+}
 
 export function CorridorScene({ 
   stateRows, 
@@ -55,6 +61,14 @@ export function CorridorScene({
     setOpenUnitId(null);
     setProbing(false);
     if (probeTimer.current) clearInterval(probeTimer.current);
+  };
+
+  const openBoard = () => {
+    if (probeTimer.current) clearInterval(probeTimer.current);
+    probeTimer.current = null;
+    setProbing(false);
+    setOpenUnitId(null);
+    setBoardOpen(true);
   };
 
   const handleProbe = (unit: typeof FRIDGE_UNITS[0]) => {
@@ -105,6 +119,17 @@ export function CorridorScene({
 
   return (
     <div className="absolute inset-0 z-0 bg-black">
+      {FRIDGE_UNITS.map((unit) => (
+        <GuideAction
+          key={unit.id}
+          action={`handover:fridge:${unit.id}`}
+          open={() => {
+            setBoardOpen(false);
+            handleOpenUnit(unit.id);
+          }}
+        />
+      ))}
+      <GuideAction action="handover:board" open={openBoard} />
       {/* Background Atmosphere */}
       <img src={backdrop} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" decoding="async" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/60 pointer-events-none" />
@@ -167,14 +192,14 @@ export function CorridorScene({
           {/* Temperature Board Section */}
           <div className="flex flex-col items-center gap-6 h-full justify-end ml-8">
             <button
-              onClick={() => { kitchenAudio.play('page'); setBoardOpen(true); }}
+              onClick={() => { kitchenAudio.play('page'); openBoard(); }}
               className="h-[70vh] max-h-[600px] w-64 bg-white rounded shadow-2xl border-4 border-zinc-300 flex flex-col items-center justify-center p-6 hover:bg-zinc-50 transition-colors focus-visible:ring-4 focus-visible:ring-primary outline-none group"
-              aria-label="Open temperature board"
+               aria-label="Temperature board"
             >
               <div className="w-16 h-2 bg-zinc-300 rounded-full mb-8" />
               <div className="font-bold text-2xl font-sans uppercase tracking-widest text-center text-zinc-800 mb-2">Temperature<br/>board</div>
               <div className="text-primary font-bold group-hover:scale-110 transition-transform mt-4">
-                 Fill in readings
+                  Write the readings up
               </div>
             </button>
           </div>
@@ -186,21 +211,21 @@ export function CorridorScene({
         <button 
           onClick={panLeft}
           className="bg-black/60 text-white p-3 rounded-full hover:bg-black transition-all focus-visible:ring-2 focus-visible:ring-primary outline-none shadow-lg"
-          aria-label="Pan left"
+           aria-label="Look left"
         >
           <ArrowLeft className="w-6 h-6" />
         </button>
         <button 
           onClick={panRight}
           className="bg-black/60 text-white p-3 rounded-full hover:bg-black transition-all focus-visible:ring-2 focus-visible:ring-primary outline-none shadow-lg"
-          aria-label="Pan right"
+           aria-label="Look right"
         >
           <ArrowRight className="w-6 h-6" />
         </button>
       </div>
 
       {/* Fridge Interior Modal */}
-      <CloseUp isOpen={!!openUnitId} onClose={handleCloseUnit} title="Fridge interior" className="max-w-3xl mx-auto h-full max-h-[720px]">
+      <CloseUp isOpen={!!openUnitId} onClose={handleCloseUnit} title={FRIDGE_UNITS.find(unit => unit.id === openUnitId)?.name ?? 'Fridge'} className="max-w-3xl mx-auto h-full max-h-[720px]">
         {openUnitId && (() => {
           const unit = FRIDGE_UNITS.find(u => u.id === openUnitId)!;
           let interiorImg = INTERIORS.fridge;
@@ -251,7 +276,7 @@ export function CorridorScene({
                        className="bg-primary text-primary-foreground font-bold px-4 py-3 rounded hover:bg-primary/90 disabled:opacity-50 flex items-center justify-center gap-2 shadow"
                      >
                        <Thermometer className="w-5 h-5" /> 
-                       Probe
+                       Take the temperature
                      </button>
                      
                      <AnimatePresence>
@@ -265,7 +290,7 @@ export function CorridorScene({
                             }}
                             className="bg-white text-black font-bold px-4 py-3 rounded shadow hover:bg-zinc-200 flex items-center justify-center gap-2"
                           >
-                            <PenTool className="w-4 h-4" /> Jot it down
+                            <PenTool className="w-4 h-4" /> Write it in your notebook
                           </motion.button>
                         )}
                      </AnimatePresence>
@@ -324,7 +349,7 @@ export function CorridorScene({
                                 }}
                                 className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded shadow-sm hover:bg-primary/20 transition-colors"
                               >
-                                From notepad
+                                Use my note
                               </button>
                             )}
                           </div>
@@ -353,7 +378,7 @@ export function CorridorScene({
                             <Input
                               value={row.note}
                               onChange={(e) => onRowChange(unit.id, 'note', e.target.value)}
-                              placeholder="Write a note..."
+                              placeholder="Anything to note?"
                               className="kitchen-input text-sm text-left w-full"
                               style={{ fontFamily: 'cursive' }}
                             />
@@ -400,7 +425,7 @@ export function CorridorScene({
                                 }}
                                 className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded shadow-sm"
                               >
-                                From notepad
+                                Use my note
                               </button>
                             )}
                           </div>
@@ -434,7 +459,7 @@ export function CorridorScene({
                           <Input
                             value={row.note}
                             onChange={(e) => onRowChange(unit.id, 'note', e.target.value)}
-                            placeholder="Write a note..."
+                            placeholder="Anything to note?"
                             className="kitchen-input text-sm text-left w-full"
                             style={{ fontFamily: 'cursive' }}
                           />

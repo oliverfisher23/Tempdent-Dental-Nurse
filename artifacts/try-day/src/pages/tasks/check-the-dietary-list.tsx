@@ -10,6 +10,7 @@ import { wrongChartRows, guestAssignmentIsSafe } from "@/lib/simulation";
 import { PassScene } from "@/components/scenes/dietary/pass";
 import { EventsScene } from "@/components/scenes/dietary/events";
 import { kitchenAudio } from "@/lib/audio";
+import { getDietaryGuide } from "@/content/guides/dietary-close";
 
 export default function DietaryTask() {
   const { progress, updateTask } = useProgress();
@@ -100,6 +101,7 @@ export default function DietaryTask() {
   return (
     <KitchenFrame
       id="check-the-dietary-list"
+      guide={getDietaryGuide(state)}
       dialogue={dialogue}
       scenes={{
         pass: (

@@ -19,6 +19,15 @@ import fridgeInterior from '@/assets/kitchen/fridge-interior.jpg';
 import freezerInterior from '@/assets/kitchen/freezer-interior.jpg';
 import walkInInterior from '@/assets/kitchen/walk-in-interior.jpg';
 import fishBox from '@/assets/kitchen/fish-box.jpg';
+import crateSeaBass from '@/assets/kitchen/crate-sea-bass.jpg';
+import crateSmokedHaddock from '@/assets/kitchen/crate-smoked-haddock.jpg';
+import crateChicken from '@/assets/kitchen/crate-chicken.jpg';
+import crateCream from '@/assets/kitchen/crate-cream.jpg';
+import crateButter from '@/assets/kitchen/crate-butter.jpg';
+import crateSpinach from '@/assets/kitchen/crate-spinach.jpg';
+import crateShallots from '@/assets/kitchen/crate-shallots.jpg';
+import crateLemons from '@/assets/kitchen/crate-lemons.jpg';
+import crateParsley from '@/assets/kitchen/crate-parsley.jpg';
 import portraitMarcus from '@/assets/kitchen/portrait-marcus.png';
 import portraitSarah from '@/assets/kitchen/portrait-sarah.png';
 import portraitElena from '@/assets/kitchen/portrait-elena.png';
@@ -43,35 +52,35 @@ export const PLACES: Record<PlaceId, Place> = {
   pass: {
     id: 'pass',
     name: 'The pass',
-    description: 'The counter where plates leave the kitchen. Clipboards, the whiteboard, the radio charger and the wall clock live here.',
+    description: 'The counter where finished plates are handed to the waiters. The clipboards, the whiteboard, the radio and the clock all live here, so everyone passes through.',
     map: { x: 45, y: 67 },
     backdrop: scenePass,
   },
   corridor: {
     id: 'corridor',
-    name: 'The fridge corridor',
-    description: 'The row of upright fridges and freezers along the back wall, the walk-in at the end, and the temperature board.',
+    name: 'The fridges',
+    description: 'The row of fridges and freezers along the back wall, with the walk-in (the fridge you can walk into) at the end and the temperature board on the wall.',
     map: { x: 62, y: 31 },
     backdrop: sceneCorridor,
   },
   'goods-in': {
     id: 'goods-in',
-    name: 'Goods-in',
-    description: 'The back door where deliveries come in, with the receiving bench and the scales.',
+    name: 'The back door',
+    description: 'Goods-in: the door where deliveries arrive. There is a bench for checking things off and a set of scales.',
     map: { x: 23, y: 20 },
     backdrop: sceneGoodsIn,
   },
   bench: {
     id: 'bench',
-    name: 'The prep bench and blast chiller',
-    description: 'The big bench by the blast chiller where batches are portioned and brought down.',
+    name: 'The prep bench',
+    description: 'The big steel bench next to the blast chiller (a cabinet that cools hot food fast). Big batches are split into trays here.',
     map: { x: 66, y: 50 },
     backdrop: sceneBench,
   },
   events: {
     id: 'events',
     name: 'The events kitchen',
-    description: 'The smaller kitchen off the main one where function food is finished. The evening board and the allergen chart are on its wall.',
+    description: 'The smaller kitchen next door where food for functions is finished. The evening board and the allergen chart are on its wall.',
     map: { x: 84, y: 62 },
     backdrop: sceneEvents,
   },
@@ -101,8 +110,8 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['pass', 'corridor'],
     light: 'dawn',
     whatIsHere: {
-      pass: 'The night porter and the overnight log on its clipboard.',
-      corridor: 'The fridges and freezers, the walk-in, the probe and the temperature board.',
+      pass: 'The night porter is waiting with the overnight log.',
+      corridor: 'The fridges to check, the probe and the temperature board.',
     },
   },
   'check-the-delivery-in': {
@@ -111,7 +120,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     light: 'morning',
     whatIsHere: {
       pass: 'Marcus, and the radio on its charger.',
-      'goods-in': 'The driver, the trolley of boxes, the scales and the delivery note.',
+      'goods-in': 'The driver is waiting with three trolleys of boxes and the delivery note.',
     },
   },
   'chill-the-event-batch': {
@@ -119,7 +128,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['bench'],
     light: 'morning',
     whatIsHere: {
-      bench: 'The braised beef, the trays, the probe, the blast chiller and the chill record.',
+      bench: 'The beef, the trays, the probe, the blast chiller and the chill record.',
     },
   },
   'check-the-dietary-list': {
@@ -127,7 +136,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['pass', 'events'],
     light: 'midday',
     whatIsHere: {
-      pass: 'Sarah with the function sheet.',
+      pass: 'Sarah is waiting with the function sheet.',
       events: 'The recipe cards, the allergen chart and the evening board.',
     },
   },
@@ -136,7 +145,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['pass'],
     light: 'afternoon',
     whatIsHere: {
-      pass: 'The waste bins and scales, the handover sheet, the evening team and, later, Elena.',
+      pass: 'The waste bins and scales, the handover sheet, the evening team and, later on, Elena.',
     },
   },
 };
@@ -169,6 +178,20 @@ export const INTERIORS = {
   freezer: freezerInterior,
   walkIn: walkInInterior,
   fishBox,
+};
+
+/** What is inside each box on the delivery, keyed by the order line id in `activities.ts`. */
+export const CRATE_IMAGES: Record<string, string> = {
+  salmon: fishBox,
+  'sea-bass': crateSeaBass,
+  'smoked-haddock': crateSmokedHaddock,
+  chicken: crateChicken,
+  cream: crateCream,
+  butter: crateButter,
+  spinach: crateSpinach,
+  shallots: crateShallots,
+  lemons: crateLemons,
+  parsley: crateParsley,
 };
 
 export const MAP_IMAGE = mapImg;

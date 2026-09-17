@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { PLACES, PEOPLE } from '@/content/kitchen';
 import { kitchenAudio } from '@/lib/audio';
 import { Hotspot } from '../../kitchen/hotspot';
+import { useKitchenAction, usePresent } from '../../kitchen/kitchen-context';
 import { FunctionSheetCloseUp } from './function-sheet';
 
 export function PassScene({
@@ -13,7 +14,9 @@ export function PassScene({
   onAssignGuest: (guestId: string, field: 'main' | 'dessert', val: string) => void;
   chartChecked: boolean;
 }) {
+  usePresent('sarah', 34);
   const [sheetOpen, setSheetOpen] = useState(false);
+  useKitchenAction('dietary.open-function-sheet', () => setSheetOpen(true));
 
   const backdrop = PLACES['pass'].backdrop;
   
@@ -30,7 +33,7 @@ export function PassScene({
       <Hotspot 
         x={45} 
         y={55} 
-        label="Function sheet" 
+        label="Take the function sheet from Sarah" 
         state="active" 
         onClick={() => { kitchenAudio.play('page'); setSheetOpen(true); }} 
       />

@@ -9,10 +9,13 @@ import {
 import { useProgress } from "@/lib/progress-store";
 import { parseNumber } from "@/lib/simulation";
 import { kitchenAudio } from "@/lib/audio";
+import { getDeliveryGuide } from "@/content/guides/handover-delivery";
 
 import { KitchenFrame } from "@/components/kitchen/kitchen-frame";
 import { PassScene } from "@/components/scenes/delivery/pass";
 import { GoodsInScene } from "@/components/scenes/delivery/goods-in";
+
+const SHORT_LINE = ORDER_LINES.find((l) => l.id === SHORT_LINE_ID)!;
 
 export default function DeliveryTask() {
   const { progress, updateTask } = useProgress();
@@ -38,7 +41,7 @@ export default function DeliveryTask() {
   }, [updateTask]);
 
   const handleLineInput = useCallback((id: string, field: "arrived" | "temperature", value: string) => {
-    if (field === "arrived" && id === SHORT_LINE_ID && parseNumber(value) === 8) {
+    if (field === "arrived" && id === SHORT_LINE_ID && parseNumber(value) === SHORT_LINE.arrived) {
       setDialogue(DELIVERY_LINES.driverOnShort);
     }
     updateTask("check-the-delivery-in", (prev) => {
@@ -93,7 +96,7 @@ export default function DeliveryTask() {
   }, [updateTask]);
 
   const handleSign = useCallback(() => {
-    const salmonAmended = parseNumber(state.noteAmendedTo) === 8;
+    const salmonAmended = parseNumber(state.noteAmendedTo) === SHORT_LINE.arrived;
     if (!salmonAmended) {
       setDialogue(DELIVERY_LINES.marcusOnUnamendedNote);
       kitchenAudio.play('wrong');
@@ -113,6 +116,7 @@ export default function DeliveryTask() {
   return (
     <KitchenFrame
       id="check-the-delivery-in"
+      guide={getDeliveryGuide(state)}
       dialogue={dialogue}
       scenes={{
         pass: <PassScene hasRadio={hasRadio} onTakeRadio={() => { kitchenAudio.play('tap'); setHasRadio(true); }} />,

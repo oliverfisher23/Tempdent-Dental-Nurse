@@ -12,6 +12,7 @@ import ChillTask from '@/pages/tasks/chill-the-event-batch';
 import DietaryTask from '@/pages/tasks/check-the-dietary-list';
 import HandoverKitchenTask from '@/pages/tasks/hand-the-kitchen-on';
 import { ProgressProvider } from '@/lib/progress-store';
+import { ExperienceViewportProvider } from '@/lib/experience-viewport';
 import {
   Route,
   Switch,
@@ -49,7 +50,9 @@ function App() {
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <ProgressProvider>
-            <Router />
+            <ExperienceViewportProvider>
+              <Router />
+            </ExperienceViewportProvider>
           </ProgressProvider>
         </WouterRouter>
         <Toaster />

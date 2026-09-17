@@ -272,7 +272,7 @@ export const MEASURED_DEPTHS_MM = { yours: 56, marcus: 48 };
 export const NINETY_MINUTE_CHOICES = [
   {
     id: 'keep-logging',
-    label: 'Leave it in the chiller and log it again at 120 minutes',
+    label: 'Leave it in the chiller and take the temperature again at 120 minutes',
     correct: true,
   },
   {

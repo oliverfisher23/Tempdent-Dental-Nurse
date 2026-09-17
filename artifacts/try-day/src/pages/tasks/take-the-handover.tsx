@@ -3,6 +3,7 @@ import { FRIDGE_UNITS, OVERNIGHT_LOG, HANDOVER_LINES, READING_TOLERANCE_C, Line 
 import { useProgress } from "@/lib/progress-store";
 import { addMinutes, within } from "@/lib/simulation";
 import { kitchenAudio } from "@/lib/audio";
+import { getHandoverGuide } from "@/content/guides/handover-delivery";
 
 import { KitchenFrame } from "@/components/kitchen/kitchen-frame";
 import { PassScene } from "@/components/scenes/handover/pass";
@@ -108,6 +109,7 @@ export default function HandoverTask() {
   return (
     <KitchenFrame
       id="take-the-handover"
+      guide={getHandoverGuide(state)}
       dialogue={dialogue}
       scenes={{
         pass: <PassScene onLogRead={handleReadLog} logRead={state.logRead} />,

@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+/* Marriott / Bonvoy brand tokens scoped to this extracted group. */
+:root {
+  --button-outline: rgba(0, 0, 0, .10);
+  --badge-outline: rgba(0, 0, 0, .05);
+  --elevate-1: rgba(0, 0, 0, .03);
+  --elevate-2: rgba(0, 0, 0, .08);
+  --background: 20 24% 96%;
+  --foreground: 0 0% 11%;
+  --border: 20 15% 88%;
+  --input: 20 15% 88%;
+  --ring: 20 100% 69%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 11%;
+  --card-border: 20 15% 88%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 11%;
+  --popover-border: 20 15% 88%;
+  --primary: 20 100% 69%;
+  --primary-foreground: 0 0% 11%;
+  --secondary: 188 14% 32%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 20 10% 92%;
+  --muted-foreground: 20 10% 45%;
+  --accent: 20 10% 92%;
+  --accent-foreground: 0 0% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+  --brand-brown: 20 26% 25%;
+  --brand-blue: 186 11% 60%;
+  --brand-green: 131 12% 73%;
+  --sidebar: 20 24% 96%;
+  --sidebar-foreground: 0 0% 11%;
+  --sidebar-border: 20 15% 88%;
+  --app-font-sans: Calibri, "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --app-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  --radius: 0rem;
+}
+
+.dark {
+  --background: 20 24% 96%;
+  --foreground: 0 0% 11%;
+  --border: 20 15% 88%;
+  --input: 20 15% 88%;
+  --ring: 20 100% 69%;
+  --card: 0 0% 100%;
+  --card-foreground: 0 0% 11%;
+  --card-border: 20 15% 88%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 0 0% 11%;
+  --popover-border: 20 15% 88%;
+  --primary: 20 100% 69%;
+  --primary-foreground: 0 0% 11%;
+  --secondary: 188 14% 32%;
+  --secondary-foreground: 0 0% 100%;
+  --muted: 20 10% 92%;
+  --muted-foreground: 20 10% 45%;
+  --accent: 20 10% 92%;
+  --accent-foreground: 0 0% 11%;
+  --destructive: 0 84% 60%;
+  --destructive-foreground: 0 0% 100%;
+}

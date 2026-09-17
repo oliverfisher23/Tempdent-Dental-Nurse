@@ -2,6 +2,8 @@
 
 An interactive day-in-the-life web simulation for students: one shift (06:45–15:00) as a trainee sous chef in the main kitchen of the Courtyard by Marriott Sandy Park, Exeter, built to the Springpod `try-day-app` mechanic (id `mar-try-day`).
 
+This is an LMS-embedded learner experience, not a public marketing site. Keep the landing page focused on a visual welcome, a short briefing and the learner's expand/start flow. See `artifacts/try-day/EMBEDDING.md` for iframe permissions and integration boundaries.
+
 ## Run & Operate
 
 - `pnpm --filter @workspace/try-day run dev` — run the try-day web app (workflow `artifacts/try-day: web`, binds `PORT`)
@@ -38,7 +40,11 @@ An interactive day-in-the-life web simulation for students: one shift (06:45–1
 - Content and rules are separated from UI: `content/` holds data, `lib/simulation.ts` decides what counts as done, pages only render. Change a reading, a quantity or a done-when rule in those files, not in components.
 - Done-when checks validate against the simulated truth (probe readings within 0.3 °C, weights within 0.15 kg, counted quantities and line statuses against what actually arrived, allergen rows against the recipe cards, the evening-board note naming the guest and the dish) so the forms cannot be filled with anything at all.
 - A completed task is frozen: revisiting it (browser Back, typed URL) shows it read-only with a link to the current task, so finished paperwork cannot be undone after `task:complete` has been posted.
-- Immersive presentation (v2): each task is a set of scenes the student stands in (backdrop = atmosphere, interactive objects rendered as real buttons in front), moved between via the kitchen map. Readings, counts and weights are captured at the object into the student's notepad (`progress.notepad`, `jot`) and written up onto the paperwork with "from notepad" chips; the kitchen clock (`progress.clock`) advances with walks, probing and waiting. Generated pictures are never click targets and nothing is pixel-aligned to them.
+- Immersive presentation (v2): each task is a set of scenes the student stands in (backdrop = atmosphere, interactive objects rendered as real buttons in front), moved between via the kitchen map. Readings, counts and weights are captured at the object into the student's notebook (`progress.notepad`, `jot`) and written up onto the paperwork with "Use my note" chips; the kitchen clock (`progress.clock`) advances with walks, probing and waiting. Generated pictures are never click targets and nothing is pixel-aligned to them.
+- Tasks open directly in the room. The persistent step guide opens the next workspace and handles room changes; the map and job card are optional tools, never automatic interruptions. `KitchenProvider` still animates walks through `mapPhase` (`closed | open | walking | entering`); reduced-motion students move directly.
+- Navigation guides live in `content/guides/` and only open workspaces via `useKitchenAction`; they must never perform practical work or bypass the completion checks. The step guide remains above close-ups, and its completion button signs off through the same validated store action as the job card.
+- Characters drawn in a scene register with `usePresent(personId, bubbleFromPercent)` so the speech bubble drops its own portrait and sits beside them instead of showing the same face twice.
+- All words the app says follow `artifacts/try-day/COPY.md` (verb-first labels, one kitchen word at a time with a gloss on first use, "notebook" not "notepad", sentence case, no trailing dots). Spec copy is exempt and stays verbatim.
 - The task shell shows the spec's `doneWhen` and `complication` text verbatim; the per-clause ticks under it are progress indicators derived in `simulation.ts`, and `complicationRevealed()` decides when the complication box appears.
 - Gate type is `complete`: finishing all five tasks completes the section. On each task completion and on day completion the app posts `{ source: "springpod", format, mechanic: "try-day-app", id: "mar-try-day", event: "task:complete" | "gate:complete", ... }` to `window.parent`. The host contract is assumed (the Springpod App Registry was unreachable when built); confirm before integration.
 - Role label follows the spec ("Trainee sous chef, main kitchen"). The user's first message said "Executive Sous Chef"; swap in one place if they want that.
@@ -60,7 +66,7 @@ An interactive day-in-the-life web simulation for students: one shift (06:45–1
 - Ridley Grotesk is Marriott's licensed typeface and is not available here; the app uses a system sans stack.
 - The intro photo's rights are unconfirmed by the client (see TODO in the intro page).
 - Close-ups are portaled to `document.body` and offset below the 56 px header (`top-14 bottom-0`); overlays (close-up, map, notepad, job card) share the `useFocusTrap` hook in `components/kitchen/`. Hide any new HUD control when the task is `finished`; the store already ignores writes to completed tasks.
-- End-to-end scripts live outside the repo in `/tmp/e2e/task{1..5}-kitchen.mjs` (playwright-core against the dev server) and select controls by accessible name, so label changes need matching test edits.
+- End-to-end scripts live outside the repo in `/tmp/e2e/task{1..5}-kitchen.mjs` (playwright-core against the dev server) and select controls by accessible name, so label changes need matching test edits. Because of the opening map shot, a script must wait for the "Close the job card" button (up to ~4 s) before interacting, or click the map to skip the shot.
 
 ## Pointers
 
