@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "zD00bYYxtGgChQD-GFBEn"
+uri = "file://artifacts/try-day/public/audio/kitchen-ambience.mp3"
+type = "audio"
+title = "kitchen ambience"
+description = "Generated sound effect: Ambient room tone of a quiet hotel kitchen early in the morning: steady extractor fan hum, refrigerator compressors ticking over, distant muffled clatter of pans and crockery,…"

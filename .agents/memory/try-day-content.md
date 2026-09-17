@@ -14,3 +14,11 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
   **How to apply:** on dark floods, put the logo in a cream header strip; ask the client for a reversed version if one is ever needed.
 - Host integration (`postMessage` with `gate:complete`) is an assumed contract; the Springpod App Registry MCP server was unreachable when built (Sept 2026). Confirm the event shape before the client embeds the iframe.
 - Verification approach that worked: drive each task end to end with playwright-core (chromium at `/repl/tools/bin/chromium`, `--no-sandbox`) against the running dev server, seeding localStorage to reach later tasks. Screenshots alone missed wiring bugs.
+- The frozen-task contract is enforced in the progress store itself (task updates, jots and unjots for a completed task are no-ops) and the finished scene is made `inert`; do not rely on overlay z-index or hidden buttons to protect signed-off paperwork.
+  **Why:** a review found the read-only blocker shared `z-40` with the HUD, so the map and notepad still worked and late timers could rewrite a completed task.
+  **How to apply:** any new write path in the store must check `prev.completed` first; any new overlay/HUD control must be hidden when `finished`.
+- Overlays portaled to `document.body` must sit below the fixed 56 px header with `top-14 bottom-0`, not `inset-0` plus a margin (that overflows the viewport and clips the bottom of the paper, e.g. the fridge "Jot it down" button).
+- Playwright screenshots taken straight after opening a framer-motion overlay or crossfading a scene capture the mid-fade frame and look translucent or empty; wait about 600 ms (2–4 s after a walk) before judging a screenshot as a bug.
+- Parallel subagents must never share a file: two agents "fixing" `scenes/chill/bench.tsx` at once re-introduced a bad import twice. Give each agent one task's folders only and keep framework files for the main agent. An agent given a whole-frame rebuild in one go ran out of context and ended without a report; scope one surface per run.
+- Renaming a visible button label (sentence-case sweeps included) breaks the e2e scripts in `/tmp/e2e/task{1..5}-kitchen.mjs`, which select by accessible name; update them in the same change.
+

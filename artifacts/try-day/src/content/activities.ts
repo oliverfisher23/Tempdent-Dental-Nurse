@@ -93,6 +93,10 @@ export const HANDOVER_LINES = {
     speaker: 'Night porter',
     text: "Morning. Log's on the clipboard, four entries. The one you want is the fridge at ten past four. I've got a bus at seven, so if you're good I'll get off.",
   } satisfies Line,
+  porterLeaving: {
+    speaker: 'Night porter',
+    text: "Right, you've read it. I'm off to catch my bus. See you.",
+  } satisfies Line,
   marcusOpening: {
     speaker: 'Marcus',
     text: "Read the log first, then we walk. Probe in, wait for it to settle, write what it says, not what you'd like it to say. Time and initials on every row.",

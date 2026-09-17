@@ -155,6 +155,20 @@ export interface TaskStates {
   'hand-the-kitchen-on': CloseState;
 }
 
+/** One line jotted in the student's pocket notepad at the thing they were looking at. */
+export interface NotepadEntry {
+  id: string;
+  taskId: TaskId;
+  /** Kitchen clock when it was written, HH:MM. */
+  at: string;
+  /** What it is about, e.g. "Larder fridge 2" or "Salmon fillets". */
+  label: string;
+  /** The value as jotted, e.g. "7.8 °C", "8 kg", "smells clean". */
+  value: string;
+  /** Machine-readable hook so paperwork can pick the entry up, e.g. { unitId: 'larder-2' }. */
+  ref?: Record<string, string | number>;
+}
+
 export interface Progress {
   version: 1;
   studentName: string;
@@ -165,6 +179,10 @@ export interface Progress {
   completed: TaskId[];
   tasks: TaskStates;
   completedAt: string | null;
+  /** The kitchen clock, HH:MM. Moves on as the student does things; each task resets it to its start time. */
+  clock: string;
+  /** The student's own notepad, kept all day. */
+  notepad: NotepadEntry[];
 }
 
 // ---------------------------------------------------------------------------
@@ -228,6 +246,8 @@ export function initialProgress(): Progress {
     completed: [],
     tasks: initialTaskStates(),
     completedAt: null,
+    clock: getTask(TASK_ORDER[0]).time,
+    notepad: [],
   };
 }
 
@@ -505,6 +525,18 @@ export function loadProgress(): Progress {
         ? (TASK_ORDER.filter((id) => (parsed.completed as unknown[]).includes(id)) as TaskId[])
         : [],
       tasks: tasks as unknown as TaskStates,
+      clock: typeof parsed.clock === 'string' && /^\d\d:\d\d$/.test(parsed.clock) ? parsed.clock : base.clock,
+      notepad: Array.isArray(parsed.notepad)
+        ? (parsed.notepad.filter(
+            (e): e is NotepadEntry =>
+              isRecord(e) &&
+              typeof e.id === 'string' &&
+              typeof e.label === 'string' &&
+              typeof e.value === 'string' &&
+              typeof e.at === 'string' &&
+              TASK_ORDER.includes(e.taskId as TaskId),
+          ) as NotepadEntry[])
+        : [],
     };
   } catch {
     return initialProgress();

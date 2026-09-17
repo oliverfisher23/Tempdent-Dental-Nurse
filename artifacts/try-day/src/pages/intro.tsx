@@ -7,6 +7,7 @@ import { TASK_ORDER } from "@/content/activities";
 import { useProgress } from "@/lib/progress-store";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { kitchenAudio } from "@/lib/audio";
 
 // TODO: image rights for this photo are unconfirmed by the client. Replace or clear before launch.
 import chefImg from "@/assets/sous-chef.webp";
@@ -21,11 +22,13 @@ export default function Intro() {
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
+    kitchenAudio.unlock();
     startDay(name);
     setLocation(`/task/${TASK_ORDER[0]}`);
   };
 
   const handleContinue = () => {
+    kitchenAudio.unlock();
     setLocation(currentTaskId ? `/task/${currentTaskId}` : "/close");
   };
 
