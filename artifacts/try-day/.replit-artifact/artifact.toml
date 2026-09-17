@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Marriott Sous Chef Try Day"
+description = "An interactive day-in-the-life simulation for students, built for Marriott International's early-careers audience. The student spends a shift as a trainee sous chef in the main kitchen at Courtyard by Marriott Sandy Park, Exeter: taking the handover and walking the fridges, checking a delivery in, blast-chilling the batch for a ninety-cover wedding, checking the dietary list against the allergen chart, and weighing waste and handing the kitchen on. Each task is a real activity with the kitchen's paperwork, a mentor beside them, and a done-when checklist; completing all five completes the section."
+version = "1.0.0"
+id = "artifacts/try-day"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25213
+
+[services.development]
+run = "pnpm --filter @workspace/try-day run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/try-day", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/try-day/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25213"
+BASE_PATH = "/"

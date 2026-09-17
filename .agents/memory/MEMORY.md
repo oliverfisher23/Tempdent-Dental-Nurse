@@ -1,0 +1,1 @@
+- [Try-day content conventions](try-day-content.md) — spec copy verbatim (incl. done-when/complication); completed tasks frozen; rules in simulation.ts; logo never recoloured; host postMessage contract is an assumption.
