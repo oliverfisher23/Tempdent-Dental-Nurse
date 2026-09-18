@@ -1,0 +1,34 @@
+{
+  "spinach": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Spinach_leaves.jpg",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/fe/Spinach_leaves.jpg",
+    "author": "Nillerdk",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "alt": "Fresh young spinach leaves separated from their stems in a metal bowl"
+  },
+  "shallots": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Echalion_2.jpg",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/a/ad/Echalion_2.jpg",
+    "author": "Pamputt",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "alt": "One whole long echalion shallot and one peeled echalion shallot on a wooden board"
+  },
+  "lemons": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Whole-Lemon.jpg",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Whole-Lemon.jpg",
+    "author": "Evan-Amos",
+    "license": "CC0",
+    "licenseUrl": "http://creativecommons.org/publicdomain/zero/1.0/deed.en",
+    "alt": "A whole fresh yellow lemon on a white background"
+  },
+  "parsley": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Flat_Leaf_Parsley123_009.JPG",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/9/91/Flat_Leaf_Parsley123_009.JPG",
+    "author": "Celestebryant",
+    "license": "CC BY 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/3.0",
+    "alt": "Close-up photograph of fresh flat-leaf parsley"
+  }
+}

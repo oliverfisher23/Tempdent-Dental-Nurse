@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { SCENE_LABELS } from '@/content/scenes/delivery';
 import { DELIVERY_REDESIGN_COPY } from '@/content/scenes/delivery-redesign';
+import { DELIVERY_PHOTOS } from '@/content/delivery-photos';
 import { FISH_CHECKS, LineStatus, ORDER_LINES, SHORT_LINE_ID } from '@/content/activities';
 import { useProgress } from '@/lib/progress-store';
 import { parseNumber } from '@/lib/simulation';
@@ -10,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { ClipboardList, ArrowLeft, Thermometer, Scale, Radio, Send, CheckCircle2 } from 'lucide-react';
 import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
+import { DeliveryItemPhoto } from './delivery-item-photo';
 
 type OrderLine = (typeof ORDER_LINES)[number];
 
@@ -115,6 +117,7 @@ export function GoodsInSceneRedesign({
 
   const activeLine = openBoxId ? ORDER_LINES.find(l => l.id === openBoxId) : null;
   const activeRow = activeLine ? getRowState(activeLine.id) : null;
+  const activePhoto = activeLine ? DELIVERY_PHOTOS[activeLine.id] : null;
 
   const salmonRow = getRowState('salmon');
   const salmonMeasured = salmonRow.counted && parseNumber(salmonRow.arrived) === 8 && salmonRow.probed && (parseNumber(salmonRow.temperature) ?? Infinity) <= 5;
@@ -193,7 +196,15 @@ export function GoodsInSceneRedesign({
                           onClick={() => openBox(line)}
                         >
                           <td className="p-3 align-top">
-                            <div className="font-bold">{line.item}</div>
+                            <button
+                              type="button"
+                              aria-pressed={isSelected}
+                              data-testid={`delivery-select-${line.id}`}
+                              className="text-left font-bold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                              onClick={event => { event.stopPropagation(); openBox(line); }}
+                            >
+                              {line.item}
+                            </button>
                             <div className="mt-1">{line.ordered} {line.unit}</div>
                           </td>
                           <td className="p-3 align-top border-l border-[#cdd3d5]">
@@ -352,7 +363,7 @@ export function GoodsInSceneRedesign({
       </div>
       
       {/* Right pane: Inspection Area */}
-      <div className="flex-1 md:w-2/5 bg-[#202427] text-white flex flex-col relative">
+      <div className="min-h-0 min-w-0 flex-1 md:w-2/5 bg-[#202427] text-white flex flex-col relative">
         {activeLine && activeRow ? (
           <>
             <header className="p-4 border-b border-gray-700 bg-gray-900 shrink-0">
@@ -361,6 +372,7 @@ export function GoodsInSceneRedesign({
             </header>
             
             <div className="flex-1 overflow-y-auto p-4 md:p-6 space-y-6">
+               {activePhoto && <DeliveryItemPhoto key={activeLine.id} photo={activePhoto} />}
               
               {/* Evidence controls */}
               <div className="bg-gray-800 p-4 rounded border border-gray-700">

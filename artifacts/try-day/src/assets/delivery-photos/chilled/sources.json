@@ -1,0 +1,26 @@
+{
+  "chicken": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Close-up_of_the_chicken_breast_on_a_cutting_board.jpg",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/6/63/Close-up_of_the_chicken_breast_on_a_cutting_board.jpg",
+    "author": "Shixart1985",
+    "license": "CC BY 2.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by/2.0",
+    "alt": "Close-up photograph of raw skin-on chicken breast portions on a cutting board"
+  },
+  "cream": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Milk_heavy_cream.jpg",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/f/f7/Milk_heavy_cream.jpg",
+    "author": "Aleksey Pogrebnoj-Alexandroff",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "alt": "Photograph of heavy cream separated above milk in a clear glass dairy jar"
+  },
+  "butter": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Lurpak_Butter_250g_unsalted_UK_market.jpg",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/7/7d/Lurpak_Butter_250g_unsalted_UK_market.jpg",
+    "author": "Charles01",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0",
+    "alt": "Photograph of a wrapped 250 gram block of unsalted butter"
+  }
+}

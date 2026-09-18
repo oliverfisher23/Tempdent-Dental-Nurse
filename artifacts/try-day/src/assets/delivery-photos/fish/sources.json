@@ -1,0 +1,26 @@
+{
+  "salmon": {
+    "sourceUrl": "https://www.pexels.com/photo/14062150/",
+    "originalUrl": "https://images.pexels.com/photos/14062150/pexels-photo-14062150.jpeg?cs=srgb&dl=pexels-photo-14062150.jpeg&fm=jpg",
+    "author": "",
+    "license": "Pexels License",
+    "licenseUrl": "https://www.pexels.com/license/",
+    "alt": "Close-up of a raw skin-on salmon fillet resting on ice"
+  },
+  "sea-bass": {
+    "sourceUrl": "https://commons.wikimedia.org/wiki/File:Dicentrarchus_labrax_(Belgium).jpg",
+    "originalUrl": "https://upload.wikimedia.org/wikipedia/commons/c/c0/Dicentrarchus_labrax_%28Belgium%29.jpg",
+    "author": "Hans Hillewaert",
+    "license": "CC BY-SA 4.0",
+    "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+    "alt": "Raw whole European sea bass shown side-on against a black background"
+  },
+  "smoked-haddock": {
+    "sourceUrl": "https://www.baronycountryfoods.co.uk/",
+    "originalUrl": "https://www.baronycountryfoods.co.uk/wp-content/uploads/2021/03/Barony-Country-Foods-Smokehouse-21-35.jpg",
+    "author": "Unknown / Barony Country Foods",
+    "license": "Copyright status not stated; reuse permission not confirmed",
+    "licenseUrl": "",
+    "alt": "Pale natural undyed smoked haddock fillets on a board"
+  }
+}
