@@ -22,3 +22,17 @@ mtime_ms = 1789722741010
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/e0363973-422a-438e-a379-b660e0ed1bb3/dbeb6cc4-bdcb-4064-889a-463f4933fb4f"
 storage_version_token = "1789722754608655"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "6yOtwSpZSFGzYe0bHGLU_"
+uri = "file://artifacts/try-day/PHOTOGRAPHY-SHOT-LIST.md"
+type = "text"
+title = "art’otel Try Day Photography Shot List"
+description = "A production-ready Markdown brief covering essential locations, staff portraits, inspection evidence, ingredient images, formats and shoot totals."
+logical_id = "5b426b24-5c03-430e-9e12-d6d113d7afea"
+content_hash = "sha256:cb051728304e8791cdea4d3f472342e562c4d84776068bea456bb93abbddd240"
+size = 7521
+mtime_ms = 1789727012093
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/5b426b24-5c03-430e-9e12-d6d113d7afea/2bca0b11-5f98-4b87-a11e-30effa1110a5"
+storage_version_token = "1789727018574991"
+content_type = "text/markdown"
