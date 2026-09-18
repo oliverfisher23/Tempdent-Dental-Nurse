@@ -1,176 +1,31 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { 
-  ORDER_LINES,
-  DELIVERY_LINES,
-  SHORT_LINE_ID,
-  LineStatus,
-  Line
-} from "@/content/activities";
-import { useProgress } from "@/lib/progress-store";
-import { parseNumber } from "@/lib/simulation";
-import { kitchenAudio } from "@/lib/audio";
-import { getDeliveryGuide } from "@/content/guides/handover-delivery";
-
-import { KitchenFrame } from "@/components/kitchen/kitchen-frame";
-import { PassScene } from "@/components/scenes/delivery/pass";
-import { GoodsInScene } from "@/components/scenes/delivery/goods-in";
-import { GoodsInSceneRedesign } from "@/components/scenes/delivery/goods-in-redesign";
-
-const SHORT_LINE = ORDER_LINES.find((l) => l.id === SHORT_LINE_ID)!;
+import { useCallback, useState } from 'react';
+import { DELIVERY_LINES } from '@/content/activities';
+import { useProgress } from '@/lib/progress-store';
+import type { DeliveryState } from '@/lib/simulation';
+import { kitchenAudio } from '@/lib/audio';
+import { getDeliveryGuide } from '@/content/guides/handover-delivery';
+import { KitchenFrame } from '@/components/kitchen/kitchen-frame';
+import { PassScene } from '@/components/scenes/delivery/pass';
+import { GoodsInScene } from '@/components/scenes/delivery/goods-in';
 
 export default function DeliveryTask() {
   const { progress, updateTask } = useProgress();
-  const state = progress.tasks["check-the-delivery-in"];
-  const [dialogue, setDialogue] = useState<Line>(DELIVERY_LINES.marcusOpening);
-  
+  const state = progress.tasks['check-the-delivery-in'];
   const [hasRadio, setHasRadio] = useState(false);
-
-  useEffect(() => {
-    if (!state.redesign && !state.signed) {
-      updateTask("check-the-delivery-in", (prev) => ({
-        ...prev,
-        redesign: {
-          version: 1,
-          accepted: {},
-          fishReason: '',
-          missingQuantity: '',
-          report: '',
-          reportSent: false
-        }
-      }));
-    }
-  }, [state.redesign, state.signed, updateTask]);
-
-  const handleLineStatus = useCallback((id: string, status: LineStatus) => {
-    const line = ORDER_LINES.find(l => l.id === id);
-    if (!state.redesign && line && status !== line.expectedStatus) {
-      setDialogue(DELIVERY_LINES.marcusOnWrongStatus);
-      kitchenAudio.play('wrong');
-    }
-
-    updateTask("check-the-delivery-in", (prev) => ({
-      ...prev,
-      signed: prev.redesign ? false : prev.signed,
-      redesign: prev.redesign ? { ...prev.redesign, reportSent: false } : prev.redesign,
-      lines: {
-        ...prev.lines,
-        [id]: { ...prev.lines[id] || { counted: false, arrived: '', probed: false, temperature: '', status: null }, status }
-      }
-    }));
-  }, [updateTask, state.redesign]);
-
-  const handleLineInput = useCallback((id: string, field: "arrived" | "temperature", value: string) => {
-    if (!state.redesign && field === "arrived" && id === SHORT_LINE_ID && parseNumber(value) === SHORT_LINE.arrived) {
-      setDialogue(DELIVERY_LINES.driverOnShort);
-    }
-    updateTask("check-the-delivery-in", (prev) => {
-      const lineState = prev.lines[id] || { counted: false, arrived: '', probed: false, temperature: '', status: null };
-      const newLine = { ...lineState, [field]: value };
-      
-      if (!prev.redesign && field === "arrived") {
-        newLine.counted = value.trim() !== "";
-      }
-
-      return { 
-        ...prev, 
-        signed: prev.redesign ? false : prev.signed,
-        redesign: prev.redesign ? { ...prev.redesign, reportSent: false } : prev.redesign,
-        lines: { ...prev.lines, [id]: newLine } 
-      };
-    });
-  }, [updateTask, state.redesign]);
-
-  const handleCountSettled = useCallback((id: string) => {
-    updateTask("check-the-delivery-in", (prev) => ({
-      ...prev,
-      lines: {
-        ...prev.lines,
-        [id]: { ...prev.lines[id] || { counted: false, arrived: '', probed: false, temperature: '', status: null }, counted: true }
-      }
-    }));
+  const handleUpdateState = useCallback((recipe: (previous: DeliveryState) => DeliveryState) => {
+    // The store owns invalidation and the completed-task freeze.
+    updateTask('check-the-delivery-in', recipe);
   }, [updateTask]);
-
-  const handleProbeSettled = useCallback((id: string) => {
-    updateTask("check-the-delivery-in", (prev) => ({
-      ...prev,
-      lines: {
-        ...prev.lines,
-        [id]: { ...prev.lines[id] || { counted: false, arrived: '', probed: false, temperature: '', status: null }, probed: true }
-      }
-    }));
-  }, [updateTask]);
-
-  const handleFishCheck = useCallback((id: any) => {
-    updateTask("check-the-delivery-in", (prev) => ({
-      ...prev,
-      fishChecks: { ...prev.fishChecks, [id]: true }
-    }));
-  }, [updateTask]);
-
-  const radioTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  useEffect(() => () => { if (radioTimer.current) clearTimeout(radioTimer.current); }, []);
-
-  const handleRadioMarcus = useCallback(() => {
-    kitchenAudio.play('radio');
-    if (radioTimer.current) clearTimeout(radioTimer.current);
-    radioTimer.current = setTimeout(() => {
-      updateTask("check-the-delivery-in", prev => ({ ...prev, radioedMarcus: true }));
-      setDialogue(DELIVERY_LINES.marcusOnRadio);
-    }, 160);
-  }, [updateTask]);
-
-  const handleSign = useCallback(() => {
-    const salmonAmended = parseNumber(state.noteAmendedTo) === SHORT_LINE.arrived;
-    if (!salmonAmended) {
-      setDialogue(DELIVERY_LINES.marcusOnUnamendedNote);
-      kitchenAudio.play('wrong');
-      return;
-    }
-    
-    updateTask("check-the-delivery-in", prev => ({ ...prev, signed: true, signature: progress.initials }));
-    setDialogue(DELIVERY_LINES.marcusDone);
-  }, [state.noteAmendedTo, updateTask, progress.initials]);
-  
-  const handleFirstArrival = useCallback(() => {
-    if (dialogue.text === DELIVERY_LINES.marcusOpening.text) {
-       setDialogue(DELIVERY_LINES.driverOpening);
-    }
-  }, [dialogue.text]);
 
   return (
     <KitchenFrame
       id="check-the-delivery-in"
       guide={getDeliveryGuide(state)}
-      dialogue={dialogue}
+      focusedWorkspace
+      dialogue={DELIVERY_LINES.marcusOpening}
       scenes={{
         pass: <PassScene hasRadio={hasRadio} onTakeRadio={() => { kitchenAudio.play('tap'); setHasRadio(true); }} />,
-        'goods-in': state.redesign ? (
-          <GoodsInSceneRedesign 
-            state={state}
-            onLineInput={handleLineInput}
-            onLineStatus={handleLineStatus}
-            onCountSettled={handleCountSettled}
-            onProbeSettled={handleProbeSettled}
-            onFishCheck={handleFishCheck}
-            onRadioMarcus={handleRadioMarcus}
-            onSign={handleSign}
-            onNoteAmended={(val: string) => updateTask("check-the-delivery-in", prev => ({ ...prev, noteAmendedTo: val }))}
-            onFirstArrival={handleFirstArrival}
-          />
-        ) : (
-          <GoodsInScene 
-            state={state}
-            onLineInput={handleLineInput}
-            onLineStatus={handleLineStatus}
-            onCountSettled={handleCountSettled}
-            onProbeSettled={handleProbeSettled}
-            onFishCheck={handleFishCheck}
-            onRadioMarcus={handleRadioMarcus}
-            onSign={handleSign}
-            onNoteAmended={(val: string) => updateTask("check-the-delivery-in", prev => ({ ...prev, noteAmendedTo: val }))}
-            onFirstArrival={handleFirstArrival}
-          />
-        )
+        'goods-in': <GoodsInScene state={state} onUpdateState={handleUpdateState} />,
       }}
     />
   );

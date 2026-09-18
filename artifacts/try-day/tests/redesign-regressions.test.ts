@@ -65,9 +65,12 @@ test('an extra cooling reading and a correct final explanation are mandatory', (
 
 test('delivery requires accepted measurements, fish explanation and an actual discrepancy report', () => {
   for (const invalidate of [
-    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.redesign!.fishReason = ''; },
-    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.redesign!.accepted.salmon = 'refuse'; },
-    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.redesign!.report = ' '; },
+    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.fishReason = 'quantity-only'; },
+    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => {
+      state.lines.salmon.acceptance = 'refuse';
+      state.lines.salmon.acceptedAmount = '0';
+    },
+    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.reportSentSnapshot = ''; },
     (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.radioedMarcus = false; },
     (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.noteAmendedTo = '12'; },
   ]) {
@@ -75,9 +78,6 @@ test('delivery requires accepted measurements, fish explanation and an actual di
     invalidate(fixture.tasks['check-the-delivery-in']);
     assert.equal(evaluateTask('check-the-delivery-in', fixture.tasks).done, false);
   }
-  const fixture = testProgress(null);
-  fixture.tasks['check-the-delivery-in'].redesign!.missingQuantity = '4.0';
-  assert.equal(evaluateTask('check-the-delivery-in', fixture.tasks).done, true);
 });
 
 test('dietary completion requires deliberately reviewed rows and ingredient evidence, not prose keywords', () => {

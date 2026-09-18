@@ -2,14 +2,11 @@ import {
   FISH_CHECKS,
   FRIDGE_UNITS,
   ORDER_LINES,
-  OVERNIGHT_LOG,
-  READING_TOLERANCE_C,
-  SHORT_LINE_ID,
 } from '@/content/activities';
 import type { StepGuide } from '@/content/step-guide';
 import type { DeliveryState, HandoverState } from '@/lib/simulation';
-import { parseNumber, within } from '@/lib/simulation';
 import { handoverLogRead, nextHandoverUnit } from '@/lib/handover-round';
+import { canSignDelivery } from '@/lib/delivery-workflow';
 
 export function getHandoverGuide(state: HandoverState): StepGuide {
   if (!handoverLogRead(state)) {
@@ -52,88 +49,45 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
   };
 }
 
-const deliveryTotal = ORDER_LINES.length + 3;
-
 export function getDeliveryGuide(state: DeliveryState): StepGuide {
-  const physicalLine = ORDER_LINES.find((line) => {
+  // Navigation checks whether work has been attempted, not whether each answer
+  // is correct. The learner requests corrective feedback in the workspace.
+  const suggestedOrder = [...ORDER_LINES].sort((a, b) =>
+    a.id === 'smoked-haddock' ? -1 : b.id === 'smoked-haddock' ? 1 : 0);
+  const unfinished = suggestedOrder.find((line) => {
     const row = state.lines[line.id];
-    return !row?.counted || (line.chilled && !row?.probed)
-      || parseNumber(row.arrived) !== line.arrived
-      || row.status !== line.expectedStatus
-      || (line.chilled && !within(row.temperature, line.actualC ?? 0, READING_TOLERANCE_C))
-      || (!!state.redesign && state.redesign.accepted[line.id] !== 'accept');
+    return !row.counted || !row.arrived.trim() || !row.comparison || !row.status
+      || !row.acceptance || !row.acceptedAmount.trim()
+      || (line.chilled && (!row.probed || !row.temperature.trim()))
+      || (line.id === 'sea-bass' && (!state.fishReason || FISH_CHECKS.some((check) => !state.fishChecks[check.id])));
   });
-  if (physicalLine) {
-    const row = state.lines[physicalLine.id];
-    const index = ORDER_LINES.indexOf(physicalLine);
-    const needsCount = !row?.counted;
-    const needsProbe = physicalLine.chilled && !row?.probed;
-    return {
-      id: `delivery-check-${physicalLine.id}-${needsCount ? 'count' : needsProbe ? 'temperature' : 'review'}`,
-      step: 1 + index,
-      total: deliveryTotal,
-      title: `Check ${physicalLine.item}`,
-      instruction: needsCount
-        ? 'Inspect the goods, measure what arrived and enter it beside the order. Decide whether to accept the checked quantity.'
-        : needsProbe
-        ? 'Take a temperature reading for this chilled item, then record it beside your checked quantity.'
-        : 'Compare your findings with the order and scenario guidance. Finish this row before moving to another item.',
-      actionLabel: `Open ${physicalLine.item}`,
-      place: 'goods-in',
-      action: `delivery:box:${physicalLine.id}`,
-    };
-  }
-
-  const fishCheck = FISH_CHECKS.find((check) => !state.fishChecks[check.id]);
-  if (fishCheck || (state.redesign && state.redesign.fishReason.trim().length <= 5)) {
-    return {
-      id: `delivery-fish-${fishCheck?.id ?? 'reason'}`,
-      step: ORDER_LINES.length + 1,
-      total: deliveryTotal,
-      title: fishCheck ? 'Inspect the whole fish' : 'Explain the fish decision',
-      instruction: 'Reveal each inspection finding, then explain how the evidence supports your decision.',
-      actionLabel: 'Open the sea bass box',
-      place: 'goods-in',
-      action: 'delivery:box:sea-bass',
-    };
-  }
-
-  if (!state.radioedMarcus || (state.redesign && !state.redesign.reportSent)) {
-    return {
-      id: 'delivery-report-shortage',
-      step: deliveryTotal - 1,
-      total: deliveryTotal,
-      title: 'Report the discrepancy',
-      instruction: 'Compare the order, supplier claim and your checked quantity. Calculate what is missing and write your message to Terence.',
-      actionLabel: 'Prepare the report',
-      place: 'goods-in',
-      action: 'delivery:radio',
-    };
-  }
-
-  if (parseNumber(state.noteAmendedTo) !== ORDER_LINES.find((line) => line.id === SHORT_LINE_ID)!.arrived) {
-    return {
-      id: 'delivery-amend-note',
-      step: deliveryTotal,
-      total: deliveryTotal,
-      title: 'Amend the delivery note',
-      instruction: 'Use your checked and accepted quantity to correct the fish supplier’s note. Keep the original claim visible.',
-      actionLabel: 'Open the delivery note',
-      place: 'goods-in',
-      action: 'delivery:note',
-    };
-  }
-
+  if (unfinished) return {
+    id: `delivery-check-${unfinished.id}`, step: 1, total: 4,
+    title: 'Check each item beside its entry',
+    instruction: 'Inspect, write your results and make your decisions. You can choose any item on the sheet.',
+    actionLabel: `Open ${unfinished.item}`, place: 'goods-in',
+    action: `delivery:box:${unfinished.id}`,
+  };
+  if (!state.contextRevealed) return {
+    id: 'delivery-compare', step: 2, total: 4,
+    title: 'Compare your amounts',
+    instruction: 'Work out what is missing and prepare the amount you would put on the supplier note.',
+    actionLabel: 'Compare amounts', place: 'goods-in', action: 'delivery:comparison',
+  };
+  if (!state.radioedMarcus) return {
+    id: 'delivery-report', step: 3, total: 4,
+    title: 'Prepare your report',
+    instruction: 'Use your checked amounts and the service information to tell Terence what needs following up.',
+    actionLabel: 'Open the report', place: 'goods-in', action: 'delivery:radio',
+  };
+  const ready = canSignDelivery(state);
   return {
-    id: state.signed && state.signature.trim() !== '' ? 'delivery-finished' : 'delivery-sign-note',
-    step: deliveryTotal,
-    total: deliveryTotal,
-    title: state.signed && state.signature.trim() !== '' ? 'Ready to sign off' : 'Sign the delivery note',
-    instruction: state.signed && state.signature.trim() !== ''
-      ? 'Every box is checked and the delivery note is right.'
-      : 'Check the amended amount, then sign for what came in.',
-    actionLabel: 'Open the delivery note',
-    place: 'goods-in',
-    action: 'delivery:note',
+    id: state.signed && ready ? 'delivery-finished' : 'delivery-review', step: 4, total: 4,
+    title: state.signed && ready ? 'Ready to sign off' : 'Review before signing',
+    instruction: state.signed && ready
+      ? 'The note is signed. Sign off this task when you are ready to continue.'
+      : 'Resolve any unfinished checks, confirm the amendment and initial it, then sign the note.',
+    actionLabel: ready ? 'Open the fish note' : 'Review my work', place: 'goods-in',
+    action: ready ? 'delivery:note' : 'delivery:review',
   };
 }

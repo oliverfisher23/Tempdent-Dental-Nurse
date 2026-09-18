@@ -8,8 +8,8 @@
  */
 
 import mechanic from '@/content/mechanic.json';
+import { deliveryReviewIssues } from '@/lib/delivery-workflow';
 import type { DeliveryRedesignState, ChillRedesignState, DietaryRedesignState, CloseRedesignState } from './redesign-types';
-import { deliveryRedesignChecklist } from './redesign-delivery';
 import { dietaryRedesignChecklist } from './redesign-dietary';
 import { evaluateCloseRedesign } from './redesign-close';
 import {
@@ -98,18 +98,33 @@ export interface OrderLineState {
   probed: boolean;
   temperature: string;
   status: LineStatus | null;
+  comparison: 'matches-both' | 'differs-both' | 'differs-order' | 'differs-claim' | null;
+  acceptance: 'accept' | 'refuse' | null;
+  acceptedAmount: string;
 }
 
 export interface DeliveryState {
   redesign?: DeliveryRedesignState;
   lines: Record<string, OrderLineState>;
   fishChecks: Record<FishCheckId, boolean>;
+  fishReason: null | 'condition-and-temperature' | 'quantity-only' | 'supplier-claim-only';
   /** Marcus has been radioed about the short line. */
   radioedMarcus: boolean;
   /** What the student has written on the delivery note against the short line. */
   noteAmendedTo: string;
   signature: string;
   signed: boolean;
+  missingAmount: string;
+  noteLineId: string;
+  amendmentInitials: string;
+  contextRevealed: boolean;
+  report: {
+    productId: string;
+    service: 'tomorrow-lunch' | 'tonight-launch' | 'both' | null;
+    action: 'contact-supplier' | 'change-tonight-menu' | 'no-follow-up' | null;
+  };
+  reportAttempted: boolean;
+  reportSentSnapshot: string;
 }
 
 export interface ChillState {
@@ -208,15 +223,25 @@ export function initialTaskStates(): TaskStates {
       ),
     },
     'check-the-delivery-in': {
-      redesign: { version: 1, accepted: {}, fishReason: '', missingQuantity: '', report: '', reportSent: false },
       lines: Object.fromEntries(
-        ORDER_LINES.map((l) => [l.id, { counted: false, arrived: '', probed: false, temperature: '', status: null }]),
+        ORDER_LINES.map((l) => [l.id, {
+          counted: false, arrived: '', probed: false, temperature: '', status: null,
+          comparison: null, acceptance: null, acceptedAmount: '',
+        }]),
       ),
       fishChecks: Object.fromEntries(FISH_CHECKS.map((c) => [c.id, false])) as Record<FishCheckId, boolean>,
+      fishReason: null,
       radioedMarcus: false,
       noteAmendedTo: '',
       signature: '',
       signed: false,
+      missingAmount: '',
+      noteLineId: '',
+      amendmentInitials: '',
+      contextRevealed: false,
+      report: { productId: '', service: null, action: null },
+      reportAttempted: false,
+      reportSentSnapshot: '',
     },
     'chill-the-event-batch': {
       redesign: { version: 1, comparisonReviewed: false },
@@ -269,6 +294,7 @@ export function initialProgress(): Progress {
 export function testProgress(target: TaskId | null | undefined): Progress {
   const p = initialProgress();
   const initials = initialsFromName('Learning Designer');
+  const shortDeliveryLine = ORDER_LINES.find((line) => line.id === SHORT_LINE_ID)!;
   const handover: HandoverState = {
     logRead: OVERNIGHT_LOG.map((entry) => entry.time),
     rows: Object.fromEntries(FRIDGE_UNITS.map((unit) => [unit.id, {
@@ -276,21 +302,28 @@ export function testProgress(target: TaskId | null | undefined): Progress {
     }])),
   };
   const delivery: DeliveryState = {
-    redesign: {
-      version: 1,
-      accepted: Object.fromEntries(ORDER_LINES.map((line) => [line.id, 'accept'])),
-      fishReason: 'Clear eyes, red gills, a clean smell and firm flesh support accepting the checked fish.',
-      missingQuantity: '4',
-      report: 'The salmon order and supplier note say 12 kg. I checked 8 kg, leaving 4 kg missing for tomorrow lunch.',
-      reportSent: true,
-    },
     lines: Object.fromEntries(ORDER_LINES.map((line) => [line.id, {
       counted: true, arrived: String(line.arrived), probed: line.chilled,
       temperature: line.chilled ? String(line.actualC) : '', status: line.expectedStatus,
+      comparison: line.id === SHORT_LINE_ID ? 'differs-both' : 'matches-both',
+      acceptance: 'accept', acceptedAmount: String(line.arrived),
     }])),
     fishChecks: Object.fromEntries(FISH_CHECKS.map((check) => [check.id, true])) as Record<FishCheckId, boolean>,
-    radioedMarcus: true, noteAmendedTo: '8', signature: initials, signed: true,
+    fishReason: 'condition-and-temperature',
+    radioedMarcus: true, noteAmendedTo: String(shortDeliveryLine.arrived), signature: initials, signed: true,
+    missingAmount: String(shortDeliveryLine.ordered - shortDeliveryLine.arrived),
+    noteLineId: SHORT_LINE_ID, amendmentInitials: initials,
+    contextRevealed: true,
+    report: { productId: SHORT_LINE_ID, service: 'tomorrow-lunch', action: 'contact-supplier' },
+    reportAttempted: true,
+    reportSentSnapshot: '',
   };
+  delivery.reportSentSnapshot = JSON.stringify({
+    productId: SHORT_LINE_ID, service: 'tomorrow-lunch', action: 'contact-supplier',
+    checkedAmount: String(shortDeliveryLine.arrived), acceptance: 'accept',
+    acceptedAmount: String(shortDeliveryLine.arrived),
+    missingAmount: String(shortDeliveryLine.ordered - shortDeliveryLine.arrived),
+  });
   const chill: ChillState = {
     redesign: { version: 1, comparisonReviewed: true },
     trays: [4, 4, 4, 1.5], askedForTray: true, shelfByTray: [0, 2, 4, 6],
@@ -427,22 +460,33 @@ export function lineStatusIsRight(lineId: string, status: LineStatus | null): bo
 export function evaluateDelivery(s: DeliveryState): Evaluation {
   const everyMarked = ORDER_LINES.every((l) => {
     const st = s.lines[l.id];
-    return st && st.counted && parseNumber(st.arrived) === l.arrived && st.status !== null && lineStatusIsRight(l.id, st.status);
+    const differsOrder = l.arrived !== l.ordered;
+    const differsClaim = l.arrived !== l.onDeliveryNote;
+    const expectedComparison: OrderLineState['comparison'] =
+      differsOrder && differsClaim ? 'differs-both'
+        : differsOrder ? 'differs-order'
+          : differsClaim ? 'differs-claim'
+            : 'matches-both';
+    return st
+      && st.counted
+      && parseNumber(st.arrived) === l.arrived
+      && lineStatusIsRight(l.id, st.status)
+      && st.comparison === expectedComparison
+      && st.acceptance === 'accept'
+      && parseNumber(st.acceptedAmount) === l.arrived;
   });
   const everyChilledTemp = ORDER_LINES.filter((l) => l.chilled).every((l) => {
     const st = s.lines[l.id];
     return st && st.probed && within(st.temperature, l.actualC ?? 0, READING_TOLERANCE_C);
   });
-  const fishLooked = FISH_CHECKS.every((c) => s.fishChecks[c.id]);
-  const shortLine = ORDER_LINES.find((l) => l.id === SHORT_LINE_ID)!;
-  const amended = parseNumber(s.noteAmendedTo) === shortLine.arrived;
-  const signedRight = s.signed && s.signature.trim() !== '' && amended;
+  const fishLooked = FISH_CHECKS.every((c) => s.fishChecks[c.id])
+    && s.fishReason === 'condition-and-temperature';
+  const signedRight = deliveryReviewIssues(s, true).length === 0;
   const checklist: ChecklistItem[] = [
     { id: 'lines', label: 'Every line marked arrived, short or refused', met: everyMarked },
     { id: 'temps', label: 'Every chilled line carries a temperature', met: everyChilledTemp },
     { id: 'fish', label: 'The fish looked at and smelled', met: fishLooked },
     { id: 'note', label: 'Delivery note signed for what you actually took in', met: signedRight },
-    ...deliveryRedesignChecklist(s),
   ];
   return { done: checklist.every((c) => c.met), checklist };
 }
@@ -578,10 +622,7 @@ export function complicationRevealed(id: TaskId, tasks: TaskStates): boolean {
       return t.logRead.includes('04:10') || !!t.rows['larder-2']?.probed;
     }
     case 'check-the-delivery-in': {
-      const st = tasks[id].lines[SHORT_LINE_ID];
-      const short = ORDER_LINES.find((line) => line.id === SHORT_LINE_ID)!;
-      return !!st && st.counted && parseNumber(st.arrived) === short.arrived && st.status === 'short'
-        && (!tasks[id].redesign || parseNumber(tasks[id].redesign?.missingQuantity ?? '') === short.ordered - short.arrived);
+      return tasks[id].contextRevealed;
     }
     case 'chill-the-event-batch':
       return tasks[id].readings[90] !== undefined;
@@ -636,15 +677,23 @@ export function loadProgress(testMode = isTestMode()): Progress {
       }
       tasks[id] = merged;
     }
+    const completed = Array.isArray(parsed.completed)
+      ? (TASK_ORDER.filter((id) => (parsed.completed as unknown[]).includes(id)) as TaskId[])
+      : [];
+    const delivery = tasks['check-the-delivery-in'] as DeliveryState;
+    // Legacy completed records remain exactly as signed off. An incomplete legacy
+    // record may retain its written signature, but an old boolean cannot sign off
+    // newly-required blank decisions.
+    if (!completed.includes('check-the-delivery-in') && delivery.signed && deliveryReviewIssues(delivery, false).length > 0) {
+      delivery.signed = false;
+    }
     return {
       ...base,
       studentName: typeof parsed.studentName === 'string' ? parsed.studentName : '',
       initials: typeof parsed.initials === 'string' ? parsed.initials : '',
       startedAt: typeof parsed.startedAt === 'string' ? parsed.startedAt : null,
       completedAt: typeof parsed.completedAt === 'string' ? parsed.completedAt : null,
-      completed: Array.isArray(parsed.completed)
-        ? (TASK_ORDER.filter((id) => (parsed.completed as unknown[]).includes(id)) as TaskId[])
-        : [],
+      completed,
       tasks: tasks as unknown as TaskStates,
       clock: typeof parsed.clock === 'string' && /^\d\d:\d\d$/.test(parsed.clock) ? parsed.clock : base.clock,
       notepad: Array.isArray(parsed.notepad)

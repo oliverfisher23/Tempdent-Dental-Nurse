@@ -66,3 +66,6 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Closing handover recommendations must distinguish saved findings, supplied scenario information and proposed follow-ups; a request is not evidence that work has happened.
   **Why:** the closing learning objective is accurate synthesis and communication. Presenting an unperformed check or an unconfirmed delivery as completed would teach false certainty.
   **How to apply:** label evidence provenance and action status, accept sensible alternative priorities without dropping required topics, and treat review-document proposals as awaiting authorisation rather than approved app changes.
+- Use structured factual composition for the core delivery report; do not pretend to assess the meaning of arbitrary free text.
+  **Why:** the approved recommendation does not assume automated free-text judgement. The learner must choose facts and follow-up, not pass by typing any nonblank sentence or copying one exact phrase.
+  **How to apply:** preserve learner-authored choices and an explicit preview/send action. A later free-text extension needs an agreed assessment approach.

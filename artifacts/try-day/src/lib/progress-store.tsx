@@ -36,6 +36,7 @@ import {
   type Progress,
   type TaskStates,
 } from '@/lib/simulation';
+import { reconcileDeliveryUpdate } from '@/lib/delivery-workflow';
 
 interface ProgressContextValue {
   progress: Progress;
@@ -117,7 +118,14 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
         // Signed-off paperwork is frozen: late callbacks and revisits cannot rewrite it.
         if (prev.completed.includes(id)) return prev;
         if (!TASK_ORDER.slice(0, TASK_ORDER.indexOf(id)).every((task) => prev.completed.includes(task))) return prev;
-        return { ...prev, tasks: { ...prev.tasks, [id]: updater(prev.tasks[id]) } };
+        const proposed = updater(prev.tasks[id]);
+        const updated = id === 'check-the-delivery-in'
+          ? reconcileDeliveryUpdate(
+              prev.tasks['check-the-delivery-in'],
+              proposed as TaskStates['check-the-delivery-in'],
+            )
+          : proposed;
+        return { ...prev, tasks: { ...prev.tasks, [id]: updated } };
       });
     },
     [],

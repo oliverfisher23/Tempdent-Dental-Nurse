@@ -1,5 +1,4 @@
 - [Try-day conventions](try-day-content.md) — approved copy, frozen sign-offs, brand rules, and guidance that simplifies navigation without doing students’ practical work.
-- [Dietary review boundaries](dietary-review-boundaries.md) — decisions were delegated and recorded in the doc's register; the exercise claims ingredient planning with a pending check, never "cleared to serve".
+- [Dietary review boundaries](dietary-review-boundaries.md) — agreed exercise covers ingredient planning and pending preparation checks, never "cleared to serve".
 - [Preview video codecs](preview-video-codecs.md) — some preview/test Chromium builds lack H.264 decoding; check codec support before treating a media error as a broken URL.
-- [Test command execution](test-command-execution.md) — use an equals-form tsx config option and require real test output; a zero exit alone can be misleading.
 - [Browser capture harness](browser-capture-harness.md) — hide the designer panel with CSS (never remove it), close the dev banner first, and don’t trust emulated touch-target sizes.
