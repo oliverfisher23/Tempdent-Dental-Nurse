@@ -1,1 +1,2 @@
 - [Try-day conventions](try-day-content.md) — approved copy, frozen sign-offs, brand rules, and guidance that simplifies navigation without doing students’ practical work.
+- [Dietary review boundaries](dietary-review-boundaries.md) — redesign proposals are not implementation approval; recipe matching and employer service clearance are separate judgements.
