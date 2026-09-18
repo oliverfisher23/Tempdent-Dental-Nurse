@@ -28,11 +28,6 @@ import crateSpinach from '@/assets/kitchen/crate-spinach.jpg';
 import crateShallots from '@/assets/kitchen/crate-shallots.jpg';
 import crateLemons from '@/assets/kitchen/crate-lemons.jpg';
 import crateParsley from '@/assets/kitchen/crate-parsley.jpg';
-import portraitMarcus from '@/assets/kitchen/portrait-marcus.png';
-import portraitSarah from '@/assets/kitchen/portrait-sarah.png';
-import portraitElena from '@/assets/kitchen/portrait-elena.png';
-import portraitPorter from '@/assets/kitchen/portrait-porter.png';
-import portraitDriver from '@/assets/kitchen/portrait-driver.png';
 
 export type PlaceId = 'pass' | 'corridor' | 'goods-in' | 'bench' | 'events';
 
@@ -162,11 +157,11 @@ export interface Person {
 /** Terence is the current on-screen name; the legacy ids remain for saved progress. */
 
 export const PEOPLE: Person[] = [
-  { id: 'marcus', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: portraitMarcus },
-  { id: 'sarah', speaker: 'Yvie', name: 'Yvie', role: 'Events', portrait: portraitSarah },
-  { id: 'elena', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: portraitElena },
-  { id: 'porter', speaker: 'Night porter', name: 'Night porter', role: 'Night porter', portrait: portraitPorter },
-  { id: 'driver', speaker: 'Driver', name: 'Driver', role: 'Delivery driver', portrait: portraitDriver },
+  { id: 'marcus', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: null },
+  { id: 'sarah', speaker: 'Yvie', name: 'Yvie', role: 'Events', portrait: null },
+  { id: 'elena', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: null },
+  { id: 'porter', speaker: 'Night porter', name: 'Night porter', role: 'Night porter', portrait: null },
+  { id: 'driver', speaker: 'Driver', name: 'Driver', role: 'Delivery driver', portrait: null },
   { id: 'evening-team', speaker: 'Evening team', name: 'Evening team', role: 'The chefs taking over at 15:00', portrait: null },
 ];
 

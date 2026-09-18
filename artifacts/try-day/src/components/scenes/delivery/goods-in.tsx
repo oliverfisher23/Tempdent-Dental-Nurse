@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowLeft, Check, ClipboardList, Radio, Scale, Thermometer } from 'lucide-react';
-import { PLACES, PEOPLE, CRATE_IMAGES } from '@/content/kitchen';
+import { PLACES, CRATE_IMAGES } from '@/content/kitchen';
 import { FISH_CHECKS, LineStatus, ORDER_LINES, SHORT_LINE_ID } from '@/content/activities';
 import { SCENE_LABELS } from '@/content/scenes/delivery';
-import { useKitchenAction, usePresent } from '@/components/kitchen/kitchen-context';
+import { useKitchenAction } from '@/components/kitchen/kitchen-context';
 import { useProgress } from '@/lib/progress-store';
 import { evaluateDelivery, parseNumber } from '@/lib/simulation';
 import { kitchenAudio } from '@/lib/audio';
@@ -39,10 +39,8 @@ export function GoodsInScene({
   onNoteAmended,
   onFirstArrival
 }: any) {
-  usePresent('driver', 30);
   const { jot, advanceClock } = useProgress();
   const notebook = useNotepad();
-  const driver = PEOPLE.find((person) => person.id === 'driver')!;
 
   const [openTrolley, setOpenTrolley] = useState<number | null>(null);
   const [openBoxId, setOpenBoxId] = useState<string | null>(null);
@@ -215,17 +213,12 @@ export function GoodsInScene({
             <span className="font-bold">Next:</span> {nextStep}
           </div>
 
-          <div className="grid flex-1 gap-4 md:min-h-0 md:grid-cols-[25%_1fr]">
-            <section className="relative min-h-[280px] overflow-hidden rounded-xl border border-white/10 bg-black/45 md:min-h-0">
-              <img
-                src={driver.portrait!}
-                alt="Delivery driver"
-                className="absolute bottom-0 left-0 h-[94%] max-w-full object-contain object-left-bottom drop-shadow-2xl"
-              />
+          <div className="grid flex-1 gap-4 md:min-h-0">
+            <section className="relative min-h-[120px] overflow-hidden rounded-xl border border-white/10 bg-black/45 md:min-h-0">
               <button
                 type="button"
                 onClick={openDeliveryNote}
-                className="absolute right-20 top-1/3 max-w-[150px] rotate-2 border border-zinc-200 bg-[#fffdf8] px-4 py-3 text-left text-sm font-bold text-black shadow-2xl transition-transform hover:rotate-0 hover:scale-105 outline-none focus-visible:ring-4 focus-visible:ring-primary sm:right-3"
+                 className="absolute left-1/2 top-1/2 max-w-[220px] -translate-x-1/2 -translate-y-1/2 rotate-2 border border-zinc-200 bg-[#fffdf8] px-4 py-3 text-left text-sm font-bold text-black shadow-2xl transition-transform hover:rotate-0 hover:scale-105 outline-none focus-visible:ring-4 focus-visible:ring-primary"
               >
                 {noteOpened ? SCENE_LABELS.readDeliveryNote : SCENE_LABELS.takeDeliveryNote}
               </button>

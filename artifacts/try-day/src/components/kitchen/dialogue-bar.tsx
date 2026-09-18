@@ -9,8 +9,6 @@ import { cn } from '@/lib/utils';
 
 /** Words appear at this pace while a character speaks. */
 const WORD_MS = 45;
-/** The character steps in this long after the student arrives in the room; their words start a little after. */
-const CHARACTER_ENTERS_AFTER_MS = 350;
 const WORDS_START_AFTER_MS = 750;
 /** Lines longer than this are folded to a few lines until the student asks for more. */
 const LONG_LINE = 220;
@@ -19,7 +17,6 @@ function sinceArrival(arrivedAt: number, afterMs: number, reduceMotion: boolean 
   if (reduceMotion || !arrivedAt) return 0;
   return Math.max(0, arrivedAt + afterMs - Date.now());
 }
-
 /**
  * Everything anyone says appears here, in one band along the bottom of the stage:
  * the name plate, the words written out as they are spoken, and any choice the
@@ -39,10 +36,9 @@ export function DialogueBar({
   const [shownWords, setShownWords] = useState(0);
   const barRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  const { present, arrivedAt, working } = useKitchen();
+  const { arrivedAt, working } = useKitchen();
 
   const person = personForSpeaker(line.speaker);
-  const drawnByScene = person ? present.some((p) => p.person === person.id) : false;
   const words = line.text.split(' ');
   const allShown = shownWords >= words.length;
   const long = working || line.text.length > LONG_LINE;
@@ -124,14 +120,6 @@ export function DialogueBar({
         aria-live="polite"
       >
         <div className="mx-auto flex max-w-6xl items-start gap-3 px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
-          {/* On a phone the face sits in the bar; on a wider screen the character stands above it. */}
-          {person?.portrait && !drawnByScene && (
-            <img
-              src={person.portrait}
-              alt=""
-              className="h-12 w-12 shrink-0 rounded-full border-2 border-primary/40 bg-zinc-100 object-cover object-top sm:hidden"
-            />
-          )}
           <div className="min-w-0 flex-1">
             <div className="flex items-baseline gap-2">
               <span className="text-xs font-bold uppercase tracking-widest text-primary">{line.speaker}</span>
@@ -193,45 +181,6 @@ export function DialogueBar({
           </button>
         </div>
       </motion.div>
-    </div>
-  );
-}
-
-/**
- * The one place a character stands: at the right of the room, on the dialogue
- * bar. They step in when they start speaking and give way when someone else does.
- * Scenes that draw a person themselves (the driver at his van) register them
- * with `usePresent`, and the spot stays empty for that person.
- */
-export function CharacterSpot({ line }: { line: Line | null }) {
-  const { present, arrivedAt, working } = useKitchen();
-  const reduceMotion = useReducedMotion();
-  const person = line ? personForSpeaker(line.speaker) : undefined;
-  const drawnByScene = person ? present.some((p) => p.person === person.id) : false;
-  const show = person?.portrait && !drawnByScene && !working ? person : null;
-  const delay = sinceArrival(arrivedAt, CHARACTER_ENTERS_AFTER_MS, reduceMotion) / 1000;
-
-  return (
-    <div
-      className="pointer-events-none absolute right-[2%] z-20 hidden h-[52%] max-h-[440px] sm:block"
-      style={{ bottom: 'var(--dialogue-h, 0px)' }}
-      aria-hidden
-    >
-      <AnimatePresence mode="wait">
-        {show && (
-          <motion.img
-            key={show.id}
-            src={show.portrait!}
-            alt=""
-            initial={reduceMotion ? false : { opacity: 0, x: 48 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 24, transition: { duration: 0.2 } }}
-            transition={{ delay, duration: 0.5, ease: [0.2, 0.8, 0.2, 1] }}
-            className="h-full w-auto object-contain object-bottom drop-shadow-[0_18px_24px_rgba(0,0,0,0.45)]"
-            decoding="async"
-          />
-        )}
-      </AnimatePresence>
     </div>
   );
 }

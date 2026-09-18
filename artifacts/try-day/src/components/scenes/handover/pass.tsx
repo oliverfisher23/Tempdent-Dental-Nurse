@@ -6,21 +6,8 @@ import { Hotspot } from '../../kitchen/hotspot';
 import { Clipboard } from '../../kitchen/paper';
 import { CloseUp } from '../../kitchen/close-up';
 import { kitchenAudio } from '@/lib/audio';
-import { useKitchen, useKitchenAction, usePresent } from '../../kitchen/kitchen-context';
+import { useKitchen, useKitchenAction } from '../../kitchen/kitchen-context';
 import { cn } from '@/lib/utils';
-import portraitMarcus from '@/assets/kitchen/portrait-marcus.png';
-import portraitPorter from '@/assets/kitchen/portrait-porter.png';
-
-function PorterPresence() {
-  usePresent('porter', 40);
-  return <img src={portraitPorter} className="h-[58%] object-contain -ml-24 drop-shadow-2xl opacity-90 transition-opacity duration-1000" alt="" />;
-}
-
-function MarcusPresence() {
-  usePresent('marcus', 40);
-  return <img src={portraitMarcus} className="h-[62%] object-contain ml-16 drop-shadow-2xl opacity-100 transition-opacity duration-1000 animate-in fade-in" alt="" />;
-}
-
 export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) => void, logRead: string[] }) {
   const [clipboardOpen, setClipboardOpen] = useState(false);
   const { goTo } = useKitchen();
@@ -39,15 +26,6 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
       
       {/* Subtle idle motion: heat lamps breathing at the pass (top edge) */}
       <div className="absolute top-0 inset-x-0 h-1/3 bg-gradient-to-b from-orange-500/10 to-transparent mix-blend-overlay animate-pulse pointer-events-none" style={{ animationDuration: '5s' }} />
-
-      {/* Characters - Presences in scene */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden flex items-end justify-center">
-        {!allRead ? (
-          <PorterPresence />
-        ) : (
-          <MarcusPresence />
-        )}
-      </div>
 
       {/* Hotspots */}
       <Hotspot 

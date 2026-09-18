@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { PLACES, PEOPLE } from '@/content/kitchen';
+import { PLACES } from '@/content/kitchen';
 import { WASTE_BINS, HANDOVER_FIELDS, ELENA_QUESTION, WasteBin } from '@/content/activities';
 import { useProgress } from '@/lib/progress-store';
 import { CloseUp } from '../../kitchen/close-up';
@@ -12,17 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { BookOpen, PenTool } from 'lucide-react';
 import { CLOSE_SCENE } from '@/content/scenes/close';
 import { weightIsRight } from '@/lib/simulation';
-import { useKitchenAction, usePresent } from '../../kitchen/kitchen-context';
-
-function ElenaPortrait() {
-  usePresent('elena', 4);
-
-  return (
-    <div className="absolute left-[60%] bottom-[15%] w-[35%] pointer-events-none z-0">
-      <img src={PEOPLE.find(p => p.id === 'elena')?.portrait || ''} alt="" className="w-full h-auto drop-shadow-2xl opacity-90 animate-in fade-in duration-1000" />
-    </div>
-  );
-}
+import { useKitchenAction } from '../../kitchen/kitchen-context';
 
 export function PassScene({ 
   onHandover, 
@@ -140,7 +130,6 @@ export function PassScene({
 
       {state.handedOver && (
         <>
-          <ElenaPortrait />
           <Hotspot
             x={75} y={45}
             label={CLOSE_SCENE.elena}
@@ -417,7 +406,6 @@ export function PassScene({
           {/* Right: Terence's question */}
           <div className="w-full md:w-[400px] shrink-0 bg-zinc-900 border border-zinc-700 p-6 rounded-xl shadow-2xl flex flex-col text-zinc-100 overflow-y-auto">
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-zinc-800">
-              <img src={PEOPLE.find(p=>p.id==='elena')?.portrait || ''} alt="" className="w-16 h-16 rounded-full object-cover bg-black border-2 border-zinc-700" />
               <div>
                 <div className="font-bold text-lg">Terence</div>
                 <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mt-1">Executive sous chef and mentor</div>

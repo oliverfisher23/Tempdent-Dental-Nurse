@@ -10,9 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { kitchenAudio } from "@/lib/audio";
 import { WELCOME_COPY } from "@/content/welcome";
-import { PEOPLE } from "@/content/kitchen";
 import logoImg from "@/assets/artotel-logo.png";
-import { BriefingVideoModal } from "@/components/briefing-video-modal";
 
 interface BriefingViewProps {
   name: string;
@@ -56,7 +54,6 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
     transition: { duration: 0.5, delay },
   });
 
-  const terence = PEOPLE.find(p => p.id === 'marcus');
   const currentTask = currentTaskId ? getTask(currentTaskId) : null;
 
   return (
@@ -85,7 +82,7 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
           <motion.div {...fade(0)} className="mb-5 flex items-center gap-4">
             <div>
               <h2 className="font-bold text-xl text-foreground">Terence</h2>
-              <p className="text-muted-foreground text-sm">{terence?.role}</p>
+              <p className="text-muted-foreground text-sm">Executive sous chef and mentor</p>
             </div>
           </motion.div>
           
@@ -94,7 +91,6 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
           </motion.h1>
           
           <motion.div {...fade(0.1)} className="mt-4 space-y-4 text-base leading-relaxed text-foreground/85">
-            <BriefingVideoModal videoId="main" trigger autoOpen />
             <p>{WELCOME_COPY.briefing}</p>
             <ul className="space-y-3 text-sm">
               {WELCOME_COPY.instructions.map(instruction => (

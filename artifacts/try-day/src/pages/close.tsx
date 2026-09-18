@@ -20,7 +20,6 @@ import { useProgress } from "@/lib/progress-store";
 import { Button } from "@/components/ui/button";
 import logoImg from "@/assets/artotel-logo.png";
 import { ExperienceSizeControl } from "@/components/experience-size-control";
-import { BriefingVideoModal } from "@/components/briefing-video-modal";
 
 export default function Close() {
   const { progress, reset, dayComplete, currentTaskId } = useProgress();
@@ -94,9 +93,6 @@ export default function Close() {
           <motion.p {...fade(0.1)} className="mt-8 text-lg md:text-xl leading-relaxed text-foreground/85 max-w-3xl">
             {FRAME.closeOfDay}
           </motion.p>
-          <motion.div {...fade(0.15)} className="mt-6">
-            <BriefingVideoModal videoId="close" trigger autoOpen />
-          </motion.div>
         </section>
 
         <section className="bg-secondary text-secondary-foreground">

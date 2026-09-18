@@ -9,9 +9,9 @@ import { KitchenProvider, useKitchen } from './kitchen-context';
 import { TASK_ROUTES, PLACES } from '@/content/kitchen';
 import { KitchenMap } from './kitchen-map';
 import { NotepadDrawer } from './notepad';
-import { DialogueBar, CharacterSpot } from './dialogue-bar';
+import { DialogueBar } from './dialogue-bar';
 import { SoundToggle } from './sound-toggle';
-import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, ClipboardList, X, Lock, Map as MapIcon, Play } from 'lucide-react';
+import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, ClipboardList, X, Lock, Map as MapIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from './use-focus-trap';
@@ -19,8 +19,6 @@ import logoImg from '@/assets/artotel-logo.png';
 import type { StepGuide } from '@/content/step-guide';
 import { StepGuideBar } from './step-guide-bar';
 import { ExperienceSizeControl } from '@/components/experience-size-control';
-import { BriefingVideoModal } from '@/components/briefing-video-modal';
-import { TASK_BRIEFING_VIDEO } from '@/content/briefing-videos';
 
 interface KitchenFrameProps {
   id: TaskId;
@@ -90,7 +88,6 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
   const onDialogueHeight = useCallback((px: number) => setDialogueHeight(Math.round(px)), []);
   const [, setLocation] = useLocation();
   const [jobCardOpen, setJobCardOpen] = useState(false);
-  const [briefingOpen, setBriefingOpen] = useState(true);
   const navigationRef = useRef<HTMLDivElement>(null);
   const jobCardRef = useRef<HTMLDivElement>(null);
   useFocusTrap(jobCardRef, jobCardOpen);
@@ -189,11 +186,6 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
             {!finished && (
               <div className="flex items-center gap-1.5 sm:gap-2 mr-1 sm:mr-2">
                 <HeaderTool
-                  label="Open Terence’s briefing"
-                  icon={<Play className="w-5 h-5" />}
-                  onClick={() => setBriefingOpen(true)}
-                />
-                <HeaderTool
                   label="Open the job card"
                   icon={<ClipboardList className="w-5 h-5" />}
                   badge={ticksCompleted < totalTicks ? ticksCompleted : undefined}
@@ -251,12 +243,6 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
         </div>
       )}
       </div>
-      <BriefingVideoModal
-        videoId={TASK_BRIEFING_VIDEO[id]}
-        open={briefingOpen}
-        onOpenChange={setBriefingOpen}
-      />
-
       {/* Main Stage */}
       <main
         className="relative min-h-0 flex-1 overflow-clip bg-zinc-900"
@@ -283,7 +269,6 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
         </AnimatePresence>
 
         {/* The person you are working with, and what they say */}
-        {!finished && !focusedWorkspace && <CharacterSpot line={dialogue} />}
         {!finished && !focusedWorkspace && dialogue && <DialogueBar line={dialogue} choices={choices} onHeight={onDialogueHeight} />}
 
         {/* Read-only blocker */}

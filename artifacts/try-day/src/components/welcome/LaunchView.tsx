@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Loader2, Maximize2 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { PLACES, PEOPLE } from "@/content/kitchen";
+import { PLACES } from "@/content/kitchen";
 import { useExperienceViewport } from "@/lib/experience-viewport";
 import { MECHANIC } from "@/lib/simulation";
 import { motion, useReducedMotion } from "framer-motion";
@@ -11,7 +11,6 @@ import logoImg from "@/assets/artotel-logo.png";
 export function LaunchView() {
   const { expand, expanding } = useExperienceViewport();
   const reduceMotion = useReducedMotion();
-  const terence = PEOPLE.find(p => p.id === 'marcus');
   const launchRef = useRef<HTMLButtonElement>(null);
   // Restore a usable keyboard position when returning from the briefing.
   useEffect(() => {
@@ -30,18 +29,6 @@ export function LaunchView() {
         <div className="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/70 to-secondary/10" />
       </div>
       
-      {terence?.portrait && (
-        <motion.img 
-          src={terence.portrait}
-          alt=""
-          aria-hidden="true"
-          className="absolute bottom-0 right-6 h-[76dvh] max-h-[650px] max-w-[42%] object-contain object-bottom opacity-90 hidden md:block z-0 pointer-events-none drop-shadow-2xl"
-          initial={reduceMotion ? false : { opacity: 0, x: 20 }}
-          animate={{ opacity: 0.9, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-        />
-      )}
-
       <div className="relative z-10 p-6 md:p-10 w-full max-w-6xl mx-auto flex flex-col min-h-[100dvh]">
         <header className="mb-auto flex items-center justify-between">
           <div className="bg-foreground px-5 py-4 border border-border/20 shadow-xl">
