@@ -32,6 +32,7 @@ This is an LMS-embedded learner experience, not a public marketing site. Keep th
 - `artifacts/try-day/src/assets/` — `be-logo.svg` (the "Be | Marriott Bonvoy" lock-up), `sous-chef.webp` (intro photo; rights unconfirmed by client), `kitchen/` (AI-generated isometric map, scene backdrops, fridge interiors, character portraits), `public/audio/kitchen-ambience.mp3`.
 - `artifacts/try-day/src/index.css` — theme tokens (brand palette as HSL variables).
 - `BUILD_BRIEF.md` — framing, brand rules and per-task interaction design used for the first build.
+- `artifacts/try-day/docs/` — learning-design review and approval records (e.g. `closing-handover-approval.md`, `dietary-learning-redesign.md`). Keep review documents here, not under `.local/` (gitignored, not preserved between task environments). An approval record is content sign-off only; implementation needs its own assignment.
 - `attached_assets/` — original spec, brand tokens markdown and the People Brand style guide PDF.
 
 ## Architecture decisions
