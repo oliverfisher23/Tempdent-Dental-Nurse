@@ -64,7 +64,7 @@ allowlisted source entries in `src/content/fridge-media.json`.
 Run the media and existing simulation regressions with:
 
 ```sh
-pnpm --filter @workspace/scripts exec tsx --tsconfig ../artifacts/try-day/tsconfig.json --test ../artifacts/try-day/tests/*.test.ts
+pnpm --filter @workspace/scripts exec tsx --tsconfig=../artifacts/try-day/tsconfig.json --test ../artifacts/try-day/tests/*.test.ts
 ```
 
 The asset tests require `ffprobe`. Vite imports the files as URLs, preserving the
@@ -80,3 +80,20 @@ A session-only motion preference is separate from learner progress and survives
 appliance changes and rechecks. Paused/reduced-motion defaults skip the opening
 animation and show the interior poster; learners can explicitly resume its motion.
 Opening a door never measures, fills in, saves or signs a fridge check.
+
+### Approval drift check
+
+The test suite also compares the current mappings, findings and all 42 media
+files with the frozen snapshot recorded in `APPROVAL.md`. Run it on its own:
+
+```sh
+pnpm --filter @workspace/scripts exec tsx --tsconfig=../artifacts/try-day/tsconfig.json --test ../artifacts/try-day/tests/fridge-approval.test.ts
+```
+
+Failures name the affected appliance/state/file or clue and require human
+review; even a technical-only media change fails. The command includes
+temporary mutation demonstrations and requires `ffmpeg` as well as `ffprobe`.
+See [approval-check guidance](../../../../docs/fridge-approval-check.md) for
+diagnostic categories, limitations and the human sign-off process. Passing
+means the files still match the recorded snapshot, not new rights clearance
+or permission to publish.

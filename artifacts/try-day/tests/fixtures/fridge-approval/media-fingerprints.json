@@ -1,0 +1,170 @@
+{
+  "dairy-closed.mp4": {
+    "sha256": "f0dc908e605ba4cb10f794f67a5826a7b2d70aae23c236a2a059490d974ffe6a",
+    "decodedSha256": "6057417a33b55b04efaab2d5e09015c9fdd3a5363168a05a73465538710097a4"
+  },
+  "dairy-closed.webm": {
+    "sha256": "706a289d403ed92cbebace4744b267f66d2be1e1191a834f6317aa405bc28ca8",
+    "decodedSha256": "45595705c29210e4ecd23955a94aa6514ffe8358678c4764e1a2d766526b8d48"
+  },
+  "dairy-closed.webp": {
+    "sha256": "466163b151e0d9d27515517d924eb6f68189e03137c1276c93e68c22b10e785f",
+    "decodedSha256": "ba43e34713f092ee6e34daf4f94137269b24266a6a8e45aa5506dc3c244b34cb"
+  },
+  "dairy-open.mp4": {
+    "sha256": "b24851ae2dae2d3fff6bcc9429c453f53e2720931bfdd1de86b72f6c948852c6",
+    "decodedSha256": "4785496721eb969d17ea222d1bc66c1b33389685168dcd2487ca53d66706a554"
+  },
+  "dairy-open.webm": {
+    "sha256": "dce52736c4fd1eeb6debde6f3932b00ff293e4b1feaf5ea518298a4044b09f74",
+    "decodedSha256": "14328ca41566bdd7139275b3e86e8e3882e3cfef826ecd5a99ca8e69d89537c4"
+  },
+  "dairy-open.webp": {
+    "sha256": "11f95e2a9627a4fb665d5eefa7fcc1c588864ba125bc8ce7a4125e37aeab4c87",
+    "decodedSha256": "377c8869587fdefff6c9b3f0309b2b4c09fc348163ee1f0bb21eb9c9c82eb1a4"
+  },
+  "fish-closed.mp4": {
+    "sha256": "0cce36c8f4cdea0c949908a7a7ff5eada5c44b85b8446c2400fff023a00f1334",
+    "decodedSha256": "84f89fc8dc94ee1efb83e553bec178e5224470a08d2342ac024cf08934cd7221"
+  },
+  "fish-closed.webm": {
+    "sha256": "b0e78aad0305c01fd757a6054b2a53f44f703b6527dac6e79075a5a23e9c1c6b",
+    "decodedSha256": "97f5a4075fff51d357254c45aed7bab14cb2fff53283bf15124871c5ba4b94c9"
+  },
+  "fish-closed.webp": {
+    "sha256": "1d44f50d572e71f00000a29c9890c1c444316b9cb140561ad8533530bb9e6674",
+    "decodedSha256": "089466bfce54c3109e67da852701a4ae3d7256d0e5a9541db10401544893dfbe"
+  },
+  "fish-open.mp4": {
+    "sha256": "3488b3de8f6870f9e89935aa8e1c128908e9ca29ad41e97753c31d7b36e54d05",
+    "decodedSha256": "99a9d437d343641f34ce3f83be8f5e2b4189ebe785bef470476f1c978e40ba1a"
+  },
+  "fish-open.webm": {
+    "sha256": "9bf3957d4b51f5d1c2cca1d5c6844b675033383fcf8293f9dd4b208453c8b21b",
+    "decodedSha256": "ba4d164bc4225e778092c19384d22dda9f4b5a18a96470c6f55a51ace76c7c03"
+  },
+  "fish-open.webp": {
+    "sha256": "2f43307caf4c02f0e61b39ad82867718caac28a302ecaab0c335a12fe41f69c3",
+    "decodedSha256": "abe589e25f33149ccaea5357e12db2dfb9d9d488381b14eb5bb91b02e9e0945b"
+  },
+  "freezer-1-closed.mp4": {
+    "sha256": "5dd292e21d517d53003b5310ae10cfce5007756bb15b4c550146cc12bd98c208",
+    "decodedSha256": "8704c70c4fc526b1f3b9e48146d3e4095ed115fe91f31fbe772930213a072845"
+  },
+  "freezer-1-closed.webm": {
+    "sha256": "98403c85a4948696768f40f1a4590ed2a5d839c23087c6733b210bb2b8814996",
+    "decodedSha256": "8de2123e07a440f2ecd6aebb6bcdfb015853973cbd18ffc80b2e7440525e0d42"
+  },
+  "freezer-1-closed.webp": {
+    "sha256": "529972dc34ff6f125b5dd9cee7b133ee0c9490feb3d5fc7a28f5272957a14791",
+    "decodedSha256": "46d7db38e895a40944b6b7443e25e6b03517ce14fdce80f483d6e64dacfdad29"
+  },
+  "freezer-1-open.mp4": {
+    "sha256": "4ad05d55df6cbd800ef85d10eab1b4437756f18698c7e69ce3b5725a7e901076",
+    "decodedSha256": "a9549f0d3d47edb592a4fc7c9edeea2f4f0deba83ac139433e324b9656ba4feb"
+  },
+  "freezer-1-open.webm": {
+    "sha256": "6df962743281276d772468296f652291ea47875e05bf1d70b9606b3d6196a42c",
+    "decodedSha256": "e7dd927160b9ceb92ef78e286fbfa081682fbf4e52f96908d3a255cdd0097782"
+  },
+  "freezer-1-open.webp": {
+    "sha256": "1a474893d66bfede3470b16b1ecc7c5f0f3e6175bb96accc072403b35e096bbd",
+    "decodedSha256": "c0742db8b03d97d955fcbed474d6aeb4d891f3f975cdd5c848b42b4a12316cf6"
+  },
+  "freezer-2-closed.mp4": {
+    "sha256": "1c84a074b1ee7bffff86d567000d4027c3cb3d77209c5614c3706f6604f399aa",
+    "decodedSha256": "71fe2673cac95cef5ac20170bd24031388a8e0150d567d2ac0831a4c914fea1e"
+  },
+  "freezer-2-closed.webm": {
+    "sha256": "70be18c1d0646f56cf63f0496c2da47f92c3a939e08eb2d20528af9d495483a2",
+    "decodedSha256": "0742a823fca312f9773af5b55a96b31f8079e47b3545be0b1111006779bb38df"
+  },
+  "freezer-2-closed.webp": {
+    "sha256": "62e135aeadd8a77352d52bff49629dbe8751718fb5e82b3412ae346e2792f2a4",
+    "decodedSha256": "2fd1acdb68c2459039255c517135b734795f45dac588ecf80efc67ae7d544426"
+  },
+  "freezer-2-open.mp4": {
+    "sha256": "86800f45d421fbb01f6f3d55bdadf5ac5a7cb89c8674e682593c55f46f3b65a9",
+    "decodedSha256": "893e429c5b280cc7fe8f35fd1834ab73e5fe9fd4a0b3f5247bcd11922279dfba"
+  },
+  "freezer-2-open.webm": {
+    "sha256": "86af473e09c5a30bb5a85f8d3c8656516c003c62842d7722d4004b7e9f896600",
+    "decodedSha256": "157b4f8db6c7fe3da964726679b82ec344ab7161aa62897775f4aa9d4a27517c"
+  },
+  "freezer-2-open.webp": {
+    "sha256": "4437b6b2578b79a13055eb1b2bbae47e63cdafb3f6d23438b7476e5f16d5c4c0",
+    "decodedSha256": "269e8d4d9cac9d3ef45293b689099971a9616fcec242499f37e6ab9a79ad4186"
+  },
+  "larder-1-closed.mp4": {
+    "sha256": "ab2d13a6d324f7083e51050dbb0753cbb36b4e540109038a7ac6a69021b05294",
+    "decodedSha256": "3613539a4443b2b394812ee9f4bb8358f23809d87d8d6c5e84f91a165a3c57e5"
+  },
+  "larder-1-closed.webm": {
+    "sha256": "decd90f80770d0fc1821ed7365eeeee261bff930c0e5dab3a6d3bdee9f41de47",
+    "decodedSha256": "356aee9c054d89a331ef087b10fe5cb4aa1b5a373bdc7e093172fc859e1ee10b"
+  },
+  "larder-1-closed.webp": {
+    "sha256": "23fc28418db868d6355e0c78586f4cdc5431404dabdef1b20b9941a77f3e5a81",
+    "decodedSha256": "cdab3b10480d0875b99343af5513139b48699f5b60b06d3a793caada2d637ed2"
+  },
+  "larder-1-open.mp4": {
+    "sha256": "714da6c53239647b0f760556d04d6822ad9df79eead32ff48f6355c88553292c",
+    "decodedSha256": "eaec31bb269e5e449cef0018d419e34f18da301f90272893f8db413147880153"
+  },
+  "larder-1-open.webm": {
+    "sha256": "2ff4dcf33454d0b056febb10da860cda22fc3e8f47110119632a2a4f5330061c",
+    "decodedSha256": "b350f35ca8930303d7e9eaa9b61f8dc0025ca6fbc83c028fb3518333a054c28a"
+  },
+  "larder-1-open.webp": {
+    "sha256": "d951ca11ea2c64d93e51d1b0088d854fa105a96efa360a6c1a4ec81b7f41bb06",
+    "decodedSha256": "b6d41201bdefc59de2a336b8409637a45e0fc45d76adf0fbc1dce8d32986d1f9"
+  },
+  "larder-2-closed.mp4": {
+    "sha256": "79f8fdc58d631d489c46ff1405cc792d542989cb790ee2302488e8929229acd5",
+    "decodedSha256": "bb03d2d22925487fcc86c14631dedca00c1e68a062abfdb78987fd517c464c24"
+  },
+  "larder-2-closed.webm": {
+    "sha256": "74cd8364d3ffd2593414163f7feb7681156c87642ecaea85375c540d153c5f4b",
+    "decodedSha256": "fec013fa0d1d0d283fc5a408a155977707d65a4d195c2359036403d0973ac243"
+  },
+  "larder-2-closed.webp": {
+    "sha256": "f1f993b2de6bb55de7be441e1bc944f5950ea1db848cec3331548e5d2cd2bf08",
+    "decodedSha256": "db621d0bee7336de2703f0390dacbd7887559dfd14b28f3890a49b19960148f5"
+  },
+  "larder-2-open.mp4": {
+    "sha256": "810cc8ddbd0712b25f07f00c9e9adc1b6a6636dcdf6cbca8cd0c651a69683e74",
+    "decodedSha256": "9789612a111d67fd9eda7ad355f48ad93829c0566cdf0b37ecf211ced48a5104"
+  },
+  "larder-2-open.webm": {
+    "sha256": "48a5289f2b7ec8f4d7202b935584721513291ae78460211f5e3f60765494b432",
+    "decodedSha256": "f5e7d0605bfd697a0931e7c5cc2124aed0a8670943267188725f22d37df15170"
+  },
+  "larder-2-open.webp": {
+    "sha256": "46220b9a1b9cc90e019fac4fd3486a4c2abfb05954c41f50b8886cda5c66eb7e",
+    "decodedSha256": "318bd145ade14de35c6b6c3f96837f3920f58917f47a832046a28a266f4e4274"
+  },
+  "walk-in-closed.mp4": {
+    "sha256": "4712f5f7d8d858433db8c19838eb5d70d6dfe9e0fefc8fa05ef6c2f5e389f23c",
+    "decodedSha256": "2d8dc1db9d0a70fcec3a2a4a46da8975accde21aaee071a027abdf232ea8112d"
+  },
+  "walk-in-closed.webm": {
+    "sha256": "0ebe17bfda14defa97b31d6b01cb096b90a634fb1cc30c54b35f0414306e2b9a",
+    "decodedSha256": "26647926ccff7429790d9b46c3c0de60d6492f4674d35d4141f3140e265fc89c"
+  },
+  "walk-in-closed.webp": {
+    "sha256": "67a7c325d3957d5bc7613b084bfc165095bbbf727aab55e9a02e7bf032ddba60",
+    "decodedSha256": "e0cf22730f99cd0897247cfdfe42d47ffcb794f63bda28b2fca5cf63bf337f3a"
+  },
+  "walk-in-open.mp4": {
+    "sha256": "4de1fca627f294b6bd57ac34e0f4cb17d966f8328169e5a8cc43751d63dbd6f3",
+    "decodedSha256": "6f208f4d4f47a0e7021b753d254a07fd37f1f471eb2d26fd25da338bf31afe5c"
+  },
+  "walk-in-open.webm": {
+    "sha256": "60d2f1ee959d12918bfe8d3c17aebaf449f12a708aa2144ec4b075f06fc28c52",
+    "decodedSha256": "fab99dadd08ee8faff421431a986bf6fb5739418b22c1858b46f5dab86231c6a"
+  },
+  "walk-in-open.webp": {
+    "sha256": "56491c349c2cabe68f4db9b6abac4acdfc1c7c65c9512a2957ab709c4f4079f2",
+    "decodedSha256": "b2cb51241a191672ddcfeb5ec833392d15bb8d8b6489d2d91ebfd84f6a69abaa"
+  }
+}
