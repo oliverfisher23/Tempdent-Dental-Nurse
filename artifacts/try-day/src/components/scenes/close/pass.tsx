@@ -350,7 +350,7 @@ export function PassScene({
         </div>
       </CloseUp>
 
-      <CloseUp isOpen={activeCloseUp === 'chill'} onClose={() => setActiveCloseUp(null)} title="Elena, at the pass" className="bg-zinc-950">
+      <CloseUp isOpen={activeCloseUp === 'chill'} onClose={() => setActiveCloseUp(null)} title="Terence, at the pass" className="bg-zinc-950">
         <div className="flex flex-col md:flex-row gap-6 max-w-5xl mx-auto h-[85vh] p-4 lg:p-6">
           {/* Left: Chill Record Sheet */}
           <div className="flex-1 overflow-y-auto pb-8">
@@ -414,13 +414,13 @@ export function PassScene({
             </Sheet>
           </div>
 
-          {/* Right: Elena's Question */}
+          {/* Right: Terence's question */}
           <div className="w-full md:w-[400px] shrink-0 bg-zinc-900 border border-zinc-700 p-6 rounded-xl shadow-2xl flex flex-col text-zinc-100 overflow-y-auto">
             <div className="flex items-center gap-4 mb-6 pb-6 border-b border-zinc-800">
               <img src={PEOPLE.find(p=>p.id==='elena')?.portrait || ''} alt="" className="w-16 h-16 rounded-full object-cover bg-black border-2 border-zinc-700" />
               <div>
-                <div className="font-bold text-lg">Elena Voss</div>
-                <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mt-1">Executive Chef</div>
+                <div className="font-bold text-lg">Terence</div>
+                <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mt-1">Executive sous chef and mentor</div>
               </div>
             </div>
 
@@ -451,7 +451,7 @@ export function PassScene({
 
             {state.elenaAnswer && (
               <div className={cn("p-4 mt-6 rounded-lg border text-sm leading-relaxed animate-in fade-in zoom-in-95 duration-300", elenaCorrect ? "bg-emerald-950/40 border-emerald-500/30 text-emerald-200" : "bg-red-950/40 border-red-500/30 text-red-200")}>
-                <strong className="block mb-1 opacity-70 text-[10px] uppercase tracking-widest">Elena</strong>
+                <strong className="block mb-1 opacity-70 text-[10px] uppercase tracking-widest">Terence</strong>
                 {ELENA_QUESTION.options.find(o=>o.id===state.elenaAnswer)?.response}
               </div>
             )}
@@ -465,7 +465,7 @@ export function PassScene({
                    }}
                    className="w-full bg-white text-black font-bold py-4 rounded-lg shadow-xl hover:bg-zinc-200 hover:scale-[1.02] active:scale-[0.98] transition-all uppercase tracking-widest text-xs"
                  >
-                    Elena signs the record
+                    Terence signs the record
                  </button>
               </div>
             )}

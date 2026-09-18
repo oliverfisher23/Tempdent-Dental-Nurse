@@ -50,7 +50,7 @@ export default function DietaryTask() {
       setDialogue(DIETARY_LINES.marcusOnChartErrors);
       kitchenAudio.play('wrong');
     } else {
-      setDialogue({ speaker: "Marcus", text: "Chart's clean. Now sort the three added guests." });
+      setDialogue({ speaker: "Terence", text: "Chart's clean. Now sort the three added guests." });
       kitchenAudio.play('confirm');
     }
   };

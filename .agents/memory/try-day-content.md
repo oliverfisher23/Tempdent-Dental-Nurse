@@ -15,6 +15,9 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Keep the existing internal mechanic/gate IDs when changing visible branding.
   **Why:** those IDs are used for saved progress and host completion messages; changing them would be an integration migration, not a visual rebrand.
   **How to apply:** update visible employer, workplace, metadata and assets while preserving storage/event identifiers unless a migration is explicitly requested.
+- The current scenario is art'otel Hoxton preparing a product launch for 100 guests. Terence is the executive sous chef/mentor; Yvie handles events.
+  **Why:** the filming script supplied on 2026-09-18 supersedes the earlier wedding scenario and Marcus/Sarah/Elena character framing.
+  **How to apply:** use Terence and Yvie in all visible copy. Preserve legacy internal person IDs and progress keys until an explicit data migration is planned.
 - Host integration (`postMessage` with `gate:complete`) is an assumed contract; the Springpod App Registry MCP server was unreachable when built (Sept 2026). Confirm the event shape before the client embeds the iframe.
   **Why:** no host capability handshake has been verified. Do not invent an LMS resize/launch message or use top-window navigation as a fullscreen substitute.
   **How to apply:** use user-initiated browser fullscreen when permitted; retain a usable in-frame path when unavailable. Keep host permissions under LMS control.

@@ -58,10 +58,10 @@ export default function Close() {
 
   const recap = [
     `Walked the fridges at ${warmRow?.time || "06:50"} and found ${warmUnit.name} at ${formatC(warmUnit.actualC)}. Your note: "${(warmRow?.note?.trim() || "door found ajar overnight").replace(/[.\s]+$/, "")}".`,
-    `Took in the delivery and signed for ${delivery.noteAmendedTo || shortLine.arrived} kg of salmon, not the ${shortLine.onDeliveryNote} kg on the supplier's note. The missing ${shortLine.ordered - shortLine.arrived} kg is on Marcus's list.`,
-    `Chilled the beef for ninety. Your tray was ${MEASURED_DEPTHS_MM.yours} mm deep against ${MEASURED_DEPTHS_MM.marcus} mm, and came under the ${CHILL_RULES.holdLineC}°C line at ${finalReading?.time || "12:45"}.`,
+    `Took in the delivery and signed for ${delivery.noteAmendedTo || shortLine.arrived} kg of salmon, not the ${shortLine.onDeliveryNote} kg on the supplier's note. The missing ${shortLine.ordered - shortLine.arrived} kg is on Terence's list.`,
+    `Chilled 27 kg of beef for the product launch. Your tray was ${MEASURED_DEPTHS_MM.yours} mm deep against Terence's ${MEASURED_DEPTHS_MM.marcus} mm tray. It needed longer after the ninety-minute check and came under the ${CHILL_RULES.holdLineC}°C line at ${finalReading?.time || "12:45"}.`,
     `Checked five dishes against fourteen allergens and put ${priya.name} on table ${priya.table} down for the ${priyaDessert?.name.toLowerCase() || "alternative dessert"}.`,
-    `Weighed ${totalWaste.toFixed(1)} kg of waste across three bins, handed the kitchen on, and signed the chill record with Elena.`,
+    `Weighed ${totalWaste.toFixed(1)} kg of waste across three bins, handed the kitchen on, and signed the chill record with Terence.`,
   ];
 
   const fade = (delay: number) => ({
@@ -109,12 +109,12 @@ export default function Close() {
               </ul>
               {elenaAnswer && (
                 <div className="mt-10 border-l-2 border-primary pl-5">
-                  <p className="text-xs font-bold uppercase tracking-widest text-secondary-foreground/60">Elena, at the pass</p>
+                  <p className="text-xs font-bold uppercase tracking-widest text-secondary-foreground/60">Terence, at the pass</p>
                   <p className="mt-2 leading-relaxed">"{elenaAnswer.response}"</p>
                 </div>
               )}
               <div className="mt-8 border-l-2 border-primary pl-5">
-                <p className="text-xs font-bold uppercase tracking-widest text-secondary-foreground/60">Marcus</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-secondary-foreground/60">Terence</p>
                 <p className="mt-2 leading-relaxed">"{CLOSE_LINES.marcusDone.text}"</p>
               </div>
             </div>

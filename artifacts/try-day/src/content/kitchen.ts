@@ -119,7 +119,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['pass', 'goods-in'],
     light: 'morning',
     whatIsHere: {
-      pass: 'Marcus, and the radio on its charger.',
+      pass: 'Terence, and the radio on its charger.',
       'goods-in': 'The driver is waiting with three trolleys of boxes and the delivery note.',
     },
   },
@@ -136,7 +136,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['pass', 'events'],
     light: 'midday',
     whatIsHere: {
-      pass: 'Sarah is waiting with the function sheet.',
+      pass: 'Yvie is waiting with the function sheet.',
       events: 'The recipe cards, the allergen chart and the evening board.',
     },
   },
@@ -145,7 +145,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['pass'],
     light: 'afternoon',
     whatIsHere: {
-      pass: 'The waste bins and scales, the handover sheet, the evening team and, later on, Elena.',
+      pass: 'The waste bins and scales, the handover sheet, the evening team and, later on, Terence.',
     },
   },
 };
@@ -159,14 +159,19 @@ export interface Person {
   portrait: string | null;
 }
 
+/** Terence is the current on-screen name; the legacy ids remain for saved progress. */
+
 export const PEOPLE: Person[] = [
-  { id: 'marcus', speaker: 'Marcus', name: 'Marcus Boateng', role: 'Chef de partie, larder', portrait: portraitMarcus },
-  { id: 'sarah', speaker: 'Sarah', name: 'Sarah Okonkwo', role: 'Conference and banqueting coordinator', portrait: portraitSarah },
-  { id: 'elena', speaker: 'Elena', name: 'Elena Voss', role: 'Executive chef', portrait: portraitElena },
+  { id: 'marcus', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: portraitMarcus },
+  { id: 'sarah', speaker: 'Yvie', name: 'Yvie', role: 'Events', portrait: portraitSarah },
+  { id: 'elena', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: portraitElena },
   { id: 'porter', speaker: 'Night porter', name: 'Night porter', role: 'Night porter', portrait: portraitPorter },
   { id: 'driver', speaker: 'Driver', name: 'Driver', role: 'Delivery driver', portrait: portraitDriver },
   { id: 'evening-team', speaker: 'Evening team', name: 'Evening team', role: 'The chefs taking over at 15:00', portrait: null },
 ];
+
+export const TERENCE_PERSON_ID = 'marcus' as const;
+export const YVIE_PERSON_ID = 'sarah' as const;
 
 export function personForSpeaker(speaker: string): Person | undefined {
   return PEOPLE.find((p) => p.speaker === speaker);

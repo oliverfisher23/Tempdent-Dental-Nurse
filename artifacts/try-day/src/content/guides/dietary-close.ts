@@ -29,7 +29,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       step: 1,
       total: DIETARY_TOTAL,
       title: 'Check the allergen chart',
-      instruction: 'Use the recipe cards to mark every allergen, then go through the chart with Marcus.',
+      instruction: 'Use the recipe cards to mark every allergen, then go through the chart with Terence.',
       actionLabel: 'Open the chart',
       place: 'events',
       action: 'dietary.open-chart',
@@ -138,10 +138,10 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
       id: answerIsCorrect ? 'close-elena-sign' : 'close-elena-question',
       step: 5,
       total: CLOSE_TOTAL,
-      title: answerIsCorrect ? 'Ask Elena to sign' : 'Go through the chill record',
+      title: answerIsCorrect ? 'Ask Terence to sign' : 'Go through the chill record',
       instruction: answerIsCorrect
-        ? 'Elena can sign the chill record after checking your answer.'
-        : 'Answer Elena’s question about cooling the beef, then ask her to sign.',
+        ? 'Terence can sign the chill record after checking your answer.'
+        : 'Answer Terence’s question about cooling the beef, then ask him to sign.',
       actionLabel: 'Open chill record',
       place: 'pass',
       action: 'close.open-elena',

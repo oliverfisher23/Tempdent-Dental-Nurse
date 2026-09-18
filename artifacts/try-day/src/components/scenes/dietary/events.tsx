@@ -281,7 +281,7 @@ export function EventsScene({
                 </div>
               ) : (
                 <Button onClick={() => { kitchenAudio.play('tap'); onCheckChart(); }} className="px-8 py-6 text-base font-bold shadow-md">
-                  Go through it with Marcus
+                  Go through it with Terence
                 </Button>
               )}
             </div>

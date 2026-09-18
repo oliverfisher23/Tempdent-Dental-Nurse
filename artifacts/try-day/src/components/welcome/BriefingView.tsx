@@ -55,7 +55,7 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
     transition: { duration: 0.5, delay },
   });
 
-  const marcus = PEOPLE.find(p => p.id === 'marcus');
+  const terence = PEOPLE.find(p => p.id === 'marcus');
   const currentTask = currentTaskId ? getTask(currentTaskId) : null;
 
   return (
@@ -82,12 +82,12 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
       <main className="flex-1 w-full max-w-6xl mx-auto px-6 md:px-10 py-6 md:py-9 grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10 items-center">
         <div className="min-w-0 md:col-span-7 flex flex-col justify-center">
           <motion.div {...fade(0)} className="mb-5 flex items-center gap-4">
-            {marcus?.portrait && (
-              <img src={marcus.portrait} alt={marcus.name} className="w-16 h-16 rounded-full bg-secondary object-cover object-top border border-border shadow-sm" />
+            {terence?.portrait && (
+              <img src={terence.portrait} alt="Terence" className="w-16 h-16 rounded-full bg-secondary object-cover object-top border border-border shadow-sm" />
             )}
             <div>
-              <h2 className="font-bold text-xl text-foreground">{marcus?.name}</h2>
-              <p className="text-muted-foreground text-sm">{marcus?.role}</p>
+              <h2 className="font-bold text-xl text-foreground">Terence</h2>
+              <p className="text-muted-foreground text-sm">{terence?.role}</p>
             </div>
           </motion.div>
           

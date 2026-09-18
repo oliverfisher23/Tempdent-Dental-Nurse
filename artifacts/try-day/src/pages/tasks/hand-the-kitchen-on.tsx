@@ -47,7 +47,7 @@ export default function HandoverKitchenTask() {
     }
 
     updateTask("hand-the-kitchen-on", prev => ({ ...prev, elenaAnswer: id as any }));
-    setDialogue({ speaker: "Elena", text: opt.response });
+    setDialogue({ speaker: "Terence", text: opt.response });
     
     if (opt.correct) {
       dialogueTimer.current = window.setTimeout(() => {

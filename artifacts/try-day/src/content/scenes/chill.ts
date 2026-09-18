@@ -18,7 +18,7 @@ export const CHILL_LABELS = {
   tray: (n: number) => `Tray ${n}`,
   trayZone: (n: number) => `Tray ${n}: hold the ladle here to pour`,
   sheetDepth: 'Sheet says 50 mm',
-  askForTray: 'Ask Marcus for another tray',
+  askForTray: 'Ask Terence for another tray',
   panEmpty: 'The pan is empty: all of your half is in the trays',
   toTheChiller: 'Take the trays to the chiller',
 
@@ -47,7 +47,7 @@ export const CHILL_LABELS = {
   rulerHint: 'Drag it to a tray to measure the depth',
   rulerZone: (n: number) => `Measure tray ${n}`,
   depthMeasured: (mm: number) => `${mm} mm deep`,
-  marcusTrays: "Marcus's trays",
+  marcusTrays: "Terence's trays",
 
   // The panel
   coreTemp: 'Core temperature',
@@ -77,16 +77,16 @@ export const CHILL_LABELS = {
 
   // The chill record
   recordTitle: 'Blast chill record',
-  recordBatch: 'Batch: braised beef shin for ninety',
-  columns: { elapsed: 'Elapsed', time: 'Time', yours: 'Your tray', marcus: "Marcus's tray" },
+  recordBatch: 'Batch: braised beef shin for one hundred',
+  columns: { elapsed: 'Elapsed', time: 'Time', yours: 'Your tray', marcus: "Terence's tray" },
   min: 'min',
   useMyNote: 'Use my note',
-  depthLine: (yours: number, marcus: number) => `Depth: mine ${yours} mm, Marcus's ${marcus} mm`,
+  depthLine: (yours: number, marcus: number) => `Depth: mine ${yours} mm, Terence's ${marcus} mm`,
   checkedBy: 'Checked by',
   signHere: 'Sign here',
   signHint: 'Write the 120-minute reading first.',
   execChef: 'Exec chef',
-  elenaSigns: 'Elena signs at the end of the day',
+  elenaSigns: 'Terence signs at the end of the day',
 
   // What to do next, one line at a time
   next: {
@@ -95,7 +95,7 @@ export const CHILL_LABELS = {
     probe: 'Put the probe into the middle of the fullest tray',
     start: 'Start the chiller',
     read: (m: number) => `Take the ${m}-minute reading and write it on the chill record`,
-    answer: 'Marcus is asking what to do',
+    answer: 'Terence is asking what to do',
     measure: 'Measure the depth of the trays with the ruler',
     wait: 'Nothing to do but wait: leave it 30 minutes',
     sign: 'Sign the chill record',

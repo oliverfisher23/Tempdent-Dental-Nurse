@@ -30,7 +30,7 @@ export function getChillGuide(state: ChillState, started: boolean, waiting: bool
     return guide(`chill-read-${m}`, m >= 90 ? 5 : 4, `Take the ${m}-minute reading`, 'Hold the thermometer until it settles, then write and save the number directly below it.', 'chill:chiller', 'Take the temperature');
   }
   if (m === 90 && state.ninetyChoice !== 'keep-logging') {
-    return guide('chill-answer', 5, 'Decide what to do with the batch', 'Read Marcus’s question and choose your answer below the workspace.', 'chill:chiller', 'Answer Marcus');
+    return guide('chill-answer', 5, 'Decide what to do with the batch', 'Read Terence’s question and choose your answer below the workspace.', 'chill:chiller', 'Answer Terence');
   }
   if (m >= 90 && !state.measuredDepths) {
     return guide('chill-measure', 5, 'Compare the tray depths', 'Carry the ruler to a tray to measure the depth of the beef.', 'chill:chiller', 'Find the ruler');

@@ -30,8 +30,9 @@ the way you read signs in a building you have just walked into.
    No "please", no exclamation marks, no "simply", no "now", no "successfully".
 7. **Short.** Hotspot labels are one to four words. Buttons are one to three. Hints are one sentence.
 8. **People speak like people.** Dialogue is in the character's voice, contractions and all, British English,
-   kitchen register. No speeches; nobody explains the simulation. Marcus tells you what to do and why
-   in one breath. The driver wants to leave. Elena is warm and exact.
+   kitchen register. No speeches; nobody explains the simulation. Terence tells you what to do and why
+   in one breath. Yvie is clear about the event and guest list. The driver wants to leave. The evening team
+   needs a useful handover.
 9. **The student is "you".** Never "the trainee", "the user", "the learner".
 
 ## Words we use, and the words we don't

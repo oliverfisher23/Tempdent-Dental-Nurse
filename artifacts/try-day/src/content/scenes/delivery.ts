@@ -21,7 +21,7 @@ export const SCENE_LABELS = {
   writeInNotebook: "Write it in your notebook",
   inNotebook: "In your notebook",
   useMyNote: "Use my note",
-  radioMarcus: "Radio Marcus",
+  radioMarcus: "Radio Terence",
   signNote: "Sign the note",
   allChecked: "All checked",
   status: {
@@ -33,7 +33,7 @@ export const SCENE_LABELS = {
     note: "Take the delivery note from the driver",
     boxes: "Check the boxes on the trolleys",
     sheet: "Fill in the order sheet",
-    radio: "Radio Marcus about the salmon",
+    radio: "Radio Terence about the salmon",
     sign: "Cross out the 12 on the note, write 8 and sign",
     done: "All done: open your job card"
   }

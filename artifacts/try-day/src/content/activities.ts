@@ -27,7 +27,8 @@ export const TASK_ORDER: TaskId[] = [
 
 /** Short lines of dialogue from the people in the kitchen. */
 export interface Line {
-  speaker: 'Marcus' | 'Sarah' | 'Elena' | 'Night porter' | 'Driver' | 'Evening team';
+  /** Legacy speaker values remain accepted for saved/imported dialogue; new content uses Terence/Yvie. */
+  speaker: 'Terence' | 'Yvie' | 'Night porter' | 'Driver' | 'Evening team' | 'Marcus' | 'Sarah' | 'Elena';
   text: string;
 }
 
@@ -91,31 +92,31 @@ export const READING_TOLERANCE_C = 0.3;
 export const HANDOVER_LINES = {
   porterOpening: {
     speaker: 'Night porter',
-    text: "Morning. Log's on the clipboard, four entries. The one you want is the fridge at ten past four. I've got a bus at seven, so if you're good I'll get off.",
+      text: "Morning. Log's on the clipboard, four entries. The one you want is larder fridge 2 at ten past four. I've got a bus at seven, so if you're good I'll get off.",
   } satisfies Line,
   porterLeaving: {
     speaker: 'Night porter',
     text: "Right, you've read it. I'm off to catch my bus. See you.",
   } satisfies Line,
   marcusOpening: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Have a look at the night notes first, then we'll go round together. Let the probe settle and write down what you actually see. Add the time and your initials as you go.",
   } satisfies Line,
   marcusAtFlaggedUnit: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "This is the fridge from the night notes. Have a proper look inside before you write anything.",
   } satisfies Line,
   marcusOnWarmReading: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Eight point six — that's too warm. Check what's in there. We need to move anything high-risk into larder one and keep this door shut while it cools.",
   } satisfies Line,
   marcusOnWrongReading: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Take another look at the probe. Just write the number you can see.",
   } satisfies Line,
   marcusDone: {
-    speaker: 'Marcus',
-    text: "Nice one. Elena always checks that board first. The delivery's not here until half eight, so grab a coffee.",
+    speaker: 'Terence',
+    text: "Nice one. I read that board at the end of the day. The delivery's not here until half eight, so grab a coffee.",
   } satisfies Line,
 };
 
@@ -173,10 +174,10 @@ export type FishCheckId = (typeof FISH_CHECKS)[number]['id'];
 export const DELIVERY_LINES = {
   driverOpening: {
     speaker: 'Driver',
-    text: "Three trolleys, all yours. Sign here and I'm gone, I'm due at the Mercure by nine.",
+    text: "Three trolleys, all yours. Sign here and I'm gone — I've got another delivery after this.",
   } satisfies Line,
   marcusOpening: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "He can wait ten minutes. Count it, probe the cold boxes, look at the fish. You sign for what you took in, not for what his bit of paper says.",
   } satisfies Line,
   driverOnShort: {
@@ -184,20 +185,20 @@ export const DELIVERY_LINES = {
     text: "Eight? It says twelve on the note. It'll have never been loaded then. Not me, I just drive it.",
   } satisfies Line,
   marcusOnRadio: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Four short on the salmon? Right. Tonight doesn't need it; tomorrow's lunch does. Mark it short, cross the twelve out on his note, write eight and sign next to it. Put it on my list and I'll ring them before ten.",
   } satisfies Line,
   marcusOnWrongStatus: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Look at the count again before you mark that line. Arrived means the full order came in; short means some of it did; refused means it's going back on the van.",
   } satisfies Line,
   marcusOnUnamendedNote: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Don't sign that yet. It still says twelve kilos of salmon. If you sign for twelve, we pay for twelve.",
   } satisfies Line,
   marcusDone: {
-    speaker: 'Marcus',
-    text: "That's done properly. Fish in the fish fridge first, then the chicken, then the dairy. Produce last; it's the least fussy.",
+    speaker: 'Terence',
+    text: "That's done properly. Store fish and meat first; fruit can wait a minute.",
   } satisfies Line,
 };
 
@@ -206,14 +207,14 @@ export const DELIVERY_LINES = {
 // ---------------------------------------------------------------------------
 
 export const PREP_SHEET = {
-  dish: 'Braised beef shin for ninety',
+  dish: 'Braised beef shin for one hundred',
   batchKg: 27,
   trays: 6,
   /** Depth the prep sheet asks for. */
   fillDepthMm: 50,
   /** A 1/1 gastronorm tray takes about 4 kg of this at 50 mm. */
   kgPerTrayAtDepth: 4,
-  /** Your half of the batch. Marcus pans the other half. */
+  /** Your half of the batch. Terence pans the other half. */
   yourShareKg: 13.5,
   /** Trays that are clean and to hand right now. */
   cleanTraysAvailable: 3,
@@ -257,7 +258,7 @@ export const YOUR_TRAY_READINGS: Record<ChillInterval, number> = {
   120: 5.9,
 };
 
-/** Marcus's tray, filled shallower, reads: */
+/** Terence's tray, filled shallower, reads: */
 export const MARCUS_TRAY_READINGS: Record<ChillInterval, number> = {
   0: 73.8,
   30: 36.1,
@@ -291,44 +292,44 @@ export type NinetyMinuteChoiceId = (typeof NINETY_MINUTE_CHOICES)[number]['id'];
 
 export const CHILL_LINES = {
   marcusOpening: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Twenty-seven kilos, six trays, fifty mil deep, says the sheet. You take half, I'll take half. Shallow trays cool fast; deep trays don't, however cold the cabinet is.",
   } satisfies Line,
   marcusOnTrayShortage: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Three clean GNs is what there is; the rest are in the pot wash. Get it panned and in, and we'll watch it. Note the depth you've ended up with.",
   } satisfies Line,
   marcusOnProbe: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Probe goes into the food, middle of the fullest tray. Against the metal you're reading the tray, not the beef.",
   } satisfies Line,
   marcusOnSpacing: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Leave a shelf between them. Stack them tight and the air can't get round; the middle one stays warm all afternoon.",
   } satisfies Line,
   marcusAtNinety: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Mine's six point four. Yours is still over eight. Nothing moves until it's under the line, so what do we do?",
   } satisfies Line,
   marcusOnRightChoice: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Right. It stays in and we keep writing it down. Now get the ruler; I want to know why yours is behind mine.",
   } satisfies Line,
   marcusOnWalkIn: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "No. I'm taking that one back. The walk-in holds cold food cold; it doesn't make warm food cold, and everything else in there warms up around it. It stays in the chiller.",
   } satisfies Line,
   marcusOnBin: {
-    speaker: 'Marcus',
-    text: "It's eleven, not twenty-one. It's behind, not spoiled. We keep it in and keep logging. Binning ninety mains because we panicked would be the real mistake.",
+    speaker: 'Terence',
+    text: "It's eleven, not twenty-one. It's behind, not spoiled. We keep it in and keep logging. Binning one hundred mains because we panicked would be the real mistake.",
   } satisfies Line,
   marcusOnRuler: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Fifty-six against forty-eight. Eight millimetres and half an hour. That's the whole lesson, and it goes on the record so the next person reads it.",
   } satisfies Line,
   marcusDone: {
-    speaker: 'Marcus',
-    text: "Five point nine at two hours. Under the line. Label it, date it, walk-in. Elena will want to read that record later; leave it on the pass.",
+    speaker: 'Terence',
+    text: "Five point nine at two hours. Under the line. Label it, date it, walk-in. I'll read that record later; leave it on the pass.",
   } satisfies Line,
 };
 
@@ -415,9 +416,9 @@ export const DISHES: Dish[] = [
 ];
 
 export const FUNCTION_SHEET = {
-  event: 'Hartley and Osei wedding breakfast',
+  event: "art'otel Hoxton product launch",
   room: 'Exe Suite',
-  covers: 90,
+  covers: 100,
   timings: [
     { time: '18:00', what: 'Drinks reception, terrace' },
     { time: '19:00', what: 'Guests seated' },
@@ -456,31 +457,31 @@ export const DESSERT_OPTIONS = ['frangipane', 'pear'] as const;
 
 export const DIETARY_LINES = {
   sarahOpening: {
-    speaker: 'Sarah',
+    speaker: 'Yvie',
     text: "Final sheet. Three added since Tuesday, tables three, six and nine. One of them's a nut allergy. I need to know what they're eating before I print the table plan, and I'd like to print it by one.",
   } satisfies Line,
   marcusOpening: {
-    speaker: 'Marcus',
-    text: "Recipe cards are on the pass. Work the chart dish by dish, all fourteen columns, before you promise Sarah anything. Then we go through it together.",
+    speaker: 'Terence',
+    text: "Recipe cards are on the pass. Work the chart dish by dish, all fourteen columns, before you promise Yvie anything. Then we go through it together.",
   } satisfies Line,
   marcusOnChartErrors: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Not yet. Go back to the recipe cards for the dishes I've marked; something's ticked that shouldn't be, or missed that should be there.",
   } satisfies Line,
   marcusOnNutDessert: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "Stop. That tart has pistachio and almond all the way through it. She can't have it, and nor can anyone sharing a plate with her. Find her the pear.",
   } satisfies Line,
   marcusOnMeatForVegetarian: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "He's vegetarian. That's the Wellington, not the beef.",
   } satisfies Line,
   sarahDone: {
-    speaker: 'Sarah',
+    speaker: 'Yvie',
     text: "Table three, pear, flagged on the plan, and I'll tell the floor team to check the name against the table. Thank you. That's what I needed.",
   } satisfies Line,
   marcusDone: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "On the board, big letters. The evening team read that board before they read anything else.",
   } satisfies Line,
 };
@@ -536,7 +537,7 @@ export const HANDOVER_FIELDS: HandoverField[] = [
     id: 'prepared',
     label: 'What is prepared',
     prompts: [
-      'Beef shin for ninety: six trays, chilled and in the walk-in',
+      'Beef shin for one hundred: six trays, chilled and in the walk-in',
       'Ninety tart bases blind-baked; filling in the dairy fridge',
       'Wellingtons built, egg-washed, on trays in the walk-in',
       'Frangipane tarts made; twelve poached pears in the pastry fridge',
@@ -546,7 +547,7 @@ export const HANDOVER_FIELDS: HandoverField[] = [
     id: 'short',
     label: 'What is short',
     prompts: [
-      'Salmon: 4 kg short on the delivery. Marcus has rung the supplier; needed for tomorrow lunch',
+      'Salmon: 4 kg short on the delivery. Terence has rung the supplier; needed for tomorrow lunch',
       'Clean 1/1 gastronorm trays were short at 10:45; pot wash has caught up',
     ],
   },
@@ -571,7 +572,7 @@ export const HANDOVER_FIELDS: HandoverField[] = [
 ];
 
 export const ELENA_QUESTION = {
-  question: "I've read the chill record. Your tray took two hours where Marcus's took ninety minutes. What would you do with the trays next time?",
+  question: "I've read the chill record. Your tray took two hours where my tray took ninety minutes. What would you do with the trays next time?",
   options: [
     {
       id: 'shallower',
@@ -589,7 +590,7 @@ export const ELENA_QUESTION = {
       id: 'walk-in',
       label: 'Take the trays out at ninety minutes and let the walk-in finish them off',
       correct: false,
-      response: "No. The walk-in holds cold food cold; it does not chill warm food, and it would have warmed up everything else in there. Marcus was right to keep it in. Think about what you would change before the chiller, not after.",
+      response: "No. The walk-in holds cold food cold; it does not chill warm food, and it would have warmed up everything else in there. I was right to keep it in. Think about what you would change before the chiller, not after.",
     },
   ],
 } as const;
@@ -598,7 +599,7 @@ export type ElenaOptionId = (typeof ELENA_QUESTION.options)[number]['id'];
 
 export const CLOSE_LINES = {
   elenaOpening: {
-    speaker: 'Elena',
+    speaker: 'Terence',
     text: "Before you go. Bring the chill record and the temperature board; I want five minutes with you at the pass.",
   } satisfies Line,
   eveningTeam: {
@@ -606,10 +607,22 @@ export const CLOSE_LINES = {
     text: "Evening. What's short, what's in the walk-in, and what are we watching?",
   } satisfies Line,
   marcusDone: {
-    speaker: 'Marcus',
+    speaker: 'Terence',
     text: "That's a shift. You took the small decisions and you wrote everything down. That's the job.",
   } satisfies Line,
 };
 
 /** The three principles that define the art'otel voice. */
 export const ARTOTEL_LINES = ['Clever.', 'Cultured.', 'Clear.'];
+
+/** Canonical-name aliases for integrations that can use the updated script names.
+ * Legacy exports and state keys above remain unchanged for saved shifts. */
+export const TERENCE_LINES = {
+  handover: HANDOVER_LINES,
+  delivery: DELIVERY_LINES,
+  chill: CHILL_LINES,
+  dietary: DIETARY_LINES,
+  close: CLOSE_LINES,
+};
+export const YVIE_LINES = DIETARY_LINES;
+export const TERENCE_QUESTION = ELENA_QUESTION;

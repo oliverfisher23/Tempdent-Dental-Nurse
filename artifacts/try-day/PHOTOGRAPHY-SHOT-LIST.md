@@ -49,13 +49,16 @@ For every featured staff member, capture:
 - Natural working photographs in the relevant location
 - Clean separation from the background where possible
 
-### Marcus Boateng — highest priority
+### Terence — highest priority
 
-Marcus is the learner’s mentor and appears throughout the experience.
+Terence is the executive sous chef at art’otel Hoxton, the learner’s guide and
+the essential featured chef. He appears throughout the experience and should be
+photographed in the real kitchen and product-launch event space.
 
 Required:
 
 - Friendly square portrait
+- In the product-launch event space
 - Three-quarter standing portrait in chef’s uniform
 - At the kitchen pass
 - Inspecting a fridge
@@ -63,9 +66,10 @@ Required:
 - Working at the preparation bench
 - Reviewing kitchen paperwork, with space for the learner’s implied position
 
-### Sarah Okonkwo
+### Yvie — optional
 
-Conference and banqueting coordinator.
+Yvie looks after events and brings the client’s request list and final guest list.
+Her photography is useful but not essential.
 
 Required:
 
@@ -74,20 +78,29 @@ Required:
 - At the pass holding the function sheet
 - Reviewing an allergen chart or events board
 
-### Elena Voss
-
-Executive chef.
-
-Required:
-
-- Square portrait
-- Three-quarter or full-length portrait
-- At the pass reviewing the chill record
-- Speaking with or handing over to the evening team
+Terence should also be captured reviewing the chill record and handing over to
+the evening team; these are part of his working set above.
 
 ---
 
-## 3. Fridge and freezer inspections — essential
+## 3. Event-space coverage — essential
+
+The product launch is for 100 guests. Capture the event area and the kitchen
+spaces that support it, with wide compositions that leave room for interface copy:
+
+- Event area / product-launch space
+- Kitchen pass heroes (wide capture)
+- Kitchen corridor and fridges (wide capture)
+- Goods-in area (wide capture)
+- Preparation bench (wide capture)
+- Events kitchen (wide capture)
+
+Capture both an empty, clean setup and a lightly populated service-ready setup
+where permitted. Do not show identifiable guest information or unapproved brands.
+
+---
+
+## 4. Fridge and freezer inspections — essential
 
 These photographs serve as interactive evidence. Each unit therefore needs its own clear image.
 
@@ -115,7 +128,7 @@ For **Larder fridge 2**, also capture an open-door or door-seal detail that supp
 
 ---
 
-## 4. Delivery ingredients — recommended
+## 5. Delivery ingredients — recommended
 
 These images appear as smaller evidence cards in the goods-in activity.
 
@@ -143,7 +156,7 @@ The full ingredient set can be completed in one controlled tabletop session.
 
 ---
 
-## 5. Contextual detail shots — recommended
+## 6. Contextual detail shots — recommended
 
 Capture these while the locations and staff are already available:
 
@@ -166,7 +179,7 @@ These photographs can support future screens, responsive crops, promotional mate
 
 ---
 
-## 6. Supporting characters — optional
+## 7. Supporting characters — optional
 
 ### Night porter
 
@@ -189,7 +202,7 @@ These photographs can support future screens, responsive crops, promotional mate
 
 ---
 
-## Items that should remain designed graphics
+## 8. Items that should remain designed graphics
 
 The following elements communicate navigation, data or learner actions and should not be replaced with photography:
 
@@ -208,12 +221,50 @@ Real photography may provide context around these elements, but the functional i
 
 ---
 
-## Recommended shoot totals
+## 9. Filming deliverables — essential
+
+Record seven separate clips for the learner briefing stages:
+
+1. Main briefing — approximately 50 seconds
+2. Task 1: handover and fridges — approximately 20 seconds
+3. Task 2: delivery — approximately 25 seconds
+4. Task 3: chill the batch — approximately 25 seconds
+5. Task 4: dietary list — approximately 25 seconds
+6. Task 5: waste and handover — approximately 25 seconds
+7. Close — approximately 35 seconds
+
+### Video production requirements
+
+- 16:9 landscape, 1920 × 1080 minimum
+- H.264 MP4 masters, with web-ready exports supplied separately if needed
+- Clean spoken audio, recorded as a discrete microphone track where possible
+- No background music, added sound effects or distracting kitchen noise
+- Consistent eyeline, framing, lighting and wardrobe across all seven clips
+- At least 3 seconds of clean handles before and after each performance
+- A verbatim caption file (WebVTT preferred) and a plain-text transcript
+- Canonical names and roles: **Terence**, executive sous chef; **Yvie**, events
+- The art’otel Hoxton kitchen and event space where practical
+- A slate or filename clearly identifying each briefing stage
+
+Suggested filenames:
+
+```text
+01-terence-briefing.mp4
+02-terence-handover-fridges.mp4
+03-terence-delivery.mp4
+04-terence-chill-batch.mp4
+05-terence-dietary-list.mp4
+06-terence-waste-handover.mp4
+07-terence-close.mp4
+```
+
+## 10. Recommended shoot totals
 
 ### Minimum viable shoot
 
 - 5 location masters
-- 3 essential staff portrait sets
+- 1 essential Terence staff portrait set
+- 1 optional Yvie staff portrait set
 - 8 fridge and freezer inspection images
 - 10 ingredient images
 
@@ -226,7 +277,7 @@ Add:
 - 2 supporting-character portrait sets
 - Evening-team group photography
 - 10–15 contextual detail shots
-- Additional working variations of Marcus, Sarah and Elena
+- Additional working variations of Terence and, if available, Yvie
 
 **Approximately 40–45 final photographs.**
 
@@ -237,13 +288,14 @@ Add:
 ```text
 photography/
 ├── 01-locations/
-├── 02-marcus/
-├── 03-sarah/
-├── 04-elena/
+├── 02-terence/
+├── 03-yvie/
+├── 04-event-space/
 ├── 05-supporting-characters/
 ├── 06-fridge-inspections/
 ├── 07-delivery-ingredients/
 ├── 08-contextual-details/
+├── 09-video/
 ├── masters/
 └── releases/
 ```

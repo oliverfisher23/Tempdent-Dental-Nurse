@@ -9,32 +9,32 @@
     "employer": "art'otel",
     "locale": "en-GB",
     "frame": {
-      "role": "Trainee sous chef, main kitchen",
-      "workplace": "art'otel: the main kitchen behind the restaurant, the events kitchen beside it, and the walk-in fridges off the back corridor",
+      "role": "Trainee sous chef, art'otel Hoxton",
+      "workplace": "art'otel Hoxton: the main kitchen, events kitchen and walk-in fridges off the back corridor",
       "shift": {
         "start": "06:45",
         "end": "15:00",
-        "rhythm": "Breakfast is already running when you arrive, so the first hour is checks and paperwork around a kitchen that is busy. Breakfast finishes at 10:30 and the room turns towards lunch and towards tonight's event, which is where most of the morning's cooking goes. Early afternoon is the quiet stretch for cleaning down, weighing, counting and writing things up, and the evening brigade, the team that works the evening shift, comes on at three."
+        "rhythm": "Breakfast is already running when you arrive, so the first hour is checks and paperwork around a busy kitchen. The room turns towards tonight's product launch for one hundred guests. Early afternoon is the quiet stretch for cleaning down, weighing, counting and writing things up, and the evening brigade comes on at three."
       },
       "people": [
         {
-          "name": "Marcus Boateng",
-          "role": "Chef de partie, larder (the chef who runs one section of the kitchen)",
-          "note": "Your mentor for the day. Quick, unfussy and generous with the reasons behind things; he will let you take the small decisions and will say plainly when he is taking one back."
+          "name": "Terence",
+          "role": "Executive sous chef, art'otel Hoxton",
+          "note": "Your mentor for the day. He runs the kitchen day to day, asks how you think, and steps in when a decision could make someone poorly."
         },
         {
-          "name": "Sarah Okonkwo",
-          "role": "Conference and banqueting coordinator",
-          "note": "Runs the events side of the hotel. She wants early, plain answers about what the kitchen can and cannot do, and she will come down to the kitchen to get one."
+          "name": "Yvie",
+          "role": "Events",
+          "note": "Looks after events and brings the client's request list in and out throughout the day."
         },
         {
-          "name": "Elena Voss",
-          "role": "Executive chef",
-          "note": "Sets the menus and the standards for every place in the hotel that serves food. She is in and out all day, and she reads the records at the end of it."
+          "name": "Terence",
+          "role": "Executive sous chef",
+          "note": "Runs the kitchen day to day, mentors you, and reads every record at the end of the day."
         }
       ],
-      "morningBrief": "Good morning. You are in the main kitchen today with Marcus, 06:45 to 15:00. This kitchen feeds breakfast, the bistro, room service and whatever is on in the events room, and tonight that is a wedding for ninety people sitting down at seven. Most of what they eat is cooked this morning and chilled, so how the food is cooled and stored matters as much as how it is cooked. Your day is the ordinary work of a sous chef: take the handover, check what comes through the back door, get tonight's food cooked and cooled, sort out the dietary list with the events team, and hand the kitchen on cleanly at three. Marcus is beside you throughout, and Elena will want a word at the end.",
-      "closeOfDay": "At 14:50 the evening team come through in their chef's whites and you walk them round the kitchen the way Marcus walked you round it this morning: what is prepared, what is short, what is in the walk-in for tonight, and the one thing you would keep an eye on. Elena signs the chill record with you. This morning it was a room full of stainless steel and a list of jobs; tonight ninety people will sit down and eat what you helped put in front of them.",
+      "morningBrief": "Hello, my name's Terence, and I'm the executive sous chef here at art'otel Hoxton, so I run the kitchen day to day. We've got a product launch event tonight for one hundred guests, while maintaining proper hotel service. Yvie looks after events and will be in and out with the client's request list. You have five jobs displayed in order: take the handover, check the delivery, chill the beef batch, complete the dietary list, and hand the kitchen over. Do not guess: take readings, make notes with the time and your initials, and ask if you are unsure.",
+      "closeOfDay": "That's you finished with your tasks. You checked the fridge properly, did not sign off on salmon that had not arrived, kept the beef in the chiller until it was ready, checked allergens before serving a nut-allergic guest, and left the evening team serving one hundred people a handover they can use. Anyone can learn to cook; what matters is checking properly, explaining decisions and leaving records people can trust.",
       "tone": "Calm, practical and warm: the register of a good chef showing someone the ropes on a normal working day."
     },
     "tasks": [
@@ -43,8 +43,8 @@
         "time": "06:45",
         "place": "Main kitchen, by the walk-in fridges",
         "title": "Take the handover and walk the fridges",
-        "situation": "The night porter is finishing and breakfast is already on. The overnight log has four entries in it, and the temperature board for the fridges, the freezers and the walk-in, a fridge the size of a small room that you step inside, has not been filled in since 22:00.",
-        "job": "Read the overnight log, then walk the fridges with a probe, a hand-held thermometer with a metal spike: read each one, write the temperature on the board, note anything warmer than it should be, and put the time and your initials against every row.",
+        "situation": "The overnight log says larder fridge 2 was found open at four this morning, for an unknown length of time. Some of tonight's prep may have been affected.",
+        "job": "Read all the notes, then open every fridge, look inside, probe it and let it settle. Write what you actually see with the time and your initials.",
         "materials": [
           {
             "name": "Overnight log",
@@ -55,8 +55,8 @@
             "description": "A paper chart on the wall with a row for every fridge and freezer, a column for the reading and a space for the time and your initials; and the probe you wipe, read, and wipe again between fridges."
           }
         ],
-        "interaction": "In person with the night porter, who is keen to get off, and with Marcus, who walks the fridges beside you and points out which one the 04:10 entry was about.",
-        "doneWhen": "Every row on the temperature board carries a reading, a time and your initials, and the fridge named in the overnight log has a note written next to it.",
+        "interaction": "In person with the night porter, who is keen to get off, and with Terence, who walks the fridges beside you and points out larder fridge 2.",
+        "doneWhen": "Every fridge row carries a reading, a time and your initials, and larder fridge 2 has a note next to it.",
         "whatHappensNext": "The produce and fish delivery arrives at the back door at 08:30."
       },
       {
@@ -64,8 +64,8 @@
         "time": "08:30",
         "place": "The goods-in door, the back entrance where deliveries come in",
         "title": "Check the delivery in",
-        "situation": "The produce and fish delivery comes in on three trolleys. The driver wants a signature and is due at another hotel by nine. Everything on tonight's menu depends on this delivery being what the order sheet says it is.",
-        "job": "Work down the order sheet: count what has arrived, put the probe into the chilled boxes and write the temperature beside each chilled line, look at and smell the fish, and mark anything short or not right before you sign for it.",
+        "situation": "Most of the delivery is for tonight's product launch. The driver is in a hurry, but you sign for what is on the trolley, not what is on the note.",
+        "job": "Count and weigh what arrived, probe chilled boxes, inspect the fish's eyes and gills, smell it and press it. Flag anything short or not right before signing.",
         "materials": [
           {
             "name": "Order sheet",
@@ -76,18 +76,18 @@
             "description": "The supplier's own list of what they say they have sent, which does not always match the order sheet, and which you sign for what you accept rather than for what it claims."
           }
         ],
-        "interaction": "In person with the driver, who is in a hurry, and on the kitchen radio to Marcus when the fish count does not match the sheet.",
+        "interaction": "In person with the driver, who is in a hurry, and on the kitchen radio to Terence when the salmon count does not match the sheet.",
         "doneWhen": "Every line on the order sheet is marked as arrived, short or refused, every chilled line carries a temperature, and the delivery note is signed for what you actually took in.",
-        "whatHappensNext": "The short line goes on a list for Marcus to take up with the supplier, and everything else is put away in the order it will be used.",
-        "complication": "Four kilos of the fish is missing and the driver says it was never loaded. Tonight's event does not use it. Tomorrow's lunch menu does."
+        "whatHappensNext": "The short line goes on a list for Terence to take up with the supplier, and everything else is put away in the order it will be used.",
+        "complication": "Four kilos of salmon is missing. Radio Terence before signing; tonight's launch does not use it, but tomorrow's lunch does."
       },
       {
         "id": "chill-the-event-batch",
         "time": "10:45",
         "place": "Main kitchen, at the bench and the blast chiller",
         "title": "Chill the batch for tonight",
-        "situation": "The main course for tonight's ninety people has come out of the oven. It has to be cooled quickly and held cold until the evening, and in this kitchen that means the blast chiller, a cabinet that blows very cold air over hot food to bring it down fast, and a written record of how the cooling went.",
-        "job": "Portion the batch into trays at the depth on the prep sheet, load the chiller with space between the trays so the cold air can move, push the probe into the thickest part of the fullest tray, and write down the temperature at nought, thirty, sixty and ninety minutes.",
+        "situation": "The main course for tonight's one hundred guests is beef shin: twenty-seven kilos. It must be cooled quickly, held cold and recorded.",
+        "job": "Split the beef with Terence, spreading it no more than fifty millimetres deep. Space trays in the chiller, probe the thickest part of the fullest tray without touching metal, and record readings every half hour.",
         "materials": [
           {
             "name": "Prep sheet",
@@ -98,40 +98,40 @@
             "description": "A form with four boxes for the readings and the time each was taken, the two lines the kitchen works to, 8°C, which is the temperature chilled food has to be held at, and a higher line above which a batch does not go to service at all, and a space at the bottom for two signatures; and the probe, which goes into the food rather than against the metal of the tray."
           }
         ],
-        "interaction": "Alongside Marcus, who pans the second half of the batch at the bench next to you and reads his own tray while you read yours.",
-        "doneWhen": "All four readings are on the chill record with the time each was taken, and the trays are in the chiller with space between them.",
+        "interaction": "Alongside Terence, who pans the second half of the batch at the bench next to you and reads his own tray while you read yours.",
+        "doneWhen": "The chill readings are recorded with their times, trays are spaced in the chiller, and the beef is under 8°C before it goes in the walk-in.",
         "whatHappensNext": "Once the batch is down it goes into the walk-in, ready for the evening team to bring back up to temperature before service.",
-        "complication": "At ninety minutes your tray is still above the first line. Marcus's tray, filled shallower, is below it. The batch stays in the chiller and keeps being logged while the two of you get a ruler out and measure the depths."
+        "complication": "At ninety minutes your tray is still above 8°C while Terence's shallower tray is below it. Keep the batch in the chiller, continue logging and measure the depths."
       },
       {
         "id": "check-the-dietary-list",
         "time": "12:30",
         "place": "Main kitchen, at the pass, then the events kitchen",
         "title": "Check tonight's dietary list",
-        "situation": "Sarah Okonkwo brings the final function sheet down to the pass, the counter where finished plates are checked before they leave the kitchen. The function sheet is the single page that tells the kitchen who is eating tonight, what they are eating and what they cannot eat. Since the last version three guests have been added, and one of them cannot eat nuts.",
-        "job": "Read the new function sheet against tonight's dishes, mark on the allergen chart which of the fourteen listed allergens are in each dish, work out which of the three added guests can eat what has already been made, and write the changes on the board for the evening team.",
+        "situation": "Yvie brings the final guest list for tonight's one-hundred-guest product launch. Three late additions are on tables 3, 6 and 9, including a nut allergy.",
+        "job": "Build the allergen chart from the recipe cards first. Check every dish and all fourteen allergens, then choose safe dishes for the three additions and put dish, name and table on the events board.",
         "materials": [
           {
             "name": "Function sheet",
-            "description": "Tonight's event: ninety people, the timings, the table plan, and the list of guests who have told the hotel there is something they cannot eat."
+            "description": "Tonight's product launch: one hundred guests, the timings, the table plan, and the list of guests who have told the hotel there is something they cannot eat."
           },
           {
             "name": "Allergen chart and the evening board",
             "description": "A grid with tonight's dishes down the side and, across the top, the fourteen things that have to be declared by law because people can be allergic to them; and the whiteboard the evening team read when they come on at three."
           }
         ],
-        "interaction": "In person with Sarah, who needs an answer before she prints the table plan, and with Marcus, who reads the chart through with you before it goes up on the board.",
+        "interaction": "In person with Yvie, who needs an answer before she prints the table plan, and with Terence, who reads the chart through with you before it goes up on the board.",
         "doneWhen": "Every dish on the allergen chart is marked against all fourteen allergens, each of the three added guests has a dish written against their name, and the changes are up on the evening board.",
-        "whatHappensNext": "Sarah prints the table plan with the dietary notes on it, and the evening team pick the changes up when they come on at three.",
-        "complication": "The dessert has already been made and it has nuts through it. A different dessert has to be found for that one table and written on the board."
+        "whatHappensNext": "Yvie prints the table plan with the dietary notes on it, and the evening team pick the changes up when they come on at three.",
+        "complication": "The frangipane contains almonds mixed through it, not just on top. It cannot be adapted; choose another dessert and write it on the board."
       },
       {
         "id": "hand-the-kitchen-on",
         "time": "14:30",
         "place": "Main kitchen, at the pass",
         "title": "Weigh the waste and hand the kitchen on",
-        "situation": "Lunch is over and the evening team arrive at three. This morning's bins have not been weighed, the chill record still needs its signatures, and Elena Voss wants to go through the day with you before she goes into the evening.",
-        "job": "Weigh what has been thrown away this morning and write each weight on the waste sheet against where it came from, fill in the handover sheet for the evening team and walk them through it, and go through the day's chill record with Elena.",
+        "situation": "The evening team are about to take over and serve one hundred guests. Waste needs weighing, the handover needs completing, and Terence will review the chill record with you.",
+        "job": "Weigh all three tubs. Put the rice and melon from larder 2 under spoilage, complete and walk through the handover covering salmon, larder 2 and table 3, then talk Terence through the beef chill record and sign it together.",
         "materials": [
           {
             "name": "Waste sheet",
@@ -142,8 +142,8 @@
             "description": "What is prepared, what is short, what is in the walk-in for tonight, and a line for the one thing you would keep an eye on."
           }
         ],
-        "interaction": "In person with Elena, who reads the chill record and asks what you would do with the trays next time, and with the evening team, who take the handover sheet from you and ask their own questions.",
-        "doneWhen": "The waste sheet carries a weight against each of the three rows, the handover sheet is filled in and handed over, and the chill record has both signatures on it.",
+        "interaction": "In person with Terence, who reads the chill record and asks what you would do with the trays next time, and with the evening team, who take the handover sheet from you and ask their own questions.",
+        "doneWhen": "All three waste rows are weighed correctly, the handover is filled in and delivered, and the chill record has both signatures.",
         "whatHappensNext": "The day closes."
       }
     ],

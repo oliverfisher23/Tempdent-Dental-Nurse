@@ -7,7 +7,7 @@ student.
 For each part, it covers:
 
 - what the student sees and is asked to do;
-- what Marcus or another member of the kitchen team tells them;
+- what Terence or another member of the kitchen team tells them;
 - the decision or practical action the student must make;
 - what must be finished before the experience moves on.
 
@@ -35,13 +35,13 @@ shorter, operational form.
 
 ## What the student is told
 
-The student is joining the main kitchen as a trainee sous chef. The kitchen is
-serving breakfast, the bistro and room service while also preparing for a
-90-person wedding that evening.
+The student is joining the art'otel Hoxton kitchen as a new starter. The kitchen
+is maintaining normal hotel service while also preparing a product launch for
+100 guests that evening.
 
-Marcus is the student's main guide during the day. Sarah works with them on the
-event and dietary requirements. Elena, the executive chef, reviews the records
-at the end of the shift.
+Terence, the executive sous chef, is the student's main guide during the day.
+Yvie looks after events and the client's request list, including dietary
+requirements. Terence reviews the records at the end of the shift.
 
 ## What the student is asked to do
 
@@ -63,7 +63,7 @@ The instruction bar tells the student where to go and what to do next. Opening a
 workspace does not complete the activity. The student still has to carry out the
 check, make the decision or finish the paperwork.
 
-Marcus explains the reason for each job and lets the student make the relevant
+Terence explains the reason for each job and lets the student make the relevant
 small decisions. When a food-safety decision cannot be left open, he gives clear
 feedback and asks them to correct it.
 
@@ -72,7 +72,7 @@ feedback and asks them to correct it.
 # Task 1 — Take the handover and check the fridges
 
 **Time:** 06:45  
-**People involved:** Night porter and Marcus  
+**People involved:** Night porter and Terence
 **Main outcome:** A complete temperature board, including a note about the warm
 fridge.
 
@@ -84,7 +84,7 @@ Read all four notes left by the night team:
 
 - the deep clean has been completed;
 - an early dry-goods delivery is waiting by the back door;
-- larder fridge 2 was found slightly open at 04:10;
+   - larder fridge 2 was found open at 04:00;
 - breakfast has been set up.
 
 The important detail is that larder fridge 2 may have been open for an unknown
@@ -95,7 +95,7 @@ amount of time.
 The night porter explains that the notes are on the clipboard and points the
 student towards the 04:10 entry before leaving to catch a bus.
 
-Marcus's instruction is:
+Terence's instruction is:
 
 > Have a look at the night notes first, then we'll go round together. Let the
 > probe settle and write down what you actually see. Add the time and your
@@ -129,14 +129,14 @@ The inspections reveal useful context. For example, the student can check
 whether food is covered, whether raw and ready-to-eat food is separated, whether
 freezer packs are still solid and whether there is ice around a door.
 
-### What Marcus asks them
+### What Terence asks them
 
 The instruction is conversational and practical:
 
 > Open it up, look around and take the temperature. Write down anything the
 > next chef should know.
 
-Marcus does not ask the student to copy a prepared answer. The inspection gives
+Terence does not ask the student to copy a prepared answer. The inspection gives
 them the evidence, and they use it to write their own note.
 
 ## Activity 3: Deal with larder fridge 2
@@ -152,9 +152,9 @@ The interactive inspection reveals:
 - the fridge contains cooked rice, cut melon and other prepared food that
   should not stay in a warm fridge.
 
-### What Marcus tells them
+### What Terence tells them
 
-Before the reading, Marcus asks the student to take a proper look because this
+Before the reading, Terence asks the student to take a proper look because this
 is the fridge named in the overnight notes.
 
 After the probe settles, he explains:
@@ -185,9 +185,9 @@ Check that all seven rows contain:
 
 The student can reopen a fridge from the board if a record needs correcting.
 
-### What Marcus says at the end
+### What Terence says at the end
 
-Marcus explains that the temperature board is one of the first things Elena
+Terence explains that the temperature board is one of the first things he
 checks and reminds the student that the delivery is due at 08:30.
 
 ### Task 1 is complete when
@@ -200,7 +200,7 @@ larder fridge 2 has a meaningful note explaining the issue and response.
 # Task 2 — Check the delivery in
 
 **Time:** 08:30  
-**People involved:** Delivery driver and Marcus  
+**People involved:** Delivery driver and Terence
 **Main outcome:** The delivery paperwork matches what was actually accepted.
 
 ## Activity 1: Take the paperwork and inspect the trolleys
@@ -214,10 +214,10 @@ trolleys containing:
 - chilled goods;
 - fruit and vegetables.
 
-### What Marcus tells them
+### What Terence tells them
 
 The driver may be in a hurry, but the student has time to check the delivery
-properly. Marcus's key point is that they sign for what actually arrived, not
+properly. Terence's key point is that they sign for what actually arrived, not
 automatically for the amount printed on the supplier's note.
 
 ## Activity 2: Count, weigh and take temperatures
@@ -241,9 +241,9 @@ The student checks ten product lines:
 - lemons;
 - parsley.
 
-### What Marcus asks them
+### What Terence asks them
 
-Marcus takes the student through the delivery one line at a time:
+Terence takes the student through the delivery one line at a time:
 
 - first check how much is physically present;
 - then take a temperature if it is chilled;
@@ -260,7 +260,7 @@ The student inspects:
 - **smell:** clean and sea-like, not sour or like ammonia;
 - **flesh:** firm and springing back when pressed.
 
-### What Marcus tells them
+### What Terence tells them
 
 These are acceptance checks, not descriptive extras. Fish with cloudy eyes,
 brown or grey gills, an unpleasant smell or flesh that stays dented should be
@@ -285,9 +285,9 @@ Everything is acceptable except the salmon delivery, which is short.
 Only **8 kg** of the ordered **12 kg** of salmon has arrived. The driver says the
 missing box was never loaded.
 
-### What Marcus asks the student to do
+### What Terence asks the student to do
 
-The student uses the radio to tell Marcus that 4 kg is missing. Marcus tells
+The student uses the radio to tell Terence that 4 kg is missing. Terence tells
 them to:
 
 1. mark the salmon as short;
@@ -296,8 +296,8 @@ them to:
 4. initial the change;
 5. leave the shortage for supplier follow-up.
 
-The salmon is needed for the following day's lunch rather than that evening's
-wedding, so it does not stop the current event preparation.
+The shortage must be reported before signing so the kitchen and events team can
+make a timely decision about the product launch.
 
 ## Activity 6: Sign and put the food away
 
@@ -322,7 +322,7 @@ the accepted delivery has been signed for.
 # Task 3 — Chill the batch for tonight
 
 **Time:** 10:45  
-**People involved:** Marcus  
+**People involved:** Terence
 **Main outcome:** The beef is safely portioned, chilled, recorded and moved to
 the walk-in.
 
@@ -330,15 +330,15 @@ the walk-in.
 
 ### What the student is asked to do
 
-The full batch is **27 kg** of braised beef shin for 90 guests. It should be
+The full batch is **27 kg** of braised beef shin for 100 guests. It should be
 divided across six trays at a depth of **50 mm**.
 
-Marcus takes half of the batch. The student portions **13.5 kg** into their own
+Terence takes half of the batch. The student portions **13.5 kg** into their own
 trays.
 
-### What Marcus tells them
+### What Terence tells them
 
-Marcus explains that tray depth matters because shallow food cools more quickly
+Terence explains that tray depth matters because shallow food cools more quickly
 and evenly. If there are not enough clean trays, the student should ask for
 another rather than overfill the trays that are available.
 
@@ -349,7 +349,7 @@ another rather than overfill the trays that are available.
 Place the trays on separate shelves and leave space between them so cold air can
 move around each tray.
 
-### What Marcus tells them
+### What Terence tells them
 
 Do not stack the trays tightly. Blocking the airflow slows the cooling process.
 
@@ -360,7 +360,7 @@ Do not stack the trays tightly. Blocking the airflow slows the cooling process.
 Put the probe into the thickest part in the middle of the fullest tray, avoiding
 the surface and the metal tray. Then start the chilling cycle.
 
-### What Marcus tells them
+### What Terence tells them
 
 The coldest or easiest point is not useful. The probe needs to measure the part
 of the food that will take longest to cool.
@@ -386,16 +386,16 @@ temperature on the chill record.
 At 90 minutes:
 
 - the student's tray is **11.2°C**, above the 8°C holding line;
-- Marcus's shallower tray is **6.4°C**.
+- Terence's shallower tray is **6.4°C**.
 
-The student's tray is 56 mm deep. Marcus's tray is 48 mm deep.
+The student's tray is 56 mm deep. Terence's tray is 48 mm deep.
 
-### What Marcus asks the student to do
+### What Terence asks the student to do
 
 Keep the food in the blast chiller and take another reading after 30 minutes.
 Do not move warm food into the walk-in and do not throw the batch away.
 
-Marcus uses the tray measurements to show that the extra depth slowed the
+Terence uses the tray measurements to show that the extra depth slowed the
 cooling.
 
 ## Activity 6: Finish the chill record
@@ -421,7 +421,7 @@ been moved and signed off.
 # Task 4 — Check tonight's dietary list
 
 **Time:** 12:30  
-**People involved:** Sarah and Marcus  
+**People involved:** Yvie and Terence
 **Main outcome:** A correct allergen chart and safe dishes for three additional
 guests.
 
@@ -432,12 +432,12 @@ guests.
 Review the event function sheet. Three late guests have been added at tables 3,
 6 and 9.
 
-### What Sarah asks them
+### What Yvie asks them
 
-Sarah needs safe dish choices before printing the final table plan. She gives
+Yvie needs safe dish choices before printing the final table plan. She gives
 the student the new guest details and asks for a clear answer.
 
-### What Marcus tells them
+### What Terence tells them
 
 Work through the dishes and all fourteen allergens before promising that a meal
 is safe.
@@ -463,7 +463,7 @@ Use the recipe information to mark whether each of five dishes contains:
 - soya;
 - sulphites.
 
-### What Marcus tells them
+### What Terence tells them
 
 Check dish by dish rather than guessing from a dish name. If a row is wrong,
 return to the recipe card and correct it before assigning meals to guests.
@@ -483,15 +483,15 @@ return to the recipe card and correct it before assigning meals to guests.
 
 ### What happens
 
-The main dessert contains pistachio and almond throughout. It cannot be made
-safe by removing a garnish or changing one part of the plate.
+The frangipane contains almonds throughout. It cannot be made safe by removing
+a garnish or changing one part of the plate.
 
-### What Marcus asks the student to do
+### What Terence asks the student to do
 
 Do not try to adapt the frangipane. Choose the separate poached pear dessert for
 Priya and record the change clearly.
 
-Marcus also stops choices that would give nuts to Priya or meat to Tom and asks
+Terence also stops choices that would give nuts to Priya or meat to Tom and asks
 the student to correct them.
 
 ## Activity 5: Update the evening board
@@ -501,10 +501,10 @@ the student to correct them.
 Write the changed dessert, guest and table number on the evening board so both
 the kitchen and floor teams can see it.
 
-### What Sarah and Marcus say
+### What Yvie and Terence say
 
-Sarah confirms that table 3 and the pear dessert will be flagged on the table
-plan and checked by name on the floor. Marcus reminds the student that the
+Yvie confirms that table 3 and the pear dessert will be flagged on the table
+plan and checked by name on the floor. Terence reminds the student that the
 evening team should see this update before service.
 
 ### Task 4 is complete when
@@ -517,7 +517,7 @@ have safe dishes and the dietary change is visible on the evening board.
 # Task 5 — Weigh the waste and hand the kitchen on
 
 **Time:** 14:30  
-**People involved:** Evening team, Marcus and Elena  
+**People involved:** Evening team and Terence
 **Main outcome:** Waste is recorded, the evening team receives a useful
 handover and the chill record is reviewed and signed.
 
@@ -531,7 +531,7 @@ Weigh three categories and write each result against the correct source:
 - spoilage — **1.8 kg**, including rice and chopped melon from larder fridge 2;
 - plate waste — **4.2 kg**.
 
-### What Marcus asks them
+### What Terence asks them
 
 Measure each container rather than estimate it, then make sure the number is
 written on the correct row. A wrong row can be corrected before the sheet is
@@ -558,11 +558,11 @@ waiting in the walk-in and what needs watching.
 The student should use the sheet to give a concise verbal handover rather than
 making the next team search through every record from the day.
 
-## Activity 3: Review the chill record with Elena
+## Activity 3: Review the chill record with Terence
 
-### What Elena asks
+### What Terence asks
 
-Elena asks why the student's tray took two hours to cool while Marcus's tray
+Terence asks why the student's tray took two hours to cool while his tray
 reached the target in 90 minutes.
 
 ### Decision the student must make
@@ -576,7 +576,7 @@ is better to use seven correctly filled trays than six overfilled ones.
 - Turning the blast chiller colder does not solve an over-deep tray.
 - Moving warm trays to the walk-in is not a safe way to finish chilling them.
 
-Elena explains that the depth of the food controlled the cooling rate.
+Terence explains that the depth of the food controlled the cooling rate.
 
 ## Activity 4: Sign off and finish the shift
 
@@ -585,12 +585,12 @@ Elena explains that the depth of the food controlled the cooling rate.
 After giving the correct explanation:
 
 1. sign the chill record;
-2. receive Elena's signature;
+2. receive Terence's signature;
 3. finish the handover to the evening team.
 
-### What Marcus says
+### What Terence says
 
-Marcus closes the experience by reinforcing that the job is about making small,
+Terence closes the experience by reinforcing that the job is about making small,
 safe decisions and leaving a clear written record for the people who take over.
 
 ### Task 5 is complete when

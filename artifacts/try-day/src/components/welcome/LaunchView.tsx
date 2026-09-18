@@ -11,7 +11,7 @@ import logoImg from "@/assets/artotel-logo.png";
 export function LaunchView() {
   const { expand, expanding } = useExperienceViewport();
   const reduceMotion = useReducedMotion();
-  const marcus = PEOPLE.find(p => p.id === 'marcus');
+  const terence = PEOPLE.find(p => p.id === 'marcus');
   const launchRef = useRef<HTMLButtonElement>(null);
   // Restore a usable keyboard position when returning from the briefing.
   useEffect(() => {
@@ -30,9 +30,9 @@ export function LaunchView() {
         <div className="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/70 to-secondary/10" />
       </div>
       
-      {marcus?.portrait && (
+      {terence?.portrait && (
         <motion.img 
-          src={marcus.portrait} 
+          src={terence.portrait}
           alt=""
           aria-hidden="true"
           className="absolute bottom-0 right-6 h-[76dvh] max-h-[650px] max-w-[42%] object-contain object-bottom opacity-90 hidden md:block z-0 pointer-events-none drop-shadow-2xl"
