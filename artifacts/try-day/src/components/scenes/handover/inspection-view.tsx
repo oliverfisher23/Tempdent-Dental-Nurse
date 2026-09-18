@@ -10,6 +10,7 @@ import { FLAGGED_FRIDGE_ID, handoverRowComplete } from '@/lib/handover-round';
 import { rowReadingIsRight } from '@/lib/simulation';
 import { kitchenAudio } from '@/lib/audio';
 import { motion } from 'framer-motion';
+import { Check } from 'lucide-react';
 import { useProgress } from '@/lib/progress-store';
 import { FRIDGE_INTERACTION_COPY } from '@/content/fridge-interaction-copy';
 
@@ -49,7 +50,8 @@ export function InspectionView({
   const [checkedClueIds, setCheckedClueIds] = useState<Set<string>>(() => new Set());
   const [announcement, setAnnouncement] = useState('');
   const [probePending, setProbePending] = useState(false);
-  const { jot } = useProgress();
+  const { progress, jot } = useProgress();
+  const noted = progress.notepad.some((entry) => entry.taskId === 'take-the-handover' && entry.ref?.unitId === unit.id);
   
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const probeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -301,23 +303,30 @@ export function InspectionView({
                    <div className="font-mono text-5xl font-bold tracking-widest text-emerald-400" data-testid="probe-display">
                      {unit.actualC.toFixed(1)} <span className="text-2xl text-emerald-500/50">°C</span>
                    </div>
-                   <button
-                     type="button"
-                      disabled={frozen}
-                     onClick={() => {
-                       kitchenAudio.play('write');
-                       jot({
-                         taskId: 'take-the-handover',
-                         label: unit.name,
-                         value: `${unit.actualC.toFixed(1)} °C`,
-                         ref: { unitId: unit.id }
-                       });
-                        setAnnouncement(FRIDGE_INTERACTION_COPY.notebookSaved);
-                     }}
-                      className="min-h-11 text-sm bg-white/10 border border-white/20 text-white font-bold px-4 py-2 rounded hover:bg-white/20 transition-colors flex items-center gap-2 disabled:opacity-50"
-                   >
-                     {HANDOVER_LABELS.writeInNotebook}
-                   </button>
+                   {noted ? (
+                     <p className="flex min-h-11 items-center gap-2 text-sm font-semibold text-emerald-300" role="status" data-testid="notebook-written">
+                       <Check className="h-4 w-4" aria-hidden="true" />
+                       {HANDOVER_LABELS.inNotebook}
+                     </p>
+                   ) : (
+                     <button
+                       type="button"
+                       disabled={frozen}
+                       onClick={() => {
+                         kitchenAudio.play('write');
+                         jot({
+                           taskId: 'take-the-handover',
+                           label: unit.name,
+                           value: `${unit.actualC.toFixed(1)} °C`,
+                           ref: { unitId: unit.id }
+                         });
+                         setAnnouncement(FRIDGE_INTERACTION_COPY.notebookSaved);
+                       }}
+                       className="min-h-11 text-sm bg-white/10 border border-white/20 text-white font-bold px-4 py-2 rounded hover:bg-white/20 transition-colors flex items-center gap-2 disabled:opacity-50"
+                     >
+                       {HANDOVER_LABELS.writeInNotebook}
+                     </button>
+                   )}
                  </div>
                ) : (
                   <button

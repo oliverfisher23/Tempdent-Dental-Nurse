@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { DELIVERY, DeliveryHarness } from '../e2e/delivery-harness';
 import { deliveries, expectedMessage, expectedReport, fishFindings } from '../e2e/delivery-data';
+import { lowerFirst } from '../src/lib/utils';
 
 test('delivery corrections, explicit reporting and frozen sign-off', async ({ page, baseURL }, testInfo) => {
   const d = new DeliveryHarness(page, baseURL!, testInfo.project.name === 'desktop-keyboard');
@@ -49,7 +50,7 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
     await test.step(`inspect and record ${line.item}`, async () => {
       await d.go('Order sheet');
       const row = d.row(line.id);
-      await d.activate(row.getByRole('button', { name: `Open ${line.item}`, exact: true }));
+      await d.activate(row.getByRole('button', { name: `Open ${lowerFirst(line.item)}`, exact: true }));
       const quantity = row.getByLabel(`Quantity for ${line.item} (${line.unit})`, { exact: true });
       const temperature = row.locator(`#temp-${line.id}`);
       const check = row.getByRole('button', { name: 'Check your decisions', exact: true });
@@ -232,7 +233,7 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
   await test.step('saved quantity edits invalidate the report, acceptance, initials and signature', async () => {
     await d.go('Order sheet');
     const salmon = d.row('salmon');
-    await d.activate(salmon.getByRole('button', { name: 'Open Salmon fillet, skin on', exact: true }));
+    await d.activate(salmon.getByRole('button', { name: 'Open salmon fillet, skin on', exact: true }));
     await d.fill(salmon.locator('#qty-salmon'), '7');
     await d.saved({ ...unsent, ...unsigned, lines: { salmon: { arrived: '7', acceptedAmount: '8' } } });
     await expect(salmon).toContainText('Quantity changed. Re-confirm acceptance.');
@@ -286,7 +287,7 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
     await d.reload();
     await expect(app.getByRole('heading', { name: "You've signed this off", exact: true })).toBeVisible();
     await expect(app.getByTestId('step-guide')).toHaveCount(0);
-    await expect(app.getByRole('button', { name: 'Open Salmon fillet, skin on', exact: true })).toHaveCount(0);
+    await expect(app.getByRole('button', { name: 'Open salmon fillet, skin on', exact: true })).toHaveCount(0);
     await expect(d.button('Open your notebook')).toHaveCount(0);
     await expect(d.button('Open the job card')).toHaveCount(0);
     const frozenButton = app.locator('main [inert] button').first();

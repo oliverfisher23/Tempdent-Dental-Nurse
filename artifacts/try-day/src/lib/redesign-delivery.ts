@@ -16,7 +16,7 @@ export function deliveryRedesignChecklist(state: DeliveryState): ChecklistItem[]
   });
   checks.push({
     id: "redesign-all-counted",
-    label: "Inspected all 10 items",
+    label: "All 10 items inspected",
     met: allCounted,
   });
 
@@ -27,7 +27,7 @@ export function deliveryRedesignChecklist(state: DeliveryState): ChecklistItem[]
   });
   checks.push({
     id: "redesign-all-probed",
-    label: "Measured 6 chilled temperatures",
+    label: "6 chilled items have temperatures measured",
     met: allProbed,
   });
 

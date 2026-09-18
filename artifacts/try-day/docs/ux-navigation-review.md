@@ -150,7 +150,7 @@ Each is tied to a purpose; none is decoration. All degrade to instant state chan
 
 **Observed (fix on evidence already gathered):** items 1–6 and 8–16 above — no task overview; mixed progress vocabularies; “0” badge; a Task 2 opening hotspot that does not match the guide; missing scroll cues; false “Opening workspace…”; returning learners not recognised after a reload; phone briefing order; abrupt task change without focus management; push-based redirects; notebook empty in Tasks 2 and 4; non-disabled footer button; truncated phone header; Task 4 starting on a black stage.
 
-**Already changed during this review:** the dialogue bar (16) now opens on demand from the colleague chip.
+**Already changed during this review:** the dialogue bar (16) now opens on demand from the colleague chip; the Task 2 pass now offers a single “Head to the back door” hotspot instead of the radio pickup (first half of recommendation 10); the guide’s item labels read in lower case mid-sentence (“Open salmon fillet, skin on”).
 
 **Assumptions that need learner testing before building:**
 

@@ -55,7 +55,7 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
           <div className="p-8 pb-12 bg-white text-foreground">
             <div className="border-b-2 border-foreground pb-4 mb-6">
                 <h2 className="text-2xl font-bold font-sans tracking-widest text-center">Overnight log</h2>
-                <p className="text-center font-mono text-muted-foreground mt-1 uppercase">Night team to morning</p>
+                <p className="text-center font-mono text-muted-foreground mt-1 uppercase">Completed by the night team</p>
             </div>
             
             <div className="space-y-6">

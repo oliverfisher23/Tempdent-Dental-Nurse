@@ -8,7 +8,7 @@ export const FRIDGE_INTERACTION_COPY = {
   evidenceProgress: (checked: number, total: number) => `${checked} of ${total} findings checked`,
   probeReady: 'The probe has settled. Write the reading on the board yourself.',
   withinLimit: (reading: string, limit: string) => `${reading} °C meets the stated limit: ${limit}.`,
-  aboveLimit: (reading: string, limit: string) => `${reading} °C does not meet the stated limit: ${limit}. Use what you find inside to explain the discrepancy and what you did.`,
+  aboveLimit: (reading: string, limit: string) => `${reading} °C does not meet the stated limit: ${limit}. Use what you find inside to explain the issue and what you did to fix it.`,
   noteProbePrompt: 'Take the temperature before writing the board entry.',
   notebookSaved: 'Reading added to your notebook.',
   rowSaved: (name: string) => `${name} saved. The door is closed.`,

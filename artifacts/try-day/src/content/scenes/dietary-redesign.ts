@@ -20,11 +20,11 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   terencePriyaFrangipane: {
     speaker: 'Terence',
-    text: "Stop — this choice conflicts with Priya's allergy. Check the tart's ingredients and your chart.",
+    text: "Stop. This choice conflicts with Priya's allergy. Check the tart's ingredients and your chart.",
   } as Line,
   terenceTomBeef: {
     speaker: 'Terence',
-    text: "Stop — compare the main's ingredients with Tom's vegetarian request.",
+    text: "Stop. Compare the main's ingredients with Tom's vegetarian request.",
   } as Line,
   terencePearSafeWait: {
     speaker: 'Terence',

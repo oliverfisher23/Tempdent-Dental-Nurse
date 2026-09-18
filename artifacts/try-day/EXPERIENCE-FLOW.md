@@ -197,7 +197,7 @@ larder fridge 2 has a meaningful note explaining the issue and response.
 
 ---
 
-# Task 2 — Check the delivery in
+# Task 2 — Check the new delivery
 
 **Time:** 08:30  
 **People involved:** Delivery driver and Terence

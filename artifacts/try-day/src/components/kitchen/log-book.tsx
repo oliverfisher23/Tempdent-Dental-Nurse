@@ -34,14 +34,11 @@ export function LogBookHeader({ round = "06:45 ROUND" }: { round?: string }) {
   return (
     <div className="flex flex-col items-center mb-8">
       <h2 
-        className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter text-[#272b3b] text-center leading-none mb-1" 
+        className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tighter text-[#272b3b] text-center leading-none mb-6" 
         style={{ fontFamily: 'var(--font-sans)', transform: 'scaleY(1.15)', transformOrigin: 'bottom' }}
       >
-        Food Temperature<br/>Log Book
+        Food temperature<br/>log book
       </h2>
-      <p className="text-[#272b3b] font-semibold tracking-wide text-base sm:text-lg lg:text-xl mb-6">
-        to Record Fridge Freezer Temperature
-      </p>
 
       {/* Equipment / Details box - adapted to Location & Date to avoid conflicting with unit rows */}
       <div className="w-full max-w-2xl border-2 border-[#272b3b] rounded-sm bg-white p-3 space-y-2 text-sm sm:text-base font-bold text-[#272b3b] shadow-sm">

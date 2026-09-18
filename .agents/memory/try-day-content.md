@@ -3,7 +3,8 @@ name: Try-day content conventions
 description: Non-obvious rules for the Marriott try-day simulation: spec copy, brand assets, completion contract, host integration.
 ---
 
-- The spec (`mechanic.json`) task wording is client-signed. Do not paraphrase jobs, `doneWhen` or complications; wrap UI labels around them instead. Employer/workplace branding may change when the user explicitly rebrands the experience.
+- The spec (`mechanic.json`) task wording is client-signed. Do not paraphrase jobs, `doneWhen` or complications; wrap UI labels around them instead. Employer/workplace branding may change when the user explicitly rebrands the experience. Exception: reviewer notes forwarded by the user (e.g. 2026-09-18 file) authorise the exact lines they quote; apply verbatim and call the spec edits out in the report.
+- Copy house style from the 2026-09-18 review: no em dashes in prose (British client, "looks AI"); "Simulation" capitalised as the product name; item names lower-case mid-sentence; spoiler-free job cards (no hints such as "when the salmon count does not match").
   **Why:** Springpod/Marriott approved that register; edits would need re-approval. A review round flagged paraphrased done-when labels as a defect.
   **How to apply:** new copy goes in `activities.ts` (dialogue, labels), never by editing the spec strings.
 - Completion contract: a task in `completed` is frozen read-only (browser Back cannot undo signed-off paperwork), tasks unlock strictly in order, and done-when checks validate against the simulated truth (readings, weights, quantities, allergen rows, board note content), not just "field is non-empty".

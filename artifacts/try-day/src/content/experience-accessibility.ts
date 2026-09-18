@@ -35,12 +35,12 @@ export const TASK_DEVICE_ADVICE: Record<TaskId, { title: string; interaction: st
   },
   'check-the-dietary-list': {
     title: '4 · Dietary requirements',
-    interaction: 'Compare ingredients with your allergen chart, propose changes and identify checks still needed.',
+    interaction: 'Compare ingredients with your allergen chart, propose changes and identify what checks are still needed.',
     advice: 'A laptop is helpful for comparing recipes, the chart and guest requirements. On a phone, work through one dish or guest at a time.',
   },
   'hand-the-kitchen-on': {
     title: '5 · Waste and handover',
-    interaction: 'Weigh the waste and explain what the evening team needs to know and follow up.',
+    interaction: 'Weigh the waste and explain what the evening team needs to know and follow up on.',
     advice: 'A phone works for weighing and reviewing evidence. A laptop keyboard can be more comfortable for writing and checking the longer handover.',
   },
 };

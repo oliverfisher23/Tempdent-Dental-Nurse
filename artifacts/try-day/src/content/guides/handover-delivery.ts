@@ -7,6 +7,7 @@ import type { StepGuide } from '@/content/step-guide';
 import type { DeliveryState, HandoverState } from '@/lib/simulation';
 import { handoverLogRead, nextHandoverUnit } from '@/lib/handover-round';
 import { canSignDelivery } from '@/lib/delivery-workflow';
+import { lowerFirst } from '@/lib/utils';
 
 export function getHandoverGuide(state: HandoverState): StepGuide {
   if (!handoverLogRead(state)) {
@@ -29,7 +30,7 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
       id: `handover-check-${nextUnit.id}`,
       step: 2,
       total: 3,
-      title: `${nextUnit.name} — ${index + 1} of ${FRIDGE_UNITS.length}`,
+      title: `${nextUnit.name} (${index + 1} of ${FRIDGE_UNITS.length})`,
       instruction: "Open it up, look around and take the temperature. Write down anything the next chef should know.",
       actionLabel: state.rows[nextUnit.id]?.probed ? 'Carry on here' : `Check ${nextUnit.name}`,
       place: 'pass',
@@ -65,7 +66,7 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
     id: `delivery-check-${unfinished.id}`, step: 1, total: 4,
     title: 'Check each item beside its entry',
     instruction: 'Inspect, write your results and make your decisions. You can choose any item on the sheet.',
-    actionLabel: `Open ${unfinished.item}`, place: 'goods-in',
+    actionLabel: `Open ${lowerFirst(unfinished.item)}`, place: 'goods-in',
     action: `delivery:box:${unfinished.id}`,
   };
   if (!state.contextRevealed) return {

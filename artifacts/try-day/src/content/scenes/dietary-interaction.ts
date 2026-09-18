@@ -56,6 +56,6 @@ export const DIETARY_UI = {
     prepChecksTitle: "Preparation & service checks",
     supplierResponses: "Supplier/Prep responses",
     serviceHoldWarning: "Service hold: You have open preparation questions. The board is a held instruction, not permission to serve.",
-    holdCheckboxLabel: "Proposed menu — hold for Terence’s preparation/service check"
+    holdCheckboxLabel: "Proposed menu: hold for Terence’s preparation/service check"
   }
 };

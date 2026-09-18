@@ -483,10 +483,10 @@ export function evaluateDelivery(s: DeliveryState): Evaluation {
     && s.fishReason === 'condition-and-temperature';
   const signedRight = deliveryReviewIssues(s, true).length === 0;
   const checklist: ChecklistItem[] = [
-    { id: 'lines', label: 'Every line marked arrived, short or refused', met: everyMarked },
-    { id: 'temps', label: 'Every chilled line carries a temperature', met: everyChilledTemp },
-    { id: 'fish', label: 'The fish looked at and smelled', met: fishLooked },
-    { id: 'note', label: 'Delivery note signed for what you actually took in', met: signedRight },
+    { id: 'lines', label: 'Every line is marked as arrived, short or refused', met: everyMarked },
+    { id: 'temps', label: 'Every chilled item is marked with a temperature', met: everyChilledTemp },
+    { id: 'fish', label: 'The fish is looked at and smelled', met: fishLooked },
+    { id: 'note', label: 'Delivery note signed for what you actually accepted', met: signedRight },
   ];
   return { done: checklist.every((c) => c.met), checklist };
 }

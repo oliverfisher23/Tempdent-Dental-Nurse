@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { DELIVERY_LINES } from '@/content/activities';
 import { useProgress } from '@/lib/progress-store';
 import type { DeliveryState } from '@/lib/simulation';
@@ -11,7 +11,6 @@ import { GoodsInScene } from '@/components/scenes/delivery/goods-in';
 export default function DeliveryTask() {
   const { progress, updateTask } = useProgress();
   const state = progress.tasks['check-the-delivery-in'];
-  const [hasRadio, setHasRadio] = useState(false);
   const handleUpdateState = useCallback((recipe: (previous: DeliveryState) => DeliveryState) => {
     // The store owns invalidation and the completed-task freeze.
     updateTask('check-the-delivery-in', recipe);
@@ -24,7 +23,7 @@ export default function DeliveryTask() {
       focusedWorkspace
       dialogue={DELIVERY_LINES.marcusOpening}
       scenes={{
-        pass: <PassScene hasRadio={hasRadio} onTakeRadio={() => { kitchenAudio.play('tap'); setHasRadio(true); }} />,
+        pass: <PassScene onLeave={() => kitchenAudio.play('tap')} />,
         'goods-in': <GoodsInScene state={state} onUpdateState={handleUpdateState} />,
       }}
     />

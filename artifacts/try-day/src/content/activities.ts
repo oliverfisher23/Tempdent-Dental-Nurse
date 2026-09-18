@@ -108,7 +108,7 @@ export const HANDOVER_LINES = {
   } satisfies Line,
   marcusOnWarmReading: {
     speaker: 'Terence',
-    text: "Eight point six — that's too warm. Check what's in there. We need to move anything high-risk into larder one and keep this door shut while it cools.",
+    text: "Eight point six. That's too warm. Check what's in there. We need to move anything high-risk into larder one and keep this door shut while it cools.",
   } satisfies Line,
   marcusOnWrongReading: {
     speaker: 'Terence',
@@ -174,7 +174,7 @@ export type FishCheckId = (typeof FISH_CHECKS)[number]['id'];
 export const DELIVERY_LINES = {
   driverOpening: {
     speaker: 'Driver',
-    text: "Three trolleys, all yours. Sign here and I'm gone — I've got another delivery after this.",
+    text: "Three trolleys, all yours. Sign here and I'm gone. I've got another delivery after this.",
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',

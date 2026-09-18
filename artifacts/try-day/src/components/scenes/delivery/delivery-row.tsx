@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { FISH_CHECKS, ORDER_LINES } from '@/content/activities';
 import { CRATE_IMAGES } from '@/content/kitchen';
+import { lowerFirst } from '@/lib/utils';
 import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
 import { kitchenAudio } from '@/lib/audio';
 import { useProgress } from '@/lib/progress-store';
@@ -148,7 +149,7 @@ export function DeliveryRow({
       <div className="flex flex-col border border-white/15 rounded-xl bg-zinc-900/80 backdrop-blur-sm shadow-xl overflow-hidden transition-all duration-300">
          <button
              type="button"
-             aria-label={`${expanded ? ROW_LABELS.closeItem : ROW_LABELS.openItem} ${line.item}`}
+             aria-label={`${expanded ? ROW_LABELS.closeItem : ROW_LABELS.openItem} ${lowerFirst(line.item)}`}
             aria-expanded={expanded}
             aria-controls={`row-body-${line.id}`}
             onClick={onToggle}

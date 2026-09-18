@@ -2,3 +2,4 @@
 - [Dietary review boundaries](dietary-review-boundaries.md) — agreed exercise covers ingredient planning and pending preparation checks, never "cleared to serve".
 - [Preview video codecs](preview-video-codecs.md) — some preview/test Chromium builds lack H.264 decoding; check codec support before treating a media error as a broken URL.
 - [Browser capture harness](browser-capture-harness.md) — hide the designer panel with CSS (never remove it), close the dev banner first, and don’t trust emulated touch-target sizes.
+- [Vite import.meta.glob guard](vite-import-meta-glob.md) — a typeof guard is always false in the browser and silently breaks asset URLs; use try/catch for Node-shared modules.

@@ -63,7 +63,7 @@
         "id": "check-the-delivery-in",
         "time": "08:30",
         "place": "The goods-in door, the back entrance where deliveries come in",
-        "title": "Check the delivery in",
+        "title": "Check the new delivery",
         "situation": "Most of the delivery is for tonight's product launch. The driver is in a hurry, but you sign for what is on the trolley, not what is on the note.",
         "job": "Count and weigh what arrived, probe chilled boxes, inspect the fish's eyes and gills, smell it and press it. Flag anything short or not right before signing.",
         "materials": [
@@ -76,8 +76,8 @@
             "description": "The supplier's own list of what they say they have sent, which does not always match the order sheet, and which you sign for what you accept rather than for what it claims."
           }
         ],
-        "interaction": "In person with the driver, who is in a hurry, and on the kitchen radio to Terence when the salmon count does not match the sheet.",
-        "doneWhen": "Every line on the order sheet is marked as arrived, short or refused, every chilled line carries a temperature, and the delivery note is signed for what you actually took in.",
+        "interaction": "In person with the driver, who is in a hurry, and on the kitchen radio to Terence when support is needed.",
+        "doneWhen": "Every line on the order sheet is marked as arrived, short or refused; every chilled line is marked with a temperature, and you've signed for what you accepted.",
         "whatHappensNext": "The short line goes on a list for Terence to take up with the supplier, and everything else is put away in the order it will be used.",
         "complication": "Four kilos of salmon is missing. Radio Terence before signing; tonight's launch does not use it, but tomorrow's lunch does."
       },
