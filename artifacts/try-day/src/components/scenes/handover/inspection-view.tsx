@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { FRIDGE_UNITS, HANDOVER_LINES } from '@/content/activities';
-import { FRIDGE_INSPECTIONS } from '@/content/fridge-photos';
-import { getFridgeMedia } from '@/content/fridge-media';
 import { InspectionMedia } from './inspection-media';
+import { getInspectionSelection } from './inspection-selection';
 import { cn } from '@/lib/utils';
 import { HANDOVER_LABELS } from '@/content/scenes/handover-round';
 import { useKitchenAction } from '../../kitchen/kitchen-context';
@@ -152,10 +151,11 @@ export function InspectionView({
   const isFlagged = unitId === FLAGGED_FRIDGE_ID;
   const isWarm = unit.actualC > unit.limitC;
   const noteRequired = isFlagged || isWarm;
-  const photo = FRIDGE_INSPECTIONS[unitId];
+  const mediaState = doorOpen ? 'open' : 'closed';
+  const selection = getInspectionSelection(unitId, mediaState);
+  const photo = selection.inspection;
   const activeClue = photo.clues.find(clue => clue.id === activeClueId);
-   const mediaState = doorOpen ? 'open' : 'closed';
-  const media = getFridgeMedia(unitId, mediaState);
+  const media = selection.media;
   const settledFeedback = isWarm
     ? FRIDGE_INTERACTION_COPY.aboveLimit(unit.actualC.toFixed(1), unit.limitLabel)
     : FRIDGE_INTERACTION_COPY.withinLimit(unit.actualC.toFixed(1), unit.limitLabel);
@@ -247,7 +247,7 @@ export function InspectionView({
         >
           {mediaState === 'open' && (
             <div className="absolute inset-0" role="group" aria-label={HANDOVER_LABELS.inspectPrompt}>
-              {photo.clues.map((clue, index) => (
+              {selection.visibleClues.map((clue, index) => (
                 <button
                   key={clue.id}
                   ref={index === 0 ? firstClueRef : undefined}
