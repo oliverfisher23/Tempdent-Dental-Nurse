@@ -143,14 +143,18 @@
   @apply bg-transparent border-b border-border border-t-0 border-l-0 border-r-0 rounded-none px-0 py-1 focus-visible:ring-0 focus-visible:border-primary shadow-none h-auto font-mono text-center transition-colors;
 }
 
-.kitchen-table {
-  @apply w-full text-sm text-left;
+.log-book-table {
+  @apply w-full border-collapse border-[3px] border-[#272b3b] bg-white text-sm md:text-base;
 }
 
-.kitchen-table th {
-  @apply font-semibold text-muted-foreground pb-2 border-b border-border;
+.log-book-table th {
+  @apply bg-[#e2e8f0] border-2 border-[#272b3b] py-2 px-3 text-center font-bold text-[#272b3b] uppercase tracking-wide;
 }
 
-.kitchen-table td {
-  @apply py-3 border-b border-border/50 align-top;
+.log-book-table td {
+  @apply border-2 border-[#272b3b] py-2 px-3 align-top;
+}
+
+.log-book-input {
+  @apply bg-transparent border-none rounded-none px-0 py-0 focus-visible:ring-0 shadow-none h-auto font-mono w-full text-center text-[#272b3b];
 }

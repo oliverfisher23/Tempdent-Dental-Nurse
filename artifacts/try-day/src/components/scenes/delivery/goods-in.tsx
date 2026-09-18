@@ -14,6 +14,7 @@ import { CloseUp } from '../../kitchen/close-up';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
 
 type OrderLine = (typeof ORDER_LINES)[number];
 
@@ -467,16 +468,19 @@ export function GoodsInScene({
 
                       {line.chilled && (
                         <div className="rounded-lg bg-black/45 p-4">
-                          <div className="flex items-center justify-between gap-3">
+                          <div className="flex items-center justify-between gap-3 mb-2">
                             <span className="font-bold">Temperature</span>
-                            <span className="font-mono text-xl font-bold text-emerald-400">
-                              {probingId === line.id && probeValue !== null
-                                ? `${probeValue.toFixed(1)} °C`
-                                : row.probed
-                                  ? `${line.actualC?.toFixed(1)} °C`
-                                  : 'Not checked'}
-                            </span>
+                            {row.probed && <Check className="h-5 w-5 text-emerald-400" />}
                           </div>
+
+                          <div className="flex justify-center mb-4">
+                            <AnalogueThermometer
+                              value={probingId === line.id && probeValue !== null ? probeValue : row.probed ? line.actualC ?? null : null}
+                              className="w-32 h-36"
+                              clip={false}
+                            />
+                          </div>
+
                           <div className="mt-3">
                             {!row.probed ? (
                               <button

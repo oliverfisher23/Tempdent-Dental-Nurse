@@ -253,6 +253,58 @@ export function initialProgress(): Progress {
   };
 }
 
+/** Session-only, evaluator-valid fixtures used by the opt-in designer panel. */
+export function testProgress(target: TaskId | null | undefined): Progress {
+  const p = initialProgress();
+  const initials = initialsFromName('Learning Designer');
+  const handover: HandoverState = {
+    logRead: OVERNIGHT_LOG.map((entry) => entry.time),
+    rows: Object.fromEntries(FRIDGE_UNITS.map((unit) => [unit.id, {
+      probed: true, reading: String(unit.actualC), time: '06:50', initials, note: unit.id === 'larder-2' ? 'Door found open overnight; move high-risk food and re-check.' : 'Checked and recorded.',
+    }])),
+  };
+  const delivery: DeliveryState = {
+    lines: Object.fromEntries(ORDER_LINES.map((line) => [line.id, {
+      counted: true, arrived: String(line.arrived), probed: line.chilled,
+      temperature: line.chilled ? String(line.actualC) : '', status: line.expectedStatus,
+    }])),
+    fishChecks: Object.fromEntries(FISH_CHECKS.map((check) => [check.id, true])) as Record<FishCheckId, boolean>,
+    radioedMarcus: true, noteAmendedTo: '8', signature: initials, signed: true,
+  };
+  const chill: ChillState = {
+    trays: [4.5, 4.5, 4.5], askedForTray: true, shelfByTray: [0, 2, 4],
+    probePlacement: 'centre',
+    readings: Object.fromEntries(([0, 30, 60, 90, 120] as ChillInterval[]).map((minute) => [
+      minute, { value: String(YOUR_TRAY_READINGS[minute]), time: addMinutes(CHILL_RULES.startClock, minute) },
+    ])),
+    minutesElapsed: 120, ninetyChoice: 'keep-logging', measuredDepths: true, studentSigned: true,
+  };
+  const dietary: DietaryState = {
+    chart: Object.fromEntries(DISHES.map((dish) => [dish.id, [...dish.allergens]])),
+    flaggedDishes: [], chartChecked: true,
+    guests: { priya: { main: 'beef', dessert: 'pear' }, tom: { main: 'wellington', dessert: 'pear' }, anna: { main: 'beef', dessert: 'frangipane' } },
+    boardNote: 'Table 3 Priya Nair: pear instead of frangipane for nut allergy.', boardPosted: true,
+  };
+  const close: CloseState = {
+    weighed: Object.fromEntries(WASTE_BINS.map((bin) => [bin.id, true])),
+    weights: Object.fromEntries(WASTE_BINS.map((bin) => [bin.id, String(bin.actualKg)])),
+    handover: { prepared: 'Beef shin chilled in six trays; tarts and Wellingtons are ready for tonight.', short: 'Salmon is 4 kg short; supplier has been told and tomorrow lunch is affected.', walkIn: 'Beef and Wellingtons are labelled and stored in the walk-in for tonight.', watch: 'Larder fridge 2 was 8.6°C after its door was open; re-check before service. Table 3 has pear.' },
+    handedOver: true, elenaAnswer: 'shallower', elenaSigned: true,
+  };
+  const completeStates: TaskStates = { 'take-the-handover': handover, 'check-the-delivery-in': delivery, 'chill-the-event-batch': chill, 'check-the-dietary-list': dietary, 'hand-the-kitchen-on': close };
+  const index = target === null ? TASK_ORDER.length : target === undefined ? 0 : TASK_ORDER.indexOf(target);
+  return {
+    ...p, studentName: 'Learning Designer', initials, startedAt: new Date().toISOString(),
+    tasks: target === null ? completeStates : target === undefined ? initialTaskStates() : {
+      ...completeStates,
+      [target]: initialTaskStates()[target],
+    },
+    completed: TASK_ORDER.slice(0, index), completedAt: target === null ? new Date().toISOString() : null,
+    clock: target === null ? getTask(TASK_ORDER[TASK_ORDER.length - 1]).time : target === undefined ? getTask(TASK_ORDER[0]).time : getTask(target).time,
+    notepad: [],
+  };
+}
+
 export function initialsFromName(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length === 0) return '';
@@ -501,11 +553,19 @@ export function isDayComplete(p: Progress): boolean {
 // ---------------------------------------------------------------------------
 
 export const STORAGE_KEY = `springpod:${mechanic.config.id}:v${mechanic.config.version}`;
+export const TEST_STORAGE_KEY = `${STORAGE_KEY}:designer-test`;
+const TEST_MODE_ENABLED =
+  typeof window !== 'undefined' &&
+  new URLSearchParams(window.location.search).get('testMode') === '1';
 
-export function loadProgress(): Progress {
+export function isTestMode(): boolean {
+  return TEST_MODE_ENABLED;
+}
+
+export function loadProgress(testMode = isTestMode()): Progress {
   if (typeof window === 'undefined') return initialProgress();
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = (testMode ? window.sessionStorage : window.localStorage).getItem(testMode ? TEST_STORAGE_KEY : STORAGE_KEY);
     if (!raw) return initialProgress();
     const parsed: unknown = JSON.parse(raw);
     if (!isRecord(parsed) || parsed.version !== 1 || !isRecord(parsed.tasks)) return initialProgress();
@@ -573,12 +633,14 @@ function mergeTaskState<T extends object>(base: T, stored: Record<string, unknow
 
 export function saveProgress(p: Progress): void {
   if (typeof window === 'undefined') return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  if (isTestMode()) window.sessionStorage.setItem(TEST_STORAGE_KEY, JSON.stringify(p));
+  else window.localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
 }
 
 export function clearProgress(): void {
   if (typeof window === 'undefined') return;
-  window.localStorage.removeItem(STORAGE_KEY);
+  if (isTestMode()) window.sessionStorage.removeItem(TEST_STORAGE_KEY);
+  else window.localStorage.removeItem(STORAGE_KEY);
 }
 
 // ---------------------------------------------------------------------------
@@ -597,7 +659,7 @@ export interface GateEvent {
 
 /** Posts progress to the parent window. Harmless when the app is opened on its own. */
 export function notifyHost(event: Omit<GateEvent, 'source' | 'format' | 'mechanic' | 'id'>): void {
-  if (typeof window === 'undefined' || window.parent === window) return;
+  if (typeof window === 'undefined' || window.parent === window || isTestMode()) return;
   const message: GateEvent = {
     source: 'springpod',
     format: mechanic.format,

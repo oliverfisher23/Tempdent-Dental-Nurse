@@ -27,6 +27,8 @@ import {
   loadProgress,
   notifyHost,
   saveProgress,
+  isTestMode,
+  testProgress,
   addMinutes,
   getTask,
   type Evaluation,
@@ -57,6 +59,8 @@ interface ProgressContextValue {
   advanceClock: (minutes: number) => void;
   /** Set the clock outright, e.g. to a task's start time or a chill interval. */
   setClock: (clock: string) => void;
+  /** Guarded fixture seeding for the opt-in learning designer panel. */
+  jumpToTestTarget: (id: TaskId | null | undefined) => void;
   /** Write a line in the student's notepad. Returns the entry. */
   jot: (entry: Omit<NotepadEntry, 'id' | 'at'> & { at?: string }) => NotepadEntry;
   /** Cross a line out of the notepad. */
@@ -145,6 +149,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setProgress(initialProgress());
   }, []);
 
+  const jumpToTestTarget = useCallback((id: TaskId | null | undefined) => {
+    if (!isTestMode()) return;
+    setProgress(testProgress(id));
+  }, []);
+
   const advanceClock = useCallback((minutes: number) => {
     setProgress((prev) => ({ ...prev, clock: addMinutes(prev.clock, minutes) }));
   }, []);
@@ -196,10 +205,11 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       reset,
       advanceClock,
       setClock,
+      jumpToTestTarget,
       jot,
       unjot,
     }),
-    [progress, evaluations, currentTaskId, isUnlocked, isCompleted, startDay, updateTask, completeTask, reset, advanceClock, setClock, jot, unjot],
+    [progress, evaluations, currentTaskId, isUnlocked, isCompleted, startDay, updateTask, completeTask, reset, advanceClock, setClock, jumpToTestTarget, jot, unjot],
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

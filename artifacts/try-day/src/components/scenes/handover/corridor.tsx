@@ -3,7 +3,7 @@ import { INTERIORS, PLACES } from '@/content/kitchen';
 import { FRIDGE_UNITS } from '@/content/activities';
 import { useProgress } from '@/lib/progress-store';
 import { useNotepad } from '../../kitchen/notepad';
-import { Whiteboard } from '../../kitchen/paper';
+import { LogBook, LogBookHeader } from '../../kitchen/log-book';
 import { CloseUp } from '../../kitchen/close-up';
 import { kitchenAudio } from '@/lib/audio';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,6 +11,7 @@ import { Thermometer, PenTool, ArrowLeft, ArrowRight, Check } from 'lucide-react
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useKitchenAction } from '../../kitchen/kitchen-context';
+import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
 
 function GuideAction({ action, open }: { action: string; open: () => void }) {
   useKitchenAction(action, open);
@@ -263,10 +264,8 @@ export function CorridorScene({
                  </div>
 
                  <div className="flex items-center gap-6">
-                   <div className="bg-black border-2 border-zinc-700 text-white px-6 py-3 rounded-xl shadow-inner min-w-[140px] text-center">
-                      <span className="font-mono text-3xl font-bold tracking-widest text-emerald-400">
-                        {probeValue !== null ? probeValue.toFixed(1) : "--.-"}
-                      </span>
+                   <div className="flex items-center justify-center min-w-[140px]">
+                     <AnalogueThermometer value={probeValue} className="w-28 h-32 drop-shadow-xl" clip={false} />
                    </div>
 
                    <div className="flex flex-col gap-2 min-w-[160px]">
@@ -303,175 +302,171 @@ export function CorridorScene({
       </CloseUp>
 
       {/* Temperature Board Modal */}
-      <CloseUp isOpen={boardOpen} onClose={() => setBoardOpen(false)} title="Temperature board" className="max-w-5xl mx-auto">
-        <Whiteboard>
-          <div className="p-6 md:p-10">
-            <h2 className="text-2xl font-bold uppercase tracking-widest text-center mb-1 font-sans text-zinc-800">Daily Fridge Checks</h2>
-            <p className="text-center font-mono text-muted-foreground mb-8">06:45 ROUND</p>
-            
-            <div className="overflow-hidden">
-              <table className="kitchen-table w-full hidden md:table">
-                <thead>
-                  <tr>
-                    <th className="w-1/4">Unit / Limit</th>
-                    <th className="w-24 text-center">Reading °C</th>
-                    <th className="w-24 text-center">Time</th>
-                    <th className="w-24 text-center">Initials</th>
-                    <th>Note</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {FRIDGE_UNITS.map(unit => {
-                    const row = stateRows[unit.id] || { probed: false, reading: '', time: '', initials: '', note: '' };
-                    const jottedNote = notepad.entryFor('unitId', unit.id);
-                    
-                    return (
-                      <tr key={unit.id} className="group hover:bg-black/5 transition-colors">
-                        <td className="py-4 px-2">
-                          <div className="font-bold text-zinc-900">{unit.name}</div>
-                          <div className="text-xs text-zinc-500">{unit.where} • {unit.limitLabel}</div>
-                        </td>
-                        <td className="py-4 px-2">
-                          <div className="flex flex-col gap-1 items-center">
-                            <Input
-                              value={row.reading}
-                              onChange={(e) => onRowChange(unit.id, 'reading', e.target.value)}
-                              placeholder="-"
-                              className={cn("kitchen-input text-lg", !row.probed && "opacity-30")}
-                              disabled={!row.probed}
-                              style={{ fontFamily: 'cursive' }}
-                            />
-                            {jottedNote && row.reading === '' && (
-                              <button
-                                onClick={() => {
-                                  kitchenAudio.play('write');
-                                  onRowChange(unit.id, 'reading', jottedNote.value.replace(' °C', ''));
-                                }}
-                                className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded shadow-sm hover:bg-primary/20 transition-colors"
-                              >
-                                Use my note
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                        <td className="py-4 px-2">
-                          <Input
-                            value={row.time}
-                            readOnly
-                            placeholder="-"
-                            className="kitchen-input text-sm text-zinc-500"
-                            style={{ fontFamily: 'cursive' }}
-                          />
-                        </td>
-                        <td className="py-4 px-2">
-                          <Input
-                            value={row.initials}
-                            onChange={(e) => onRowChange(unit.id, 'initials', e.target.value)}
-                            maxLength={3}
-                            placeholder="-"
-                            className="kitchen-input uppercase"
-                            style={{ fontFamily: 'cursive' }}
-                          />
-                        </td>
-                        <td className="py-4 pl-4 pr-2">
-                          {(unit.actualC > unit.limitC || row.note || unit.id === 'larder-2') ? (
-                            <Input
-                              value={row.note}
-                              onChange={(e) => onRowChange(unit.id, 'note', e.target.value)}
-                              placeholder="Anything to note?"
-                              className="kitchen-input text-sm text-left w-full"
-                              style={{ fontFamily: 'cursive' }}
-                            />
-                          ) : (
-                            <span className="text-zinc-300 block py-1 text-center">-</span>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-
-              {/* Mobile Card View */}
-              <div className="flex flex-col gap-4 md:hidden">
+      <CloseUp isOpen={boardOpen} onClose={() => setBoardOpen(false)} title="Temperature board" className="max-w-5xl mx-auto p-0 sm:p-0 h-full sm:h-auto max-h-[90vh]">
+        <LogBook className="h-full sm:h-auto">
+          <LogBookHeader />
+          <div className="overflow-x-auto pb-4 hide-scrollbar">
+            <table className="log-book-table w-full hidden md:table">
+              <thead>
+                <tr>
+                  <th className="w-1/4">Equipment / Limit</th>
+                  <th className="w-24">Reading °C</th>
+                  <th className="w-24">Time</th>
+                  <th className="w-24">Initials</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
                 {FRIDGE_UNITS.map(unit => {
                   const row = stateRows[unit.id] || { probed: false, reading: '', time: '', initials: '', note: '' };
                   const jottedNote = notepad.entryFor('unitId', unit.id);
 
                   return (
-                    <div key={unit.id} className="bg-white border border-zinc-200 rounded p-4 shadow-sm flex flex-col gap-3">
-                      <div>
-                        <div className="font-bold text-zinc-900 text-lg">{unit.name}</div>
-                        <div className="text-xs text-zinc-500">{unit.where} • {unit.limitLabel}</div>
-                      </div>
-                      
-                      <div className="grid grid-cols-3 gap-3">
-                        <div>
-                          <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-1">Reading °C</label>
-                          <div className="flex flex-col gap-1 items-start">
-                            <Input
-                              value={row.reading}
-                              onChange={(e) => onRowChange(unit.id, 'reading', e.target.value)}
-                              placeholder="-"
-                              className={cn("kitchen-input text-lg text-left w-full", !row.probed && "opacity-30")}
-                              disabled={!row.probed}
-                              style={{ fontFamily: 'cursive' }}
-                            />
-                            {jottedNote && row.reading === '' && (
-                              <button
-                                onClick={() => {
-                                  kitchenAudio.play('write');
-                                  onRowChange(unit.id, 'reading', jottedNote.value.replace(' °C', ''));
-                                }}
-                                className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded shadow-sm"
-                              >
-                                Use my note
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                        <div>
-                          <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-1">Time</label>
+                    <tr key={unit.id} className="group hover:bg-[#f8fafc] transition-colors">
+                      <td className="py-2 px-2 bg-white">
+                        <div className="font-bold text-[#272b3b]">{unit.name}</div>
+                        <div className="text-xs text-slate-500 font-medium">{unit.where} • {unit.limitLabel}</div>
+                      </td>
+                      <td className="py-2 px-2 align-middle bg-white">
+                        <div className="flex flex-col gap-1 items-center justify-center">
                           <Input
-                            value={row.time}
-                            readOnly
-                            placeholder="-"
-                            className="kitchen-input text-sm text-zinc-500 text-left w-full"
+                            value={row.reading}
+                            onChange={(e) => onRowChange(unit.id, 'reading', e.target.value)}
+                            placeholder=""
+                            className={cn("log-book-input text-lg", !row.probed && "opacity-30")}
+                            disabled={!row.probed}
                             style={{ fontFamily: 'cursive' }}
                           />
+                          {jottedNote && row.reading === '' && (
+                            <button
+                              onClick={() => {
+                                kitchenAudio.play('write');
+                                onRowChange(unit.id, 'reading', jottedNote.value.replace(' °C', ''));
+                              }}
+                              className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded shadow-sm hover:bg-primary/20 transition-colors"
+                            >
+                              Use my note
+                            </button>
+                          )}
                         </div>
-                        <div>
-                          <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-1">Initials</label>
-                          <Input
-                            value={row.initials}
-                            onChange={(e) => onRowChange(unit.id, 'initials', e.target.value)}
-                            maxLength={3}
-                            placeholder="-"
-                            className="kitchen-input uppercase text-left w-full"
-                            style={{ fontFamily: 'cursive' }}
-                          />
-                        </div>
-                      </div>
-
-                      {(unit.actualC > unit.limitC || row.note || unit.id === 'larder-2') && (
-                        <div>
-                          <label className="text-[10px] font-bold uppercase text-zinc-500 block mb-1">Note</label>
+                      </td>
+                      <td className="py-2 px-2 align-middle bg-white">
+                        <Input
+                          value={row.time}
+                          readOnly
+                          placeholder=""
+                          className="log-book-input text-sm text-slate-500"
+                          style={{ fontFamily: 'cursive' }}
+                        />
+                      </td>
+                      <td className="py-2 px-2 align-middle bg-white">
+                        <Input
+                          value={row.initials}
+                          onChange={(e) => onRowChange(unit.id, 'initials', e.target.value)}
+                          maxLength={3}
+                          placeholder=""
+                          className="log-book-input uppercase text-lg"
+                          style={{ fontFamily: 'cursive' }}
+                        />
+                      </td>
+                      <td className="py-2 px-2 align-middle bg-white">
+                        {(unit.actualC > unit.limitC || row.note || unit.id === 'larder-2') ? (
                           <Input
                             value={row.note}
                             onChange={(e) => onRowChange(unit.id, 'note', e.target.value)}
                             placeholder="Anything to note?"
-                            className="kitchen-input text-sm text-left w-full"
+                            className="log-book-input text-sm text-left w-full pl-2"
                             style={{ fontFamily: 'cursive' }}
                           />
-                        </div>
-                      )}
-                    </div>
+                        ) : (
+                          <span className="text-slate-300 block py-1 text-center font-mono opacity-50">-</span>
+                        )}
+                      </td>
+                    </tr>
                   );
                 })}
-              </div>
-            </div>
+              </tbody>
+            </table>
           </div>
-        </Whiteboard>
+
+          {/* Mobile Card View (Adaptation for small screens to maintain usability but keep logbook style) */}
+          <div className="flex flex-col gap-4 md:hidden pb-10">
+            {FRIDGE_UNITS.map(unit => {
+              const row = stateRows[unit.id] || { probed: false, reading: '', time: '', initials: '', note: '' };
+              const jottedNote = notepad.entryFor('unitId', unit.id);
+
+              return (
+                <div key={unit.id} className="bg-white border-2 border-[#272b3b] rounded-sm p-4 shadow-sm flex flex-col gap-4">
+                  <div className="border-b-2 border-slate-200 pb-2">
+                    <div className="font-bold text-[#272b3b] text-lg uppercase tracking-tight">{unit.name}</div>
+                    <div className="text-xs text-slate-500 font-bold">{unit.where} • {unit.limitLabel}</div>
+                  </div>
+
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="border-r-2 border-slate-200 pr-2">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Reading °C</label>
+                      <div className="flex flex-col gap-1 items-start">
+                        <Input
+                          value={row.reading}
+                          onChange={(e) => onRowChange(unit.id, 'reading', e.target.value)}
+                          placeholder="-"
+                          className={cn("log-book-input text-lg text-left pl-0", !row.probed && "opacity-30")}
+                          disabled={!row.probed}
+                          style={{ fontFamily: 'cursive' }}
+                        />
+                        {jottedNote && row.reading === '' && (
+                          <button
+                            onClick={() => {
+                              kitchenAudio.play('write');
+                              onRowChange(unit.id, 'reading', jottedNote.value.replace(' °C', ''));
+                            }}
+                            className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded shadow-sm"
+                          >
+                            Use my note
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div className="border-r-2 border-slate-200 pr-2">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Time</label>
+                      <Input
+                        value={row.time}
+                        readOnly
+                        placeholder="-"
+                        className="log-book-input text-sm text-slate-500 text-left pl-0"
+                        style={{ fontFamily: 'cursive' }}
+                      />
+                    </div>
+                    <div>
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Initials</label>
+                      <Input
+                        value={row.initials}
+                        onChange={(e) => onRowChange(unit.id, 'initials', e.target.value)}
+                        maxLength={3}
+                        placeholder="-"
+                        className="log-book-input uppercase text-left pl-0"
+                        style={{ fontFamily: 'cursive' }}
+                      />
+                    </div>
+                  </div>
+
+                  {(unit.actualC > unit.limitC || row.note || unit.id === 'larder-2') && (
+                    <div className="border-t-2 border-slate-200 pt-2">
+                      <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Note</label>
+                      <Input
+                        value={row.note}
+                        onChange={(e) => onRowChange(unit.id, 'note', e.target.value)}
+                        placeholder="Anything to note?"
+                        className="log-book-input text-sm text-left w-full pl-0"
+                        style={{ fontFamily: 'cursive' }}
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </LogBook>
       </CloseUp>
     </div>
   );

@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useDraggable, useDropZone, HoldToRead } from '../../kitchen/interact';
 import { TRAY_DEPTH_MM, type ChillActions } from './types';
+import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
 
 const BEEF = 'linear-gradient(to top, #3f1f0f, #7a4222 70%, #8f5330)';
 
@@ -173,16 +174,14 @@ function ProbeTool({ locked, inTray }: { locked: boolean; inTray: number | null 
       <div
         {...props}
         aria-label={`${L.probe}: ${L.probeHint}`}
-        className={cn('relative flex h-24 w-12 flex-col items-center outline-none focus-visible:ring-4 focus-visible:ring-primary rounded-lg', isLifted && 'z-50', locked && 'opacity-60')}
+        className={cn('relative flex flex-col items-center outline-none focus-visible:ring-4 focus-visible:ring-primary rounded-lg', isLifted && 'z-50', locked && 'opacity-60')}
         style={props.style}
         data-testid="probe"
       >
-        <div className="h-9 w-7 rounded-md border border-zinc-500 bg-gradient-to-b from-zinc-100 to-zinc-400 shadow-md">
-          <div className="mx-auto mt-1.5 h-3 w-4 rounded-sm bg-zinc-800" />
-        </div>
-        <div className="h-14 w-1 rounded-b-full bg-gradient-to-b from-zinc-300 to-zinc-500" />
+        <AnalogueThermometer value={null} className="w-16 h-20 pointer-events-none" />
+        <div className="h-10 w-1.5 -mt-3 rounded-b-full bg-gradient-to-b from-zinc-300 to-zinc-500 shadow-sm pointer-events-none" />
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">
+      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center max-w-[80px]">
         {inTray !== null ? `${L.probe.replace('The temperature ', '')} in tray ${inTray + 1}` : L.probe.replace('The temperature ', 'Temperature ')}
       </span>
     </div>
@@ -239,15 +238,13 @@ function SectionProbe() {
     <div
       {...props}
       aria-label={`${L.probe}: ${L.probeHint}`}
-      className={cn('relative flex h-28 w-14 flex-col items-center rounded-lg outline-none focus-visible:ring-4 focus-visible:ring-primary', isLifted && 'z-50')}
+      className={cn('relative flex flex-col items-center rounded-lg outline-none focus-visible:ring-4 focus-visible:ring-primary cursor-grab active:cursor-grabbing', isLifted && 'z-50')}
       style={props.style}
       data-testid="probe-in-hand"
       autoFocus
     >
-      <div className="h-10 w-8 rounded-md border border-zinc-500 bg-gradient-to-b from-zinc-100 to-zinc-400 shadow-md">
-        <div className="mx-auto mt-2 h-3 w-5 rounded-sm bg-zinc-800" />
-      </div>
-      <div className="h-[4.25rem] w-1 rounded-b-full bg-gradient-to-b from-zinc-300 to-zinc-500" />
+      <AnalogueThermometer value={null} className="w-20 h-24 pointer-events-none" clip={false} />
+      <div className="h-[4.25rem] w-1.5 -mt-3 rounded-b-full bg-gradient-to-b from-zinc-300 to-zinc-500 shadow-sm pointer-events-none" />
     </div>
   );
 }

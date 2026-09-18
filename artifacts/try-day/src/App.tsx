@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useEffect } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ErrorBoundary } from '@/components/error-boundary';
 import { Toaster } from '@/components/ui/toaster';
@@ -12,6 +12,8 @@ import ChillTask from '@/pages/tasks/chill-the-event-batch';
 import DietaryTask from '@/pages/tasks/check-the-dietary-list';
 import HandoverKitchenTask from '@/pages/tasks/hand-the-kitchen-on';
 import { ProgressProvider } from '@/lib/progress-store';
+import { isTestMode } from '@/lib/simulation';
+import { LearningDesignerPanel } from '@/components/learning-designer-panel';
 import { ExperienceViewportProvider } from '@/lib/experience-viewport';
 import {
   Route,
@@ -51,7 +53,9 @@ function App() {
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <ProgressProvider>
             <ExperienceViewportProvider>
+              <TestModeNavigationGuard />
               <Router />
+              <LearningDesignerPanel />
             </ExperienceViewportProvider>
           </ProgressProvider>
         </WouterRouter>
@@ -59,6 +63,17 @@ function App() {
       </TooltipProvider>
     </QueryClientProvider>
   );
+}
+
+function TestModeNavigationGuard() {
+  const [location, setLocation] = useLocation();
+  useEffect(() => {
+    if (typeof window !== 'undefined' && isTestMode() && !location.includes('testMode=1')) {
+      const separator = location.includes('?') ? '&' : '?';
+      setLocation(`${location}${separator}testMode=1`);
+    }
+  }, [location, setLocation]);
+  return null;
 }
 
 export default App;
