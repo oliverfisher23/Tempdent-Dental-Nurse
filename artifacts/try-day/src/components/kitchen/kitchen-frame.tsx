@@ -27,6 +27,10 @@ interface KitchenFrameProps {
   /** What the student should do next, in one short line ("Portion the beef into the trays"). */
   now?: string;
   guide?: StepGuide;
+  /** A dedicated workspace uses the stage rather than room navigation. */
+  focusedWorkspace?: boolean;
+  /** Additional interaction gate; the simulation evaluator remains authoritative. */
+  readyToContinue?: boolean;
   /** A choice the student is being asked to make, shown under the words in the dialogue bar. */
   choices?: ReactNode;
 }
@@ -76,7 +80,7 @@ function HeaderTool({
   );
 }
 
-function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFrameProps) {
+function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorkspace = false, readyToContinue = true }: KitchenFrameProps) {
   const task = getTask(id);
   const { progress, evaluations, completeTask, isUnlocked, currentTaskId, setClock } = useProgress();
   const { place, light, mapOpen, pendingAction, openWorkspace, openNotepad, openMap } = useKitchen();
@@ -93,6 +97,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFram
   const finished = progress.completed.includes(id);
   const showComplication = finished || complicationRevealed(id, progress.tasks);
   const evaluation = evaluations[id];
+  const ready = evaluation.done && readyToContinue;
   const stepNumber = taskIndex(id) + 1;
 
   useLayoutEffect(() => {
@@ -137,6 +142,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFram
   if (!unlocked) return null;
 
   const handleNext = () => {
+    if (!ready) return;
     kitchenAudio.play('complete');
     if (completeTask(id)) {
       const next = nextTaskId(id);
@@ -185,11 +191,11 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFram
                   badge={ticksCompleted < totalTicks ? ticksCompleted : undefined}
                   onClick={() => { kitchenAudio.play('page'); setJobCardOpen(true); }}
                 />
-                <HeaderTool
+                {!focusedWorkspace && <HeaderTool
                   label="Open the map"
                   icon={<MapIcon className="w-5 h-5" />}
                   onClick={() => { kitchenAudio.play('page'); openMap(); }}
-                />
+                />}
                 <HeaderTool
                   label="Open your notebook"
                   icon={<BookOpen className="w-5 h-5" />}
@@ -203,7 +209,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFram
               <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               <span className="font-mono font-bold text-sm">{progress.clock}</span>
             </div>
-            <div className="hidden lg:flex items-center gap-2 px-3 py-1 bg-white rounded shadow-sm border border-border">
+            <div className={cn("hidden items-center gap-2 px-3 py-1 bg-white rounded shadow-sm border border-border", !focusedWorkspace && "lg:flex")}>
               <MapPin className="w-4 h-4 text-muted-foreground" />
               <span className="font-medium text-sm max-w-[140px] truncate">
                 {PLACES[place].name}
@@ -225,7 +231,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFram
         <div data-step-navigation>
           <StepGuideBar
             guide={guide}
-            done={evaluation.done}
+            done={ready}
             lastTask={!nextTaskId(id)}
             busy={mapOpen || !!pendingAction}
             onNext={handleNext}
@@ -264,8 +270,8 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFram
         </AnimatePresence>
 
         {/* The person you are working with, and what they say */}
-        {!finished && <CharacterSpot line={dialogue} />}
-        {!finished && dialogue && <DialogueBar line={dialogue} choices={choices} onHeight={onDialogueHeight} />}
+        {!finished && !focusedWorkspace && <CharacterSpot line={dialogue} />}
+        {!finished && !focusedWorkspace && dialogue && <DialogueBar line={dialogue} choices={choices} onHeight={onDialogueHeight} />}
 
         {/* Read-only blocker */}
         {finished && (
@@ -358,7 +364,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices }: KitchenFram
 
                 {!finished && (
                   <div className="p-4 border-t border-border bg-white shrink-0">
-                    {evaluation.done ? (
+                    {ready ? (
                       <div className="space-y-3">
                         <p className="text-xs font-medium text-primary bg-primary/10 p-2 rounded border border-primary/20">
                           {task.whatHappensNext}

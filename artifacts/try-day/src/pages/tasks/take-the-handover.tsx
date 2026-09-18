@@ -1,119 +1,111 @@
-import { useEffect, useRef, useState } from "react";
-import { FRIDGE_UNITS, OVERNIGHT_LOG, HANDOVER_LINES, READING_TOLERANCE_C, Line } from "@/content/activities";
-import { useProgress } from "@/lib/progress-store";
-import { addMinutes, within } from "@/lib/simulation";
-import { kitchenAudio } from "@/lib/audio";
-import { getHandoverGuide } from "@/content/guides/handover-delivery";
-
-import { KitchenFrame } from "@/components/kitchen/kitchen-frame";
-import { PassScene } from "@/components/scenes/handover/pass";
-import { CorridorScene } from "@/components/scenes/handover/corridor";
+import { FRIDGE_UNITS, OVERNIGHT_LOG } from '@/content/activities';
+import { useProgress } from '@/lib/progress-store';
+import { handoverLogRead, handoverRoundSaved, handoverRowComplete, handoverRowSaved } from '@/lib/handover-round';
+import { kitchenAudio } from '@/lib/audio';
+import { getHandoverGuide } from '@/content/guides/handover-delivery';
+import { KitchenFrame } from '@/components/kitchen/kitchen-frame';
+import { HandoverRound } from '@/components/scenes/handover/round';
+import type { HandoverRoundProps } from '@/components/scenes/handover/round-types';
 
 export default function HandoverTask() {
-  const { progress, updateTask } = useProgress();
-  const state = progress.tasks["take-the-handover"];
-  
-  const [dialogue, setDialogue] = useState<Line>(HANDOVER_LINES.porterOpening);
-  
-  const dialogueTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  
-  useEffect(() => () => { if (dialogueTimer.current) clearTimeout(dialogueTimer.current); }, []);
+  const { progress, updateTask, advanceClock } = useProgress();
+  const state = progress.tasks['take-the-handover'];
+  const frozen = progress.completed.includes('take-the-handover');
 
-  // Time starts at 06:48 when they start probing on the board
-  const baseTime = "06:48";
-  
-  const handleReadLog = (entryTime: string) => {
-    if (!state.logRead.includes(entryTime)) {
-      updateTask("take-the-handover", (prev) => ({
-        ...prev,
-        logRead: [...prev.logRead, entryTime]
-      }));
-    }
-    // Check if this was the last one
-    const newLogRead = [...new Set([...state.logRead, entryTime])];
-    if (newLogRead.length >= OVERNIGHT_LOG.length) {
-      setDialogue(HANDOVER_LINES.porterLeaving);
-      if (dialogueTimer.current) clearTimeout(dialogueTimer.current);
-      dialogueTimer.current = setTimeout(() => {
-        setDialogue(HANDOVER_LINES.marcusOpening);
-      }, 3500);
-    }
-  };
-
-  const handleRowChange = (unitId: string, field: "reading" | "initials" | "note", value: string) => {
-    const prev = state;
-    const row = prev.rows[unitId] || { reading: '', time: '', initials: '', note: '', probed: false };
-    const newRow = { ...row, [field]: value };
-    
-    if (field === "reading" && value.length > 0 && !row.time) {
-      const filledCount = Object.values(prev.rows).filter(r => r.time).length;
-      newRow.time = addMinutes(baseTime, filledCount * 2);
-      newRow.initials = progress.initials;
-    }
-
-    let nextDialogue = dialogue;
-
-    if (field === "reading" && value.length >= 3) {
-      const unit = FRIDGE_UNITS.find(u => u.id === unitId);
-      if (unit && row.probed) {
-        const isRight = within(value, unit.actualC, READING_TOLERANCE_C);
-        if (!isRight) {
-           nextDialogue = HANDOVER_LINES.marcusOnWrongReading;
-           kitchenAudio.play('wrong');
-        } else {
-           nextDialogue = dialogue.text === HANDOVER_LINES.marcusOnWrongReading.text
-               ? (unitId === "larder-2" ? HANDOVER_LINES.marcusOnWarmReading : HANDOVER_LINES.marcusOpening)
-               : dialogue;
-           
-           const allOthersFilled = FRIDGE_UNITS.filter(u => u.id !== unitId).every(u => {
-             const r = prev.rows[u.id];
-             return r?.reading && r?.time && r?.initials && within(r.reading, u.actualC, READING_TOLERANCE_C);
-           });
-           const noteOnFlagged = unitId === "larder-2" ? value.length > 0 : (prev.rows["larder-2"]?.note?.length || 0) > 8;
-           if (allOthersFilled && isRight && noteOnFlagged) {
-             nextDialogue = HANDOVER_LINES.marcusDone;
-           }
-        }
-      }
-    }
-
-    if (field === "note" && value.length > 8 && unitId === "larder-2") {
-      const allFilled = FRIDGE_UNITS.every(u => {
-        const r = u.id === unitId ? newRow : prev.rows[u.id];
-        return r?.reading && r?.time && r?.initials && within(r.reading, u.actualC, READING_TOLERANCE_C);
-      });
-      if (allFilled) nextDialogue = HANDOVER_LINES.marcusDone;
-    }
-
-    if (nextDialogue !== dialogue) {
-      setDialogue(nextDialogue);
-    }
-
-    updateTask("take-the-handover", (old) => ({ ...old, rows: { ...old.rows, [unitId]: newRow } }));
-  };
-
-  const handleProbeSettled = (unitId: string) => {
-    updateTask("take-the-handover", (prev) => ({
+  const handleReadLog = () => {
+    if (frozen || handoverLogRead(state)) return;
+    updateTask('take-the-handover', prev => ({
       ...prev,
-      rows: { ...prev.rows, [unitId]: { ...(prev.rows[unitId] || { reading: '', time: '', initials: '', note: '' }), probed: true } }
+      logRead: OVERNIGHT_LOG.map(entry => entry.time),
     }));
+    advanceClock(3);
+    kitchenAudio.play('page');
   };
 
-  // Catch the warm reading dialogue if they open Larder 2
-  useEffect(() => {
-    if (state.rows['larder-2']?.probed && !state.rows['larder-2']?.reading) {
-       setDialogue(HANDOVER_LINES.marcusOnWarmReading);
-    }
-  }, [state.rows]);
+  const handleProbe = (unitId: string) => {
+    if (frozen || !handoverLogRead(state) || !FRIDGE_UNITS.some(unit => unit.id === unitId)) return;
+    updateTask('take-the-handover', prev => {
+      const row = prev.rows[unitId];
+      return {
+        ...prev,
+        rows: {
+          ...prev.rows,
+          [unitId]: {
+            ...row,
+            probed: true,
+            time: row.time || progress.clock,
+            initials: row.initials || progress.initials,
+            recorded: false,
+          },
+        },
+      };
+    });
+  };
+
+  const handleRowChange: HandoverRoundProps['onRowChange'] = (unitId, field, value) => {
+    if (frozen || !FRIDGE_UNITS.some(unit => unit.id === unitId)) return;
+    updateTask('take-the-handover', prev => {
+      const row = prev.rows[unitId];
+      if (!row?.probed) return prev;
+      // Older rounds could have a settled probe but no board entry yet. Stamp
+      // their first written entry too, rather than leaving a read-only time blank.
+      const measurementDetails = row.time
+        ? {}
+        : { time: progress.clock, initials: row.initials || progress.initials };
+      return {
+        ...prev,
+        rows: {
+          ...prev.rows,
+          [unitId]: { ...row, ...measurementDetails, [field]: value, recorded: false },
+        },
+      };
+    });
+  };
+
+  const handleSaveClose = (unitId: string): boolean => {
+    const row = state.rows[unitId];
+    if (frozen || !handoverLogRead(state) || !handoverRowComplete(unitId, row)) return false;
+    const wasSaved = handoverRowSaved(unitId, row);
+    updateTask('take-the-handover', prev => {
+      const current = prev.rows[unitId];
+      if (!handoverRowComplete(unitId, current)) return prev;
+      return {
+        ...prev,
+        rows: {
+          ...prev.rows,
+          [unitId]: {
+            ...current,
+            reading: current.reading.trim(),
+            initials: current.initials.trim(),
+            note: current.note.trim(),
+            recorded: true,
+          },
+        },
+      };
+    });
+    if (!wasSaved) advanceClock(2);
+    kitchenAudio.play('confirm');
+    return true;
+  };
 
   return (
     <KitchenFrame
       id="take-the-handover"
       guide={getHandoverGuide(state)}
-      dialogue={dialogue}
+      dialogue={null}
+      focusedWorkspace
+      readyToContinue={handoverRoundSaved(state)}
       scenes={{
-        pass: <PassScene onLogRead={handleReadLog} logRead={state.logRead} />,
-        corridor: <CorridorScene stateRows={state.rows} onRowChange={handleRowChange} onProbeSettled={handleProbeSettled} logRead={state.logRead} />
+        pass: (
+          <HandoverRound
+            state={state}
+            initials={progress.initials}
+            onReadLog={handleReadLog}
+            onProbe={handleProbe}
+            onRowChange={handleRowChange}
+            onSaveClose={handleSaveClose}
+          />
+        ),
       }}
     />
   );

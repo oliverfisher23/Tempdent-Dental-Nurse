@@ -78,6 +78,8 @@ export interface BoardRow {
   time: string;
   initials: string;
   note: string;
+  /** False while editing; true once the learner saves the check and closes the door. */
+  recorded?: boolean;
 }
 
 export interface HandoverState {

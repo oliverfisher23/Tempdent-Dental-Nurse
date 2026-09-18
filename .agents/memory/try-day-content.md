@@ -16,6 +16,9 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
   **Why:** no host capability handshake has been verified. Do not invent an LMS resize/launch message or use top-window navigation as a fullscreen substitute.
   **How to apply:** use user-initiated browser fullscreen when permitted; retain a usable in-frame path when unavailable. Keep host permissions under LMS control.
 - Verification approach that worked: drive each task end to end with playwright-core (chromium at `/repl/tools/bin/chromium`, `--no-sandbox`) against the running dev server, seeding localStorage to reach later tasks. Screenshots alone missed wiring bugs.
+- For timed interactions, keep the input held until the UI reports completion rather than assuming a short fixed delay.
+  **Why:** early releases once produced matching mouse and keyboard failures that looked like broken probe wiring, but the control was correctly rejecting incomplete measurements.
+  **How to apply:** await the settled state or enabled reading field before releasing; verify early release separately as an expected negative case.
 - The frozen-task contract is enforced in the progress store itself (task updates, jots and unjots for a completed task are no-ops) and the finished scene is made `inert`; do not rely on overlay z-index or hidden buttons to protect signed-off paperwork.
   **Why:** a review found the read-only blocker shared `z-40` with the HUD, so the map and notepad still worked and late timers could rewrite a completed task.
   **How to apply:** any new write path in the store must check `prev.completed` first; any new overlay/HUD control must be hidden when `finished`.
@@ -33,3 +36,6 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Distinguish navigating to the work from doing the work. Guide students directly to the next workspace, but leave the measuring, pouring, decisions and signatures to them.
   **Why:** the user wanted less click-through activity, then found the immersive version too difficult to navigate. Hiding where to go is not the intended learning challenge.
   **How to apply:** preserve practical interactions and validation while removing mandatory map searches, repeated paperwork trips and automatic tool interruptions.
+- Keep the fridge round focused on one appliance: measure and write its final record together, then deliberately close it before moving on. Use task-relevant photorealistic contents.
+  **Why:** the user explicitly approved this alternative to visiting all appliances first and transferring notebook readings later; the full-screen fridge is the intended focus.
+  **How to apply:** keep the notebook optional, never advance on a probe result alone or fill in the learner's reading, and assemble the final board from saved checks without repeat transcription.

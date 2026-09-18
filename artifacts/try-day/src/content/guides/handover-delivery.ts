@@ -9,100 +9,46 @@ import {
 import type { StepGuide } from '@/content/step-guide';
 import type { DeliveryState, HandoverState } from '@/lib/simulation';
 import { parseNumber, within } from '@/lib/simulation';
-
-const handoverTotal = 1 + FRIDGE_UNITS.length * 2 + 1;
+import { handoverLogRead, nextHandoverUnit } from '@/lib/handover-round';
 
 export function getHandoverGuide(state: HandoverState): StepGuide {
-  if (state.logRead.length < OVERNIGHT_LOG.length) {
+  if (!handoverLogRead(state)) {
     return {
       id: 'handover-log',
       step: 1,
-      total: handoverTotal,
-      title: 'Read the overnight log',
-      instruction: 'Read all four entries and remember which fridge was left open.',
-      actionLabel: 'Open the log',
+      total: 3,
+      title: 'Take the handover',
+      instruction: 'Read the overnight log. Look out for the fridge left open, then start your round.',
+      actionLabel: 'View the log',
       place: 'pass',
-      action: 'handover:log',
+      action: 'handover:workspace',
     };
   }
 
-  const unmeasured = FRIDGE_UNITS.find((unit) => !state.rows[unit.id]?.probed);
-  if (unmeasured) {
-    const index = FRIDGE_UNITS.indexOf(unmeasured);
+  const nextUnit = nextHandoverUnit(state);
+  if (nextUnit) {
+    const index = FRIDGE_UNITS.indexOf(nextUnit);
     return {
-      id: `handover-measure-${unmeasured.id}`,
-      step: 2 + index,
-      total: handoverTotal,
-      title: `Take the temperature of ${unmeasured.name}`,
-      instruction: 'Put the temperature probe in, wait for it to settle, then write the reading in your notebook.',
-      actionLabel: `Open ${unmeasured.name}`,
-      place: 'corridor',
-      action: `handover:fridge:${unmeasured.id}`,
-    };
-  }
-
-  const wrongReading = FRIDGE_UNITS.find((unit) => {
-    const reading = state.rows[unit.id]?.reading ?? '';
-    return reading.trim() !== '' && !within(reading, unit.actualC, READING_TOLERANCE_C);
-  });
-  if (wrongReading) {
-    const index = FRIDGE_UNITS.indexOf(wrongReading);
-    return {
-      id: `handover-recheck-${wrongReading.id}`,
-      step: 2 + index,
-      total: handoverTotal,
-      title: `Check ${wrongReading.name} again`,
-      instruction: 'Take the temperature again, then use the number shown on the probe.',
-      actionLabel: `Open ${wrongReading.name}`,
-      place: 'corridor',
-      action: `handover:fridge:${wrongReading.id}`,
-    };
-  }
-
-  const unfinishedRow = FRIDGE_UNITS.find((unit) => {
-    const row = state.rows[unit.id];
-    return !row
-      || !within(row.reading, unit.actualC, READING_TOLERANCE_C)
-      || row.time.trim() === ''
-      || row.initials.trim() === '';
-  });
-  if (unfinishedRow) {
-    const index = FRIDGE_UNITS.indexOf(unfinishedRow);
-    return {
-      id: `handover-board-${unfinishedRow.id}`,
-      step: 2 + FRIDGE_UNITS.length + index,
-      total: handoverTotal,
-      title: `Write up ${unfinishedRow.name}`,
-      instruction: 'Write the probe reading on the board. Check that the time and your initials are there.',
-      actionLabel: 'Open the board',
-      place: 'corridor',
-      action: 'handover:board',
-    };
-  }
-
-  const warmUnit = FRIDGE_UNITS.find((unit) => unit.id === 'larder-2')!;
-  if ((state.rows[warmUnit.id]?.note ?? '').trim().length < 8) {
-    return {
-      id: 'handover-warm-note',
-      step: handoverTotal,
-      total: handoverTotal,
-      title: 'Write what happened with the warm fridge',
-      instruction: 'Next to Larder fridge 2, write that the food was moved and the door was shut.',
-      actionLabel: 'Open the board',
-      place: 'corridor',
-      action: 'handover:board',
+      id: `handover-check-${nextUnit.id}`,
+      step: 2,
+      total: 3,
+      title: `Check ${index + 1} of ${FRIDGE_UNITS.length}: ${nextUnit.name}`,
+      instruction: 'Take the temperature, complete this record, then close the fridge to move on.',
+      actionLabel: state.rows[nextUnit.id]?.probed ? 'Continue this check' : `Open ${nextUnit.name}`,
+      place: 'pass',
+      action: 'handover:workspace',
     };
   }
 
   return {
     id: 'handover-finished',
-    step: handoverTotal,
-    total: handoverTotal,
-    title: 'Ready to sign off',
-    instruction: 'The overnight log and every fridge check are finished.',
-    actionLabel: 'Open the board',
-    place: 'corridor',
-    action: 'handover:board',
+    step: 3,
+    total: 3,
+    title: 'Review the temperature board',
+    instruction: 'All seven checks are saved. Review your records, then move on to the next job.',
+    actionLabel: 'Review your checks',
+    place: 'pass',
+    action: 'handover:workspace',
   };
 }
 
