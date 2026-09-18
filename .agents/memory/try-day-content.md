@@ -48,6 +48,9 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Fridge notes should come from inspecting clickable details in the appliance, not from a static block that gives the answer away.
   **Why:** the user wants Task 1 to feel interactive and asked for context learners can reveal before writing their notes.
   **How to apply:** use short, conversational findings; let the learner turn those findings into their own note rather than auto-filling it.
+- Fridge clips need not visually demonstrate every supplied inspection finding; accepted visual limitations alone are not a reason to replace them or rewrite the clues.
+  **Why:** the content owner explicitly approved simulation illustrations after being told about non-visible tactile checks, unclear labels and ingredients, and the opening motion in the clips named closed.
+  **How to apply:** preserve the distinction between illustrative media and supplied scenario evidence. Seek a new decision for changed content, rather than reopening the same accepted limitations unprompted.
 - A planned learning complication must not require violating the task's own preparation instruction. Capacity and authored comparison evidence need joint employer approval, not an isolated numerical correction.
   **Why:** preserving a scripted cooling complication is not justification for teaching contradictory preparation; fixed example readings are not physical predictions for arbitrary learner choices.
   **How to apply:** keep learner portioning and recorded comparison evidence distinct in an authorised prototype; never attribute the fixed case temperatures to arbitrary learner fills. Employer review must reconcile tray supply, whole-batch accounting and protected wording before learner rollout.

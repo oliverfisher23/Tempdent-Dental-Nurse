@@ -5,6 +5,18 @@ The clips in `videos/` are user-supplied simulation media from
 site photographs, or evidence of an actual art'otel kitchen. Appliance names,
 temperatures, limits, and findings remain defined by the activity.
 
+## Learner-use approval
+
+On 2026-09-18, the user confirmed they were authorised to clear all 14 clips
+for the intended learner use and approved all seven closed/interior pairings
+as simulation illustrations, with the reviewed limitations. No replacements
+or additional conditions were requested.
+
+See [the approval record](APPROVAL.md) for the exact confirmation, each pair's
+matching findings, accepted limitations, and the approved asset snapshot.
+This is content approval only, not authorisation to publish or change the
+activity's readings, completion rules, or approved safety guidance.
+
 ## Source mapping
 
 | Appliance | State | Exact archive path |
