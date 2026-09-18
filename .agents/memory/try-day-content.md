@@ -3,15 +3,18 @@ name: Try-day content conventions
 description: Non-obvious rules for the Marriott try-day simulation: spec copy, brand assets, completion contract, host integration.
 ---
 
-- The spec (`mechanic.json`) wording is client-signed. Do not paraphrase it even when it reads oddly; wrap UI labels around it instead. The shell renders `doneWhen` and `complication` verbatim and uses per-clause checklist labels only as progress ticks underneath.
+- The spec (`mechanic.json`) task wording is client-signed. Do not paraphrase jobs, `doneWhen` or complications; wrap UI labels around them instead. Employer/workplace branding may change when the user explicitly rebrands the experience.
   **Why:** Springpod/Marriott approved that register; edits would need re-approval. A review round flagged paraphrased done-when labels as a defect.
   **How to apply:** new copy goes in `activities.ts` (dialogue, labels), never by editing the spec strings.
 - Completion contract: a task in `completed` is frozen read-only (browser Back cannot undo signed-off paperwork), tasks unlock strictly in order, and done-when checks validate against the simulated truth (readings, weights, quantities, allergen rows, board note content), not just "field is non-empty".
   **Why:** the gate posts `gate:complete` to the host; anything that lets a student bypass or later invalidate a task breaks that contract.
   **How to apply:** put any new rule in `lib/simulation.ts`, keep pages render-only, and make sure every wrong turn has a way back (a review found an unrecoverable tray placement once).
-- The "Be" logo SVG the client supplied is the full "Be | Marriott Bonvoy" lock-up (coral script + black wordmark). It only works on light backgrounds and must never be recoloured (no `invert`/`brightness` filters).
-  **Why:** People Brand guide rules; the first design pass inverted it on the dark-blue close page and had to be redone.
-  **How to apply:** on dark floods, put the logo in a cream header strip; ask the client for a reversed version if one is ever needed.
+- art'otel is the current brand. The supplied logo is the white mark on a black rectangle; preserve that treatment rather than recolouring it.
+  **Why:** the user supplied the 2026 art'otel guidelines and explicitly replaced the previous Marriott/Be branding.
+  **How to apply:** use black/white with a restrained vivid-red accent, editorial serif headings, clear sans body copy, left alignment, and the voice principles “Clever. Cultured. Clear.”
+- Keep the existing internal mechanic/gate IDs when changing visible branding.
+  **Why:** those IDs are used for saved progress and host completion messages; changing them would be an integration migration, not a visual rebrand.
+  **How to apply:** update visible employer, workplace, metadata and assets while preserving storage/event identifiers unless a migration is explicitly requested.
 - Host integration (`postMessage` with `gate:complete`) is an assumed contract; the Springpod App Registry MCP server was unreachable when built (Sept 2026). Confirm the event shape before the client embeds the iframe.
   **Why:** no host capability handshake has been verified. Do not invent an LMS resize/launch message or use top-window navigation as a fullscreen substitute.
   **How to apply:** use user-initiated browser fullscreen when permitted; retain a usable in-frame path when unavailable. Keep host permissions under LMS control.

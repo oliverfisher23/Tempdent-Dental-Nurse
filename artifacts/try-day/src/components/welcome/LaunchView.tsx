@@ -6,7 +6,7 @@ import { useExperienceViewport } from "@/lib/experience-viewport";
 import { MECHANIC } from "@/lib/simulation";
 import { motion, useReducedMotion } from "framer-motion";
 import { WELCOME_COPY } from "@/content/welcome";
-import logoImg from "@/assets/be-logo.svg";
+import logoImg from "@/assets/artotel-logo.png";
 
 export function LaunchView() {
   const { expand, expanding } = useExperienceViewport();
@@ -44,8 +44,8 @@ export function LaunchView() {
 
       <div className="relative z-10 p-6 md:p-10 w-full max-w-6xl mx-auto flex flex-col min-h-[100dvh]">
         <header className="mb-auto flex items-center justify-between">
-          <div className="bg-background px-4 py-3">
-            <img src={logoImg} alt="Be | Marriott Bonvoy" className="h-8 md:h-9" />
+          <div className="bg-foreground px-5 py-4 border border-border/20 shadow-xl">
+            <img src={logoImg} alt="art'otel" className="h-6 md:h-7 object-contain" />
           </div>
         </header>
 

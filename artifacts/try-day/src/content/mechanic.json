@@ -6,11 +6,11 @@
     "mechanic": "try-day-app",
     "version": 1,
     "id": "mar-try-day",
-    "employer": "Marriott International",
+    "employer": "art'otel",
     "locale": "en-GB",
     "frame": {
       "role": "Trainee sous chef, main kitchen",
-      "workplace": "Courtyard by Marriott Sandy Park, Exeter: the main kitchen behind Kitchen & Bistro, the events kitchen beside it, and the walk-in fridges off the back corridor",
+      "workplace": "art'otel: the main kitchen behind the restaurant, the events kitchen beside it, and the walk-in fridges off the back corridor",
       "shift": {
         "start": "06:45",
         "end": "15:00",

@@ -11,7 +11,7 @@ Use the app's real published URL in place of `APP_URL`:
 ```html
 <iframe
   src="APP_URL"
-  title="Marriott Sous Chef Try Day"
+  title="art'otel Sous Chef Try Day"
   width="100%"
   height="640"
   style="display:block;border:0"

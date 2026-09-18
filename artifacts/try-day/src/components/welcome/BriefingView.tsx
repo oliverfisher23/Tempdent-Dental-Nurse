@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { kitchenAudio } from "@/lib/audio";
 import { WELCOME_COPY } from "@/content/welcome";
 import { PEOPLE } from "@/content/kitchen";
-import logoImg from "@/assets/be-logo.svg";
+import logoImg from "@/assets/artotel-logo.png";
 
 interface BriefingViewProps {
   name: string;
@@ -60,12 +60,12 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
 
   return (
     <div data-testid="welcome-briefing" className="min-h-[100dvh] bg-background flex flex-col">
-      <header className="px-6 md:px-10 py-5 flex items-center justify-between border-b border-border bg-white z-10 sticky top-0">
+      <header className="px-6 md:px-10 py-5 flex items-center justify-between border-b border-border bg-foreground text-primary-foreground z-10 sticky top-0">
         <div className="flex items-center gap-4">
-          <img src={logoImg} alt="Be | Marriott Bonvoy" className="h-6 md:h-8" />
-          <span className="text-sm font-bold text-muted-foreground border-l border-border pl-4 hidden sm:block">{WELCOME_COPY.subtitle}</span>
+          <img src={logoImg} alt="art'otel" className="h-6 md:h-8 object-contain" />
+          <span className="text-sm font-bold text-white/70 border-l border-white/20 pl-4 hidden sm:block">{WELCOME_COPY.subtitle}</span>
         </div>
-        <Button variant="ghost" size="sm" onClick={() => void collapse()} aria-label={WELCOME_COPY.returnButton} className="text-muted-foreground hover:text-foreground">
+        <Button variant="ghost" size="sm" onClick={() => void collapse()} aria-label={WELCOME_COPY.returnButton} className="text-white/70 hover:text-white hover:bg-white/10">
           <Minimize2 className="w-4 h-4 mr-2" />
           <span className="hidden sm:inline">{WELCOME_COPY.returnButton}</span>
           <span className="sm:hidden">{WELCOME_COPY.close}</span>

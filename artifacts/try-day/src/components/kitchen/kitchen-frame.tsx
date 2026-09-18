@@ -15,7 +15,7 @@ import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, Clipboard
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from './use-focus-trap';
-import logoImg from '@/assets/be-logo.svg';
+import logoImg from '@/assets/artotel-logo.png';
 import type { StepGuide } from '@/content/step-guide';
 import { StepGuideBar } from './step-guide-bar';
 import { ExperienceSizeControl } from '@/components/experience-size-control';
@@ -166,13 +166,13 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
     <div className="fixed inset-0 flex flex-col bg-black text-white overflow-hidden select-none">
       <div ref={navigationRef} className="relative z-40 shrink-0">
       {/* HUD - Top Bar (Always z-40 so it floats above scenes but below dialogs) */}
-      <header className="relative z-40 bg-[#F9F6F4] text-foreground shadow-md shrink-0 border-b border-border h-14">
+      <header className="relative z-40 bg-foreground text-primary-foreground shadow-md shrink-0 border-b border-border/20 h-14">
         <div className="px-4 md:px-6 h-full flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
-            <Link href="/" aria-label="Back to the start" className="shrink-0 block bg-white px-3 py-1.5 rounded-sm shadow-sm border border-border/50">
-              <img src={logoImg} alt="Be" className="h-4 sm:h-5" />
+            <Link href="/" aria-label="Back to the start" className="shrink-0 block bg-black px-2 py-1 rounded-sm border border-white/20 transition-colors hover:bg-white/10">
+              <img src={logoImg} alt="art'otel" className="h-4 sm:h-5 object-contain" />
             </Link>
-            <div className="h-5 w-px bg-border hidden sm:block shrink-0" />
+            <div className="h-5 w-px bg-border/20 hidden sm:block shrink-0" />
             <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4 text-xs font-medium min-w-0">
               <div className="flex items-center gap-1.5 text-primary font-bold whitespace-nowrap">
                 Task {stepNumber} of {TASK_ORDER.length}
@@ -205,11 +205,11 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
               </div>
             )}
 
-            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-white rounded shadow-sm border border-border">
+            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 bg-white text-foreground rounded shadow-sm border border-border">
               <Clock className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary" />
               <span className="font-mono font-bold text-sm">{progress.clock}</span>
             </div>
-            <div className={cn("hidden items-center gap-2 px-3 py-1 bg-white rounded shadow-sm border border-border", !focusedWorkspace && "lg:flex")}>
+            <div className={cn("hidden items-center gap-2 px-3 py-1 bg-white text-foreground rounded shadow-sm border border-border", !focusedWorkspace && "lg:flex")}>
               <MapPin className="w-4 h-4 text-muted-foreground" />
               <span className="font-medium text-sm max-w-[140px] truncate">
                 {PLACES[place].name}

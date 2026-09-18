@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Plus+Jakarta+Sans:ital,wght@0,200..800;1,200..800&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -39,6 +40,7 @@
   --color-sidebar-border: hsl(var(--sidebar-border));
 
   --font-sans: var(--app-font-sans);
+  --font-serif: var(--app-font-serif);
   --font-mono: var(--app-font-mono);
 
   --radius-sm: calc(var(--radius) - 4px);
@@ -48,80 +50,72 @@
 }
 
 :root {
-  /* Brand Palette mapped */
-  /* Cream #F9F6F4 */
-  --background: 20 24% 96%;
-  /* Bonvoy Black #1C1C1C */
-  --foreground: 0 0% 11%;
+  /* art'otel palette */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 5%;
   
-  /* Borders - slight contrast from cream */
-  --border: 20 15% 88%;
-  --input: 20 15% 88%;
-  --ring: 20 100% 69%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 358 79% 50%;
 
-  /* White #FFFFFF */
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 11%;
-  --card-border: 20 15% 88%;
+  --card-foreground: 0 0% 5%;
+  --card-border: 0 0% 90%;
 
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 11%;
-  --popover-border: 20 15% 88%;
+  --popover-foreground: 0 0% 5%;
+  --popover-border: 0 0% 90%;
 
-  /* Bonvoy Coral #FF9662 */
-  --primary: 20 100% 69%;
-  --primary-foreground: 0 0% 11%;
+  /* Vivid Red */
+  --primary: 358 79% 50%;
+  --primary-foreground: 0 0% 100%;
 
-  /* Dark Blue #45595C */
-  --secondary: 188 14% 32%;
+  /* Black */
+  --secondary: 0 0% 5%;
   --secondary-foreground: 0 0% 100%;
 
   /* Muted / Neutral */
-  --muted: 20 10% 92%;
-  --muted-foreground: 20 10% 45%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 40%;
 
   /* Accents */
-  --accent: 20 10% 92%;
-  --accent-foreground: 0 0% 11%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 5%;
 
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
   
-  /* Supporting */
-  --brand-brown: 20 26% 25%;
-  --brand-blue: 186 11% 60%;
-  --brand-green: 131 12% 73%;
+  --sidebar: 0 0% 98%;
+  --sidebar-foreground: 0 0% 5%;
+  --sidebar-border: 0 0% 90%;
 
-  --sidebar: 20 24% 96%;
-  --sidebar-foreground: 0 0% 11%;
-  --sidebar-border: 20 15% 88%;
-
-  --app-font-sans: Calibri, "Segoe UI", -apple-system, "Helvetica Neue", Arial, sans-serif;
+  --app-font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --app-font-serif: "Playfair Display", ui-serif, Georgia, serif;
   --app-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   --radius: 0rem;
 }
 
 .dark {
-  /* Dark mode is disabled by design per brand requirements, defaulting to light mode values */
-  --background: 20 24% 96%;
-  --foreground: 0 0% 11%;
-  --border: 20 15% 88%;
-  --input: 20 15% 88%;
-  --ring: 20 100% 69%;
+  /* Defaulting to light mode values */
+  --background: 0 0% 100%;
+  --foreground: 0 0% 5%;
+  --border: 0 0% 90%;
+  --input: 0 0% 90%;
+  --ring: 358 79% 50%;
   --card: 0 0% 100%;
-  --card-foreground: 0 0% 11%;
-  --card-border: 20 15% 88%;
+  --card-foreground: 0 0% 5%;
+  --card-border: 0 0% 90%;
   --popover: 0 0% 100%;
-  --popover-foreground: 0 0% 11%;
-  --popover-border: 20 15% 88%;
-  --primary: 20 100% 69%;
-  --primary-foreground: 0 0% 11%;
-  --secondary: 188 14% 32%;
+  --popover-foreground: 0 0% 5%;
+  --popover-border: 0 0% 90%;
+  --primary: 358 79% 50%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 0 0% 5%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 20 10% 92%;
-  --muted-foreground: 20 10% 45%;
-  --accent: 20 10% 92%;
-  --accent-foreground: 0 0% 11%;
+  --muted: 0 0% 96%;
+  --muted-foreground: 0 0% 40%;
+  --accent: 0 0% 96%;
+  --accent-foreground: 0 0% 5%;
   --destructive: 0 84% 60%;
   --destructive-foreground: 0 0% 100%;
 }
@@ -134,7 +128,7 @@
     @apply font-sans antialiased bg-background text-foreground selection:bg-primary/30;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight text-foreground;
+    @apply font-serif font-medium tracking-tight text-foreground;
   }
   input[type="time"]::-webkit-calendar-picker-indicator {
     display: none;
@@ -154,7 +148,7 @@
 }
 
 .kitchen-table th {
-  @apply font-bold text-muted-foreground pb-2 border-b border-border;
+  @apply font-semibold text-muted-foreground pb-2 border-b border-border;
 }
 
 .kitchen-table td {

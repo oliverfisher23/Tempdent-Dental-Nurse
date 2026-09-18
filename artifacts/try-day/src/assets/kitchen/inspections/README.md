@@ -1,7 +1,7 @@
 # Task 1 refrigerator visuals
 
 These are generated photorealistic training images, created for this simulation
-on 2026-09-18. They are not site photographs or evidence of the actual Marriott
+on 2026-09-18. They are not site photographs or evidence of an actual art'otel
 kitchen. Food choices are representative of each appliance's function; the
 approved appliance names, temperatures and limits remain defined in the activity.
 

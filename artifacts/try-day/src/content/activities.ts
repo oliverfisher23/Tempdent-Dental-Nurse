@@ -611,5 +611,5 @@ export const CLOSE_LINES = {
   } satisfies Line,
 };
 
-/** The three-line close from the People Brand, using approved extensions only. */
-export const BE_LINES = ['Be curious.', 'Be purposeful.', 'Be you.'];
+/** The three principles that define the art'otel voice. */
+export const ARTOTEL_LINES = ['Clever.', 'Cultured.', 'Clear.'];

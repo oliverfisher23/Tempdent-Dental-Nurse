@@ -5,7 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import { FRAME, GATE, formatC } from "@/lib/simulation";
 import {
   ADDED_GUESTS,
-  BE_LINES,
+  ARTOTEL_LINES,
   CHILL_RULES,
   DISHES,
   ELENA_QUESTION,
@@ -18,7 +18,7 @@ import {
 } from "@/content/activities";
 import { useProgress } from "@/lib/progress-store";
 import { Button } from "@/components/ui/button";
-import logoImg from "@/assets/be-logo.svg";
+import logoImg from "@/assets/artotel-logo.png";
 import { ExperienceSizeControl } from "@/components/experience-size-control";
 
 export default function Close() {
@@ -73,7 +73,9 @@ export default function Close() {
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col">
       <header className="max-w-5xl mx-auto w-full px-6 md:px-10 pt-8 flex items-center justify-between">
-        <img src={logoImg} alt="Be | Marriott Bonvoy" className="h-8 md:h-10" />
+        <div className="bg-foreground px-4 py-2 border border-border/20 shadow-xl">
+          <img src={logoImg} alt="art'otel" className="h-6 md:h-8 object-contain" />
+        </div>
         <div className="flex items-center gap-3">
           <span className="font-mono text-sm font-bold text-foreground">{FRAME.shift.end}</span>
           <ExperienceSizeControl />
@@ -118,11 +120,11 @@ export default function Close() {
             </div>
             <div className="lg:col-span-5 lg:pl-8 flex flex-col justify-between gap-12">
               <div className="space-y-2">
-                {BE_LINES.map((line, i) => (
+                {ARTOTEL_LINES.map((line, i) => (
                   <motion.p
                     key={line}
                     {...fade(0.5 + i * 0.15)}
-                    className={i === BE_LINES.length - 1 ? "text-4xl md:text-5xl font-bold tracking-tight text-primary" : "text-4xl md:text-5xl font-bold tracking-tight"}
+                    className={i === ARTOTEL_LINES.length - 1 ? "text-4xl md:text-5xl font-bold tracking-tight text-primary" : "text-4xl md:text-5xl font-bold tracking-tight"}
                   >
                     {line}
                   </motion.p>

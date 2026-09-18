@@ -1,4 +1,4 @@
-# Marriott Sous Chef Try Day — full experience flow
+# art'otel Sous Chef Try Day — full experience flow
 
 This document explains what happens from the opening briefing through Tasks 1–5.
 It is written for people reviewing the learning experience rather than for the
@@ -611,11 +611,11 @@ The evening team takes over the kitchen. By this point, the student has:
 - recorded waste;
 - handed the kitchen on to the next shift.
 
-The close connects those practical actions to the experience themes:
+The close connects those practical actions to the art'otel voice:
 
-- **Be curious**
-- **Be purposeful**
-- **Be you**
+- **Clever**
+- **Cultured**
+- **Clear**
 
 ---
 
