@@ -54,3 +54,6 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Distinguish scenario parameters from employer-approved food-safety teaching when recommending learning changes.
   **Why:** a stored acceptance limit establishes the exercise's intended result, not the provenance or scope of a workplace receiving procedure.
   **How to apply:** retain existing scenario facts, but require employer confirmation before presenting new receiving guidance, product-specific sensory teaching or refusal cases. A design recommendation is not that approval.
+- Closing handover recommendations must distinguish saved findings, supplied scenario information and proposed follow-ups; a request is not evidence that work has happened.
+  **Why:** the closing learning objective is accurate synthesis and communication. Presenting an unperformed check or an unconfirmed delivery as completed would teach false certainty.
+  **How to apply:** label evidence provenance and action status, accept sensible alternative priorities without dropping required topics, and treat review-document proposals as awaiting authorisation rather than approved app changes.

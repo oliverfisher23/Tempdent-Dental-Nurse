@@ -92,3 +92,17 @@ mtime_ms = 1789731827885
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/7c0d6f0e-57ad-45ed-ae64-058f0595c4e9/10b1496d-6679-4824-80d0-a6ba124acd0d"
 storage_version_token = "1789731900966078"
 content_type = "text/html"
+
+[[outputs]]
+id = "I9LothFPoLCAl3HAEu3YH"
+uri = "file://.local/reviews/task-5-redesign.md"
+type = "text"
+title = "Waste and handover redesign report"
+description = "Source-grounded recommendation with desktop and phone concepts, recipient dialogue, proposed assessment criteria and approval checks. Specification only; no app changes."
+logical_id = "d9b55b63-454b-4990-8494-0b3138c68170"
+content_hash = "sha256:bcdffcab39bcae8d7725c0d755a0b0852ebe24a9eeb6497bef41c6db8b535d8e"
+size = 57885
+mtime_ms = 1789731886464
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/d9b55b63-454b-4990-8494-0b3138c68170/cca5a71b-a1b0-4be3-8274-2450d74519fa"
+storage_version_token = "1789732018009421"
+content_type = "text/markdown"
