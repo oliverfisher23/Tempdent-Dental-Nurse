@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Check the delivery in — learning-design recommendation</title>
+  <style>
+    :root { color-scheme: light; --ink: #202427; --muted: #535b61; --rule: #cdd3d5; --soft: #f1f4f4; --accent: #245b63; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #e9eded; color: var(--ink); font: 15px/1.45 Arial, Helvetica, sans-serif; }
+    main { max-width: 1050px; margin: 28px auto; }
+    section.page { padding: 38px 44px; margin-bottom: 24px; background: white; }
+    h1 { font-size: 31px; line-height: 1.1; margin: 8px 0 12px; letter-spacing: -.5px; }
+    h2 { font-size: 24px; line-height: 1.2; margin: 6px 0 17px; }
+    h3 { font-size: 16px; margin: 17px 0 6px; }
+    p { margin: 7px 0; }
+    .eyebrow { text-transform: uppercase; font-size: 11px; letter-spacing: 1px; color: var(--accent); font-weight: bold; }
+    .standfirst { font-size: 17px; }
+    .small, .sources { font-size: 12px; }
+    .muted { color: var(--muted); }
+    .box { padding: 12px 15px; margin: 13px 0; border-left: 4px solid var(--accent); background: var(--soft); }
+    .outline { border: 1px solid var(--rule); border-radius: 3px; padding: 14px; margin: 12px 0; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+    th { text-align: left; background: var(--soft); }
+    th, td { border: 1px solid var(--rule); padding: 8px; vertical-align: top; }
+    caption { text-align: left; margin: 0 0 7px; font-weight: bold; }
+    ol, ul { margin: 7px 0; padding-left: 22px; }
+    li { margin-bottom: 6px; }
+    .compact li { margin-bottom: 4px; }
+    .tag { font-size: 11px; font-weight: bold; color: var(--accent); }
+    .blank { display: inline-block; min-width: 48px; padding: 1px 5px; border-bottom: 1px solid var(--muted); }
+    .ref { color: var(--muted); font-size: 11px; white-space: nowrap; }
+    a { color: var(--accent); }
+    code { overflow-wrap: anywhere; font-size: 11px; }
+    .footer { border-top: 1px solid var(--rule); margin-top: 20px; padding-top: 7px; font-size: 11px; color: var(--muted); }
+    @media (max-width: 720px) {
+      main { margin: 0; }
+      section.page { padding: 24px 18px; }
+      .grid { grid-template-columns: 1fr; gap: 4px; }
+      .wide { overflow-x: auto; }
+    }
+    @page { size: A4; margin: 14mm 14mm 15mm; }
+    @media print {
+      body { background: white; font-size: 10pt; line-height: 1.32; }
+      main { max-width: none; margin: 0; }
+      section.page { padding: 0; margin: 0; break-after: page; }
+      section.page:last-child { break-after: auto; }
+      h1 { font-size: 25pt; }
+      h2 { font-size: 19pt; }
+      h3 { font-size: 11.5pt; margin-top: 12px; }
+      .standfirst { font-size: 12pt; }
+      .eyebrow, .tag, .ref { font-size: 8pt; }
+      .small, .sources { font-size: 8.5pt; }
+      table { font-size: 9pt; }
+      th, td { padding: 6px; }
+      tr, .box, .outline { break-inside: avoid; }
+      h2, h3 { break-after: avoid; }
+      a { text-decoration: none; }
+      .footer { font-size: 8pt; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+<main>
+  <section class="page">
+    <div class="eyebrow">Recommendation only · 18 September 2026 · 1 / 7</div>
+    <h1>Check the delivery in</h1>
+    <p class="standfirst">Keep the checks. Make comparison, acceptance and signing the learner’s work.</p>
+    <div class="box">
+      <strong>Recommended decision:</strong> approve an order-sheet-led design direction, not an app build.
+      Retain three trolleys, ten quantity checks, six temperature checks and all four fish observations.
+      Enter inspection results beside the evidence; give a few decisions depth and keep routine checks brief.
+    </div>
+    <p><strong>Intended outcome:</strong> the learner can explain what was ordered, what the supplier claims,
+      what was checked, what is suitable to accept, and why the signed note must match that accepted amount.</p>
+    <h3>Expert walkthrough, not learner research</h3>
+    <p>This review follows the current source-defined journey and its completion rules.
+      It identifies likely friction and learning risks; it does not claim observed student behaviour,
+      measured usability gains or proven learning effects. A later learner trial would test those hypotheses.</p>
+    <table>
+      <caption>Current sequence → two different problems</caption>
+      <thead><tr><th style="width:25%">Current behaviour</th><th style="width:34%">Learner friction</th><th>Learning-design weakness</th></tr></thead>
+      <tbody>
+        <tr><td>Note → trolleys → boxes → separate order sheet.</td><td>Repeated opening and closing separates evidence from the place it is used.</td><td>Comparing three sources becomes a memory/navigation exercise. The order sheet omits the supplier-claimed column. <span class="ref">[S1, S2]</span></td></tr>
+        <tr><td>Guided inspection, notebook prompts, then “write up” every line.</td><td>Notebook capture and optional “Use my note” create a second pass; manual form entry is possible, so transcription is encouraged, not universally enforced.</td><td>Accurate transfer can dominate the decision. Quantity entry can itself mark a line counted, weakening evidence of actual inspection. <span class="ref">[S1–S3]</span></td></tr>
+        <tr><td>Count/weigh reveals a fixed total; fish controls reveal findings.</td><td>Similar actions repeat across mostly normal goods.</td><td>Revealing a result is not counting competence. Four acknowledged fish findings do not show that the learner can interpret them. <span class="ref">[S1, S4]</span></td></tr>
+        <tr><td>Enter temperatures and choose a status.</td><td>No receiving guidance is displayed alongside the readings.</td><td>Completion tests transcription accuracy, not comparison with a receiving limit; wrong statuses get count-focused feedback even when the issue is suitability. <span class="ref">[S3, S4, S6]</span></td></tr>
+        <tr><td>Radio → amend → sign.</td><td>The last steps are easy to follow mechanically.</td><td>Guidance gives “four kilos” and “12…8”; the radio is an acknowledgement action, not a learner-authored report. <span class="ref">[S2–S5]</span></td></tr>
+      </tbody>
+    </table>
+    <h3>Keep observation; remove avoidable repetition</h3>
+    <p>Keep deliberate inspection of every product, settled readings, four fish findings, a status for every row,
+      a report, an amendment and an explicit signature. Remove compulsory notebook transfer, repeated trips
+      to paperwork and answer-bearing next-step prompts. Do not replace them with bulk acceptance.</p>
+    <p class="small"><strong>Fact boundary:</strong> nine quantities match and all goods are suitable in this scenario.
+      Salmon is short: 12 kg ordered/claimed, 8 kg received. Its impact is on <strong>tomorrow’s lunch</strong>,
+      not tonight’s launch. The supporting flow document’s launch-impact sentence conflicts with the approved
+      complication and dialogue; use the latter as the authority. No existing text has been changed. <span class="ref">[S4, S7, S8]</span></p>
+    <div class="footer">This document specifies a proposal. It does not authorise implementation, publication or changes to approved scenario wording.</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Proposed workspace · 2 / 7</div>
+    <h2>One working order sheet, three sources</h2>
+    <p>Make the order sheet the persistent receiving workspace, grouped by the existing trolleys.
+      Opening a row brings its box, scales/count evidence, probe and relevant guidance beside that row.
+      The learner writes each measured result directly into the row once. Closing an inspection leaves the
+      sheet, evidence links and unfinished work available.</p>
+    <div class="outline">
+      <div class="tag">ANNOTATED WIREFRAME — SALMON ROW BEFORE AN ATTEMPT; NOT AN APP MOCKUP</div>
+      <h3>Salmon fillet, skin on · Trolley 1: fish</h3>
+      <table>
+        <thead><tr><th>A · Kitchen order</th><th>B · Supplier says</th><th>C · You checked</th><th>D · Your decision</th></tr></thead>
+        <tbody><tr>
+          <td>12 kg<br><span class="small">Read-only order source</span></td>
+          <td>12 kg<br><span class="small">Exmouth Fish delivery note · open source</span></td>
+          <td><span class="blank">&nbsp;</span> kg<br><span class="blank">&nbsp;</span> °C<br><span class="small">Inspect salmon · not checked</span></td>
+          <td>No status selected<br><span class="small">All here / Short / Refused<br>Acceptance not decided</span></td>
+        </tr></tbody>
+      </table>
+      <p><strong>E · Inspection area:</strong> open the goods, weigh them, wait for the temperature to settle,
+        then write the readings in C. Reopen the same evidence without starting another paperwork trip.</p>
+      <p><strong>F · Comparison:</strong> “Does this match both pieces of paper?”
+        The learner identifies the mismatch and writes the missing amount; no computed shortage is supplied.</p>
+    </div>
+    <ul class="compact">
+      <li><strong>A/B are claims, C is the learner’s work.</strong> Keep the original order and supplier quantity visible
+        after any amendment. Label the amended figure separately, with the learner’s initials.</li>
+      <li><strong>Evidence is not a prefill.</strong> Inspection controls reveal readings/findings, not completed fields.
+        Typing alone must not count as inspection. “Open the next box” only navigates.</li>
+      <li><strong>Quantity and suitability are distinct.</strong> Preserve All here / Short / Refused.
+        Alongside that status, require a deliberate choice to accept the checked amount or refuse it;
+        no selection is prechosen. Short does not mean the delivered goods are unsuitable.</li>
+      <li><strong>One saved result, several views.</strong> The learner’s row supplies the later summary and report’s
+        factual context. An optional notebook is for personal reminders, never a required transfer step.</li>
+    </ul>
+    <h3>Keep supplier documents correctly attributed</h3>
+    <p>The current rendered note is <strong>Exmouth Fish Suppliers’ fish-only note</strong>. The order sheet
+      labels Devon Fresh / Exmouth Fish jointly; non-fish claim amounts exist in the data, but individual
+      non-fish document attribution is not established. Do not put all ten products on Exmouth’s note.
+      Confirm the non-fish supplier/document mapping before producing new learner-facing paperwork. <span class="ref">[S1, S5]</span></p>
+    <h3>Equivalent phone and keyboard route</h3>
+    <p>Desktop: sheet plus adjacent inspection. Phone: the same labelled row as an expanded card, with
+      order and supplier claims above evidence and entry fields. A persistent “All ten items” list shows
+      each item as unchecked, unfinished or ready to review; no default filter hides unchecked work.
+      Return to the same row and scroll position.</p>
+    <p>Use semantic headings, labelled fields with units, radio groups for decisions, visible focus and
+      keyboard-operable inspection controls. Announce settled readings and errors in text, not only colour.
+      Return focus to the row after closing evidence; no drag-only, hover-only or precision-pointer action.
+      Errors link directly to the relevant row and do not erase entries.</p>
+    <div class="footer">Proposed learner-facing wording is illustrative and follows COPY.md; approved task strings remain verbatim.</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Coverage and flow · 3 / 7</div>
+    <h2>Retain every line, not every repeated trip</h2>
+    <p><strong>Review-only completed example:</strong> these are the scenario’s expected outcomes,
+      not values to prefill for learners. Initially all observed quantities, readings, statuses,
+      acceptance decisions and shortage fields are blank. All ten items remain listed.</p>
+    <div class="wide">
+      <table>
+        <caption>Annotated order-sheet example — quantities and temperatures unchanged [S4]</caption>
+        <thead><tr><th>Trolley / item</th><th>Ordered</th><th>Supplier claims*</th><th>Learner checked</th><th>°C</th><th>Final status / acceptance</th></tr></thead>
+        <tbody>
+          <tr><td>1 · Salmon fillet, skin on</td><td>12 kg</td><td>12 kg</td><td>8 kg</td><td>2.1</td><td>Short / accept 8 kg</td></tr>
+          <tr><td>1 · Sea bass, whole, gutted</td><td>10 fish</td><td>10 fish</td><td>10 fish</td><td>1.8</td><td>All here / accept 10 fish</td></tr>
+          <tr><td>1 · Smoked haddock, undyed</td><td>3 kg</td><td>3 kg</td><td>3 kg</td><td>2.4</td><td>All here / accept 3 kg</td></tr>
+          <tr><td>2 · Chicken supreme, skin on</td><td>96 pieces</td><td>96 pieces</td><td>96 pieces</td><td>3.2</td><td>All here / accept 96 pieces</td></tr>
+          <tr><td>2 · Double cream, 2 litre</td><td>6 bottles</td><td>6 bottles</td><td>6 bottles</td><td>4.0</td><td>All here / accept 6 bottles</td></tr>
+          <tr><td>2 · Unsalted butter, 250 g</td><td>20 blocks</td><td>20 blocks</td><td>20 blocks</td><td>4.4</td><td>All here / accept 20 blocks</td></tr>
+          <tr><td>3 · Baby spinach, 1 kg bag</td><td>8 bags</td><td>8 bags</td><td>8 bags</td><td>—</td><td>All here / accept 8 bags</td></tr>
+          <tr><td>3 · Banana shallots, 5 kg</td><td>2 sacks</td><td>2 sacks</td><td>2 sacks</td><td>—</td><td>All here / accept 2 sacks</td></tr>
+          <tr><td>3 · Lemons</td><td>60 each</td><td>60 each</td><td>60 each</td><td>—</td><td>All here / accept 60 each</td></tr>
+          <tr><td>3 · Flat-leaf parsley</td><td>10 bunches</td><td>10 bunches</td><td>10 bunches</td><td>—</td><td>All here / accept 10 bunches</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="small">*Fish claims link to the existing fish note. Other claims here come from scenario data,
+      not a verified rendered supplier document. Confirm their source before presenting an attributed note.
+      “—” preserves the current task’s non-probed produce lines; it is not general food-storage guidance.</p>
+    <h3>Proposed journey</h3>
+    <ol class="compact">
+      <li><strong>Orient at the back door.</strong> Keep the approved situation, job and done-when wording.
+        Make the order sheet and source documents immediately available; navigation does not name the fault.</li>
+      <li><strong>Try one normal line with support.</strong> Suggest smoked haddock on trolley 1 as the first practice
+        line; show how to inspect, enter and compare without doing it for the learner.</li>
+      <li><strong>Work through the three trolleys.</strong> Finish each row beside its evidence. Allow revisiting
+        and non-linear selection; keep all remaining checks visible.</li>
+      <li><strong>Explain the important decisions.</strong> Fish evidence, chilled-guidance comparison and
+        packaging units get short focused prompts; routine lines need no written explanation.</li>
+      <li><strong>Prepare and send the discrepancy report.</strong> The learner calculates the shortage and
+        reports it to Terence; report preparation can begin when the mismatch is found.</li>
+      <li><strong>Correct the supplier’s note.</strong> Choose the affected line and accepted amount,
+        preserve the original claim and deliberately initial the correction.</li>
+      <li><strong>Review, sign, then sign off the task.</strong> Require all ten checks, six readings,
+        four fish findings, decisions, report and correct amendment before the note can be signed.
+        Preserve the existing separate task sign-off and read-only completed state.</li>
+    </ol>
+    <div class="box small">Routine does not mean automatic: inspect → enter quantity/reading → compare → choose status
+      and acceptance → move on. No “accept trolley”, no inferred inspection from typed answers,
+      and no automatic advance when a probe settles.</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Reasoning storyboards · 4 / 7</div>
+    <h2>Three trolleys, three emphases</h2>
+    <h3>1 · Fish: distinguish “short” from “not suitable”</h3>
+    <p><strong>Salmon sequence:</strong> open the order and Exmouth note (both 12 kg) → inspect and weigh
+      the delivered salmon (8 kg), take its temperature (2.1°C) → enter those observations → identify
+      that both documents claim more than is present → calculate 12 − 8 = <strong>4 kg missing</strong>
+      → choose Short and deliberately accept the <strong>8 kg of suitable goods</strong>.</p>
+    <p>The condition decision uses the scenario’s suitable-goods finding and its own temperature evidence,
+      not the quantity mismatch. The learner must not refuse acceptable salmon merely because some is missing.
+      Do not add a condition defect or make the driver identify the discrepancy before the learner attempts it.</p>
+    <p><strong>Whole sea bass sequence:</strong> count 10, read 1.8°C, inspect all four supplied findings:
+      clear/bright/slightly domed eyes; deep red/wet gills; clean sea-like smell; firm flesh that springs back.
+      Then choose acceptance and answer once: <em>“Which findings support your decision?”</em>
+      Select the relevant evidence and write one brief reason, not four repeated descriptions.</p>
+    <div class="box small"><strong>Expected explanation, for reviewers only:</strong>
+      “The count matches, the temperature meets the supplied guidance, and the eyes, gills, smell and flesh
+      findings support accepting the fish.” All four findings must be inspected. The reason should connect
+      the evidence to the decision, rather than merely say “I checked it”.</div>
+    <p class="small">Use eyes/gills on whole sea bass, not salmon fillets or smoked haddock.
+      The current controls share four fish flags across fish boxes; do not claim they establish separate
+      sensory checks for each product. Smell and texture are <strong>supplied scenario findings</strong>
+      (“What you notice”), not sensations the browser detects. Image/text alternatives show the same evidence.
+      Any additional fillet-specific evidence requires content approval.</p>
+    <h3>2 · Chilled: interpret, rather than only copy, a reading</h3>
+    <p>Check chicken, cream and butter separately, retaining all counts and readings.
+      Use butter (4.4°C) for one short comparison with an always-available
+      <strong>employer-supplied receiving guide</strong>: “Does this reading meet the receiving guidance?”
+      The learner points to the applicable guidance and chooses acceptance; chicken and cream then use
+      the same reference with reduced prompting.</p>
+    <p class="small"><strong>Approval boundary:</strong> current data specifies <strong>5°C or below</strong>
+      for all six chilled lines, but this is not shown as learner-facing guidance. A proposed receiving card
+      may use that existing scenario value only after the employer confirms its scope, wording and what to do
+      outside it. Do not invent a threshold or import the fridge/chiller rules from other tasks.
+      All six current readings meet the stored limit; butter is not a hidden refusal.
+      Reading-entry tolerance and food acceptance criteria are different things. Until guidance is approved,
+      do not describe this activity as teaching a validated workplace safety rule.</p>
+    <h3>3 · Fruit and veg: compare the right packaging/count unit</h3>
+    <p><strong>Existing-facts option:</strong> inspect two 5 kg shallot sacks.
+      Ask “Does the order ask for sacks or kilos?” Enter <strong>2 sacks</strong>, not 10 in a sacks field.
+      The same goods total 10 kg, but the order is for two sacks. Count spinach as 8 bags and parsley
+      as 10 bunches; inspect and count all 60 lemons.</p>
+    <p><strong>Optional new packaging proposal:</strong> show lemons in three trays of 20, retaining
+      60 lemons in the order, claim and delivery. Let the learner inspect the contents, not infer them
+      solely from a carton label, then enter 60 each rather than 3 trays.
+      <strong>This packaging is not current content.</strong> It needs approval and suitable evidence;
+      the existing sack example is enough for the core recommendation.</p>
+    <div class="footer">No new refusal is needed. Most deliveries should be routine; the activity is not ten fault-finding tricks.</div>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Learner-owned report and signature · 5 / 7</div>
+    <h2>Attempt first; explain and correct second</h2>
+    <h3>Keep answer-bearing information out of navigation</h3>
+    <p>Currently the fish guide gives the finding before the observation; later prompts explicitly give
+      four kilos missing and the 12-to-8 amendment. The “Next” strip gives the same correction.
+      The approved complication can appear after <em>any nonblank salmon amount</em>, because entering
+      an amount also sets counted; correct comparison or a shortage attempt is not required.
+      The driver reacts to 8, and the radio reply supplies the solution. <span class="ref">[S2–S7, S9]</span></p>
+    <p><strong>Proposed disclosure gate:</strong> keep approved strings unchanged, but withhold the
+      answer-bearing complication, driver response and solution-bearing radio reply until the learner has
+      inspected salmon, entered quantity/temperature, compared order and note, and attempted status,
+      accepted amount, shortage and an amendment amount. “Attempted” need not mean correct.
+      Preparation of the amendment happens on the sheet; the supplier note remains unsigned.</p>
+    <p>Then show the approved complication verbatim. It supplies the service context:
+      tomorrow’s lunch needs salmon; tonight’s launch does not. Learners need not guess that fact.
+      They finish their report using it. Terence’s existing answer-bearing reply follows the report attempt,
+      as corrective confirmation rather than the first source of the learner’s decisions.</p>
+    <div class="outline">
+      <div class="tag">PROPOSED REPORT TO TERENCE — SHORT, STRUCTURED, LEARNER-AUTHORED</div>
+      <p><strong>Facts:</strong> choose the affected product; reference the learner’s saved quantity and
+        source claims. The missing amount is the learner’s calculation from the comparison, not auto-generated.</p>
+      <p><strong>Your message:</strong> “What is missing, what can you accept, and what needs following up?”</p>
+      <p><strong>Service affected:</strong> “Which meal needs this, and what do you need Terence to do?”</p>
+      <p class="small"><strong>Acceptable example, for review/feedback only:</strong>
+        “Terence, salmon is 4 kg short: the order and note say 12 kg but I checked 8 kg.
+        The 8 kg delivered is suitable to accept. Tomorrow’s lunch needs the missing amount, not tonight’s
+        launch. Can you follow up with the supplier? I’ll correct the note to the amount accepted before signing.”</p>
+    </div>
+    <p>Keep the report to a few sentences, not ten explanations. Sending the radio message is a deliberate
+      action; clicking a radio alone is not evidence of reporting. Check its factual fields and meaning,
+      allow plain-language variants, and do not require an exact phrase or silently treat any non-empty text
+      as a correct explanation. Automated free-text judgement is not assumed by this recommendation.</p>
+    <h3>Make the amendment a document decision, not another notebook pass</h3>
+    <p>The learner selects salmon on the <strong>fish supplier’s note</strong>, strikes the original 12 kg,
+      and chooses the accepted amount from their saved work, or enters an amendment themselves.
+      The recommended single-entry route uses the learner’s own proposed amount only after an explicit
+      “Use my amount” action. It never substitutes the hidden correct answer. Original claim,
+      amended amount and initials stay visible. The learner signs for <strong>8 kg accepted</strong>,
+      not 12 claimed or 4 missing. Neither initials nor signature is applied without an explicit action.</p>
+    <h3>Recover before sign-off</h3>
+    <p>“Review before signing” identifies unresolved checks and contradictions with links to their sources.
+      Retain wrong entries as editable drafts, allow reinspection and resending a corrected report,
+      and recheck dependent decisions after a quantity changes; never silently repair them.
+      If work changes after the note is signed but before task sign-off, require explicit re-signing.
+      Once the task is signed off, preserve the existing frozen, read-only result and completion identifiers;
+      review and hints must not mutate it.</p>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Support and corrective feedback · 6 / 7</div>
+    <h2>Teach the method, then reduce the prompts</h2>
+    <h3>One supported normal example: smoked haddock</h3>
+    <ol class="compact">
+      <li>Show the order’s 3 kg and the fish note’s 3 kg as two labelled claims.</li>
+      <li>Prompt “Weigh what came in.” The scale reveals 3 kg; the learner writes it in the row.</li>
+      <li>Prompt “Take the temperature.” The learner waits, reads 2.4°C, writes it once and uses the
+        approved receiving guidance when available.</li>
+      <li>Ask “Does this match both pieces of paper?” and “Will you accept what you checked?”
+        Leave quantity, status and acceptance unselected; the learner chooses them.</li>
+      <li>After their attempt, explain why the matching quantity and suitable condition support
+        All here / accept 3 kg. Keep this example available to reopen, never impose it as ten repeated scripts.</li>
+    </ol>
+    <p>Next, salmon gets the comparison question but no arithmetic answer; sea bass gets the evidence
+      question; butter gets one guidance comparison; shallots get one packaging question.
+      Remaining rows keep evidence, fields and the reference available with only neutral navigation:
+      “Open the next box”, “Check your entries”, “Prepare your report”.</p>
+    <h3>Optional hint ladder</h3>
+    <table>
+      <thead><tr><th style="width:18%">Level</th><th>Support on request</th><th style="width:30%">Boundary</th></tr></thead>
+      <tbody>
+        <tr><td>1 · Find</td><td>“Open the fish note beside your check.”</td><td>Points to a source, not the answer.</td></tr>
+        <tr><td>2 · Compare</td><td>“Which amount is on the paper, and which did you weigh?”</td><td>Names the relationship, not the shortage.</td></tr>
+        <tr><td>3 · Method</td><td>“Subtract what arrived from what was ordered. Sign for what you accept.”</td><td>Provides the method; fields remain learner-owned.</td></tr>
+        <tr><td>4 · Work it through</td><td>After an evidence-backed attempt, show 12 − 8 = 4 and distinguish 8 accepted from 4 missing.</td><td>Explicit help on request; learner corrects and confirms, with no penalty or automatic field changes.</td></tr>
+      </tbody>
+    </table>
+    <h3>Feedback points back to the source that resolves the error</h3>
+    <table>
+      <thead><tr><th style="width:28%">Attempt</th><th>First corrective feedback</th><th style="width:26%">Recovery</th></tr></thead>
+      <tbody>
+        <tr><td>Writes the note’s 12 kg as observed salmon.</td><td>“That matches the supplier’s note. Compare it with your scales.”</td><td>Open salmon evidence; edit the saved result.</td></tr>
+        <tr><td>Marks salmon All here or Refused because it is short.</td><td>“Compare the quantity with the order, then check whether the goods themselves are suitable.”</td><td>Revisit quantity and condition; choose status and acceptance separately.</td></tr>
+        <tr><td>Rejects butter because 4.4 sounds high.</td><td>“Compare that reading with the receiving guidance for this delivery.”</td><td>Open approved guidance; keep the measured value, reconsider acceptance.</td></tr>
+        <tr><td>Accepts fish with no supporting explanation.</td><td>“Which of the fish findings supports accepting it?”</td><td>Reopen four supplied findings and revise the brief reason.</td></tr>
+        <tr><td>Writes 10 in the shallot sacks field.</td><td>“The bag size is in kilos. What does the order ask you to count?”</td><td>Inspect labels and contents; enter the number of sacks.</td></tr>
+        <tr><td>Reports tonight’s launch as affected; or amends to 4 kg.</td><td>“Check which meal Terence says needs it.” / “Does this amount mean missing or accepted?”</td><td>Reopen the revealed context or accepted-amount entry; revise, then resend or re-sign.</td></tr>
+      </tbody>
+    </table>
+    <p class="small">Feedback follows an attempt, not a keystroke that reveals the answer early.
+      Separate missing evidence, a misread value, a unit error and a wrong decision.
+      Provide a route back without points, timers, penalties or a full-task restart.</p>
+  </section>
+
+  <section class="page">
+    <div class="eyebrow">Priorities, review criteria and sources · 7 / 7</div>
+    <h2>What to approve, and what to hold back</h2>
+    <table>
+      <thead><tr><th style="width:19%">Priority</th><th>Recommendation</th><th style="width:30%">Decision needed</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 · Core</strong><br>Existing facts</td><td>Persistent sheet; direct result entry; all checks retained; learner-owned shortage, acceptance, report and amendment; later answer disclosure; repair before sign-off.</td><td>Approve the design direction. Any build remains a separately authorised task.</td></tr>
+        <tr><td><strong>2 · Teaching</strong><br>Existing data, new presentation</td><td>Use whole-fish evidence and existing sack sizes; provide scoped receiving guidance; make supplier claims traceable.</td><td>Employer validates fish teaching, the receiving card and non-fish supplier/document attribution before learner-facing use.</td></tr>
+        <tr><td><strong>3 · Optional</strong><br>New scenario evidence</td><td>Lemon trays of 20; additional product-specific evidence; a separate refusal practice case, only if useful.</td><td>Approve new evidence/assets and any refusal guidance. None is required for the core design.</td></tr>
+      </tbody>
+    </table>
+    <p class="small"><strong>Optional refusal extension:</strong> a separate practice delivery could supply an
+      employer-authored unsuitable-condition finding and ask the learner to apply the supplied guidance,
+      report it and refuse that item. The employer must define the product, evidence, action and acceptance rule.
+      Do not turn a current acceptable line into a fault, invent unsafe temperatures or treat this extension
+      as approved scenario truth.</p>
+    <h3>How to judge the design in a later learner trial</h3>
+    <ul class="compact">
+      <li><strong>Comparison:</strong> without the explicit answer hint, the learner distinguishes ordered/claimed
+        12 kg from observed 8 kg, calculates 4 kg missing and explains why 8 kg is accepted and signed for.</li>
+      <li><strong>Evidence:</strong> explains fish acceptance using inspected findings; interprets a chilled
+        reading using the supplied guidance; counts packaging in the order’s unit.</li>
+      <li><strong>Communication:</strong> their short report names the discrepancy, suitable amount, tomorrow’s
+        lunch and supplier follow-up. It does not invent an effect on tonight’s launch.</li>
+      <li><strong>Coverage and recovery:</strong> no unchecked row disappears; all ten quantities, six temperatures
+        and four fish observations are completed. A mistaken value/status/report/amendment can be repaired
+        before sign-off; signed-off work stays read-only.</li>
+      <li><strong>Accessibility and effort:</strong> the same evidence and decisions are reachable by phone and
+        keyboard. Check whether duplicate entry and navigation decrease, not whether students finish faster
+        under pressure. Observe assistance used; do not add a learner score or timer.</li>
+    </ul>
+    <p class="small">A correct final form alone is insufficient evidence of independent judgement.
+      Ask “Why accept this?”, “What is missing?” and “Why amend to that amount?” after the attempt.
+      Distinguish independent reasoning from an answer reached with explicit help; both can finish after
+      correction. This is a proposed review method, not a claim that user testing has occurred.</p>
+    <h3>Source register — current activity, not external learner research</h3>
+    <div class="sources">
+      <p>Paths below are relative to <code>artifacts/try-day/</code>. Line ranges identify the reviewed version.</p>
+      <p><strong>S1</strong> <code>src/components/scenes/delivery/goods-in.tsx:128–182, 349–509, 522–754</code> —
+        inspection, notebook, sheet, fish-only supplier note, statuses and signature controls.<br>
+        <strong>S2</strong> <code>src/content/guides/handover-delivery.ts:55–154</code> — inspection/write-up sequence and disclosed answers.<br>
+        <strong>S3</strong> <code>src/pages/tasks/check-the-delivery-in.tsx:27–107</code> — count-on-entry, feedback, radio and signing.<br>
+        <strong>S4</strong> <code>src/content/activities.ts:124–203</code> — quantities, temperatures, stored limits, fish findings and dialogue.<br>
+        <strong>S5</strong> <code>src/content/scenes/delivery.ts:1–40</code> — supplier heading and answer-bearing next steps.<br>
+        <strong>S6</strong> <code>src/lib/simulation.ts:382–406, 527–544</code> — final checks and complication reveal.<br>
+        <strong>S7</strong> <code>src/content/mechanic.json:63–82</code> — approved task wording and tomorrow’s-lunch impact.<br>
+        <strong>S8</strong> <code>EXPERIENCE-FLOW.md:200–318</code>, especially 299–300 — secondary account; conflicting launch-impact sentence.<br>
+        <strong>S9</strong> <code>src/components/kitchen/kitchen-frame.tsx:83–100, 324–336</code> — complication display in the job card.<br>
+        <strong>S10</strong> <code>src/lib/progress-store.tsx:114–142</code> — full-task completion and freeze, distinct from note signature.<br>
+        <strong>S11</strong> <code>COPY.md</code> and <code>.agents/memory/try-day-content.md</code> (workspace root) —
+        plain-language, approved-copy and read-only constraints.</p>
+    </div>
+    <div class="footer">Deliverable: learning-design specification only. No app code, existing assets, approved copy, canvas,
+      live progress, other activities, branding, host integration, persistence contract or published experience was changed.</div>
+  </section>
+</main>
+</body>
+</html>

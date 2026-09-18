@@ -51,3 +51,6 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - A planned learning complication must not require violating the task's own preparation instruction. Capacity and authored comparison evidence need joint employer approval, not an isolated numerical correction.
   **Why:** preserving a scripted cooling complication is not justification for teaching contradictory preparation; fixed example readings are not physical predictions for arbitrary learner choices.
   **How to apply:** when redesigning the chill activity, agree the tray supply/capacity, whole-batch accounting and comparison scenario together before changing content or validation.
+- Distinguish scenario parameters from employer-approved food-safety teaching when recommending learning changes.
+  **Why:** a stored acceptance limit establishes the exercise's intended result, not the provenance or scope of a workplace receiving procedure.
+  **How to apply:** retain existing scenario facts, but require employer confirmation before presenting new receiving guidance, product-specific sensory teaching or refusal cases. A design recommendation is not that approval.

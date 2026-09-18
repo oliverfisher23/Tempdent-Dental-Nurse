@@ -64,3 +64,31 @@ mtime_ms = 1789731734442
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/6d39ca23-6cc4-4892-8840-8c3bf7870a84/27f318f2-cbde-46df-964a-be1ba9309e71"
 storage_version_token = "1789731748788993"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "62eQa_bi_Z7luNWurbnkQ"
+uri = "file://docs/delivery-learning-redesign.pdf"
+type = "pdf"
+title = "Delivery learning redesign — recommendation"
+description = "Seven-page learning-design specification: expert walkthrough, annotated order sheet, three trolley storyboards, learner-owned reporting, hints, recovery and approval boundaries. Recommendation only; no app changes."
+logical_id = "49fe8e67-1f92-4ec8-a986-ed95e027d671"
+content_hash = "sha256:f40175b614104122b881a385658f4119288ce879d0b5e0a15d94874fa83ce45b"
+size = 196799
+mtime_ms = 1789731827889
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/49fe8e67-1f92-4ec8-a986-ed95e027d671/a560bca0-9dc2-4114-8dad-1563669ca0ca"
+storage_version_token = "1789731900457966"
+content_type = "application/pdf"
+
+[[outputs]]
+id = "2Kmn97lZP8JG0Bhjwfxa_"
+uri = "file://docs/delivery-learning-redesign.html"
+type = "html"
+title = "Delivery learning redesign — browser version"
+description = "Self-contained, accessible HTML document with the same recommendation and source references. This is a design specification, not a working app or prototype."
+logical_id = "7c0d6f0e-57ad-45ed-ae64-058f0595c4e9"
+content_hash = "sha256:9c4378f7e9ccee27a4d3737bd323f9aee3ff59cd8611018ea2756db8d8762182"
+size = 35194
+mtime_ms = 1789731827885
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/7c0d6f0e-57ad-45ed-ae64-058f0595c4e9/10b1496d-6679-4824-80d0-a6ba124acd0d"
+storage_version_token = "1789731900966078"
+content_type = "text/html"
