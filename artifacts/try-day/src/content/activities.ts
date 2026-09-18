@@ -249,7 +249,7 @@ export const CHILL_RULES = {
 
 export type ChillInterval = (typeof CHILL_RULES.intervals)[number] | 120;
 
-/** What the probe reads in your tray (filled to 56 mm) at each interval. */
+/** Authored 56 mm example-batch readings, not a physical prediction of learner portioning. */
 export const YOUR_TRAY_READINGS: Record<ChillInterval, number> = {
   0: 74.2,
   30: 41.5,
@@ -258,7 +258,7 @@ export const YOUR_TRAY_READINGS: Record<ChillInterval, number> = {
   120: 5.9,
 };
 
-/** Terence's tray, filled shallower, reads: */
+/** Authored comparison readings for Terence's 48 mm example tray. */
 export const MARCUS_TRAY_READINGS: Record<ChillInterval, number> = {
   0: 73.8,
   30: 36.1,
@@ -267,7 +267,7 @@ export const MARCUS_TRAY_READINGS: Record<ChillInterval, number> = {
   120: 3.2,
 };
 
-/** Measured with the ruler at ninety minutes. */
+/** Depths in the authored cooling comparison, distinct from the learner's practice trays. */
 export const MEASURED_DEPTHS_MM = { yours: 56, marcus: 48 };
 
 export const NINETY_MINUTE_CHOICES = [
@@ -293,11 +293,11 @@ export type NinetyMinuteChoiceId = (typeof NINETY_MINUTE_CHOICES)[number]['id'];
 export const CHILL_LINES = {
   marcusOpening: {
     speaker: 'Terence',
-    text: "Twenty-seven kilos, six trays, fifty mil deep, says the sheet. You take half, I'll take half. Shallow trays cool fast; deep trays don't, however cold the cabinet is.",
+    text: "You have half of the twenty-seven-kilo batch. Keep the beef no deeper than fifty millimetres. If the trays on the bench will not hold your share at that depth, ask for a clean spare. Then we will work through a recorded cooling comparison.",
   } satisfies Line,
   marcusOnTrayShortage: {
     speaker: 'Terence',
-    text: "Three clean GNs is what there is; the rest are in the pot wash. Get it panned and in, and we'll watch it. Note the depth you've ended up with.",
+    text: "Here is a clean spare tray. Divide your share without going over fifty millimetres in any tray. You can return beef to the pan and redistribute it before loading.",
   } satisfies Line,
   marcusOnProbe: {
     speaker: 'Terence',
@@ -309,11 +309,11 @@ export const CHILL_LINES = {
   } satisfies Line,
   marcusAtNinety: {
     speaker: 'Terence',
-    text: "Mine's six point four. Yours is still over eight. Nothing moves until it's under the line, so what do we do?",
+    text: "In this recorded comparison, the shallower tray is at six point four. The deeper tray is still over eight. Use the example readings and the kitchen's limits to decide what happens next.",
   } satisfies Line,
   marcusOnRightChoice: {
     speaker: 'Terence',
-    text: "Right. It stays in and we keep writing it down. Now get the ruler; I want to know why yours is behind mine.",
+    text: "The deeper example batch stays in the chiller while we keep recording. Now compare the example depths with the depth of the trays you prepared.",
   } satisfies Line,
   marcusOnWalkIn: {
     speaker: 'Terence',
@@ -325,11 +325,11 @@ export const CHILL_LINES = {
   } satisfies Line,
   marcusOnRuler: {
     speaker: 'Terence',
-    text: "Fifty-six against forty-eight. Eight millimetres and half an hour. That's the whole lesson, and it goes on the record so the next person reads it.",
+    text: "The example trays were fifty-six and forty-eight millimetres deep. Those are the recorded case depths, not a measurement of your arrangement. Compare their cooling records and use the prep sheet's depth limit for your next batch.",
   } satisfies Line,
   marcusDone: {
     speaker: 'Terence',
-    text: "Five point nine at two hours. Under the line. Label it, date it, walk-in. I'll read that record later; leave it on the pass.",
+    text: "The deeper example batch reaches five point nine at two hours. Record that result and sign your comparison record. The evening team needs to know which readings were checked.",
   } satisfies Line,
 };
 
@@ -537,48 +537,45 @@ export const HANDOVER_FIELDS: HandoverField[] = [
     id: 'prepared',
     label: 'What is prepared',
     prompts: [
-      'Beef shin for one hundred: six trays, chilled and in the walk-in',
-      'Ninety tart bases blind-baked; filling in the dairy fridge',
-      'Wellingtons built, egg-washed, on trays in the walk-in',
-      'Frangipane tarts made; twelve poached pears in the pastry fridge',
+      'Which preparation facts are in the supplied shift notes?',
+      'What does the recorded cooling comparison show, and what does it not confirm?',
     ],
   },
   {
     id: 'short',
     label: 'What is short',
     prompts: [
-      'Salmon: 4 kg short on the delivery. Terence has rung the supplier; needed for tomorrow lunch',
-      'Clean 1/1 gastronorm trays were short at 10:45; pot wash has caught up',
+      'What was ordered, what was accepted and how much is missing?',
+      'Which service needs it, and who needs to follow it up?',
     ],
   },
   {
     id: 'walkIn',
     label: 'What is in the walk-in for tonight',
     prompts: [
-      'Beef shin, six trays, labelled 17/09, chilled to 5.9°C at 12:45',
-      'Wellingtons on two trays, top shelf',
-      'Glazed carrots, two trays',
+      'Use the supplied storage facts; do not turn a proposed move into a completed one.',
+      'Keep preparation, example cooling readings and storage information distinct.',
     ],
   },
   {
     id: 'watch',
     label: 'The one thing you would keep an eye on',
     prompts: [
-      'Larder fridge 2: door was found open overnight, read 8.6°C at 06:50. Re-check before service',
-      'Table 3: nut allergy. Poached pear, not the frangipane. It is on the board',
-      'Your beef tray was 56 mm deep and took two hours to come down; bring the batch up gently',
+      'Which saved reading needs follow-up, and when?',
+      'Which dietary proposal is on hold for a preparation and service check?',
+      'Name who should act; a requested check has not happened yet.',
     ],
   },
 ];
 
 export const ELENA_QUESTION = {
-  question: "I've read the chill record. Your tray took two hours where my tray took ninety minutes. What would you do with the trays next time?",
+  question: "In the recorded comparison, the deeper tray took two hours to get under the line and the shallower tray took ninety minutes. How would you prepare the trays for the next batch?",
   options: [
     {
       id: 'shallower',
-      label: 'Fill to the depth on the sheet and get more trays washed up before the batch comes out, even if that means seven trays instead of six',
+      label: 'Have enough clean trays ready to keep every tray within the depth on the prep sheet',
       correct: true,
-      response: "That's the answer. The sheet said fifty and you had fifty-six because you ran out of trays, not because you got the maths wrong. Next time, the trays are ready before the oven door opens. Good day.",
+      response: "Use the fifty-millimetre limit on the prep sheet and arrange enough clean trays before portioning. The comparison shows why we pay attention to depth; it does not predict the readings of every arrangement.",
     },
     {
       id: 'colder',

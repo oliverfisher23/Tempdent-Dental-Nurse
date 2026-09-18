@@ -12,6 +12,7 @@ import { PortioningView } from './portioning';
 import { ChillerView } from './chiller';
 import { ChillRecord } from './record';
 import type { ChillSceneProps, ChillView } from './types';
+import { cn } from '@/lib/utils';
 
 /** How the camera frames each part of the room (the backdrop moves; the panel sits on top). */
 const CAMERA: Record<ChillView, { scale: number; x: string; y: string }> = {
@@ -112,13 +113,55 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
           transition={{ duration: 0.6 }}
         />
 
-        {view === 'room' && (
-          <>
-            <Hotspot x={34} y={62} label={L.brattPan} hint={L.brattPanHint} state={benchState} onClick={() => go('bench')} />
-            <Hotspot x={72} y={28} label={L.blastChiller} hint={L.blastChillerHint} state={chillerState} onClick={() => go('chiller')} />
-            <Hotspot x={56} y={30} label={L.record} hint={L.recordHint} state={recordState} onClick={openRecord} />
-          </>
-        )}
+        {/* Persistent Workspace Navigation */}
+        <div className="absolute inset-x-0 top-4 z-20 flex justify-center pointer-events-none">
+          <div className="flex gap-2 p-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl pointer-events-auto">
+            <button 
+              onClick={() => view !== 'bench' && go('bench')}
+              className={cn(
+                "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all",
+                view === 'bench' ? "bg-primary text-white shadow-md cursor-default" : benchState === 'done' ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-white/80 hover:bg-white/10 hover:text-white"
+              )}
+            >
+              {L.brattPan}
+              {benchState === 'done' && <span className="ml-2 text-[10px] text-emerald-400">✓</span>}
+            </button>
+            <button 
+              onClick={() => chillerState !== 'locked' && view !== 'chiller' && go('chiller')}
+              className={cn(
+                "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center group",
+                view === 'chiller' ? "bg-primary text-white shadow-md cursor-default" : chillerState === 'locked' ? "opacity-50 cursor-not-allowed" : "text-white/80 hover:bg-white/10 hover:text-white"
+              )}
+            >
+              <div>
+                {L.blastChiller}
+                {chillerState === 'done' && <span className="ml-2 text-[10px] text-emerald-400">✓</span>}
+              </div>
+              {chillerState === 'locked' && (
+                <span className="hidden group-hover:block absolute top-full mt-2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
+                  Portion the beef first
+                </span>
+              )}
+            </button>
+            <button 
+              onClick={() => recordState !== 'locked' && !recordOpen && openRecord()}
+              className={cn(
+                "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center group",
+                recordOpen ? "bg-primary text-white shadow-md cursor-default" : recordState === 'locked' ? "opacity-50 cursor-not-allowed" : "text-white/80 hover:bg-white/10 hover:text-white"
+              )}
+            >
+              <div>
+                {L.record}
+                {recordState === 'done' && <span className="ml-2 text-[10px] text-emerald-400">✓</span>}
+              </div>
+              {recordState === 'locked' && (
+                <span className="hidden group-hover:block absolute top-full mt-2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
+                  Start the chiller first
+                </span>
+              )}
+            </button>
+          </div>
+        </div>
 
         <AnimatePresence mode="wait">
           {view === 'bench' && (

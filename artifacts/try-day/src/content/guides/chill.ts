@@ -21,7 +21,7 @@ export function getChillGuide(state: ChillState, started: boolean, waiting: bool
   const m = state.minutesElapsed as ChillInterval;
   const previousWrong = CHILL_RULES.intervals.find(i => i < m && (!state.readings[i]?.time || !readingIsRight(i, state.readings[i]?.value ?? '')));
   if (previousWrong !== undefined) {
-    return guide(`chill-correct-${previousWrong}`, 4, `Check the ${previousWrong}-minute reading`, 'Compare the chill record with your notebook and correct the reading before carrying on.', 'chill:record', 'Open the chill record');
+    return guide(`chill-correct-${previousWrong}`, 4, `Check the ${previousWrong}-minute reading`, 'Compare the chill record with your notebook and correct the reading before carrying on.', 'chill:chiller', 'Open the chiller');
   }
   if (waiting) {
     return guide('chill-waiting', m >= 90 ? 5 : 4, 'The batch is chilling', 'The clock is moving on. Take another reading when the next half-hour is up.', 'chill:chiller', 'Watch the chiller');
@@ -38,5 +38,5 @@ export function getChillGuide(state: ChillState, started: boolean, waiting: bool
   if (m < 120) {
     return guide(`chill-wait-${m}`, m >= 90 ? 5 : 4, 'Leave the batch to chill', 'Your reading is saved. Leave it 30 minutes using the control below the thermometer.', 'chill:chiller', 'Return to the chiller');
   }
-  return guide('chill-sign', 6, L.next.sign, 'All the readings are written down. Add your signature at the bottom of the chill record.', 'chill:record', 'Open the chill record');
+  return guide('chill-sign', 6, L.next.sign, 'All the readings are written down. Add your signature at the bottom of the chill record.', 'chill:chiller', 'Open the chiller');
 }

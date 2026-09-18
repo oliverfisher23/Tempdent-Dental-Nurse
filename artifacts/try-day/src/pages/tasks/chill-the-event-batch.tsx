@@ -16,8 +16,8 @@ const TASK = "chill-the-event-batch" as const;
 /** Half an hour on the chiller clock passes in this many steps, this far apart. */
 const WAIT_STEPS = 10;
 const WAIT_STEP_MS = 240;
-/** A tray cannot take more than this: it would be brimming. */
-const TRAY_CAP_KG = TRAY_DEPTH_MM / PREP_SHEET.depthForKg(1);
+/** A tray cannot take more than 50mm, which is 4kg. */
+const TRAY_CAP_KG = 4.0;
 
 export default function ChillTask() {
   const { progress, updateTask, advanceClock } = useProgress();
@@ -38,6 +38,16 @@ export default function ChillTask() {
 
   const onPour = useCallback<ChillActions["onPour"]>((trayIndex, kg) => {
     updateTask(TASK, prev => {
+      if (kg < 0) {
+        // Return to pan
+        const current = prev.trays[trayIndex] || 0;
+        const remove = Math.min(Math.abs(kg), current);
+        if (remove <= 0.001) return prev;
+        const trays = [...prev.trays];
+        trays[trayIndex] = Math.round((trays[trayIndex] - remove) * 100) / 100;
+        return { ...prev, trays };
+      }
+      
       const left = PREP_SHEET.yourShareKg - prev.trays.reduce((a, b) => a + b, 0);
       const room = TRAY_CAP_KG - prev.trays[trayIndex];
       const amount = Math.min(kg, left, room);
@@ -50,7 +60,12 @@ export default function ChillTask() {
 
   const onAskForTray = useCallback(() => {
     kitchenAudio.play('tap');
-    updateTask(TASK, prev => ({ ...prev, askedForTray: true }));
+    updateTask(TASK, prev => ({ 
+      ...prev, 
+      askedForTray: true,
+      trays: prev.trays.length === 3 ? [...prev.trays, 0] : prev.trays,
+      shelfByTray: prev.shelfByTray.length === 3 ? [...prev.shelfByTray, null] : prev.shelfByTray
+    }));
     setDialogue(CHILL_LINES.marcusOnTrayShortage);
   }, [updateTask]);
 

@@ -14,6 +14,7 @@ import { getDeliveryGuide } from "@/content/guides/handover-delivery";
 import { KitchenFrame } from "@/components/kitchen/kitchen-frame";
 import { PassScene } from "@/components/scenes/delivery/pass";
 import { GoodsInScene } from "@/components/scenes/delivery/goods-in";
+import { GoodsInSceneRedesign } from "@/components/scenes/delivery/goods-in-redesign";
 
 const SHORT_LINE = ORDER_LINES.find((l) => l.id === SHORT_LINE_ID)!;
 
@@ -24,37 +25,60 @@ export default function DeliveryTask() {
   
   const [hasRadio, setHasRadio] = useState(false);
 
+  useEffect(() => {
+    if (!state.redesign && !state.signed) {
+      updateTask("check-the-delivery-in", (prev) => ({
+        ...prev,
+        redesign: {
+          version: 1,
+          accepted: {},
+          fishReason: '',
+          missingQuantity: '',
+          report: '',
+          reportSent: false
+        }
+      }));
+    }
+  }, [state.redesign, state.signed, updateTask]);
+
   const handleLineStatus = useCallback((id: string, status: LineStatus) => {
     const line = ORDER_LINES.find(l => l.id === id);
-    if (line && status !== line.expectedStatus) {
+    if (!state.redesign && line && status !== line.expectedStatus) {
       setDialogue(DELIVERY_LINES.marcusOnWrongStatus);
       kitchenAudio.play('wrong');
     }
 
     updateTask("check-the-delivery-in", (prev) => ({
       ...prev,
+      signed: prev.redesign ? false : prev.signed,
+      redesign: prev.redesign ? { ...prev.redesign, reportSent: false } : prev.redesign,
       lines: {
         ...prev.lines,
         [id]: { ...prev.lines[id] || { counted: false, arrived: '', probed: false, temperature: '', status: null }, status }
       }
     }));
-  }, [updateTask]);
+  }, [updateTask, state.redesign]);
 
   const handleLineInput = useCallback((id: string, field: "arrived" | "temperature", value: string) => {
-    if (field === "arrived" && id === SHORT_LINE_ID && parseNumber(value) === SHORT_LINE.arrived) {
+    if (!state.redesign && field === "arrived" && id === SHORT_LINE_ID && parseNumber(value) === SHORT_LINE.arrived) {
       setDialogue(DELIVERY_LINES.driverOnShort);
     }
     updateTask("check-the-delivery-in", (prev) => {
       const lineState = prev.lines[id] || { counted: false, arrived: '', probed: false, temperature: '', status: null };
       const newLine = { ...lineState, [field]: value };
       
-      if (field === "arrived") {
+      if (!prev.redesign && field === "arrived") {
         newLine.counted = value.trim() !== "";
       }
 
-      return { ...prev, lines: { ...prev.lines, [id]: newLine } };
+      return { 
+        ...prev, 
+        signed: prev.redesign ? false : prev.signed,
+        redesign: prev.redesign ? { ...prev.redesign, reportSent: false } : prev.redesign,
+        lines: { ...prev.lines, [id]: newLine } 
+      };
     });
-  }, [updateTask]);
+  }, [updateTask, state.redesign]);
 
   const handleCountSettled = useCallback((id: string) => {
     updateTask("check-the-delivery-in", (prev) => ({
@@ -120,18 +144,33 @@ export default function DeliveryTask() {
       dialogue={dialogue}
       scenes={{
         pass: <PassScene hasRadio={hasRadio} onTakeRadio={() => { kitchenAudio.play('tap'); setHasRadio(true); }} />,
-        'goods-in': <GoodsInScene 
-          state={state}
-          onLineInput={handleLineInput}
-          onLineStatus={handleLineStatus}
-          onCountSettled={handleCountSettled}
-          onProbeSettled={handleProbeSettled}
-          onFishCheck={handleFishCheck}
-          onRadioMarcus={handleRadioMarcus}
-          onSign={handleSign}
-          onNoteAmended={(val: string) => updateTask("check-the-delivery-in", prev => ({ ...prev, noteAmendedTo: val }))}
-          onFirstArrival={handleFirstArrival}
-        />
+        'goods-in': state.redesign ? (
+          <GoodsInSceneRedesign 
+            state={state}
+            onLineInput={handleLineInput}
+            onLineStatus={handleLineStatus}
+            onCountSettled={handleCountSettled}
+            onProbeSettled={handleProbeSettled}
+            onFishCheck={handleFishCheck}
+            onRadioMarcus={handleRadioMarcus}
+            onSign={handleSign}
+            onNoteAmended={(val: string) => updateTask("check-the-delivery-in", prev => ({ ...prev, noteAmendedTo: val }))}
+            onFirstArrival={handleFirstArrival}
+          />
+        ) : (
+          <GoodsInScene 
+            state={state}
+            onLineInput={handleLineInput}
+            onLineStatus={handleLineStatus}
+            onCountSettled={handleCountSettled}
+            onProbeSettled={handleProbeSettled}
+            onFishCheck={handleFishCheck}
+            onRadioMarcus={handleRadioMarcus}
+            onSign={handleSign}
+            onNoteAmended={(val: string) => updateTask("check-the-delivery-in", prev => ({ ...prev, noteAmendedTo: val }))}
+            onFirstArrival={handleFirstArrival}
+          />
+        )
       }}
     />
   );

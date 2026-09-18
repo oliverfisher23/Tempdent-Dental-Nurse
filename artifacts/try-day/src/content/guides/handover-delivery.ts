@@ -52,12 +52,16 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
   };
 }
 
-const deliveryTotal = ORDER_LINES.length * 2 + FISH_CHECKS.length + 3;
+const deliveryTotal = ORDER_LINES.length + 3;
 
 export function getDeliveryGuide(state: DeliveryState): StepGuide {
   const physicalLine = ORDER_LINES.find((line) => {
     const row = state.lines[line.id];
-    return !row?.counted || (line.chilled && !row?.probed);
+    return !row?.counted || (line.chilled && !row?.probed)
+      || parseNumber(row.arrived) !== line.arrived
+      || row.status !== line.expectedStatus
+      || (line.chilled && !within(row.temperature, line.actualC ?? 0, READING_TOLERANCE_C))
+      || (!!state.redesign && state.redesign.accepted[line.id] !== 'accept');
   });
   if (physicalLine) {
     const row = state.lines[physicalLine.id];
@@ -67,10 +71,10 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
       id: `delivery-check-${physicalLine.id}-${needsCount ? 'count' : 'temperature'}`,
       step: 1 + index,
       total: deliveryTotal,
-      title: `${needsCount ? (physicalLine.unit === 'kg' ? 'Weigh' : 'Count') : 'Take the temperature of'} ${physicalLine.item}`,
+      title: `Check ${physicalLine.item}`,
       instruction: needsCount
-        ? `${physicalLine.unit === 'kg' ? 'Weigh' : 'Count'} what came in and write the result in your notebook.`
-        : 'Take the temperature, wait for the probe to settle, then write it in your notebook.',
+        ? 'Inspect the goods, measure what arrived and enter it beside the order. Decide whether to accept the checked quantity.'
+        : 'Compare your findings with the order and scenario guidance. Finish this row before moving to another item.',
       actionLabel: `Open ${physicalLine.item}`,
       place: 'goods-in',
       action: `delivery:box:${physicalLine.id}`,
@@ -78,49 +82,27 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
   }
 
   const fishCheck = FISH_CHECKS.find((check) => !state.fishChecks[check.id]);
-  if (fishCheck) {
-    const fishIndex = FISH_CHECKS.indexOf(fishCheck);
+  if (fishCheck || (state.redesign && state.redesign.fishReason.trim().length <= 5)) {
     return {
-      id: `delivery-fish-${fishCheck.id}`,
-      step: 1 + ORDER_LINES.length + fishIndex,
+      id: `delivery-fish-${fishCheck?.id ?? 'reason'}`,
+      step: ORDER_LINES.length + 1,
       total: deliveryTotal,
-      title: `${fishCheck.label === 'Smell' ? 'Smell' : `Check the ${fishCheck.label.toLowerCase()}`} of the fish`,
-      instruction: fishCheck.whatYouFind,
+      title: fishCheck ? 'Inspect the whole fish' : 'Explain the fish decision',
+      instruction: 'Reveal each inspection finding, then explain how the evidence supports your decision.',
       actionLabel: 'Open the sea bass box',
       place: 'goods-in',
       action: 'delivery:box:sea-bass',
     };
   }
 
-  const unfinishedLine = ORDER_LINES.find((line) => {
-    const row = state.lines[line.id];
-    return !row
-      || parseNumber(row.arrived) !== line.arrived
-      || row.status !== line.expectedStatus
-      || (line.chilled && !within(row.temperature, line.actualC ?? 0, READING_TOLERANCE_C));
-  });
-  if (unfinishedLine) {
-    const index = ORDER_LINES.indexOf(unfinishedLine);
-    return {
-      id: `delivery-sheet-${unfinishedLine.id}`,
-      step: 1 + ORDER_LINES.length + FISH_CHECKS.length + index,
-      total: deliveryTotal,
-      title: `Write up ${unfinishedLine.item}`,
-      instruction: 'Use your notes for the amount and temperature, then mark it all here, short or refused.',
-      actionLabel: 'Open the order sheet',
-      place: 'goods-in',
-      action: 'delivery:order-sheet',
-    };
-  }
-
-  if (!state.radioedMarcus) {
+  if (!state.radioedMarcus || (state.redesign && !state.redesign.reportSent)) {
     return {
       id: 'delivery-report-shortage',
-      step: deliveryTotal - 2,
+      step: deliveryTotal - 1,
       total: deliveryTotal,
-      title: 'Tell Terence about the salmon shortage',
-      instruction: 'Use the radio by the back door to tell Terence that four kilos are missing.',
-      actionLabel: 'Show the radio',
+      title: 'Report the discrepancy',
+      instruction: 'Compare the order, supplier claim and your checked quantity. Calculate what is missing and write your message to Terence.',
+      actionLabel: 'Prepare the report',
       place: 'goods-in',
       action: 'delivery:radio',
     };
@@ -129,10 +111,10 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
   if (parseNumber(state.noteAmendedTo) !== ORDER_LINES.find((line) => line.id === SHORT_LINE_ID)!.arrived) {
     return {
       id: 'delivery-amend-note',
-      step: deliveryTotal - 1,
+      step: deliveryTotal,
       total: deliveryTotal,
       title: 'Amend the delivery note',
-      instruction: 'Cross out 12 kilos of salmon and write the 8 kilos that came in.',
+      instruction: 'Use your checked and accepted quantity to correct the fish supplier’s note. Keep the original claim visible.',
       actionLabel: 'Open the delivery note',
       place: 'goods-in',
       action: 'delivery:note',

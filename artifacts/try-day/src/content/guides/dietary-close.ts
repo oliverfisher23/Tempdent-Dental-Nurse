@@ -1,6 +1,7 @@
 import { ADDED_GUESTS, ELENA_QUESTION, WASTE_BINS } from '@/content/activities';
 import type { StepGuide } from '@/content/step-guide';
 import { GUIDE_COPY } from '@/content/step-guide';
+import { getDietaryRedesignStage } from '@/lib/redesign-dietary';
 import {
   evaluateClose,
   evaluateDietary,
@@ -11,8 +12,8 @@ import {
   type DietaryState,
 } from '@/lib/simulation';
 
-const DIETARY_TOTAL = 5;
-const CLOSE_TOTAL = 5;
+const DIETARY_TOTAL = 3;
+const CLOSE_TOTAL = 6;
 const WASTE_GUIDE_NAMES: Record<string, string> = {
   trimmings: 'the trimmings',
   spoilage: 'the spoiled food',
@@ -29,7 +30,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       step: 1,
       total: DIETARY_TOTAL,
       title: 'Check the allergen chart',
-      instruction: 'Use the recipe cards to mark every allergen, then go through the chart with Terence.',
+      instruction: 'Read each recipe beside your chart, check all fourteen categories and ask Terence to review your entries.',
       actionLabel: 'Open the chart',
       place: 'events',
       action: 'dietary.open-chart',
@@ -42,28 +43,28 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       state.guests[guest.id] ?? { main: null, dessert: null },
     ),
   );
-  if (guestIndex !== -1) {
-    const guest = ADDED_GUESTS[guestIndex];
+  if (guestIndex !== -1 || (state.redesign && getDietaryRedesignStage(state) === 'guests')) {
+    const guest = ADDED_GUESTS[Math.max(0, guestIndex)];
     return {
       id: `dietary-guest-${guest.id}`,
-      step: guestIndex + 2,
+      step: 2,
       total: DIETARY_TOTAL,
-      title: `Choose ${guest.name.split(' ')[0]}'s meal`,
-      instruction: 'Use the function sheet to choose a safe main and dessert for this guest.',
+      title: guestIndex !== -1 ? `Review ${guest.name.split(' ')[0]}'s courses` : 'Explain your menu decisions',
+      instruction: 'Use your chart and ingredients to explain what you would keep, swap or ask about. Preparation and service checks remain separate.',
       actionLabel: 'Open function sheet',
-      place: 'pass',
+      place: 'events',
       action: 'dietary.open-function-sheet',
     };
   }
 
   const boardDone = evaluation.checklist.find((item) => item.id === 'board')?.met ?? false;
-  if (!boardDone) {
+  if (!boardDone || !evaluation.done) {
     return {
       id: 'dietary-board',
-      step: 5,
+      step: 3,
       total: DIETARY_TOTAL,
       title: 'Update the evening board',
-      instruction: 'Write the changed dessert and the guest or table it is for.',
+      instruction: 'Review each proposed change, including guest, table and reason. Keep unresolved checks on hold for Terence.',
       actionLabel: 'Open the board',
       place: 'events',
       action: 'dietary.open-board',
@@ -94,7 +95,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
         step: index + 1,
         total: CLOSE_TOTAL,
         title: `Weigh ${binName}`,
-        instruction: 'Put this bin on the scales and write the weight in your notebook.',
+        instruction: 'Inspect the contents, put this tub on the scales and enter the reading beside it.',
         actionLabel: 'Open the scales',
         place: 'pass',
         action: 'close.open-waste',
@@ -107,22 +108,35 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
         step: index + 1,
         total: CLOSE_TOTAL,
         title: `Write the weight for ${binName}`,
-        instruction: 'Use the weight in your notebook to correct this row on the waste sheet.',
-        actionLabel: 'Open handover sheet',
+        instruction: 'Read the scales and correct this weight on the same sheet.',
+        actionLabel: 'Open the scales',
         place: 'pass',
-        action: 'close.open-clipboard',
+        action: 'close.open-waste',
       };
     }
   }
 
-  const handoverDone = evaluation.checklist.find((item) => item.id === 'handover')?.met ?? false;
-  if (!handoverDone) {
+  if (state.redesign && (!state.redesign.wasteFocus || !state.redesign.wasteReason.trim())) {
     return {
-      id: 'close-handover',
+      id: 'close-interpret',
       step: 4,
       total: CLOSE_TOTAL,
+      title: 'Choose a waste follow-up',
+      instruction: 'Use the weights and contents to suggest something worth investigating. Weight alone does not tell us the cause.',
+      actionLabel: 'Review the waste',
+      place: 'pass',
+      action: 'close.open-waste',
+    };
+  }
+
+  const handoverDone = evaluation.checklist.find((item) => item.id === 'handover')?.met ?? false;
+  if (!handoverDone || (state.redesign && !state.redesign.recipientConfirmed)) {
+    return {
+      id: 'close-handover',
+      step: 5,
+      total: CLOSE_TOTAL,
       title: 'Hand the kitchen on',
-      instruction: 'Fill in the handover sheet for the evening team, then hand it over.',
+      instruction: 'Use the saved records and supplied shift facts. Answer the evening team’s questions, clarify timing and responsibility, then hand it over.',
       actionLabel: 'Open handover sheet',
       place: 'pass',
       action: 'close.open-clipboard',
@@ -136,7 +150,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
     );
     return {
       id: answerIsCorrect ? 'close-elena-sign' : 'close-elena-question',
-      step: 5,
+      step: 6,
       total: CLOSE_TOTAL,
       title: answerIsCorrect ? 'Ask Terence to sign' : 'Go through the chill record',
       instruction: answerIsCorrect

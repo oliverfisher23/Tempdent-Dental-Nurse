@@ -116,6 +116,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       setProgress((prev) => {
         // Signed-off paperwork is frozen: late callbacks and revisits cannot rewrite it.
         if (prev.completed.includes(id)) return prev;
+        if (!TASK_ORDER.slice(0, TASK_ORDER.indexOf(id)).every((task) => prev.completed.includes(task))) return prev;
         return { ...prev, tasks: { ...prev.tasks, [id]: updater(prev.tasks[id]) } };
       });
     },
@@ -124,6 +125,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
 
   const completeTask = useCallback(
     (id: TaskId): boolean => {
+      if (!TASK_ORDER.slice(0, TASK_ORDER.indexOf(id)).every((task) => progress.completed.includes(task))) return false;
       const evaluation = evaluateTask(id, progress.tasks);
       if (!evaluation.done) return false;
       if (progress.completed.includes(id)) return true;

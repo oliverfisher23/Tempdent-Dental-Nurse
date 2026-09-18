@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Thermometer, Ruler as RulerIcon, ClipboardList, Play, Clock, Check, X } from 'lucide-react';
 import { PREP_SHEET, CHILLER_SHELVES, CHILL_RULES, YOUR_TRAY_READINGS, PROBE_PLACEMENTS, type ProbePlacementId, type ChillInterval } from '@/content/activities';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
+import { CoolingRecordSummary } from './cooling-record-summary';
 import { parseNumber, readingIsRight, traysHaveSpace, type ChillState } from '@/lib/simulation';
 import { useProgress } from '@/lib/progress-store';
 import { useFocusTrap } from '../../kitchen/use-focus-trap';
@@ -541,8 +542,10 @@ export function ChillerView({
               )}
               {!readingDue && <p role="status" className="text-sm font-semibold text-emerald-400">{L.readingSaved(m)}</p>}
 
+              <CoolingRecordSummary state={state} />
+
               <Button variant="secondary" onClick={onOpenRecord} className="w-full font-bold" data-testid="open-record">
-                <ClipboardList className="mr-1 h-4 w-4" /> {L.record}
+                <ClipboardList className="mr-1 h-4 w-4" /> {m >= CHILL_RULES.extraInterval && !readingDue ? L.reviewAndSign : L.recordTitle}
               </Button>
 
               <div>

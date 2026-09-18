@@ -8,6 +8,10 @@
  */
 
 import mechanic from '@/content/mechanic.json';
+import type { DeliveryRedesignState, ChillRedesignState, DietaryRedesignState, CloseRedesignState } from './redesign-types';
+import { deliveryRedesignChecklist } from './redesign-delivery';
+import { dietaryRedesignChecklist } from './redesign-dietary';
+import { evaluateCloseRedesign } from './redesign-close';
 import {
   ADDED_GUESTS,
   ALLERGENS,
@@ -97,6 +101,7 @@ export interface OrderLineState {
 }
 
 export interface DeliveryState {
+  redesign?: DeliveryRedesignState;
   lines: Record<string, OrderLineState>;
   fishChecks: Record<FishCheckId, boolean>;
   /** Marcus has been radioed about the short line. */
@@ -108,9 +113,10 @@ export interface DeliveryState {
 }
 
 export interface ChillState {
+  redesign?: ChillRedesignState;
   /** Kilos scooped into each of your trays. */
   trays: number[];
-  /** Student asked Marcus for a fourth tray (there isn't one). */
+  /** Student requested a clean spare tray. */
   askedForTray: boolean;
   /** Shelf index for each tray once loaded, or null while it is still on the bench. */
   shelfByTray: (number | null)[];
@@ -130,6 +136,7 @@ export interface GuestAssignment {
 }
 
 export interface DietaryState {
+  redesign?: DietaryRedesignState;
   /** Ticks on the allergen chart, keyed by dish id. */
   chart: Record<string, AllergenId[]>;
   /** Dish ids Marcus has flagged as wrong on the last check. */
@@ -141,6 +148,7 @@ export interface DietaryState {
 }
 
 export interface CloseState {
+  redesign?: CloseRedesignState;
   weighed: Record<string, boolean>;
   weights: Record<string, string>;
   handover: Record<string, string>;
@@ -200,6 +208,7 @@ export function initialTaskStates(): TaskStates {
       ),
     },
     'check-the-delivery-in': {
+      redesign: { version: 1, accepted: {}, fishReason: '', missingQuantity: '', report: '', reportSent: false },
       lines: Object.fromEntries(
         ORDER_LINES.map((l) => [l.id, { counted: false, arrived: '', probed: false, temperature: '', status: null }]),
       ),
@@ -210,6 +219,7 @@ export function initialTaskStates(): TaskStates {
       signed: false,
     },
     'chill-the-event-batch': {
+      redesign: { version: 1, comparisonReviewed: false },
       trays: Array.from({ length: PREP_SHEET.cleanTraysAvailable }, () => 0),
       askedForTray: false,
       shelfByTray: Array.from({ length: PREP_SHEET.cleanTraysAvailable }, () => null),
@@ -221,6 +231,7 @@ export function initialTaskStates(): TaskStates {
       studentSigned: false,
     },
     'check-the-dietary-list': {
+      redesign: { version: 1, decisions: {}, serviceHoldAcknowledged: false, rowReviewConfirmed: {}, openQuestions: {} },
       chart: Object.fromEntries(DISHES.map((d) => [d.id, []])),
       flaggedDishes: [],
       chartChecked: false,
@@ -229,6 +240,7 @@ export function initialTaskStates(): TaskStates {
       boardPosted: false,
     },
     'hand-the-kitchen-on': {
+      redesign: { version: 1, wasteFocus: '', wasteReason: '', priorities: {}, clarifications: {}, recipientConfirmed: false },
       weighed: Object.fromEntries(WASTE_BINS.map((b) => [b.id, false])),
       weights: Object.fromEntries(WASTE_BINS.map((b) => [b.id, ''])),
       handover: Object.fromEntries(HANDOVER_FIELDS.map((f) => [f.id, ''])),
@@ -264,6 +276,14 @@ export function testProgress(target: TaskId | null | undefined): Progress {
     }])),
   };
   const delivery: DeliveryState = {
+    redesign: {
+      version: 1,
+      accepted: Object.fromEntries(ORDER_LINES.map((line) => [line.id, 'accept'])),
+      fishReason: 'Clear eyes, red gills, a clean smell and firm flesh support accepting the checked fish.',
+      missingQuantity: '4',
+      report: 'The salmon order and supplier note say 12 kg. I checked 8 kg, leaving 4 kg missing for tomorrow lunch.',
+      reportSent: true,
+    },
     lines: Object.fromEntries(ORDER_LINES.map((line) => [line.id, {
       counted: true, arrived: String(line.arrived), probed: line.chilled,
       temperature: line.chilled ? String(line.actualC) : '', status: line.expectedStatus,
@@ -272,7 +292,8 @@ export function testProgress(target: TaskId | null | undefined): Progress {
     radioedMarcus: true, noteAmendedTo: '8', signature: initials, signed: true,
   };
   const chill: ChillState = {
-    trays: [4.5, 4.5, 4.5], askedForTray: true, shelfByTray: [0, 2, 4],
+    redesign: { version: 1, comparisonReviewed: true },
+    trays: [4, 4, 4, 1.5], askedForTray: true, shelfByTray: [0, 2, 4, 6],
     probePlacement: 'centre',
     readings: Object.fromEntries(([0, 30, 60, 90, 120] as ChillInterval[]).map((minute) => [
       minute, { value: String(YOUR_TRAY_READINGS[minute]), time: addMinutes(CHILL_RULES.startClock, minute) },
@@ -280,25 +301,44 @@ export function testProgress(target: TaskId | null | undefined): Progress {
     minutesElapsed: 120, ninetyChoice: 'keep-logging', measuredDepths: true, studentSigned: true,
   };
   const dietary: DietaryState = {
+    redesign: {
+      version: 1,
+      rowReviewConfirmed: Object.fromEntries(DISHES.map((dish) => [dish.id, true])),
+      openQuestions: { frangipane: 'Confirm allergy wording, supplier information and preparation/service controls with Terence.' },
+      serviceHoldAcknowledged: true,
+      decisions: {
+        'priya:main': { action: 'keep', proposedDishId: 'beef', category: 'no-conflict', evidence: ['Beef shin'], reason: 'No nuts are listed in the supplied main ingredients; preparation checks remain pending.' },
+        'priya:dessert': { action: 'swap', proposedDishId: 'pear', category: 'ingredient-conflict', evidence: ['Ground almonds', 'Pistachios', 'Almonds are mixed through the prepared tart'], reason: 'Almonds run throughout the filling and pistachios are present. Removing visible nuts cannot fix this. Propose pear, which still contains milk, subject to preparation checks.' },
+        'tom:main': { action: 'swap', proposedDishId: 'wellington', category: 'vegetarian-conflict', evidence: ['Beef shin'], reason: 'The beef conflicts with the vegetarian request; the Wellington is the listed vegetarian main.' },
+        'tom:dessert': { action: 'keep', proposedDishId: 'frangipane', category: 'no-conflict', evidence: ['Ground almonds'], reason: 'No conflict with the stated vegetarian request is identified in these dessert ingredients.' },
+        'anna:main': { action: 'keep', proposedDishId: 'beef', category: 'no-conflict', evidence: ['Beef shin'], reason: 'The guest sheet has no restriction stated; retain the planned main.' },
+        'anna:dessert': { action: 'keep', proposedDishId: 'frangipane', category: 'no-conflict', evidence: ['Ground almonds'], reason: 'There is no stated reason to change the planned dessert.' },
+      },
+    },
     chart: Object.fromEntries(DISHES.map((dish) => [dish.id, [...dish.allergens]])),
     flaggedDishes: [], chartChecked: true,
-    guests: { priya: { main: 'beef', dessert: 'pear' }, tom: { main: 'wellington', dessert: 'pear' }, anna: { main: 'beef', dessert: 'frangipane' } },
-    boardNote: 'Table 3 Priya Nair: pear instead of frangipane for nut allergy.', boardPosted: true,
+    guests: { priya: { main: 'beef', dessert: 'pear' }, tom: { main: 'wellington', dessert: 'frangipane' }, anna: { main: 'beef', dessert: 'frangipane' } },
+    boardNote: 'Table 3 Priya Nair: frangipane → pear for the nut requirement; milk remains. Table 6 Tom Reid: beef → Wellington, vegetarian. Proposals on hold for Terence’s preparation and service checks.', boardPosted: true,
   };
   const close: CloseState = {
+    redesign: {
+      version: 1, wasteFocus: 'plate', wasteReason: 'Ask the service team what was returned and why before deciding how to reduce plate waste.',
+      priorities: { salmon: 'later', larder2: 'before-service', table3: 'before-service' },
+      responsibilities: { salmon: 'Terence', larder2: 'Evening chef', table3: 'Terence and evening service team' },
+      clarifications: { salmon: 'tomorrow', fridge: 'todo', dietary: 'pear' },
+      recipientConfirmed: true,
+    },
     weighed: Object.fromEntries(WASTE_BINS.map((bin) => [bin.id, true])),
     weights: Object.fromEntries(WASTE_BINS.map((bin) => [bin.id, String(bin.actualKg)])),
-    handover: { prepared: 'Beef shin chilled in six trays; tarts and Wellingtons are ready for tonight.', short: 'Salmon is 4 kg short; supplier has been told and tomorrow lunch is affected.', walkIn: 'Beef and Wellingtons are labelled and stored in the walk-in for tonight.', watch: 'Larder fridge 2 was 8.6°C after its door was open; re-check before service. Table 3 has pear.' },
+    handover: { prepared: 'My practice share is in four trays. The supplied shift notes list prepared tarts and Wellingtons.', short: 'Salmon is 4 kg short for tomorrow lunch. Terence needs to follow up; a replacement is not confirmed.', walkIn: 'The supplied shift notes list Wellingtons and glazed carrots in the walk-in. Cooling readings are a recorded example.', watch: 'Ask the evening chef to re-check larder fridge 2 before service. Table 3 pear is a proposal on hold for Terence’s preparation and service checks.' },
     handedOver: true, elenaAnswer: 'shallower', elenaSigned: true,
   };
   const completeStates: TaskStates = { 'take-the-handover': handover, 'check-the-delivery-in': delivery, 'chill-the-event-batch': chill, 'check-the-dietary-list': dietary, 'hand-the-kitchen-on': close };
   const index = target === null ? TASK_ORDER.length : target === undefined ? 0 : TASK_ORDER.indexOf(target);
   return {
     ...p, studentName: 'Learning Designer', initials, startedAt: new Date().toISOString(),
-    tasks: target === null ? completeStates : target === undefined ? initialTaskStates() : {
-      ...completeStates,
-      [target]: initialTaskStates()[target],
-    },
+    // Only seed preceding tasks. Later tasks must still start with blank learner work.
+    tasks: Object.fromEntries(TASK_ORDER.map((id, i) => [id, i < index ? completeStates[id] : p.tasks[id]])) as unknown as TaskStates,
     completed: TASK_ORDER.slice(0, index), completedAt: target === null ? new Date().toISOString() : null,
     clock: target === null ? getTask(TASK_ORDER[TASK_ORDER.length - 1]).time : target === undefined ? getTask(TASK_ORDER[0]).time : getTask(target).time,
     notepad: [],
@@ -402,6 +442,7 @@ export function evaluateDelivery(s: DeliveryState): Evaluation {
     { id: 'temps', label: 'Every chilled line carries a temperature', met: everyChilledTemp },
     { id: 'fish', label: 'The fish looked at and smelled', met: fishLooked },
     { id: 'note', label: 'Delivery note signed for what you actually took in', met: signedRight },
+    ...deliveryRedesignChecklist(s),
   ];
   return { done: checklist.every((c) => c.met), checklist };
 }
@@ -417,7 +458,7 @@ export function traysHaveSpace(shelfByTray: (number | null)[]): boolean {
   for (let i = 1; i < shelves.length; i++) {
     if (shelves[i] - shelves[i - 1] < 2) return false;
   }
-  return shelves.every((x) => x >= 0 && x < CHILLER_SHELVES);
+  return shelves.every((x) => Number.isInteger(x) && x >= 0 && x < CHILLER_SHELVES);
 }
 
 export function readingIsRight(interval: ChillInterval, value: string): boolean {
@@ -425,8 +466,10 @@ export function readingIsRight(interval: ChillInterval, value: string): boolean 
 }
 
 export function evaluateChill(s: ChillState): Evaluation {
-  const portioned = Math.abs(totalPortionedKg(s) - PREP_SHEET.yourShareKg) < 0.01;
-  const loaded = traysHaveSpace(s.shelfByTray);
+  const validTrays = s.trays.length > 0 && s.trays.every((kg) => Number.isFinite(kg) && kg > 0);
+  const portioned = validTrays && Math.abs(totalPortionedKg(s) - PREP_SHEET.yourShareKg) < 0.01
+    && (!s.redesign || s.trays.every((kg) => kg <= PREP_SHEET.kgPerTrayAtDepth));
+  const loaded = s.shelfByTray.length === s.trays.length && traysHaveSpace(s.shelfByTray);
   const probeRight = s.probePlacement !== null && PROBE_PLACEMENTS.find((p) => p.id === s.probePlacement)?.correct === true;
   const fourReadings = CHILL_RULES.intervals.every((i) => {
     const r = s.readings[i];
@@ -482,12 +525,14 @@ export function boardNoteIsUseful(note: string): boolean {
 
 export function evaluateDietary(s: DietaryState): Evaluation {
   const chartRight = wrongChartRows(s.chart).length === 0;
-  const allAllergensConsidered = ALLERGENS.length === 14; // the chart always shows all fourteen
+  const allAllergensConsidered = ALLERGENS.length === 14
+    && (!s.redesign || DISHES.every((dish) => s.redesign?.rowReviewConfirmed?.[dish.id] === true));
   const guestsDone = ADDED_GUESTS.every((g) => guestAssignmentIsSafe(g.id, s.guests[g.id] ?? { main: null, dessert: null }));
   const checklist: ChecklistItem[] = [
     { id: 'chart', label: 'Every dish marked against all fourteen allergens', met: chartRight && allAllergensConsidered && s.chartChecked },
     { id: 'guests', label: 'Each of the three added guests has a dish written against their name', met: guestsDone },
     { id: 'board', label: 'The changes are up on the evening board', met: s.boardPosted && guestsDone && boardNoteIsUseful(s.boardNote) },
+    ...dietaryRedesignChecklist(s),
   ];
   return { done: checklist.every((c) => c.met), checklist };
 }
@@ -499,12 +544,13 @@ export function weightIsRight(binId: string, value: string): boolean {
 
 export function evaluateClose(s: CloseState, chill: ChillState): Evaluation {
   const weights = WASTE_BINS.every((b) => s.weighed[b.id] && weightIsRight(b.id, s.weights[b.id] ?? ''));
-  const handoverFilled = HANDOVER_FIELDS.every((f) => (s.handover[f.id] ?? '').trim().length >= 10);
-  const elenaAnswered = s.elenaAnswer !== null && ELENA_QUESTION.options.some((o) => o.id === s.elenaAnswer);
+  const handoverFilled = HANDOVER_FIELDS.every((f) => (s.handover[f.id] ?? '').trim().length >= (s.redesign ? 1 : 10));
+  const elenaAnswered = s.elenaAnswer !== null && ELENA_QUESTION.options.some((o) => o.id === s.elenaAnswer && o.correct);
   const checklist: ChecklistItem[] = [
     { id: 'waste', label: 'A weight against each of the three rows on the waste sheet', met: weights },
     { id: 'handover', label: 'Handover sheet filled in and handed over', met: handoverFilled && s.handedOver },
     { id: 'signatures', label: 'Both signatures on the chill record', met: chill.studentSigned && s.elenaSigned && elenaAnswered },
+    ...evaluateCloseRedesign(s),
   ];
   return { done: checklist.every((c) => c.met), checklist };
 }
@@ -533,12 +579,16 @@ export function complicationRevealed(id: TaskId, tasks: TaskStates): boolean {
     }
     case 'check-the-delivery-in': {
       const st = tasks[id].lines[SHORT_LINE_ID];
-      return !!st && st.counted && st.arrived.trim() !== '';
+      const short = ORDER_LINES.find((line) => line.id === SHORT_LINE_ID)!;
+      return !!st && st.counted && parseNumber(st.arrived) === short.arrived && st.status === 'short'
+        && (!tasks[id].redesign || parseNumber(tasks[id].redesign?.missingQuantity ?? '') === short.ordered - short.arrived);
     }
     case 'chill-the-event-batch':
       return tasks[id].readings[90] !== undefined;
     case 'check-the-dietary-list':
-      return tasks[id].chartChecked;
+      return tasks[id].redesign
+        ? !!tasks[id].redesign?.decisions['priya:dessert']?.action
+        : tasks[id].chartChecked;
     case 'hand-the-kitchen-on':
       return tasks[id].handedOver;
   }
@@ -575,7 +625,16 @@ export function loadProgress(testMode = isTestMode()): Progress {
     const tasks: Record<string, unknown> = {};
     for (const id of TASK_ORDER) {
       const stored = parsed.tasks[id];
-      tasks[id] = mergeTaskState(base.tasks[id], isRecord(stored) ? stored : {});
+      const merged = mergeTaskState(base.tasks[id], isRecord(stored) ? stored : {});
+      // An already signed legacy record must not acquire assessment requirements retroactively.
+      // A legacy cooling cycle already in progress also cannot be re-portioned mid-cycle.
+      const completedLegacy = Array.isArray(parsed.completed) && parsed.completed.includes(id);
+      const runningLegacyChill = id === 'chill-the-event-batch' && isRecord(stored)
+        && isRecord(stored.readings) && Object.keys(stored.readings).length > 0;
+      if (isRecord(stored) && !stored.redesign && (completedLegacy || runningLegacyChill)) {
+        delete (merged as { redesign?: unknown }).redesign;
+      }
+      tasks[id] = merged;
     }
     return {
       ...base,

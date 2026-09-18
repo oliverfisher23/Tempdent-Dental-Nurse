@@ -7,6 +7,7 @@ import { useNotepad } from '../../kitchen/notepad';
 import { Clipboard } from '../../kitchen/paper';
 import { CloseUp } from '../../kitchen/close-up';
 import { SignaturePad, type SignatureValue } from '../../kitchen/interact';
+import { evaluateChill } from '@/lib/simulation';
 import { kitchenAudio } from '@/lib/audio';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -31,7 +32,7 @@ export function ChillRecord({
 }) {
   const { progress } = useProgress();
   const notepad = useNotepad();
-  const canSign = state.minutesElapsed >= CHILL_RULES.extraInterval && !!state.readings[CHILL_RULES.extraInterval]?.value;
+  const canSign = evaluateChill({ ...state, studentSigned: true }).done;
   const yourDepth = PREP_SHEET.depthForKg(state.trays[fullestTray(state.trays)]);
 
   const onSignature = useCallback(
@@ -110,7 +111,7 @@ export function ChillRecord({
 
           {state.measuredDepths && (
             <p className="mb-6 border-l-4 border-zinc-300 pl-3 text-lg text-zinc-700" style={{ fontFamily: 'cursive' }}>
-              {L.depthLine(yourDepth, MEASURED_DEPTHS_MM.marcus)}
+              {L.depthLine(yourDepth, MEASURED_DEPTHS_MM.yours, MEASURED_DEPTHS_MM.marcus)}
             </p>
           )}
 

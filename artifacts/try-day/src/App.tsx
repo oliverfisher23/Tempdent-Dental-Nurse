@@ -11,7 +11,7 @@ import DeliveryTask from '@/pages/tasks/check-the-delivery-in';
 import ChillTask from '@/pages/tasks/chill-the-event-batch';
 import DietaryTask from '@/pages/tasks/check-the-dietary-list';
 import HandoverKitchenTask from '@/pages/tasks/hand-the-kitchen-on';
-import { ProgressProvider } from '@/lib/progress-store';
+import { ProgressProvider, useProgress } from '@/lib/progress-store';
 import { isTestMode } from '@/lib/simulation';
 import { LearningDesignerPanel } from '@/components/learning-designer-panel';
 import { ExperienceViewportProvider } from '@/lib/experience-viewport';
@@ -19,14 +19,16 @@ import {
   Route,
   Switch,
   useLocation,
+  useSearch,
   Router as WouterRouter,
 } from 'wouter';
 
 const queryClient = new QueryClient();
 
 function Router() {
+  const { progress } = useProgress();
   return (
-    <RoutedErrorBoundary>
+    <RoutedErrorBoundary key={isTestMode() ? progress.startedAt ?? 'new-test' : undefined}>
       <Switch>
         <Route path="/" component={Intro} />
         <Route path="/close" component={Close} />
@@ -67,12 +69,14 @@ function App() {
 
 function TestModeNavigationGuard() {
   const [location, setLocation] = useLocation();
+  const search = useSearch();
   useEffect(() => {
-    if (typeof window !== 'undefined' && isTestMode() && !location.includes('testMode=1')) {
-      const separator = location.includes('?') ? '&' : '?';
-      setLocation(`${location}${separator}testMode=1`);
+    const params = new URLSearchParams(search);
+    if (isTestMode() && params.get('testMode') !== '1') {
+      params.set('testMode', '1');
+      setLocation(`${location}?${params.toString()}`, { replace: true });
     }
-  }, [location, setLocation]);
+  }, [location, search, setLocation]);
   return null;
 }
 

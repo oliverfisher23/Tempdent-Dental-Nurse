@@ -1,112 +1,62 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Hand } from 'lucide-react';
+import { ArrowRight, Minus, Plus } from 'lucide-react';
 import { PREP_SHEET } from '@/content/activities';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { useDraggable, useDropZone } from '../../kitchen/interact';
 import { POUR_KG, POUR_TICK_MS, SCOOP_KG, TRAY_DEPTH_MM, type ChillActions } from './types';
 
 const BEEF = 'linear-gradient(to top, #3f1f0f, #7a4222 70%, #8f5330)';
 
-/** The ladle rests on the rim of the pan until it is picked up. */
-function Ladle({ empty }: { empty: boolean }) {
-  const { props, isLifted } = useDraggable({ id: 'ladle', kind: 'ladle', label: L.ladle, disabled: empty });
-  return (
-    <div
-      {...props}
-      aria-label={`${L.ladle}: ${L.ladleHint}`}
-      className={cn(
-        'absolute -right-4 -top-10 h-28 w-24 rounded-full outline-none focus-visible:ring-4 focus-visible:ring-primary',
-        isLifted && 'z-50',
-        empty && 'opacity-40',
-      )}
-      style={props.style}
-      data-testid="ladle"
-    >
-      <div
-        className={cn(
-          'absolute bottom-[2.6rem] left-1/2 h-[4.5rem] w-2.5 origin-bottom rounded-full bg-gradient-to-b from-zinc-100 via-zinc-300 to-zinc-500 shadow-md transition-transform',
-          isLifted ? '-translate-x-1/2 rotate-[10deg]' : '-translate-x-1/2 rotate-[34deg]',
-        )}
-      />
-      <div className="absolute bottom-1 left-1/2 h-14 w-14 -translate-x-1/2 rounded-full border border-zinc-500 shadow-xl [background:radial-gradient(circle_at_35%_30%,#fafafa,#a1a1aa_45%,#3f3f46_100%)]">
-        <div
-          className={cn('absolute inset-[7px] rounded-full transition-opacity duration-300', empty ? 'opacity-0' : 'opacity-100')}
-          style={{ background: BEEF }}
-        />
-      </div>
-      {!isLifted && !empty && (
-        <span className="pointer-events-none absolute -bottom-6 left-1/2 flex -translate-x-1/2 items-center gap-1 whitespace-nowrap rounded-full bg-black/70 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white">
-          <Hand className="h-3 w-3" /> {L.ladle.replace('The ', '')}
-        </span>
-      )}
-    </div>
-  );
-}
-
 function Tray({
   index,
   kg,
-  panEmpty,
-  onPour,
+  selected,
+  onSelect,
+  pouring,
 }: {
   index: number;
   kg: number;
-  panEmpty: boolean;
-  onPour: ChillActions['onPour'];
+  selected: boolean;
+  onSelect: (index: number) => void;
+  pouring: boolean;
 }) {
-  const accepts = useCallback((kind: string) => kind === 'ladle', []);
-  // Letting go over the tray tips a scoop in, unless the ladle has already been pouring there
-  // (a quick tap, or the keyboard route, still puts beef in the tray).
-  const pouredHere = useRef(false);
-  const onDrop = useCallback(() => {
-    if (!pouredHere.current) onPour(index, SCOOP_KG);
-    pouredHere.current = false;
-  }, [index, onPour]);
   const depth = PREP_SHEET.depthForKg(kg);
-  const full = depth >= TRAY_DEPTH_MM;
-  const { ref, isOver, isTarget, props } = useDropZone({
-    id: `tray-${index}`,
-    label: L.trayZone(index + 1),
-    accepts,
-    onDrop,
-    disabled: panEmpty || full,
-  });
-  const pouring = (isOver || isTarget) && !panEmpty && !full;
-
-  // Beef runs while the ladle is held over the tray.
-  useEffect(() => {
-    if (!pouring) return;
-    const t = setInterval(() => {
-      pouredHere.current = true;
-      onPour(index, POUR_KG);
-    }, POUR_TICK_MS);
-    return () => clearInterval(t);
-  }, [pouring, index, onPour]);
-
   const fill = Math.min(1, depth / TRAY_DEPTH_MM);
   const overSheet = depth > PREP_SHEET.fillDepthMm;
 
   return (
-    <div ref={ref} {...props} className="flex flex-col gap-1.5" data-testid={`tray-${index}`} data-kg={kg}>
+    <button
+      type="button"
+      onClick={() => onSelect(index)}
+      className={cn(
+        "flex flex-col gap-1.5 text-left transition-transform outline-none focus-visible:ring-4 focus-visible:ring-primary rounded-2xl",
+        selected ? "scale-105" : "hover:scale-105 opacity-80"
+      )}
+      data-testid={`tray-${index}`}
+    >
       <div className="flex items-baseline justify-between gap-2 px-1">
-        <span className="text-[11px] font-bold uppercase tracking-widest text-white/70">{L.tray(index + 1)}</span>
+        <span className={cn("text-[11px] font-bold uppercase tracking-widest", selected ? "text-primary" : "text-white/70")}>{L.tray(index + 1)}</span>
         <span className={cn('whitespace-nowrap font-mono text-base font-bold', overSheet ? 'text-amber-300' : 'text-white')} aria-live="polite">
           {depth} mm
         </span>
       </div>
       <div
         className={cn(
-          'relative h-36 overflow-hidden rounded-b-2xl sm:h-40 md:h-48 border-x-[6px] border-b-[6px] border-zinc-400 bg-zinc-800/80 shadow-[inset_0_12px_24px_rgba(0,0,0,0.6)] transition-shadow',
-          pouring && 'ring-4 ring-primary ring-offset-2 ring-offset-black',
+          'relative h-36 w-full overflow-hidden rounded-b-2xl sm:h-40 md:h-48 border-x-[6px] border-b-[6px] transition-all',
+          selected ? 'border-primary shadow-[0_0_20px_rgba(225,29,72,0.3)] bg-zinc-800' : 'border-zinc-400 bg-zinc-800/80 shadow-[inset_0_12px_24px_rgba(0,0,0,0.6)]'
         )}
       >
         {/* The line the sheet asks for */}
         <div className="absolute inset-x-0 z-10 border-t-2 border-dashed border-white/60" style={{ bottom: `${(PREP_SHEET.fillDepthMm / TRAY_DEPTH_MM) * 100}%` }}>
           <span className="absolute right-1 top-0.5 text-[10px] font-bold uppercase tracking-wider text-white/80">{PREP_SHEET.fillDepthMm} mm</span>
         </div>
+        {/* Max depth line */}
+        <div className="absolute inset-x-0 z-10 border-t-2 border-red-500/50" style={{ top: 0 }}>
+          <span className="absolute left-1 top-0 text-[10px] font-bold uppercase tracking-wider text-red-500/80">MAX {TRAY_DEPTH_MM} mm</span>
+        </div>
+        
         {/* The beef */}
         <motion.div
           className="absolute inset-x-0 bottom-0 h-full origin-bottom"
@@ -123,14 +73,14 @@ function Tray({
               animate={{ scaleY: 1, opacity: 1 }}
               exit={{ scaleY: 0, opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="absolute left-1/2 top-0 w-2 origin-top -translate-x-1/2 rounded-b-full bg-[#8f5330]"
+              className="absolute left-1/2 top-0 w-3 origin-top -translate-x-1/2 rounded-b-full bg-[#8f5330]"
               style={{ height: `${Math.max(6, (1 - fill) * 100)}%` }}
             />
           )}
         </AnimatePresence>
       </div>
       <span className="px-1 text-right font-mono text-[11px] text-white/60">{kg.toFixed(2)} kg</span>
-    </div>
+    </button>
   );
 }
 
@@ -148,20 +98,66 @@ export function PortioningView({
   onToChiller: () => void;
 }) {
   const panEmpty = remaining <= 0;
+  // All at sheet depth: >= 50mm
   const allAtSheetDepth = trays.every((kg) => PREP_SHEET.depthForKg(kg) >= PREP_SHEET.fillDepthMm);
   const canAsk = !panEmpty && allAtSheetDepth && !askedForTray;
 
+  const [selectedTray, setSelectedTray] = useState<number>(0);
+  const [pouring, setPouring] = useState(false);
+  
+  // Ensure selected tray is valid if array shrinks (unlikely, but safe)
+  useEffect(() => {
+    if (selectedTray >= trays.length) setSelectedTray(trays.length - 1);
+  }, [trays.length, selectedTray]);
+
+  const targetDepth = PREP_SHEET.depthForKg(trays[selectedTray]);
+  const isTargetFull = targetDepth >= TRAY_DEPTH_MM;
+
+  const handlePourTick = useCallback(() => {
+    if (remaining > 0 && !isTargetFull) {
+      actions.onPour(selectedTray, POUR_KG);
+    } else {
+      setPouring(false);
+    }
+  }, [remaining, isTargetFull, actions, selectedTray]);
+
+  useEffect(() => {
+    if (!pouring) return;
+    const t = setInterval(handlePourTick, POUR_TICK_MS);
+    return () => clearInterval(t);
+  }, [pouring, handlePourTick]);
+
+  const startPouring = useCallback((e: React.PointerEvent | React.KeyboardEvent) => {
+    if (panEmpty || isTargetFull) return;
+    e.preventDefault();
+    setPouring(true);
+    handlePourTick(); // immediate first tick
+  }, [panEmpty, isTargetFull, handlePourTick]);
+
+  const stopPouring = useCallback(() => {
+    setPouring(false);
+  }, []);
+
+  const addScoop = useCallback(() => {
+    if (!panEmpty && !isTargetFull) actions.onPour(selectedTray, SCOOP_KG);
+  }, [panEmpty, isTargetFull, actions, selectedTray]);
+
+  const returnScoop = useCallback(() => {
+    if (trays[selectedTray] > 0) actions.onPour(selectedTray, -SCOOP_KG);
+  }, [trays, selectedTray, actions]);
+
   return (
     <div className="mx-auto grid w-full max-w-5xl gap-6 pt-2 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:items-start">
-      {/* The pan */}
-      <div className="relative">
+      {/* The pan and controls */}
+      <div className="flex flex-col gap-4">
         <div className="rounded-lg border border-[#D9D0C1] bg-[#F5EFE6] px-3 py-2 text-[11px] leading-snug text-zinc-700 shadow">
           <span className="font-bold uppercase tracking-widest text-zinc-500">Prep sheet</span>{' '}
           {PREP_SHEET.dish}: {PREP_SHEET.batchKg} kg, {PREP_SHEET.trays} trays, {PREP_SHEET.fillDepthMm} mm deep.
           Your half: <strong>{PREP_SHEET.yourShareKg} kg</strong>. {PREP_SHEET.cleanTraysAvailable} clean trays to hand.
         </div>
-        <div className="relative mt-8 rounded-[28px] border-[6px] border-zinc-500 bg-zinc-800 p-3 shadow-2xl">
-          <div className="relative h-32 overflow-hidden rounded-2xl bg-zinc-950 sm:h-44 shadow-[inset_0_10px_30px_rgba(0,0,0,0.8)]" aria-hidden>
+        
+        <div className="relative rounded-[28px] border-[6px] border-zinc-500 bg-zinc-800 p-3 shadow-2xl">
+          <div className="relative h-24 overflow-hidden rounded-2xl bg-zinc-950 shadow-[inset_0_10px_30px_rgba(0,0,0,0.8)]" aria-hidden>
             <motion.div
               className="absolute inset-x-0 bottom-0 h-full origin-bottom"
               style={{ background: BEEF }}
@@ -169,22 +165,79 @@ export function PortioningView({
               animate={{ scaleY: Math.max(panEmpty ? 0 : 0.06, remaining / PREP_SHEET.yourShareKg) }}
               transition={{ type: 'tween', duration: 0.2 }}
             />
+            {/* Pan remaining gauge overlay */}
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+               <span className="font-mono text-3xl font-bold text-white drop-shadow-md" data-testid="remaining">
+                {remaining.toFixed(2)} <span className="text-xl text-white/80">kg</span>
+               </span>
+            </div>
           </div>
-          <Ladle empty={panEmpty} />
           <div className="mt-3 flex items-baseline justify-between px-1">
             <span className="text-[11px] font-bold uppercase tracking-widest text-white/60">{L.pan}</span>
-            <span className="font-mono text-2xl font-bold text-white" data-testid="remaining">
-              {remaining.toFixed(2)} kg <span className="text-sm font-medium text-white/60">{L.left}</span>
-            </span>
+            <span className="text-[11px] font-bold uppercase tracking-widest text-white/60">{L.left}</span>
+          </div>
+        </div>
+
+        {/* Portioning Controls */}
+        <div className="bg-zinc-900 rounded-2xl p-4 border border-zinc-800 shadow-xl flex flex-col gap-3">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Controls for {L.tray(selectedTray + 1)}</span>
+            <span className="text-xs text-zinc-500 font-mono">{trays[selectedTray].toFixed(2)} kg</span>
+          </div>
+          
+          <button
+            onPointerDown={startPouring}
+            onPointerUp={stopPouring}
+            onPointerLeave={stopPouring}
+            onBlur={stopPouring}
+            onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') startPouring(e); }}
+            onKeyUp={(e) => { if (e.key === ' ' || e.key === 'Enter') stopPouring(); }}
+            disabled={panEmpty || isTargetFull}
+            className={cn(
+              "w-full py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center transition-all select-none touch-none",
+              panEmpty || isTargetFull 
+                ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
+                : pouring 
+                  ? "bg-primary text-primary-foreground scale-95" 
+                  : "bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 active:scale-95"
+            )}
+          >
+            Hold to add beef
+          </button>
+          
+          <div className="grid grid-cols-2 gap-2">
+            <Button 
+              variant="outline" 
+              className="bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 font-bold"
+              onClick={returnScoop}
+              disabled={trays[selectedTray] <= 0}
+            >
+              <Minus className="w-4 h-4 mr-1" /> Return 0.5kg
+            </Button>
+            <Button 
+              variant="outline" 
+              className="bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 font-bold"
+              onClick={addScoop}
+              disabled={panEmpty || isTargetFull}
+            >
+              <Plus className="w-4 h-4 mr-1" /> Scoop 0.5kg
+            </Button>
           </div>
         </div>
       </div>
 
       {/* The trays */}
       <div className="flex flex-col gap-5">
-        <div className="grid grid-cols-3 gap-3 sm:gap-5">
+        <div className={cn("grid gap-3 sm:gap-5", trays.length === 4 ? "grid-cols-4" : "grid-cols-3")}>
           {trays.map((kg, i) => (
-            <Tray key={i} index={i} kg={kg} panEmpty={panEmpty} onPour={actions.onPour} />
+            <Tray 
+              key={i} 
+              index={i} 
+              kg={kg} 
+              selected={selectedTray === i} 
+              onSelect={setSelectedTray} 
+              pouring={pouring && selectedTray === i} 
+            />
           ))}
         </div>
         <AnimatePresence mode="wait">

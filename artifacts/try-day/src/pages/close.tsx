@@ -59,8 +59,8 @@ export default function Close() {
   const recap = [
     `Walked the fridges at ${warmRow?.time || "06:50"} and found ${warmUnit.name} at ${formatC(warmUnit.actualC)}. Your note: "${(warmRow?.note?.trim() || "door found ajar overnight").replace(/[.\s]+$/, "")}".`,
     `Took in the delivery and signed for ${delivery.noteAmendedTo || shortLine.arrived} kg of salmon, not the ${shortLine.onDeliveryNote} kg on the supplier's note. The missing ${shortLine.ordered - shortLine.arrived} kg is on Terence's list.`,
-    `Chilled 27 kg of beef for the product launch. Your tray was ${MEASURED_DEPTHS_MM.yours} mm deep against Terence's ${MEASURED_DEPTHS_MM.marcus} mm tray. It needed longer after the ninety-minute check and came under the ${CHILL_RULES.holdLineC}°C line at ${finalReading?.time || "12:45"}.`,
-    `Checked five dishes against fourteen allergens and put ${priya.name} on table ${priya.table} down for the ${priyaDessert?.name.toLowerCase() || "alternative dessert"}.`,
+    `Portioned your share into ${chill.trays.length} trays and studied a recorded cooling comparison: the ${MEASURED_DEPTHS_MM.yours} mm example against Terence's ${MEASURED_DEPTHS_MM.marcus} mm example. Your recorded final reading was ${finalReading?.value ?? "—"}°C at ${finalReading?.time || "—"}, below the ${CHILL_RULES.holdLineC}°C line. These example readings do not predict your own tray arrangement.`,
+    `Checked five dishes against fourteen allergens and proposed ${priyaDessert?.name.toLowerCase() || "an alternative dessert"} for ${priya.name} on table ${priya.table}. This ingredient-based proposal remains on hold for Terence's preparation and service checks; finishing the exercise does not authorise service.`,
     `Weighed ${totalWaste.toFixed(1)} kg of waste across three bins, handed the kitchen on, and signed the chill record with Terence.`,
   ];
 

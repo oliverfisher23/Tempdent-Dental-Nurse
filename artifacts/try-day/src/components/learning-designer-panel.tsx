@@ -23,6 +23,7 @@ export function LearningDesignerPanel() {
   const jump = (target: TaskId | null | undefined, path: string) => {
     jumpToTestTarget(target);
     navigate(`${path}${path.includes('?') ? '&' : '?'}testMode=1`);
+    setOpen(false);
   };
 
   return (
