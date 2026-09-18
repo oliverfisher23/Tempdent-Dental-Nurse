@@ -9,7 +9,7 @@ import type { HandoverState } from '@/lib/simulation';
 import { FLAGGED_FRIDGE_ID, handoverRowComplete } from '@/lib/handover-round';
 import { rowReadingIsRight } from '@/lib/simulation';
 import { kitchenAudio } from '@/lib/audio';
-import { motion } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { useProgress } from '@/lib/progress-store';
 
 export function InspectionView({
@@ -37,6 +37,7 @@ export function InspectionView({
   const [doorOpen, setDoorOpen] = useState(false);
   const [closing, setClosing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [activeClueId, setActiveClueId] = useState<string | null>(null);
   const { jot } = useProgress();
   
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -117,6 +118,8 @@ export function InspectionView({
   const isFlagged = unitId === FLAGGED_FRIDGE_ID;
   const isWarm = unit.actualC > unit.limitC;
   const noteRequired = isFlagged || isWarm;
+  const photo = FRIDGE_PHOTOS[unitId];
+  const activeClue = photo.clues.find(clue => clue.id === activeClueId);
 
   return (
     <div 
@@ -161,10 +164,58 @@ export function InspectionView({
             className={cn("absolute inset-0 transition-opacity duration-500 motion-reduce:duration-0", (doorOpen && !closing) ? "opacity-100" : "opacity-0 pointer-events-none")}
           >
              <img 
-               src={FRIDGE_PHOTOS[unitId].src} 
-               alt={FRIDGE_PHOTOS[unitId].alt} 
+                src={photo.src}
+                alt={photo.alt}
                className="w-full h-full object-contain" 
              />
+             <div className="absolute inset-0" aria-label={HANDOVER_LABELS.inspectPrompt}>
+               {photo.clues.map((clue, index) => (
+                 <motion.button
+                   key={clue.id}
+                   type="button"
+                   initial={{ opacity: 0, scale: 0.7 }}
+                   animate={{ opacity: 1, scale: activeClueId === clue.id ? 1.08 : 1 }}
+                   transition={{ delay: 0.12 + index * 0.08, type: 'spring', stiffness: 320, damping: 20 }}
+                   onClick={() => {
+                     setActiveClueId(clue.id);
+                     setError(null);
+                     kitchenAudio.play('page');
+                   }}
+                   className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary text-primary-foreground shadow-[0_2px_16px_rgba(0,0,0,0.8)] h-10 w-10 sm:h-12 sm:w-12 font-bold focus-visible:ring-4 focus-visible:ring-white/70 outline-none hover:scale-110 motion-reduce:transition-none"
+                   style={{ left: `${clue.x}%`, top: `${clue.y}%` }}
+                   aria-label={clue.label}
+                   aria-pressed={activeClueId === clue.id}
+                 >
+                   {index + 1}
+                 </motion.button>
+               ))}
+               <div className="absolute bottom-3 left-3 right-3 flex justify-center pointer-events-none">
+                 <AnimatePresence mode="wait">
+                   {activeClue ? (
+                     <motion.div
+                       key={activeClue.id}
+                       initial={{ opacity: 0, y: 10 }}
+                       animate={{ opacity: 1, y: 0 }}
+                       exit={{ opacity: 0, y: 6 }}
+                       className="max-w-lg rounded-lg border border-white/20 bg-black/85 px-4 py-3 text-white shadow-xl backdrop-blur-sm"
+                       role="status"
+                     >
+                       <div className="text-xs font-bold uppercase tracking-wider text-primary-foreground/80">{activeClue.label}</div>
+                       <div className="mt-1 text-sm sm:text-base leading-snug">{activeClue.finding}</div>
+                     </motion.div>
+                   ) : (
+                     <motion.div
+                       key="hint"
+                       initial={{ opacity: 0 }}
+                       animate={{ opacity: 1 }}
+                       className="rounded-full bg-black/75 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm"
+                     >
+                       {HANDOVER_LABELS.inspectHint}
+                     </motion.div>
+                   )}
+                 </AnimatePresence>
+               </div>
+             </div>
           </div>
         </div>
       </div>
@@ -267,13 +318,13 @@ export function InspectionView({
                </div>
                
                <div className="flex flex-col gap-2 mt-2">
-                 {(isFlagged || (isWarm && row.probed)) && (
-                   <div className="bg-primary/10 border border-primary/30 p-3 rounded-lg mb-1 text-primary-foreground font-medium flex gap-3 items-start">
-                     <div className="mt-0.5 shrink-0 bg-primary rounded-full p-1 text-primary-foreground">
+                  {(isFlagged || (isWarm && row.probed)) && (
+                    <div className="bg-primary/15 border border-primary/50 p-3 rounded-lg mb-1 text-zinc-100 font-medium flex gap-3 items-start">
+                      <div className="mt-0.5 shrink-0 bg-primary rounded-full p-1 text-white">
                         <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                      </div>
                      <div className="text-sm">
-                       {(isWarm && row.probed) ? HANDOVER_LINES.marcusOnWarmReading.text : HANDOVER_LINES.marcusAtFlaggedUnit.text}
+                        {(isWarm && row.probed) ? HANDOVER_LINES.marcusOnWarmReading.text : HANDOVER_LINES.marcusAtFlaggedUnit.text}
                      </div>
                    </div>
                  )}

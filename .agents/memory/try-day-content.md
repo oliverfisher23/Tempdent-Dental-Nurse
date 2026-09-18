@@ -39,3 +39,6 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Keep the fridge round focused on one appliance: measure and write its final record together, then deliberately close it before moving on. Use task-relevant photorealistic contents.
   **Why:** the user explicitly approved this alternative to visiting all appliances first and transferring notebook readings later; the full-screen fridge is the intended focus.
   **How to apply:** keep the notebook optional, never advance on a probe result alone or fill in the learner's reading, and assemble the final board from saved checks without repeat transcription.
+- Fridge notes should come from inspecting clickable details in the appliance, not from a static block that gives the answer away.
+  **Why:** the user wants Task 1 to feel interactive and asked for context learners can reveal before writing their notes.
+  **How to apply:** use short, conversational findings; let the learner turn those findings into their own note rather than auto-filling it.

@@ -45,20 +45,20 @@ export interface LogEntry {
 export const OVERNIGHT_LOG: LogEntry[] = [
   {
     time: '22:10',
-    text: 'Deep clean finished: floors, the pass and the hot section. Extraction filters back in.',
+    text: 'Deep clean done. Floors, pass and hot section all sorted. Extraction filters are back in.',
   },
   {
     time: '01:35',
-    text: 'Dry goods delivery left in the back corridor by the driver. Boxes still on the trolley by the goods-in door, not put away.',
+    text: 'Dry goods turned up early. The boxes are still on the trolley by the back door.',
   },
   {
     time: '04:10',
-    text: 'Larder fridge 2 door found ajar on the round. Pushed it shut. Not sure how long it had been open.',
+    text: 'Found larder fridge 2 slightly open on my round. Shut it, but no idea how long it was like that.',
     flagsUnitId: 'larder-2',
   },
   {
     time: '06:30',
-    text: 'Breakfast set-up done. Hot plate on, juices out, bakery delivery taken in and checked.',
+    text: 'Breakfast is ready. Hot plate is on, juices are out and the bakery delivery is checked.',
   },
 ];
 
@@ -99,23 +99,23 @@ export const HANDOVER_LINES = {
   } satisfies Line,
   marcusOpening: {
     speaker: 'Marcus',
-    text: "Read the log first, then we walk. Probe in, wait for it to settle, write what it says, not what you'd like it to say. Time and initials on every row.",
+    text: "Have a look at the night notes first, then we'll go round together. Let the probe settle and write down what you actually see. Add the time and your initials as you go.",
   } satisfies Line,
   marcusAtFlaggedUnit: {
     speaker: 'Marcus',
-    text: "This is the one from the log. Door was open for who knows how long. Whatever it reads, write it down and put a note next to it so the record shows we knew and what we did about it.",
+    text: "This is the fridge from the night notes. Have a proper look inside before you write anything.",
   } satisfies Line,
   marcusOnWarmReading: {
     speaker: 'Marcus',
-    text: "Eight point six. That's over the line. We'll move the high-risk stuff out of it into larder one and let it pull down with the door shut. Write that next to it.",
+    text: "Eight point six — that's too warm. Check what's in there. We need to move anything high-risk into larder one and keep this door shut while it cools.",
   } satisfies Line,
   marcusOnWrongReading: {
     speaker: 'Marcus',
-    text: "That's not what the probe said. Have another look and write the number it's showing.",
+    text: "Take another look at the probe. Just write the number you can see.",
   } satisfies Line,
   marcusDone: {
     speaker: 'Marcus',
-    text: "Good. That board's the first thing Elena reads. Delivery's due at half eight; get a coffee.",
+    text: "Nice one. Elena always checks that board first. The delivery's not here until half eight, so grab a coffee.",
   } satisfies Line,
 };
 
