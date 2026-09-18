@@ -5,6 +5,8 @@
 
 **Status: recommendation for approval, not an implementation instruction.** This document proposes changes within the existing try-day experience. No application code, approved copy, video, canvas, learner progress or published experience has been changed.
 
+**Employer approval gate — 18 September 2026: decided under delegation.** The project owner confirmed authority to approve on the employer's behalf and asked the reviewer to take the decisions. Section 9 records each decision as approved, rejected or still open, with its provenance. The exercise is scoped to ingredient planning with a pending preparation check; no supplier declarations, cross-contact procedures or safety assurances were invented, and no client-signed wording, film or transcript changes. The remaining open items are non-blocking. Implementation still needs its own assignment.
+
 ## 1. Recommendation at a glance
 
 Use this sequence:
@@ -20,6 +22,8 @@ Approve three decisions before implementation:
 1. **Scope:** assess guest decisions for **main and dessert only**. Review the starter in the matrix, but do not claim that a whole meal is suitable. Tom cannot eat the smoked-haddock starter; whole-menu approval would need an employer-approved vegetarian starter.
 2. **Evidence:** reconcile Priya's visible allergy wording with the existing nuts-and-peanuts rule, confirm the relevant supplier/preparation information, and approve the starting main/dessert plan against which learners make changes.
 3. **Disclosure:** approve moving answer-bearing explanations until after a first decision or a requested hint. If those explanations must stay upfront, describe and assess the activity as **coached practice**, not independent discovery.
+
+**Resolution (18 September 2026):** all three are decided in the section 9 register — main/dessert scope, evidence limited to the supplied recipe cards with a pending preparation check, and coached practice with the conclusion moved after the first decision.
 
 ### Basis and limits
 
@@ -280,6 +284,45 @@ Keep the current task order, completion identifiers, host messages, persistence 
 
 No separate app, branding change, new dietary cases, arbitrary substitutions, points, timers, compulsory long explanations, AI text marking or analytics are proposed.
 
+### Employer decision register
+
+**Recorded 18 September 2026 — decisions taken under delegation; see provenance below.**
+
+Status vocabulary: **Approved**, **Rejected** or **Still open**. An approval identifies the exact decision, the approving authority, the date and a traceable response. Rejecting a proposal does not authorise an unspecified replacement. Missing, ambiguous or partial responses stay **Still open**. Client-signed wording in `mechanic.json` stays protected; none of the decisions below changes it.
+
+**Provenance.** On 18 September 2026 the project owner confirmed that they can approve on the employer's behalf, supplied no content decisions or evidence, and then asked the reviewer to take the decisions (“Can you not decide all of this?”). The reviewer therefore decided the learning-design and scenario-parameter questions and recorded them as **Approved (delegated)**. The decision summary was returned to the owner in the same session; a veto or correction will be recorded here as a revision. Two limits were kept regardless of delegation: no supplier declarations, cross-contact procedures or chef's safety assurances were authored, and no client-signed wording, film or transcript was changed. The exercise is therefore scoped to what the supplied evidence can support.
+
+| ID | Decision | Outcome | Status |
+| --- | --- | --- | --- |
+| D01 | Guest-decision scope | Mains and desserts only. All five dishes stay in the chart. Tom's starter is shown as an explicit unresolved item for Terence (“Tom's starter still needs a separate decision”), never approved, and no vegetarian starter is invented. This satisfies the signed-off done-when (“a dish written against their name”) without a whole-meal claim. | **Approved (delegated)** |
+| D02 | Original planned dishes | The standard menu is the starting plan for all three added guests: braised beef shin main and frangipane dessert. Anna keeps both. Consistent with the flow's “appropriate standard dish”. Learners record any change as original → replacement. | **Approved (delegated)** |
+| D03 | Allocation of the twelve pears | Scenario parameter: the event may take what it needs from the twelve prepared portions for its dietary requirements (the table-5 guest already has one; Priya takes one); the bistro keeps the rest. Terence authorises this in the fiction. Availability is stated on the recipe card and is not a counting or reservation exercise for the learner. | **Approved (delegated)** |
+| D04 | Priya's requirement | Guest-sheet wording: **“Tree-nut and peanut allergy (severe). Carries an adrenaline pen.”** The rule keeps tree nuts and peanuts as separate exclusions, matching the flow's “severe nut and peanut allergy”. The signed-off “including a nut allergy” and Yvie's “One of them's a nut allergy” stay as summaries; the sheet carries the detail. No dish contains peanuts, so the peanut column is a reviewed blank, never a mark. | **Approved (delegated)** |
+| D05 | Compound-ingredient declarations | The recipe cards as written are the exercise's complete ingredient evidence and the matrix truth is unchanged. No further declarations are authored for stock/jus, pastry, ricotta, horseradish or ice cream. Learners may attach a “check needed” note to a compound item without penalty; such notes display as open questions, never as allergen marks. Real product declarations are needed only if the employer later wants a service-clearance claim (see D06). | **Approved (delegated) — narrower evidence base**; real declarations **Still open, non-blocking** |
+| D06 | Preparation and service authority | The exercise never claims “cleared to serve”. Terence holds service authority in the scenario; the learner's part ends at a checked chart, chosen dishes on the board and a **preparation check requested**. Allergy-driven changes (Priya) carry a visible **“Preparation check: ask Terence before service — pending”** status; vegetarian swaps do not. No cross-contact procedure is taught or invented. Existing scenario statements (no shared plate with Priya) stay as they are. | **Approved (delegated) — narrower completion claim**; real cross-contact evidence **Still open, non-blocking** |
+| D07 | Ask questions and responses | One approved Ask route for Priya's dessert. Terence (proposed copy; the build may tighten the words but must not add an assurance): “Good — ask, don't assume. The recipe card tells you what's in the pear, not how it's been handled. I'll check that myself before anything goes to table three. Put the change on the board and mark the check as pending.” Asking is never marked wrong; the hold stays pending through sign-off. No “safe” confirmation exists in the exercise. | **Approved (delegated)** |
+| D08 | Answer-bearing recipe commentary | The frangipane card keeps the facts (“Made this morning. Ground almonds are mixed through the whole tart.”) and drops the conclusion “it cannot be adapted”. That conclusion is delivered by the signed-off complication and Terence's existing line after the learner's first dessert decision for Priya, or on a requested hint. | **Approved (delegated)** |
+| D09 | Complication timing | The complication text stays verbatim. It is revealed when the learner reaches Priya's dessert decision (first choice or requested hint), matching the approved flow's order (Activity 3 “give the added guests safe dishes”, then Activity 4 “deal with the dessert complication”), instead of at chart pass. | **Approved (delegated)** |
+| D10 | Briefing and learning claim | The filmed briefing and transcript stay unchanged, so the activity is **coached practice**: the almond rule has been taught before the attempt. Feedback, educator notes and completion copy must not describe independent discovery. A discovery variant would need a new briefing edit and is not planned. | **Approved (delegated)** |
+| D11 | Feedback and completion wording | Graduated hints (source → component → mapping → explicit comparison), unlimited retries, no points or timers. Existing answer-giving lines (“Find her the pear”, “That's the Wellington, not the beef”) become the final hint tier, not the first response. The job card keeps the signed-off job/done-when verbatim; per-clause ticks and labels use the narrower language (“matches the recipe cards”, “change on the board — preparation check pending”). Structured board fields (guest · table · original → replacement · dietary reason) plus a presence-only free-text reason. | **Approved (delegated)**; any re-wording of `mechanic.json` **Rejected** as unnecessary |
+| D12 | Dietary record for the handover | The signed-off Task 4 record exposed to the handover workstream is: guest, table, original → replacement, dietary reason and preparation-check status (pending / confirmed by Terence). How Task 5 uses it is decided in that workstream. | **Approved (delegated)** — information only |
+| F1 | Function-sheet consistency (found during this review) | The table-5 coeliac note says “beef without jus thickening”, which implies gluten in the standard jus, while the beef row's truth has no gluten. Decision: keep the beef row truth and reword the note so it no longer implies a gluten thickener (for example “Plated separately: no tart pastry, poached pear”). Alternative, if the employer prefers a hidden-gluten catch: add a flour-thickened jus to the beef card **and** its row — not chosen. | **Approved (delegated)** |
+
+#### What remains open (non-blocking)
+
+- Real supplier/product declarations for compound ingredients (D05) and the kitchen's actual cross-contact controls and clearance route (D06/D07). Neither is needed for the approved narrower completion claim; both are needed before the exercise could ever say “approved to serve”.
+- The delegating representative's job role has not been recorded. Add it here if the employer needs it for their own audit trail.
+
+#### Response and evidence record
+
+- **18 September 2026 —** “Can you provide the employer's dietary sign-off?”: the owner selected **“I can confirm on the employer's behalf.”** No decisions, comments or files were attached. Authority confirmed; no content approved at that point.
+- **18 September 2026 —** a decision form covering scope, starting plan, Priya's wording and pear allocation was dismissed; the owner asked what was needed, then asked the reviewer to decide (“Can you not decide all of this?”). Decisions D01–D12 and F1 were recorded as above and returned to the owner.
+- **Approval evidence files received:** none. **Implementation authorisation:** these decisions unblock the separately assigned Task 4 redesign; they are not themselves an instruction to change code, film or the client-signed spec beyond what that assignment covers.
+
+Dependencies reconciled before build: scope with starter coverage and completion language (D01/D11); original dishes with every change record (D02/D12); pear allocation with existing commitments (D03); Priya's wording with the rule (D04); recipe cards with matrix truth (D05/F1); preparation status with the Ask route and clearance (D06/D07); all answer-bearing sources with the coached-practice claim (D08–D10).
+
+This gate is dietary-specific. It neither approves nor replaces delivery, chilling or closing-handover safety/content decisions.
+
 ## 10. Evaluation scenarios — planned, not run
 
 | Scenario | Expected evidence |
@@ -314,4 +357,4 @@ Paths below are within `artifacts/try-day/` unless stated otherwise; line refere
 - **S9 — Signed-off narrative/editorial sources:** `src/content/mechanic.json:107–126`; `src/content/briefing-videos.ts:71–82`; `src/components/briefing-video-modal.tsx:44–64`; `EXPERIENCE-FLOW.md:421–513`; `COPY.md`.
 - **S10 — Reference and conventions:** workspace `attached_assets/Screenshot_2026-09-18_at_12.34.07_1789731284267.png`; `.agents/memory/try-day-content.md`. The image informs grid structure only.
 
-**Delivered:** a recommendation and textual specification. Implementation, employer confirmation, learner testing, video/canvas edits and publishing remain outside this work.
+**Original review deliverable:** a recommendation and textual specification. **Approval-stage update (18 September 2026):** section 9 records the decisions taken under delegation from the employer's representative, with the non-blocking items that remain open. Implementation, learner testing, video/canvas edits and publishing have not been carried out.
