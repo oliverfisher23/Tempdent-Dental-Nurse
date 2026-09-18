@@ -7,3 +7,18 @@ uri = "file://artifacts/try-day/public/audio/kitchen-ambience.mp3"
 type = "audio"
 title = "kitchen ambience"
 description = "Generated sound effect: Ambient room tone of a quiet hotel kitchen early in the morning: steady extractor fan hum, refrigerator compressors ticking over, distant muffled clatter of pans and crockery,…"
+logical_id = "c2305ca0-03d0-4d44-b495-7cec250a3c62"
+
+[[outputs]]
+id = "_TIcx78BsBmxpdIahAq43"
+uri = "file://artifacts/try-day/EXPERIENCE-FLOW.md"
+type = "text"
+title = "Marriott Sous Chef Try Day — Full Experience Flow"
+description = "Briefing, Tasks 1–5, student actions, chef instructions, key decisions and completion conditions."
+logical_id = "e0363973-422a-438e-a379-b660e0ed1bb3"
+content_hash = "sha256:e377887afcb43e1206022a06812b87e5decd6210ae3ee0929106a21a523a7c26"
+size = 18874
+mtime_ms = 1789722741010
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/e0363973-422a-438e-a379-b660e0ed1bb3/dbeb6cc4-bdcb-4064-889a-463f4933fb4f"
+storage_version_token = "1789722754608655"
+content_type = "text/markdown"
