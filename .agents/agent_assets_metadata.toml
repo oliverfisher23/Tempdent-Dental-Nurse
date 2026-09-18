@@ -36,3 +36,17 @@ mtime_ms = 1789727012093
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/5b426b24-5c03-430e-9e12-d6d113d7afea/2bca0b11-5f98-4b87-a11e-30effa1110a5"
 storage_version_token = "1789727018574991"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "VVfqVhZxEKOjE1322L5Ps"
+uri = "file://artifacts/try-day/exports/artotel-try-day-current-images.zip"
+type = "unspecified"
+title = "art’otel Try Day — Current Images"
+description = "ZIP export containing all 36 image assets currently held by the app, with their project folder structure and an image manifest."
+logical_id = "ab6e63b3-6624-4f01-9b6b-2698e434b5ad"
+content_hash = "sha256:519247f9594545bcd26ed1aba2fb61bf774fc3ff455da8dc16fdece20100a7f3"
+size = 4285117
+mtime_ms = 1789727061759
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/ab6e63b3-6624-4f01-9b6b-2698e434b5ad/447b3481-1845-45f8-a53b-ed997cb8138d"
+storage_version_token = "1789727065969824"
+content_type = "application/octet-stream"
