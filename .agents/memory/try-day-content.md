@@ -21,7 +21,6 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Host integration (`postMessage` with `gate:complete`) is an assumed contract; the Springpod App Registry MCP server was unreachable when built (Sept 2026). Confirm the event shape before the client embeds the iframe.
   **Why:** no host capability handshake has been verified. Do not invent an LMS resize/launch message or use top-window navigation as a fullscreen substitute.
   **How to apply:** use user-initiated browser fullscreen when permitted; retain a usable in-frame path when unavailable. Keep host permissions under LMS control.
-- Verification approach that worked: drive each task end to end with playwright-core (chromium at `/repl/tools/bin/chromium`, `--no-sandbox`) against the running dev server, seeding localStorage to reach later tasks. Screenshots alone missed wiring bugs.
 - For timed interactions, keep the input held until the UI reports completion rather than assuming a short fixed delay.
   **Why:** early releases once produced matching mouse and keyboard failures that looked like broken probe wiring, but the control was correctly rejecting incomplete measurements.
   **How to apply:** await the settled state or enabled reading field before releasing; verify early release separately as an expected negative case.
