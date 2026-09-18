@@ -12,6 +12,7 @@ import { kitchenAudio } from "@/lib/audio";
 import { WELCOME_COPY } from "@/content/welcome";
 import { PEOPLE } from "@/content/kitchen";
 import logoImg from "@/assets/artotel-logo.png";
+import { BriefingVideoModal } from "@/components/briefing-video-modal";
 
 interface BriefingViewProps {
   name: string;
@@ -82,9 +83,6 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
       <main className="flex-1 w-full max-w-6xl mx-auto px-6 md:px-10 py-6 md:py-9 grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10 items-center">
         <div className="min-w-0 md:col-span-7 flex flex-col justify-center">
           <motion.div {...fade(0)} className="mb-5 flex items-center gap-4">
-            {terence?.portrait && (
-              <img src={terence.portrait} alt="Terence" className="w-16 h-16 rounded-full bg-secondary object-cover object-top border border-border shadow-sm" />
-            )}
             <div>
               <h2 className="font-bold text-xl text-foreground">Terence</h2>
               <p className="text-muted-foreground text-sm">{terence?.role}</p>
@@ -96,6 +94,7 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
           </motion.h1>
           
           <motion.div {...fade(0.1)} className="mt-4 space-y-4 text-base leading-relaxed text-foreground/85">
+            <BriefingVideoModal videoId="main" trigger autoOpen />
             <p>{WELCOME_COPY.briefing}</p>
             <ul className="space-y-3 text-sm">
               {WELCOME_COPY.instructions.map(instruction => (
