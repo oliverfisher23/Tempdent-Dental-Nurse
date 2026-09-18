@@ -1,2 +1,3 @@
 - [Try-day conventions](try-day-content.md) — approved copy, frozen sign-offs, brand rules, and guidance that simplifies navigation without doing students’ practical work.
 - [Dietary review boundaries](dietary-review-boundaries.md) — redesign proposals are not implementation approval; recipe matching and employer service clearance are separate judgements.
+- [Preview video codecs](preview-video-codecs.md) — some preview/test Chromium builds lack H.264 decoding; check codec support before treating a media error as a broken URL.

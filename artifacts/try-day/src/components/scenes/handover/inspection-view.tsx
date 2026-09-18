@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { FRIDGE_UNITS, HANDOVER_LINES } from '@/content/activities';
-import { CLOSED_FRIDGE_PHOTO, FRIDGE_PHOTOS } from '@/content/fridge-photos';
+import { FRIDGE_INSPECTIONS } from '@/content/fridge-photos';
+import { getFridgeMedia } from '@/content/fridge-media';
+import { InspectionMedia } from './inspection-media';
 import { cn } from '@/lib/utils';
 import { HANDOVER_LABELS } from '@/content/scenes/handover-round';
 import { useKitchenAction } from '../../kitchen/kitchen-context';
@@ -8,7 +10,7 @@ import type { HandoverState } from '@/lib/simulation';
 import { FLAGGED_FRIDGE_ID, handoverRowComplete } from '@/lib/handover-round';
 import { rowReadingIsRight } from '@/lib/simulation';
 import { kitchenAudio } from '@/lib/audio';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { useProgress } from '@/lib/progress-store';
 import { FRIDGE_INTERACTION_COPY } from '@/content/fridge-interaction-copy';
 
@@ -22,6 +24,8 @@ export function InspectionView({
   totalCount,
   frozen,
   onSelectUnit,
+  motionEnabled,
+  setMotionEnabled,
 }: {
   unitId: string;
   state: HandoverState;
@@ -32,6 +36,8 @@ export function InspectionView({
   totalCount: number;
   frozen: boolean;
   onSelectUnit: (id: string) => void;
+  motionEnabled: boolean;
+  setMotionEnabled: (enabled: boolean) => void;
 }) {
   const unit = FRIDGE_UNITS.find(u => u.id === unitId)!;
   const row = state.rows[unitId] || { probed: false, reading: '', time: '', initials: '', note: '' };
@@ -57,6 +63,7 @@ export function InspectionView({
 
   // Focus management
   const openBtnRef = useRef<HTMLButtonElement>(null);
+  const firstClueRef = useRef<HTMLButtonElement>(null);
   const readingInputRef = useRef<HTMLInputElement>(null);
   const initialsInputRef = useRef<HTMLInputElement>(null);
   const noteInputRef = useRef<HTMLInputElement>(null);
@@ -69,12 +76,14 @@ export function InspectionView({
   }, [unitId, doorOpen, closing]);
 
   useEffect(() => {
-    if (doorOpen && row.probed && !closing && !frozen) {
-      readingInputRef.current?.focus();
+    if (doorOpen && !closing && !frozen) {
+      if (row.probed) readingInputRef.current?.focus();
+      else firstClueRef.current?.focus({ preventScroll: true });
     }
   }, [closing, doorOpen, frozen, row.probed]);
 
   useKitchenAction('handover:workspace', () => {
+    if (frozen) return;
     if (!doorOpen) {
       setDoorOpen(true);
       setError(null);
@@ -96,6 +105,7 @@ export function InspectionView({
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (frozen) return;
     setError(null);
     
     if (!handoverRowComplete(unitId, row)) {
@@ -133,8 +143,10 @@ export function InspectionView({
   const isFlagged = unitId === FLAGGED_FRIDGE_ID;
   const isWarm = unit.actualC > unit.limitC;
   const noteRequired = isFlagged || isWarm;
-  const photo = FRIDGE_PHOTOS[unitId];
+  const photo = FRIDGE_INSPECTIONS[unitId];
   const activeClue = photo.clues.find(clue => clue.id === activeClueId);
+  const mediaState = doorOpen && !closing ? 'open' : 'closed';
+  const media = getFridgeMedia(unitId, mediaState);
   const settledFeedback = isWarm
     ? FRIDGE_INTERACTION_COPY.aboveLimit(unit.actualC.toFixed(1), unit.limitLabel)
     : FRIDGE_INTERACTION_COPY.withinLimit(unit.actualC.toFixed(1), unit.limitLabel);
@@ -178,10 +190,10 @@ export function InspectionView({
         </div>
       </nav>
       <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row">
-      {/* Visual Scene: Photo Area */}
-      <div className="relative h-[340px] min-h-[260px] md:h-full md:flex-1 md:min-h-0 bg-black flex flex-col items-center justify-center p-4 shrink-0 md:shrink">
+      {/* Keep the markers relative to the visible portrait, not the surrounding space. */}
+      <div className="relative md:h-full md:flex-1 md:min-w-0 bg-black flex flex-col gap-3 p-4 shrink-0 md:shrink">
         {/* We show the unit identity and saved count even when closed */}
-        <div className="absolute top-4 left-4 right-4 flex justify-between items-start z-10">
+        <div className="flex flex-wrap justify-between items-start gap-2 shrink-0">
            <div className="bg-black/60 text-white p-3 rounded-lg backdrop-blur-sm border border-white/10 shadow-xl">
              <h2 className="font-bold text-xl text-white">{unit.name}</h2>
              <div className="text-zinc-300 text-xs mt-1 uppercase tracking-wider">{unit.where} • {unit.limitLabel}</div>
@@ -191,86 +203,66 @@ export function InspectionView({
            </div>
         </div>
 
-        <div className="relative w-full h-full flex items-center justify-center pt-20 pb-4">
-          <div 
-             className={cn("absolute inset-0 transition-opacity duration-200 motion-reduce:duration-0", (doorOpen && !closing) ? "opacity-0 pointer-events-none" : "opacity-100")}
-          >
-             <img src={CLOSED_FRIDGE_PHOTO} alt="Closed fridge door" className="w-full h-full object-contain" />
-             {!doorOpen && !closing && (
-               <div className="absolute inset-0 flex items-center justify-center">
-                 <button
-                   ref={openBtnRef}
-                   type="button"
-                   data-testid="open-fridge"
-                   onClick={handleOpen}
-                    disabled={frozen}
-                   className="bg-white text-black font-bold px-8 py-4 rounded-xl shadow-2xl hover:bg-zinc-200 hover:scale-105 transition-all motion-reduce:transition-none text-xl md:text-2xl tracking-wide border-4 border-zinc-200"
-                 >
-                   {HANDOVER_LABELS.openFridge}
-                 </button>
-               </div>
-             )}
+        <InspectionMedia
+          key={`${unitId}-${mediaState}`}
+          media={media}
+          description={mediaState === 'open' ? photo.alt : `${unit.name}, closed door.`}
+          motionEnabled={motionEnabled}
+          setMotionEnabled={setMotionEnabled}
+          active={!closing && !frozen}
+        >
+          {mediaState === 'closed' && !closing && (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <button
+                ref={openBtnRef}
+                type="button"
+                data-testid="open-fridge"
+                onClick={handleOpen}
+                disabled={frozen}
+                className="bg-white text-black font-bold px-5 py-4 rounded-xl shadow-2xl hover:bg-zinc-200 transition-colors text-xl tracking-wide border-4 border-zinc-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                {HANDOVER_LABELS.openFridge}
+              </button>
+            </div>
+          )}
+          {mediaState === 'open' && (
+            <div className="absolute inset-0" role="group" aria-label={HANDOVER_LABELS.inspectPrompt}>
+              {photo.clues.map((clue, index) => (
+                <button
+                  key={clue.id}
+                  ref={index === 0 ? firstClueRef : undefined}
+                  type="button"
+                  disabled={frozen}
+                  onClick={() => {
+                    setActiveClueId(clue.id);
+                    setCheckedClueIds(previous => new Set(previous).add(clue.id));
+                    setAnnouncement(clue.finding);
+                    setError(null);
+                    kitchenAudio.play('page');
+                  }}
+                  className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary text-primary-foreground shadow-[0_2px_16px_rgba(0,0,0,0.8)] h-11 w-11 sm:h-12 sm:w-12 font-bold focus-visible:ring-4 focus-visible:ring-white/70 outline-none hover:scale-110 motion-reduce:transition-none"
+                  style={{ left: `${clue.x}%`, top: `${clue.y}%` }}
+                  aria-label={clue.label}
+                  aria-pressed={activeClueId === clue.id}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          )}
+        </InspectionMedia>
+        {mediaState === 'open' && (
+          <div className="shrink-0 rounded-lg border border-white/20 bg-zinc-900 px-4 py-3 text-white">
+            {activeClue ? (
+              <>
+                <div className="text-xs font-bold uppercase tracking-wider">{activeClue.label}</div>
+                <div className="mt-1 text-sm sm:text-base leading-snug">{activeClue.finding}</div>
+              </>
+            ) : (
+              <div className="text-xs font-medium">{HANDOVER_LABELS.inspectHint}</div>
+            )}
           </div>
-
-          <div 
-             className={cn("absolute inset-0 transition-opacity duration-200 motion-reduce:duration-0", (doorOpen && !closing) ? "opacity-100" : "opacity-0 pointer-events-none")}
-          >
-             <img 
-                src={photo.src}
-                alt={photo.alt}
-               className="w-full h-full object-contain" 
-             />
-              <div className="absolute inset-0" role="group" aria-label={HANDOVER_LABELS.inspectPrompt}>
-               {photo.clues.map((clue, index) => (
-                 <motion.button
-                   key={clue.id}
-                   type="button"
-                   initial={{ opacity: 0, scale: 0.7 }}
-                   animate={{ opacity: 1, scale: activeClueId === clue.id ? 1.08 : 1 }}
-                    transition={{ duration: 0.2, delay: index * 0.04 }}
-                   onClick={() => {
-                     setActiveClueId(clue.id);
-                      setCheckedClueIds(previous => new Set(previous).add(clue.id));
-                      setAnnouncement(clue.finding);
-                     setError(null);
-                     kitchenAudio.play('page');
-                   }}
-                    className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary text-primary-foreground shadow-[0_2px_16px_rgba(0,0,0,0.8)] h-11 w-11 sm:h-12 sm:w-12 font-bold focus-visible:ring-4 focus-visible:ring-white/70 outline-none hover:scale-110 motion-reduce:transition-none"
-                   style={{ left: `${clue.x}%`, top: `${clue.y}%` }}
-                   aria-label={clue.label}
-                   aria-pressed={activeClueId === clue.id}
-                 >
-                   {index + 1}
-                 </motion.button>
-               ))}
-               <div className="absolute bottom-3 left-3 right-3 flex justify-center pointer-events-none">
-                 <AnimatePresence mode="wait">
-                   {activeClue ? (
-                     <motion.div
-                       key={activeClue.id}
-                       initial={{ opacity: 0, y: 10 }}
-                       animate={{ opacity: 1, y: 0 }}
-                       exit={{ opacity: 0, y: 6 }}
-                       className="max-w-lg rounded-lg border border-white/20 bg-black/85 px-4 py-3 text-white shadow-xl backdrop-blur-sm"
-                     >
-                       <div className="text-xs font-bold uppercase tracking-wider text-primary-foreground/80">{activeClue.label}</div>
-                       <div className="mt-1 text-sm sm:text-base leading-snug">{activeClue.finding}</div>
-                     </motion.div>
-                   ) : (
-                     <motion.div
-                       key="hint"
-                        initial={{ opacity: 0 }}
-                       animate={{ opacity: 1 }}
-                       className="rounded-full bg-black/75 px-4 py-2 text-xs font-medium text-white backdrop-blur-sm"
-                     >
-                       {HANDOVER_LABELS.inspectHint}
-                     </motion.div>
-                   )}
-                 </AnimatePresence>
-               </div>
-             </div>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Control Panel Area */}

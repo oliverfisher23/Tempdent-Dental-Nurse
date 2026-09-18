@@ -5,9 +5,11 @@ import { FRIDGE_UNITS } from '@/content/activities';
 import { LogView } from './log-view';
 import { InspectionView } from './inspection-view';
 import { BoardReview } from './board-review';
+import { useInspectionMotion } from './use-inspection-motion';
 
 export function HandoverRound(props: HandoverRoundProps) {
   const [recheckUnitId, setRecheckUnitId] = useState<string | null>(null);
+  const motion = useInspectionMotion();
 
   const { state, onReadLog, onProbe, onRowChange, onSaveClose, frozen = false } = props;
 
@@ -25,6 +27,7 @@ export function HandoverRound(props: HandoverRoundProps) {
     return (
       <InspectionView
         key={currentUnitId}
+        {...motion}
         unitId={currentUnitId}
         state={state}
         onProbe={onProbe}

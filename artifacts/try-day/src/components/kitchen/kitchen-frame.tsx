@@ -20,6 +20,7 @@ import type { StepGuide } from '@/content/step-guide';
 import { StepGuideBar } from './step-guide-bar';
 import { ExperienceSizeControl } from '@/components/experience-size-control';
 import { DeviceAdvice } from '@/components/device-advice';
+import { SceneMediaActiveContext } from './scene-media-context';
 
 interface KitchenFrameProps {
   id: TaskId;
@@ -84,7 +85,7 @@ function HeaderTool({
 function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorkspace = false, readyToContinue = true }: KitchenFrameProps) {
   const task = getTask(id);
   const { progress, evaluations, completeTask, isUnlocked, currentTaskId, setClock } = useProgress();
-  const { place, light, mapOpen, pendingAction, openWorkspace, openNotepad, openMap, clearAction } = useKitchen();
+  const { place, light, mapOpen, notepadOpen, pendingAction, openWorkspace, openNotepad, openMap, clearAction } = useKitchen();
   const [dialogueHeight, setDialogueHeight] = useState(0);
   const onDialogueHeight = useCallback((px: number) => setDialogueHeight(Math.round(px)), []);
   const [, setLocation] = useLocation();
@@ -296,7 +297,9 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
             inert={finished || undefined}
           >
             <Suspense fallback={<div className="absolute inset-0 bg-black" />}>
-              {activeScene}
+              <SceneMediaActiveContext.Provider value={!finished && !jobCardOpen && !mapOpen && !notepadOpen}>
+                {activeScene}
+              </SceneMediaActiveContext.Provider>
             </Suspense>
             <div className={cn("absolute inset-0 pointer-events-none mix-blend-overlay transition-colors duration-1000", lightOverlay)} />
           </motion.div>
