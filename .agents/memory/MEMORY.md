@@ -2,3 +2,4 @@
 - [Dietary review boundaries](dietary-review-boundaries.md) — redesign proposals are not implementation approval; recipe matching and employer service clearance are separate judgements.
 - [Preview video codecs](preview-video-codecs.md) — some preview/test Chromium builds lack H.264 decoding; check codec support before treating a media error as a broken URL.
 - [Test command execution](test-command-execution.md) — use an equals-form tsx config option and require real test output; a zero exit alone can be misleading.
+- [Browser capture harness](browser-capture-harness.md) — hide the designer panel with CSS (never remove it), close the dev banner first, and don’t trust emulated touch-target sizes.
