@@ -50,3 +50,17 @@ mtime_ms = 1789727061759
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/ab6e63b3-6624-4f01-9b6b-2698e434b5ad/447b3481-1845-45f8-a53b-ed997cb8138d"
 storage_version_token = "1789727065969824"
 content_type = "application/octet-stream"
+
+[[outputs]]
+id = "3drPVPrcHmRQnwzRWSaYf"
+uri = "file://.local/reviews/task-3-redesign.md"
+type = "text"
+title = "Task 3 redesign specification"
+description = "Decision-ready review with annotated desktop and phone wireframes, portioning and monitoring controls, content-approval blockers, and acceptance checks. Recommendations only; the app is unchanged."
+logical_id = "6d39ca23-6cc4-4892-8840-8c3bf7870a84"
+content_hash = "sha256:1b54b77325b7fce48a91de16dbe04f7c01e3302d0c1223f465fdd5e2f2368856"
+size = 47721
+mtime_ms = 1789731734442
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/6d39ca23-6cc4-4892-8840-8c3bf7870a84/27f318f2-cbde-46df-964a-be1ba9309e71"
+storage_version_token = "1789731748788993"
+content_type = "text/markdown"

@@ -48,3 +48,6 @@ description: Non-obvious rules for the Marriott try-day simulation: spec copy, b
 - Fridge notes should come from inspecting clickable details in the appliance, not from a static block that gives the answer away.
   **Why:** the user wants Task 1 to feel interactive and asked for context learners can reveal before writing their notes.
   **How to apply:** use short, conversational findings; let the learner turn those findings into their own note rather than auto-filling it.
+- A planned learning complication must not require violating the task's own preparation instruction. Capacity and authored comparison evidence need joint employer approval, not an isolated numerical correction.
+  **Why:** preserving a scripted cooling complication is not justification for teaching contradictory preparation; fixed example readings are not physical predictions for arbitrary learner choices.
+  **How to apply:** when redesigning the chill activity, agree the tray supply/capacity, whole-batch accounting and comparison scenario together before changing content or validation.
