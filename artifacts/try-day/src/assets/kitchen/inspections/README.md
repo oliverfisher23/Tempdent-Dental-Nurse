@@ -69,6 +69,14 @@ pnpm --filter @workspace/scripts exec tsx --tsconfig ../artifacts/try-day/tsconf
 
 The asset tests require `ffprobe`. Vite imports the files as URLs, preserving the
 configured base path. Only the current appliance/state receives a video source;
-the other clips are not preloaded. A session-only motion preference is separate
-from learner progress and survives appliance changes and rechecks. Reduced
-motion defaults to a poster unless the learner explicitly chooses to play.
+the other clips are not preloaded. The files named `closed` contain a door-opening
+sequence: show their still poster until the learner chooses Open fridge, play the
+opening once, then switch to the looping interior. Do not loop an opening door
+behind a button asking the learner to open it. The learner can bypass the opening
+with Inspect now; a failed or stalled opening also proceeds to the usable interior.
+The desktop paperwork column stays in place throughout this transition.
+
+A session-only motion preference is separate from learner progress and survives
+appliance changes and rechecks. Paused/reduced-motion defaults skip the opening
+animation and show the interior poster; learners can explicitly resume its motion.
+Opening a door never measures, fills in, saves or signs a fridge check.

@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { FRIDGE_UNITS, HANDOVER_LINES } from '@/content/activities';
 import { FRIDGE_INSPECTIONS } from '@/content/fridge-photos';
 import { getFridgeMedia } from '@/content/fridge-media';
@@ -42,7 +42,8 @@ export function InspectionView({
   const unit = FRIDGE_UNITS.find(u => u.id === unitId)!;
   const row = state.rows[unitId] || { probed: false, reading: '', time: '', initials: '', note: '' };
   
-  const [doorOpen, setDoorOpen] = useState(false);
+   const [doorPhase, setDoorPhase] = useState<'closed' | 'opening' | 'open'>('closed');
+   const doorOpen = doorPhase === 'open';
   const [closing, setClosing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeClueId, setActiveClueId] = useState<string | null>(null);
@@ -67,41 +68,49 @@ export function InspectionView({
   const readingInputRef = useRef<HTMLInputElement>(null);
   const initialsInputRef = useRef<HTMLInputElement>(null);
   const noteInputRef = useRef<HTMLInputElement>(null);
+   const probeButtonRef = useRef<HTMLButtonElement>(null);
+   const wasProbedRef = useRef(row.probed);
+   const finishOpening = useCallback(() => {
+     setDoorPhase(phase => phase === 'opening' ? 'open' : phase);
+   }, []);
   
   // When unit loads, if closed, focus open button
   useEffect(() => {
-    if (!doorOpen && !closing) {
-      openBtnRef.current?.focus();
+     if (doorPhase === 'closed' && !closing) {
+       openBtnRef.current?.focus({ preventScroll: true });
     }
-  }, [unitId, doorOpen, closing]);
+   }, [unitId, doorPhase, closing]);
 
   useEffect(() => {
     if (doorOpen && !closing && !frozen) {
-      if (row.probed) readingInputRef.current?.focus();
-      else firstClueRef.current?.focus({ preventScroll: true });
+       firstClueRef.current?.focus({ preventScroll: true });
     }
-  }, [closing, doorOpen, frozen, row.probed]);
+   }, [closing, doorOpen, frozen]);
+
+   useEffect(() => {
+     if (row.probed && !wasProbedRef.current && !frozen) readingInputRef.current?.focus();
+     wasProbedRef.current = row.probed;
+   }, [row.probed, frozen]);
+
+   const handleOpen = () => {
+     if (frozen || doorPhase !== 'closed') return;
+     kitchenAudio.play('door');
+     setDoorPhase(motionEnabled ? 'opening' : 'open');
+     setError(null);
+   };
 
   useKitchenAction('handover:workspace', () => {
     if (frozen) return;
-    if (!doorOpen) {
-      setDoorOpen(true);
-      setError(null);
-      kitchenAudio.play('door');
+     if (doorPhase === 'closed') {
+       handleOpen();
+     } else if (doorPhase === 'opening') {
+       finishOpening();
     } else if (!row.probed) {
-      const panelBtn = document.querySelector(`[data-testid="fridge-inspection"] form button[type="button"]`) as HTMLButtonElement | null;
-      panelBtn?.focus();
+       probeButtonRef.current?.focus();
     } else {
       readingInputRef.current?.focus();
     }
   });
-
-  const handleOpen = () => {
-    if (frozen) return;
-    kitchenAudio.play('door');
-    setDoorOpen(true);
-    setError(null);
-  };
 
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,7 +144,7 @@ export function InspectionView({
       const success = onSaveClose(unitId);
       if (success) {
         setAnnouncement(FRIDGE_INTERACTION_COPY.rowSaved(unit.name));
-        setDoorOpen(false);
+         setDoorPhase('closed');
       }
     }, delay); 
   };
@@ -145,7 +154,7 @@ export function InspectionView({
   const noteRequired = isFlagged || isWarm;
   const photo = FRIDGE_INSPECTIONS[unitId];
   const activeClue = photo.clues.find(clue => clue.id === activeClueId);
-  const mediaState = doorOpen && !closing ? 'open' : 'closed';
+   const mediaState = doorOpen ? 'open' : 'closed';
   const media = getFridgeMedia(unitId, mediaState);
   const settledFeedback = isWarm
     ? FRIDGE_INTERACTION_COPY.aboveLimit(unit.actualC.toFixed(1), unit.limitLabel)
@@ -156,6 +165,7 @@ export function InspectionView({
       className="absolute inset-0 z-0 bg-black flex flex-col overflow-hidden"
       data-testid="fridge-inspection" 
       data-unit-id={unitId}
+       data-door-phase={doorPhase}
     >
       <nav className="shrink-0 border-b border-zinc-700 bg-zinc-950 px-3 py-2 text-white" aria-label={FRIDGE_INTERACTION_COPY.roundOrientation}>
         <div className="flex items-center gap-2 overflow-x-auto pb-1" role="list">
@@ -193,7 +203,7 @@ export function InspectionView({
       {/* Keep the markers relative to the visible portrait, not the surrounding space. */}
       <div className="relative md:h-full md:flex-1 md:min-w-0 bg-black flex flex-col gap-3 p-4 shrink-0 md:shrink">
         {/* We show the unit identity and saved count even when closed */}
-        <div className="flex flex-wrap justify-between items-start gap-2 shrink-0">
+         <div className="flex flex-wrap justify-between items-start gap-2 shrink-0">
            <div className="bg-black/60 text-white p-3 rounded-lg backdrop-blur-sm border border-white/10 shadow-xl">
              <h2 className="font-bold text-xl text-white">{unit.name}</h2>
              <div className="text-zinc-300 text-xs mt-1 uppercase tracking-wider">{unit.where} • {unit.limitLabel}</div>
@@ -203,28 +213,38 @@ export function InspectionView({
            </div>
         </div>
 
+         <div className="flex min-h-11 flex-wrap items-center gap-3 text-white">
+           {doorPhase === 'closed' && (
+             <>
+               <button ref={openBtnRef} type="button" data-testid="open-fridge" onClick={handleOpen} disabled={frozen}
+                 className="min-h-11 rounded-lg border-2 border-white bg-white px-5 py-2 text-base font-bold text-black shadow-lg hover:bg-zinc-200 disabled:opacity-60">
+                 {HANDOVER_LABELS.openFridge}
+               </button>
+               <p className="text-sm text-zinc-300">{FRIDGE_INTERACTION_COPY.closedHint}</p>
+             </>
+           )}
+           {doorPhase === 'opening' && (
+             <>
+               <p className="font-semibold" role="status">{FRIDGE_INTERACTION_COPY.opening}</p>
+               <button type="button" onClick={finishOpening} data-testid="skip-fridge-opening" disabled={frozen}
+                 className="min-h-11 rounded-lg border border-white/40 px-4 py-2 text-sm font-semibold hover:bg-white/10">
+                 {FRIDGE_INTERACTION_COPY.skipOpening}
+               </button>
+             </>
+           )}
+           {doorOpen && <p className="text-sm text-zinc-300">{HANDOVER_LABELS.inspectHint}</p>}
+         </div>
+
         <InspectionMedia
-          key={`${unitId}-${mediaState}`}
+           key={`${unitId}-${doorPhase}`}
           media={media}
-          description={mediaState === 'open' ? photo.alt : `${unit.name}, closed door.`}
+           description={doorOpen ? photo.alt : `${unit.name}, closed door.`}
           motionEnabled={motionEnabled}
           setMotionEnabled={setMotionEnabled}
           active={!closing && !frozen}
+           playback={doorPhase === 'closed' ? 'still' : doorPhase === 'opening' ? 'once' : 'loop'}
+           onComplete={finishOpening}
         >
-          {mediaState === 'closed' && !closing && (
-            <div className="absolute inset-0 flex items-center justify-center">
-              <button
-                ref={openBtnRef}
-                type="button"
-                data-testid="open-fridge"
-                onClick={handleOpen}
-                disabled={frozen}
-                className="bg-white text-black font-bold px-5 py-4 rounded-xl shadow-2xl hover:bg-zinc-200 transition-colors text-xl tracking-wide border-4 border-zinc-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              >
-                {HANDOVER_LABELS.openFridge}
-              </button>
-            </div>
-          )}
           {mediaState === 'open' && (
             <div className="absolute inset-0" role="group" aria-label={HANDOVER_LABELS.inspectPrompt}>
               {photo.clues.map((clue, index) => (
@@ -251,16 +271,10 @@ export function InspectionView({
             </div>
           )}
         </InspectionMedia>
-        {mediaState === 'open' && (
+        {mediaState === 'open' && activeClue && (
           <div className="shrink-0 rounded-lg border border-white/20 bg-zinc-900 px-4 py-3 text-white">
-            {activeClue ? (
-              <>
-                <div className="text-xs font-bold uppercase tracking-wider">{activeClue.label}</div>
-                <div className="mt-1 text-sm sm:text-base leading-snug">{activeClue.finding}</div>
-              </>
-            ) : (
-              <div className="text-xs font-medium">{HANDOVER_LABELS.inspectHint}</div>
-            )}
+            <div className="text-xs font-bold uppercase tracking-wider">{activeClue.label}</div>
+            <div className="mt-1 text-sm sm:text-base leading-snug">{activeClue.finding}</div>
           </div>
         )}
       </div>
@@ -269,13 +283,16 @@ export function InspectionView({
       <div 
         className={cn(
            "bg-zinc-900 border-t md:border-t-0 md:border-l border-zinc-700 transition-all duration-200 motion-reduce:duration-0 flex-shrink-0 md:w-[400px] lg:w-[500px]",
-          (doorOpen && !closing) ? "opacity-100" : "opacity-0 pointer-events-none md:opacity-100"
+           doorOpen ? "flex" : "hidden md:flex"
         )}
-        style={{
-          display: (!doorOpen || closing) ? 'none' : 'flex'
-        }}
       >
-         <form onSubmit={handleFormSubmit} className="p-4 sm:p-6 lg:p-8 text-white flex flex-col gap-6 w-full h-auto md:h-full overflow-visible md:overflow-y-auto">
+          {!doorOpen ? (
+            <aside className="flex w-full flex-col justify-center gap-3 p-6 lg:p-8 text-white">
+              <h3 className="text-2xl">{FRIDGE_INTERACTION_COPY.checkHeading}</h3>
+              <p className="text-sm leading-relaxed text-zinc-300">{FRIDGE_INTERACTION_COPY.checkHint}</p>
+            </aside>
+          ) : (
+          <form onSubmit={handleFormSubmit} aria-busy={closing} className="p-4 sm:p-6 lg:p-8 text-white flex flex-col gap-6 w-full h-auto md:h-full overflow-visible md:overflow-y-auto">
             
             {/* Probe Action / Display */}
             <div className="bg-black border border-zinc-700 rounded-xl p-6 shadow-inner flex flex-col items-center justify-center min-h-[140px] shrink-0">
@@ -304,6 +321,7 @@ export function InspectionView({
                  </div>
                ) : (
                   <button
+                    ref={probeButtonRef}
                     type="button"
                     disabled={frozen || probePending}
                     onClick={() => {
@@ -451,7 +469,8 @@ export function InspectionView({
                  {HANDOVER_LABELS.saveAndClose}
                </button>
             </div>
-         </form>
+          </form>
+          )}
       </div>
       </div>
       <span className="sr-only" aria-live="polite">{announcement}</span>

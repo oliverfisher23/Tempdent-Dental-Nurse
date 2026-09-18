@@ -12,4 +12,9 @@ export const FRIDGE_INTERACTION_COPY = {
   noteProbePrompt: 'Take the temperature before writing the board entry.',
   notebookSaved: 'Reading added to your notebook.',
   rowSaved: (name: string) => `${name} saved. The door is closed.`,
+  closedHint: 'Open the door to inspect inside.',
+  opening: 'Opening the door',
+  skipOpening: 'Inspect now',
+  checkHeading: 'Your fridge check',
+  checkHint: 'Look inside, take the temperature, then write your reading and any observations here.',
 } as const;

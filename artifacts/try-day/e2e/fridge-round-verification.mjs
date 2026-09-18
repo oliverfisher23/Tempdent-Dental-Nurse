@@ -37,17 +37,22 @@ export async function verifyFridgeMedia(page) {
 
   for (const [index, [unit, reading]] of units.entries()) {
     await page.waitForSelector(`[data-testid="fridge-inspection"][data-unit-id="${unit}"]`);
-    await assertMedia(unit, 'closed', index !== 1);
-    if (index === 1) {
-      assert.equal(await video.getAttribute('src'), null, 'pause choice survives the next appliance');
-      await page.getByRole('button', { name: 'Resume motion', exact: true }).click();
-      await assertMedia(unit, 'closed');
-    }
-    const closedVideo = await video.elementHandle();
+    await page.waitForSelector('[data-testid="fridge-inspection"][data-door-phase="closed"]');
+    assert.ok((await page.getByTestId('inspection-poster').getAttribute('src')).includes(`${unit}-closed`));
+    assert.equal(await video.count(), 0, 'a closed door is a still, not an opening clip on repeat');
     await page.getByTestId('open-fridge').click();
+    if (index !== 1) {
+      await page.waitForFunction(unit => {
+        const v = document.querySelector('[data-testid="inspection-video"]');
+        return v?.currentSrc.includes(`${unit}-closed`) && !v.loop && !v.paused && v.currentTime > 0;
+      }, unit);
+    }
+    await page.waitForSelector('[data-testid="fridge-inspection"][data-door-phase="open"]');
+    if (index === 1) {
+      assert.equal(await video.getAttribute('src'), null, 'pause choice survives opening the next appliance');
+      await page.getByRole('button', { name: 'Resume motion', exact: true }).click();
+    }
     await assertMedia(unit, 'open');
-    assert.equal(await closedVideo.evaluate(v => v.paused && !v.hasAttribute('src')), true);
-    await closedVideo.dispose();
     const clues = page.locator('[data-testid="fridge-inspection"] button[aria-pressed]');
     assert.equal(await clues.count(), 2);
     for (const clue of await clues.all()) {
