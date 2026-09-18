@@ -189,16 +189,18 @@ export default function ChillTask() {
     : !state.studentSigned ? L.next.sign
     : L.next.done;
 
-  const askingAtNinety = started && m === 90 && !!state.readings[90]?.value && state.ninetyChoice !== 'keep-logging';
+  const askingAtNinety = started && m === 90 && !!state.readings[90]?.value;
   const choices = askingAtNinety ? (
-    <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap" role="group" aria-label={CHILL_LINES.marcusAtNinety.text}>
+    <div className="flex flex-col gap-2" role="group" aria-label={CHILL_LINES.marcusAtNinety.text}>
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
       {NINETY_MINUTE_CHOICES.map(choice => (
         <button
           key={choice.id}
           type="button"
           onClick={() => onNinetyChoice(choice.id)}
+          aria-pressed={state.ninetyChoice === choice.id}
           className={cn(
-            'rounded-full border px-4 py-2 text-left text-sm font-semibold shadow outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary',
+            'min-h-11 rounded-xl border px-4 py-2 text-left text-sm font-semibold shadow outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary',
             state.ninetyChoice === choice.id
               ? 'border-red-300 bg-red-50 text-red-800'
               : 'border-primary/40 bg-primary/10 text-foreground hover:bg-primary/20',
@@ -207,6 +209,12 @@ export default function ChillTask() {
           {choice.label}
         </button>
       ))}
+      </div>
+      {state.ninetyChoice && (
+        <p className={cn('rounded-lg px-3 py-2 text-sm font-medium', state.ninetyChoice === 'keep-logging' ? 'bg-emerald-50 text-emerald-900' : 'bg-amber-50 text-amber-950')} role="status" aria-live="polite">
+          {state.ninetyChoice === 'keep-logging' ? L.choiceRight : L.choiceWrong}
+        </p>
+      )}
     </div>
   ) : undefined;
 

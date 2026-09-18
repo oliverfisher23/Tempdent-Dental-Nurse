@@ -9,7 +9,7 @@ import { BoardReview } from './board-review';
 export function HandoverRound(props: HandoverRoundProps) {
   const [recheckUnitId, setRecheckUnitId] = useState<string | null>(null);
 
-  const { state, onReadLog, onProbe, onRowChange, onSaveClose, initials } = props;
+  const { state, onReadLog, onProbe, onRowChange, onSaveClose, frozen = false } = props;
 
   const logRead = handoverLogRead(state);
   const nextUnit = nextHandoverUnit(state);
@@ -27,7 +27,6 @@ export function HandoverRound(props: HandoverRoundProps) {
         key={currentUnitId}
         unitId={currentUnitId}
         state={state}
-        initials={initials}
         onProbe={onProbe}
         onRowChange={onRowChange}
         onSaveClose={(id) => {
@@ -39,9 +38,11 @@ export function HandoverRound(props: HandoverRoundProps) {
         }}
         savedCount={savedCount}
         totalCount={totalCount}
+        frozen={frozen}
+        onSelectUnit={(id) => setRecheckUnitId(id === nextUnit?.id ? null : id)}
       />
     );
   }
 
-  return <BoardReview state={state} onRecheck={(id) => setRecheckUnitId(id)} />;
+  return <BoardReview state={state} frozen={frozen} onRecheck={(id) => setRecheckUnitId(id)} />;
 }

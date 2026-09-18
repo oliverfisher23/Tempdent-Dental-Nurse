@@ -67,13 +67,16 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
     const row = state.lines[physicalLine.id];
     const index = ORDER_LINES.indexOf(physicalLine);
     const needsCount = !row?.counted;
+    const needsProbe = physicalLine.chilled && !row?.probed;
     return {
-      id: `delivery-check-${physicalLine.id}-${needsCount ? 'count' : 'temperature'}`,
+      id: `delivery-check-${physicalLine.id}-${needsCount ? 'count' : needsProbe ? 'temperature' : 'review'}`,
       step: 1 + index,
       total: deliveryTotal,
       title: `Check ${physicalLine.item}`,
       instruction: needsCount
         ? 'Inspect the goods, measure what arrived and enter it beside the order. Decide whether to accept the checked quantity.'
+        : needsProbe
+        ? 'Take a temperature reading for this chilled item, then record it beside your checked quantity.'
         : 'Compare your findings with the order and scenario guidance. Finish this row before moving to another item.',
       actionLabel: `Open ${physicalLine.item}`,
       place: 'goods-in',

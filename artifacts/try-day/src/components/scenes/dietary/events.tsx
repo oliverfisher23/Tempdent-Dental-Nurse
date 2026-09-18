@@ -90,49 +90,49 @@ export function EventsScene({
 
       {activeWorkspace === null && (
         <>
-          <Hotspot 
-            x={65} 
-            y={40} 
-            label="Allergen matrix & recipe cards" 
-            state={stage !== 'chart' ? 'done' : 'active'} 
-            onClick={() => { kitchenAudio.play('page'); setActiveWorkspace('chart'); }} 
+          <Hotspot
+            x={65}
+            y={40}
+            label="Allergen matrix & recipe cards"
+            state={stage !== 'chart' ? 'done' : 'active'}
+            onClick={() => { kitchenAudio.play('page'); setActiveWorkspace('chart'); }}
           />
 
-          <Hotspot 
-            x={15} 
-            y={25} 
-            label="Function sheet & guest decisions" 
-            state={stage === 'guests' ? 'active' : (stage === 'chart' ? 'todo' : 'done')} 
-            onClick={() => { 
+          <Hotspot
+            x={15}
+            y={25}
+            label="Function sheet & guest decisions"
+            state={stage === 'guests' ? 'active' : (stage === 'chart' ? 'todo' : 'done')}
+            onClick={() => {
               if (stage !== 'chart') {
-                kitchenAudio.play('page'); 
-                setActiveWorkspace('guests'); 
+                kitchenAudio.play('page');
+                setActiveWorkspace('guests');
               }
-            }} 
+            }}
           />
-          
-          <Hotspot 
-            x={80} 
-            y={35} 
-            label="Evening board" 
-            state={stage === 'board' ? 'active' : (stage === 'done' ? 'done' : 'todo')} 
-            onClick={() => { 
+
+          <Hotspot
+            x={80}
+            y={35}
+            label="Evening board"
+            state={stage === 'board' ? 'active' : (stage === 'done' ? 'done' : 'todo')}
+            onClick={() => {
               if (stage === 'board' || stage === 'done') {
-                kitchenAudio.play('page'); 
-                setActiveWorkspace('board'); 
+                kitchenAudio.play('page');
+                setActiveWorkspace('board');
               }
-            }} 
+            }}
           />
         </>
       )}
 
-      <CloseUp 
-        isOpen={activeWorkspace === 'chart'} 
-        title="Allergen Matrix" 
-        onClose={() => setActiveWorkspace(null)} 
-        className="max-w-6xl w-[90vw] h-[85vh] md:h-[80vh] p-0"
+      <CloseUp
+        isOpen={activeWorkspace === 'chart'}
+        title="Allergen Matrix"
+        onClose={() => setActiveWorkspace(null)}
+        className="max-w-[1200px] w-full h-full md:w-[95vw] md:h-[90vh] p-0 rounded-none md:rounded-lg"
       >
-        <ChartWorkspace 
+        <ChartWorkspace
           chart={stateChart}
           redesign={redesign}
           flaggedDishes={flaggedDishes}
@@ -147,53 +147,33 @@ export function EventsScene({
         />
       </CloseUp>
 
-      <CloseUp 
-        isOpen={activeWorkspace === 'guests'} 
-        title="Guest Decisions" 
-        onClose={() => setActiveWorkspace(null)} 
-        className="max-w-6xl w-[95vw] h-[90vh] md:w-[90vw] md:h-[80vh] p-0"
+      <CloseUp
+        isOpen={activeWorkspace === 'guests'}
+        title="Guest Decisions"
+        onClose={() => setActiveWorkspace(null)}
+        className="max-w-[1400px] w-full h-full md:w-[95vw] md:h-[90vh] p-0 flex flex-col rounded-none md:rounded-lg"
       >
-        <div className="flex-1 flex flex-col min-h-0 bg-white">
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain" data-testid="guest-decisions-scroll">
-          <GuestsWorkspace 
-            redesign={redesign}
-            onUpdateRedesign={onUpdateRedesign}
-            stateGuests={stateGuests}
-            onAssignGuest={onAssignGuest}
-            stateChart={stateChart}
-          />
+        <div className="flex-1 flex flex-col min-h-0 bg-white rounded-none md:rounded-b-lg overflow-hidden">
+          <div className="min-h-0 flex-1 overflow-hidden" data-testid="guest-decisions-scroll">
+            <GuestsWorkspace
+              redesign={redesign}
+              onUpdateRedesign={onUpdateRedesign}
+              stateGuests={stateGuests}
+              onAssignGuest={onAssignGuest}
+              stateChart={stateChart}
+            />
           </div>
-          <div className="shrink-0 p-3 bg-white border-t border-gray-200 flex flex-wrap gap-2 justify-between">
-            <button 
-              onClick={() => {
-                kitchenAudio.play('page');
-                setActiveWorkspace('chart');
-              }}
-              className="px-3 py-2 border border-gray-300 rounded text-sm font-medium hover:bg-gray-50 transition-colors"
-            >
-              Back to matrix
-            </button>
-            <button 
-              onClick={() => {
-                kitchenAudio.play('page');
-                setActiveWorkspace('board');
-              }}
-              disabled={stage === 'guests' || stage === 'chart'}
-              className="px-3 py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Next: Evening board
-            </button>
-          </div>
+          {/* Note: Internal navigation is now handled in GuestsWorkspace, but we can keep a fail-safe fallback or just rely on the workspace ones */}
         </div>
       </CloseUp>
 
-      <CloseUp 
-        isOpen={activeWorkspace === 'board'} 
-        title="Evening Board" 
-        onClose={() => setActiveWorkspace(null)} 
-        className="max-w-5xl w-[90vw] h-[85vh] md:h-[70vh] p-0"
+      <CloseUp
+        isOpen={activeWorkspace === 'board'}
+        title="Evening Board"
+        onClose={() => setActiveWorkspace(null)}
+        className="max-w-5xl w-full h-full md:w-[90vw] md:h-[80vh] p-0 rounded-none md:rounded-lg"
       >
-        <BoardWorkspace 
+        <BoardWorkspace
           boardNote={boardNote}
           onBoardNoteChange={onBoardNoteChange}
           boardPosted={boardPosted}

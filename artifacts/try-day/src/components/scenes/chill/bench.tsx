@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Check } from 'lucide-react';
 import { PLACES } from '@/content/kitchen';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
 import { traysHaveSpace } from '@/lib/simulation';
-import { Hotspot } from '../../kitchen/hotspot';
 import { useKitchen, useKitchenAction } from '../../kitchen/kitchen-context';
 import { DragProvider } from '../../kitchen/interact';
 import { kitchenAudio } from '@/lib/audio';
@@ -23,21 +22,22 @@ const CAMERA: Record<ChillView, { scale: number; x: string; y: string }> = {
 
 /** A part of the room the student has stepped up to, filling the stage above the dialogue bar. */
 function ViewShell({ title, onBack, children }: { title: string; onBack: () => void; children: ReactNode }) {
+  const reduceMotion = useReducedMotion();
   return (
     <motion.div
-      initial={{ opacity: 0, y: 18 }}
+      initial={reduceMotion ? false : { opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: 10, transition: { duration: 0.2 } }}
-      transition={{ delay: 0.25, duration: 0.4, ease: [0.2, 0.8, 0.2, 1] }}
+      exit={{ opacity: 0, y: reduceMotion ? 0 : 6, transition: { duration: reduceMotion ? 0 : 0.15 } }}
+      transition={{ duration: reduceMotion ? 0 : 0.2, ease: [0.2, 0.8, 0.2, 1] }}
       className="absolute inset-x-0 top-0 z-10 flex flex-col"
       style={{ bottom: 'var(--dialogue-h, 0px)' }}
     >
-      <div className="flex shrink-0 items-center justify-end gap-3 px-3 pt-2 sm:px-5 sm:pt-3">
-        <span className="hidden text-[11px] font-bold uppercase tracking-widest text-white/70 md:inline">{title}</span>
+      <div className="flex shrink-0 items-center justify-between gap-3 px-3 pt-16 sm:px-5">
+        <h2 className="text-sm font-bold text-white">{title}</h2>
         <button
           type="button"
           onClick={onBack}
-          className="flex items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-1.5 text-xs font-bold text-white shadow-lg outline-none backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-primary"
+          className="flex min-h-11 items-center gap-1.5 rounded-full border border-white/20 bg-black/60 px-3 py-2 text-xs font-bold text-white shadow-lg outline-none backdrop-blur-sm transition-colors hover:bg-black/80 focus-visible:ring-2 focus-visible:ring-primary"
         >
           <ArrowLeft className="h-3.5 w-3.5" /> {L.backToRoom}
         </button>
@@ -103,65 +103,67 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
           decoding="async"
           initial={false}
           animate={reduceMotion ? { scale: 1, x: '0%', y: '0%' } : cam}
-          transition={{ duration: 0.9, ease: [0.4, 0, 0.2, 1] }}
+          transition={{ duration: reduceMotion ? 0 : 0.2, ease: [0.4, 0, 0.2, 1] }}
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
         <motion.div
           className="pointer-events-none absolute inset-0 bg-zinc-950"
           initial={false}
           animate={{ opacity: view === 'room' ? 0 : 0.8 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: reduceMotion ? 0 : 0.2 }}
         />
 
         {/* Persistent Workspace Navigation */}
-        <div className="absolute inset-x-0 top-4 z-20 flex justify-center pointer-events-none">
-          <div className="flex gap-2 p-1.5 rounded-full bg-black/40 backdrop-blur-md border border-white/10 shadow-2xl pointer-events-auto">
+        <nav aria-label="Task 3 work areas" className="absolute inset-x-0 top-2 z-20 flex justify-center px-2 pointer-events-none">
+          <div className="grid w-full max-w-xl grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-black/75 p-1.5 shadow-2xl backdrop-blur-md pointer-events-auto">
             <button 
+              type="button"
               onClick={() => view !== 'bench' && go('bench')}
+              aria-current={view === 'bench' ? 'page' : undefined}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all",
+                "min-h-11 rounded-xl px-2 py-2 text-xs font-bold transition-colors",
                 view === 'bench' ? "bg-primary text-white shadow-md cursor-default" : benchState === 'done' ? "text-white/80 hover:bg-white/10 hover:text-white" : "text-white/80 hover:bg-white/10 hover:text-white"
               )}
             >
               {L.brattPan}
-              {benchState === 'done' && <span className="ml-2 text-[10px] text-emerald-400">✓</span>}
+              {benchState === 'done' && <Check className="ml-1 inline h-3.5 w-3.5 text-emerald-400" aria-label="Finished" />}
             </button>
             <button 
+              type="button"
               onClick={() => chillerState !== 'locked' && view !== 'chiller' && go('chiller')}
+              disabled={chillerState === 'locked'}
+              aria-current={view === 'chiller' ? 'page' : undefined}
+              aria-describedby={chillerState === 'locked' ? 'chiller-locked-reason' : undefined}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center group",
+                "min-h-11 rounded-xl px-2 py-2 text-xs font-bold transition-colors flex flex-col items-center justify-center",
                 view === 'chiller' ? "bg-primary text-white shadow-md cursor-default" : chillerState === 'locked' ? "opacity-50 cursor-not-allowed" : "text-white/80 hover:bg-white/10 hover:text-white"
               )}
             >
               <div>
                 {L.blastChiller}
-                {chillerState === 'done' && <span className="ml-2 text-[10px] text-emerald-400">✓</span>}
+                {chillerState === 'done' && <Check className="ml-1 inline h-3.5 w-3.5 text-emerald-400" aria-label="Finished" />}
               </div>
-              {chillerState === 'locked' && (
-                <span className="hidden group-hover:block absolute top-full mt-2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
-                  Portion the beef first
-                </span>
-              )}
+              {chillerState === 'locked' && <span id="chiller-locked-reason" className="sr-only">Portion the beef first.</span>}
             </button>
             <button 
+              type="button"
               onClick={() => recordState !== 'locked' && !recordOpen && openRecord()}
+              disabled={recordState === 'locked'}
+              aria-current={recordOpen ? 'page' : undefined}
+              aria-describedby={recordState === 'locked' ? 'record-locked-reason' : undefined}
               className={cn(
-                "px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex flex-col items-center justify-center group",
+                "min-h-11 rounded-xl px-2 py-2 text-xs font-bold transition-colors flex flex-col items-center justify-center",
                 recordOpen ? "bg-primary text-white shadow-md cursor-default" : recordState === 'locked' ? "opacity-50 cursor-not-allowed" : "text-white/80 hover:bg-white/10 hover:text-white"
               )}
             >
               <div>
                 {L.record}
-                {recordState === 'done' && <span className="ml-2 text-[10px] text-emerald-400">✓</span>}
+                {recordState === 'done' && <Check className="ml-1 inline h-3.5 w-3.5 text-emerald-400" aria-label="Finished" />}
               </div>
-              {recordState === 'locked' && (
-                <span className="hidden group-hover:block absolute top-full mt-2 bg-black text-white text-[10px] px-2 py-1 rounded whitespace-nowrap">
-                  Start the chiller first
-                </span>
-              )}
+              {recordState === 'locked' && <span id="record-locked-reason" className="sr-only">Start the chiller first.</span>}
             </button>
           </div>
-        </div>
+        </nav>
 
         <AnimatePresence mode="wait">
           {view === 'bench' && (

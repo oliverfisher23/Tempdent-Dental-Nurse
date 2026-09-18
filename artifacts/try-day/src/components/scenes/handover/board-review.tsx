@@ -9,9 +9,11 @@ import { cn } from '@/lib/utils';
 
 export function BoardReview({
   state,
+  frozen = false,
   onRecheck
 }: {
   state: HandoverState;
+  frozen?: boolean;
   onRecheck: (unitId: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -75,7 +77,8 @@ export function BoardReview({
                          <button
                            aria-label={`Recheck ${unit.name}`}
                            onClick={() => onRecheck(unit.id)}
-                           className="text-[10px] font-bold uppercase tracking-wider text-primary hover:bg-primary/10 px-2 py-1.5 rounded transition-colors whitespace-nowrap"
+                            disabled={frozen}
+                            className="min-h-11 text-xs font-bold text-primary hover:bg-primary/10 px-3 py-2 rounded transition-colors whitespace-nowrap disabled:opacity-50"
                          >
                            {HANDOVER_LABELS.recheck}
                          </button>
@@ -103,7 +106,8 @@ export function BoardReview({
                       <button
                         aria-label={`Recheck ${unit.name}`}
                         onClick={() => onRecheck(unit.id)}
-                        className="text-[10px] font-bold uppercase tracking-wider text-primary bg-primary/10 hover:bg-primary/20 px-3 py-2 rounded shrink-0 transition-colors"
+                        disabled={frozen}
+                        className="min-h-11 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-2 rounded shrink-0 transition-colors disabled:opacity-50"
                       >
                         {HANDOVER_LABELS.recheck}
                       </button>

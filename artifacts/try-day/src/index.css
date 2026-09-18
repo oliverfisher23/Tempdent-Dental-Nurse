@@ -82,7 +82,7 @@
   --accent: 0 0% 96%;
   --accent-foreground: 0 0% 5%;
 
-  --destructive: 0 84% 60%;
+  --destructive: 0 73% 41%;
   --destructive-foreground: 0 0% 100%;
   
   --sidebar: 0 0% 98%;
@@ -116,7 +116,7 @@
   --muted-foreground: 0 0% 40%;
   --accent: 0 0% 96%;
   --accent-foreground: 0 0% 5%;
-  --destructive: 0 84% 60%;
+  --destructive: 0 73% 41%;
   --destructive-foreground: 0 0% 100%;
 }
 
@@ -128,10 +128,65 @@
     @apply font-sans antialiased bg-background text-foreground selection:bg-primary/30;
   }
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif font-medium tracking-tight text-foreground;
+    @apply font-serif font-medium tracking-tight;
   }
-  input[type="time"]::-webkit-calendar-picker-indicator {
-    display: none;
+  :where(button, a, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 3px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+  :where(input, textarea, select, button, summary) {
+    scroll-margin-block: 6rem;
+  }
+  :where(p, li, label) {
+    overflow-wrap: anywhere;
+  }
+}
+
+.skip-link {
+  position: fixed;
+  top: .5rem;
+  left: .5rem;
+  z-index: 10000;
+  padding: .75rem 1rem;
+  background: white;
+  color: #111;
+  border: 2px solid #111;
+  transform: translateY(-200%);
+}
+.skip-link:focus { transform: translateY(0); }
+
+:where(button, a, input, textarea, select, summary, [tabindex]):focus-visible {
+  outline: 3px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+.activity-enter { animation: activity-enter 180ms ease-out both; }
+@keyframes activity-enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (pointer: coarse) {
+  :where(button, [role="button"], select, summary, input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"])) {
+    min-height: 44px;
+  }
+  :where(button, [role="button"]) { min-width: 44px; }
+  input, textarea, select { font-size: max(1rem, 16px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (forced-colors: active) {
+  :where(button, input, textarea, select) { border: 1px solid ButtonText; }
+  :where(button, a, input, textarea, select, summary, [tabindex]):focus-visible {
+    outline: 3px solid Highlight;
   }
 }
 

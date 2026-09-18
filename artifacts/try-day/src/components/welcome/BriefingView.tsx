@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { kitchenAudio } from "@/lib/audio";
 import { WELCOME_COPY } from "@/content/welcome";
 import logoImg from "@/assets/artotel-logo.png";
+import { DeviceAdvice } from "@/components/device-advice";
 
 interface BriefingViewProps {
   name: string;
@@ -77,12 +78,12 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
         </div>
       )}
 
-      <main className="flex-1 w-full max-w-6xl mx-auto px-6 md:px-10 py-6 md:py-9 grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10 items-center">
+      <main id="main-activity" tabIndex={-1} className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-9 grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10 items-center">
         <div className="min-w-0 md:col-span-7 flex flex-col justify-center">
           <motion.div {...fade(0)} className="mb-5 flex items-center gap-4">
             <div>
-              <h2 className="font-bold text-xl text-foreground">Terence</h2>
-              <p className="text-muted-foreground text-sm">Executive sous chef and mentor</p>
+              <p className="font-bold text-xl text-foreground">Terence</p>
+              <p className="text-muted-foreground text-sm">{WELCOME_COPY.mentorRole}</p>
             </div>
           </motion.div>
           
@@ -101,6 +102,7 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
               ))}
             </ul>
             <p className="text-xs text-muted-foreground">{WELCOME_COPY.controls}</p>
+            <DeviceAdvice />
           </motion.div>
 
           <motion.div {...fade(0.15)} className="mt-5 space-y-3 border-t border-border pt-4">
@@ -174,6 +176,7 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
                     aria-describedby="name-help"
                     maxLength={80}
                     autoComplete="given-name"
+                     required
                     className="text-lg py-6 bg-muted/50 focus:bg-background transition-colors"
                   />
                 </div>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { motion, useReducedMotion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
@@ -20,15 +20,25 @@ import { useProgress } from "@/lib/progress-store";
 import { Button } from "@/components/ui/button";
 import logoImg from "@/assets/artotel-logo.png";
 import { ExperienceSizeControl } from "@/components/experience-size-control";
+import {
+  AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader,
+  AlertDialogTitle, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogCancel, AlertDialogAction,
+} from "@/components/ui/alert-dialog";
+import { COMPLETION_ACCESSIBILITY_COPY as COPY } from "@/content/accessibility-media";
 
 export default function Close() {
   const { progress, reset, dayComplete, currentTaskId } = useProgress();
   const [, setLocation] = useLocation();
   const reduceMotion = useReducedMotion();
+  const headingRef = useRef<HTMLHeadingElement>(null);
 
   useEffect(() => {
     if (!dayComplete) setLocation(currentTaskId ? `/task/${currentTaskId}` : "/");
   }, [dayComplete, currentTaskId, setLocation]);
+  useEffect(() => {
+    if (dayComplete) headingRef.current?.focus({ preventScroll: true });
+  }, [dayComplete]);
 
   if (!dayComplete) return null;
 
@@ -72,7 +82,7 @@ export default function Close() {
 
   return (
     <div className="min-h-[100dvh] bg-background flex flex-col">
-      <header className="max-w-5xl mx-auto w-full px-6 md:px-10 pt-8 flex items-center justify-between">
+      <header className="max-w-5xl mx-auto w-full px-4 sm:px-6 md:px-10 pt-8 flex flex-wrap gap-4 items-center justify-between">
         <div className="bg-foreground px-4 py-2 border border-border/20 shadow-xl">
           <img src={logoImg} alt="art'otel" className="h-6 md:h-8 object-contain" />
         </div>
@@ -82,12 +92,12 @@ export default function Close() {
         </div>
       </header>
 
-      <main className="flex-1">
+      <main id="main-activity" tabIndex={-1} className="flex-1">
         <section className="max-w-5xl mx-auto px-6 md:px-10 pt-12 md:pt-16 pb-14">
           <motion.p {...fade(0)} className="text-xs font-bold uppercase tracking-widest text-muted-foreground mb-4">
             Close of day
           </motion.p>
-          <motion.h1 {...fade(0.05)} className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]">
+          <motion.h1 ref={headingRef} tabIndex={-1} {...fade(0.05)} className="text-4xl md:text-5xl font-bold tracking-tight leading-[1.05]">
             That's a shift, {progress.studentName.split(" ")[0]}.
           </motion.h1>
           <motion.p {...fade(0.1)} className="mt-8 text-lg md:text-xl leading-relaxed text-foreground/85 max-w-3xl">
@@ -135,13 +145,23 @@ export default function Close() {
                   <CheckCircle2 className="w-5 h-5 text-primary" aria-hidden /> Section complete
                 </p>
                 <p className="text-sm text-secondary-foreground/75">{GATE.label}. You have.</p>
-                <Button
-                  variant="outline"
-                  className="bg-transparent border-white/40 text-white hover:bg-white/10 w-full"
-                  onClick={handleStartAgain}
-                >
-                  Start the day again
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" className="bg-transparent border-white/60 text-white hover:bg-white/10 w-full">
+                      {COPY.reset}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent className="w-[calc(100%-2rem)] max-h-[calc(100dvh-2rem)] overflow-y-auto">
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{COPY.resetTitle}</AlertDialogTitle>
+                      <AlertDialogDescription>{COPY.resetDescription}</AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter className="gap-2">
+                      <AlertDialogCancel>{COPY.cancelReset}</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleStartAgain}>{COPY.confirmReset}</AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </div>
             </div>
           </div>

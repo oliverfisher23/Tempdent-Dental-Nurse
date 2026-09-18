@@ -528,6 +528,7 @@ export function GoodsInScene({
             </div>
 
             <table className="kitchen-table hidden w-full text-sm md:table">
+              <caption className="sr-only">Delivery order, measured entries and status for all trolleys</caption>
               <thead>
                 <tr>
                   <th className="w-1/4">Item</th>
@@ -638,7 +639,7 @@ export function GoodsInScene({
 
 function StatusButtons({ line, row, onLineStatus }: { line: OrderLine; row: any; onLineStatus: any }) {
   return (
-    <div className="flex overflow-hidden rounded-sm border border-border bg-muted">
+    <div className="flex overflow-hidden rounded-sm border border-border bg-muted" role="radiogroup" aria-label={`Status for ${line.item}`}>
       {(['arrived', 'short', 'refused'] as LineStatus[]).map((status) => (
         <button
           type="button"
@@ -647,6 +648,8 @@ function StatusButtons({ line, row, onLineStatus }: { line: OrderLine; row: any;
             kitchenAudio.play('tap');
             onLineStatus(line.id, status);
           }}
+          role="radio"
+          aria-checked={row.status === status}
           className={cn(
             'flex-1 px-1 py-2 text-[10px] font-bold outline-none focus-visible:ring-2 focus-visible:ring-primary',
             row.status === status
@@ -681,13 +684,16 @@ function NoteField({
   const value = row[field] || '';
   const disabled = field === 'temperature' && !row.probed;
   const label = field === 'arrived' ? `Came in for ${line.item}` : `Temperature for ${line.item}`;
+  const inputId = `delivery-sheet-${field}-${line.id}`;
   return (
     <div className="flex flex-col items-center gap-1">
+      <label htmlFor={inputId} className="sr-only">{label}</label>
       <Input
+        id={inputId}
+        inputMode="decimal"
         value={value}
         onChange={(event) => onLineInput(line.id, field, event.target.value)}
         disabled={disabled}
-        aria-label={label}
         className={cn('kitchen-input w-full text-center text-lg', disabled && 'opacity-30')}
         placeholder="-"
         style={{ fontFamily: 'cursive' }}
@@ -711,10 +717,10 @@ function NoteField({
 function OrderSheetRow({ line, row, quantityNote, temperatureNote, onLineInput, onLineStatus }: any) {
   return (
     <tr className={cn(row.status === 'short' && 'bg-red-50')}>
-      <td className="px-2 py-3 font-medium">
+      <th scope="row" className="px-2 py-3 text-left font-medium">
         {line.item}
         <div className="text-[10px] text-zinc-500">Trolley {line.trolley}</div>
-      </td>
+      </th>
       <td className="px-2 py-3 text-center font-mono text-zinc-500">{line.ordered} {line.unit}</td>
       <td className="px-2 py-3"><NoteField line={line} row={row} field="arrived" note={quantityNote} onLineInput={onLineInput} /></td>
       <td className="px-2 py-3 text-center">
@@ -736,11 +742,11 @@ function OrderSheetCard({ line, row, quantityNote, temperatureNote, onLineInput,
       </div>
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="mb-1 block text-xs font-bold text-zinc-500">Came in</label>
+          <div className="mb-1 text-xs font-bold text-zinc-700">Came in</div>
           <NoteField line={line} row={row} field="arrived" note={quantityNote} onLineInput={onLineInput} />
         </div>
         <div>
-          <label className="mb-1 block text-xs font-bold text-zinc-500">Temp °C</label>
+          <div className="mb-1 text-xs font-bold text-zinc-700">Temp °C</div>
           {line.chilled
             ? <NoteField line={line} row={row} field="temperature" note={temperatureNote} onLineInput={onLineInput} />
             : <div className="flex h-10 items-center px-2 text-zinc-400">—</div>}

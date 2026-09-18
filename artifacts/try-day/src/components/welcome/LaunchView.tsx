@@ -9,7 +9,7 @@ import { WELCOME_COPY } from "@/content/welcome";
 import logoImg from "@/assets/artotel-logo.png";
 
 export function LaunchView() {
-  const { expand, expanding } = useExperienceViewport();
+  const { expand, expanding, openInline } = useExperienceViewport();
   const reduceMotion = useReducedMotion();
   const launchRef = useRef<HTMLButtonElement>(null);
   // Restore a usable keyboard position when returning from the briefing.
@@ -18,7 +18,7 @@ export function LaunchView() {
   }, []);
 
   return (
-    <div data-testid="welcome-launch" className="relative flex flex-col justify-end min-h-[100dvh] bg-secondary text-secondary-foreground overflow-hidden">
+    <main id="main-activity" tabIndex={-1} data-testid="welcome-launch" className="relative flex flex-col justify-end min-h-[100dvh] bg-secondary text-secondary-foreground overflow-hidden">
       <div className="absolute inset-0 z-0">
         <img 
           src={PLACES.pass.backdrop} 
@@ -41,7 +41,7 @@ export function LaunchView() {
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-primary font-bold tracking-widest uppercase text-[11px] md:text-xs mb-4"
+            className="text-white font-bold tracking-widest uppercase text-xs mb-4"
           >
             {MECHANIC.config.employer}
           </motion.p>
@@ -63,7 +63,7 @@ export function LaunchView() {
           </motion.p>
           
           <motion.div
-            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
           >
@@ -78,10 +78,19 @@ export function LaunchView() {
               {expanding ? <Loader2 className="w-5 h-5 animate-spin motion-reduce:animate-none mr-3" /> : <Maximize2 className="w-4 h-4 mr-3" />}
               {WELCOME_COPY.launchButton}
             </Button>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={openInline}
+              data-testid="continue-inline"
+              className="mt-3 min-h-12 w-full border-white/60 bg-black/40 text-white hover:bg-white hover:text-black sm:ml-3 sm:mt-0 sm:w-auto"
+            >
+              {WELCOME_COPY.inlineButton}
+            </Button>
             <p className="mt-3 text-xs text-secondary-foreground/75">{WELCOME_COPY.launchHint}</p>
           </motion.div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

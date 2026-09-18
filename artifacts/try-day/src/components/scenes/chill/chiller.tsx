@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Thermometer, Ruler as RulerIcon, ClipboardList, Play, Clock, Check, X } from 'lucide-react';
 import { PREP_SHEET, CHILLER_SHELVES, CHILL_RULES, YOUR_TRAY_READINGS, PROBE_PLACEMENTS, type ProbePlacementId, type ChillInterval } from '@/content/activities';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
@@ -218,18 +218,19 @@ function SectionZoneBox({ id, label, style, onPlace }: { id: SectionZone; label:
   const onDrop = useCallback(() => onPlace(id), [id, onPlace]);
   const { ref, isOver, isTarget, props } = useDropZone({ id: `probe-zone-${id}`, label, accepts, onDrop });
   return (
-    <div
+    <button
+      type="button"
       ref={ref}
       {...props}
       style={style}
       className={cn(
-        'absolute flex items-center justify-center rounded-md border-2 border-dashed border-white/50 text-center text-[10px] font-bold uppercase tracking-wider text-white/90 transition-colors sm:text-[11px]',
+        'absolute flex min-h-11 items-center justify-center rounded-md border-2 border-dashed border-white/50 text-center text-[10px] font-bold uppercase tracking-wider text-white/90 transition-colors focus-visible:ring-4 focus-visible:ring-primary sm:text-[11px]',
         (isOver || isTarget) && 'border-primary bg-primary/40 text-white',
       )}
       data-testid={`probe-zone-${id}`}
     >
       {label}
-    </div>
+    </button>
   );
 }
 
@@ -252,6 +253,7 @@ function SectionProbe() {
 
 function TraySection({ trayIndex, kg, onPlace, onClose }: { trayIndex: number; kg: number; onPlace: (zone: SectionZone) => void; onClose: () => void }) {
   const ref = useRef<HTMLDivElement>(null);
+  const reduceMotion = useReducedMotion();
   useFocusTrap(ref, true);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -271,9 +273,10 @@ function TraySection({ trayIndex, kg, onPlace, onClose }: { trayIndex: number; k
 
   return createPortal(
     <motion.div
-      initial={{ opacity: 0 }}
+      initial={reduceMotion ? false : { opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      transition={{ duration: reduceMotion ? 0 : 0.2 }}
       className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-3 sm:p-6"
       role="dialog"
       aria-modal="true"
@@ -287,7 +290,7 @@ function TraySection({ trayIndex, kg, onPlace, onClose }: { trayIndex: number; k
             <h3 className="text-lg font-bold text-white">{L.sectionTitle(trayIndex + 1)}</h3>
             <p className="text-sm text-zinc-300">{L.sectionQuestion}</p>
           </div>
-          <button type="button" onClick={onClose} className="rounded-full p-2 text-zinc-300 hover:bg-white/10 outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label={L.leaveItOut}>
+          <button type="button" onClick={onClose} className="flex min-h-11 min-w-11 items-center justify-center rounded-full p-2 text-zinc-300 hover:bg-white/10 outline-none focus-visible:ring-2 focus-visible:ring-primary" aria-label={L.leaveItOut}>
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -319,6 +322,13 @@ function TraySection({ trayIndex, kg, onPlace, onClose }: { trayIndex: number; k
             <SectionProbe />
             <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{L.probeHint}</span>
           </div>
+        </div>
+        <div className="mt-4 grid gap-2 sm:grid-cols-3" aria-label={L.sectionQuestion}>
+          {(Object.entries(L.sectionZones) as [SectionZone, string][]).map(([zone, label]) => (
+            <Button key={zone} type="button" variant="outline" className="min-h-11 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={() => onPlace(zone)}>
+              {label}
+            </Button>
+          ))}
         </div>
       </div>
     </motion.div>,
@@ -354,6 +364,7 @@ export function ChillerView({
   const [probed, setProbed] = useState<number | null>(null);
   const [note, setNote] = useState('');
   const [noteError, setNoteError] = useState(false);
+  const reduceMotion = useReducedMotion();
   const panelRef = useRef<HTMLDivElement>(null);
   const toolsRef = useRef<HTMLDivElement>(null);
 
@@ -408,6 +419,9 @@ export function ChillerView({
 
   const startHint = !allShelved ? L.startHint.trays : !spaced ? L.startHint.space : !probeRight ? L.startHint.probe : null;
   const measuredDepth = state.measuredDepths ? PREP_SHEET.depthForKg(state.trays[fullest]) : null;
+  const loadedCount = state.shelfByTray.filter((s) => s !== null).length;
+  const availableShelves = Array.from({ length: CHILLER_SHELVES }, (_, shelf) => shelf)
+    .filter((shelf) => !state.shelfByTray.includes(shelf));
 
   const renderTray = (i: number) => (
     <TrayChip
@@ -452,7 +466,7 @@ export function ChillerView({
                 initial={{ x: '-102%' }}
                 animate={{ x: 0 }}
                 exit={{ x: '-102%' }}
-                transition={{ duration: 0.6, ease: [0.2, 0.8, 0.2, 1] }}
+                 transition={{ duration: reduceMotion ? 0 : 0.2, ease: [0.2, 0.8, 0.2, 1] }}
                 className="pointer-events-none absolute inset-0 border-4 border-zinc-500/70 bg-cyan-100/10"
                 aria-hidden
               >
@@ -465,7 +479,54 @@ export function ChillerView({
       </div>
 
       {/* Panel and tools: on a phone the hooks come first, right under the cabinet */}
-      <div className="flex flex-col-reverse gap-4 md:flex-col">
+       <div className="flex flex-col gap-4">
+        {!started && (
+          <section className="rounded-xl border border-zinc-700 bg-zinc-900 p-3 text-white" aria-labelledby="tray-position-heading">
+            <div className="flex items-center justify-between gap-3">
+              <h3 id="tray-position-heading" className="text-sm font-semibold">Tray positions</h3>
+              <span className="text-xs text-zinc-300" role="status" aria-live="polite">{L.loadStatus(loadedCount, state.trays.length)}</span>
+            </div>
+            <div className="mt-3 space-y-2">
+              {state.trays.map((_, i) => {
+                const shelf = state.shelfByTray[i];
+                const selectId = `tray-${i}-shelf`;
+                return (
+                  <div key={i} className="rounded-lg bg-black/30 p-2">
+                    <div className="flex min-h-11 items-center gap-2">
+                      <span className="min-w-14 text-sm font-semibold">{L.tray(i + 1)}</span>
+                      {shelf === null ? (
+                        <>
+                          <label htmlFor={selectId} className="sr-only">{L.shelfChoice(i + 1)}</label>
+                          <select
+                            id={selectId}
+                            defaultValue=""
+                            onChange={(event) => {
+                              const nextShelf = Number(event.target.value);
+                              if (Number.isInteger(nextShelf)) actions.onLoadTray(i, nextShelf);
+                            }}
+                            className="min-h-11 min-w-0 flex-1 rounded-md border border-zinc-600 bg-zinc-800 px-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                          >
+                            <option value="" disabled>Choose shelf</option>
+                            {availableShelves.map((option) => <option key={option} value={option}>{L.shelf(option + 1)}</option>)}
+                          </select>
+                        </>
+                      ) : (
+                        <>
+                          <span className="flex-1 text-sm text-zinc-300">{L.shelf(shelf + 1)}</span>
+                          <Button type="button" size="sm" variant="outline" className="min-h-11 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={() => actions.onRemoveTray(i)}>
+                            {L.returnToTrolley(i + 1)}
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {allShelved && <p className={cn('mt-3 text-sm font-medium', spaced ? 'text-emerald-300' : 'text-amber-300')} role="status">{spaced ? L.spacingReady : L.spacingNeeded}</p>}
+          </section>
+        )}
+
         <div ref={panelRef} className="rounded-2xl border-4 border-zinc-700 bg-zinc-900 p-4 text-zinc-100 shadow-2xl" data-testid="panel">
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">{L.chillerTitle}</span>
@@ -518,9 +579,10 @@ export function ChillerView({
                           setNoteError(false);
                         }}
                       >
+                        <p className="text-sm font-semibold text-emerald-300" role="status" aria-live="assertive">{L.settledReading(probed)}</p>
                         <p className="text-xs text-zinc-300">{L.readingHelp}</p>
                         <div className="flex items-center gap-2">
-                        <label className="sr-only" htmlFor="chill-note">{L.yourReading}</label>
+                         <label className="text-xs font-semibold text-white" htmlFor="chill-note">{L.yourReading}</label>
                         <Input
                           id="chill-note"
                           value={note}
@@ -561,9 +623,28 @@ export function ChillerView({
         </div>
 
         {/* Hooks */}
-        <div ref={toolsRef} className="flex items-start justify-around rounded-xl border border-zinc-800 bg-zinc-900/60 px-2 py-3">
-          <ProbeTool locked={started} inTray={state.probePlacement ? probeTray : null} />
-          {rulerOut && <RulerTool />}
+         <div ref={toolsRef} className="rounded-xl border border-zinc-800 bg-zinc-900/80 px-3 py-3 text-white">
+           <div className="flex items-start justify-around">
+             <ProbeTool locked={started} inTray={state.probePlacement ? probeTray : null} />
+             {rulerOut && <RulerTool />}
+           </div>
+           {!started && (
+             <div className="mt-3 border-t border-zinc-700 pt-3">
+               <p className="mb-2 text-sm text-zinc-300">{L.probeAlternative}</p>
+               <div className="grid grid-cols-2 gap-2">
+                 {state.trays.map((_, i) => (
+                   <Button key={i} type="button" variant="outline" className="min-h-11 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={() => openSection(i)}>
+                     {L.placeProbeIn(i + 1)}
+                   </Button>
+                 ))}
+               </div>
+             </div>
+           )}
+           {rulerOut && (
+             <Button type="button" variant="outline" className="mt-3 min-h-11 w-full border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={actions.onMeasure}>
+               <RulerIcon className="mr-2 h-4 w-4" /> {L.measureFullest(fullest + 1)}
+             </Button>
+           )}
         </div>
       </div>
 

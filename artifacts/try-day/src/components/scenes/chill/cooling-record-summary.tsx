@@ -8,7 +8,18 @@ export function CoolingRecordSummary({ state }: { state: ChillState }) {
     <section className="space-y-2 border-t border-zinc-700 pt-3" aria-label={L.recordTitle}>
       <h3 className="text-sm font-semibold text-white">{L.recordTitle}</h3>
       <p className="text-xs leading-relaxed text-zinc-300">{L.comparisonNotice}</p>
-      <div className="overflow-x-auto">
+      <div className="space-y-2 sm:hidden" data-testid="live-cooling-record-cards">
+        {[...CHILL_RULES.intervals, CHILL_RULES.extraInterval].filter(minute => minute <= state.minutesElapsed).map(minute => (
+          <article key={minute} className="rounded-lg border border-zinc-700 bg-black/20 p-3">
+            <h4 className="font-semibold text-white">{minute} {L.min} · {state.readings[minute]?.time || 'Time not written'}</h4>
+            <dl className="mt-2 grid grid-cols-2 gap-2">
+              <div><dt className="text-zinc-400">{L.columns.yours}</dt><dd className="mt-1 text-sm">{state.readings[minute]?.value ? `${state.readings[minute]!.value}°C` : 'Not written'}</dd></div>
+              <div><dt className="text-zinc-400">{L.columns.marcus}</dt><dd className="mt-1 text-sm">{MARCUS_TRAY_READINGS[minute]}°C</dd></div>
+            </dl>
+          </article>
+        ))}
+      </div>
+      <div className="hidden overflow-x-auto sm:block">
         <table className="w-full text-left text-xs text-zinc-200" data-testid="live-cooling-record">
           <thead>
             <tr>

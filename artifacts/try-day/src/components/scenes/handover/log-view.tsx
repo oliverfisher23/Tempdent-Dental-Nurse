@@ -37,6 +37,7 @@ export function LogView({ onStart }: { onStart: () => void }) {
              <div className="mt-12 flex justify-center">
                 <button
                   ref={btnRef}
+                   type="button"
                   data-testid="start-fridge-round"
                   onClick={onStart}
                   className="bg-primary text-primary-foreground font-bold px-8 py-4 rounded hover:bg-primary/90 shadow text-lg"

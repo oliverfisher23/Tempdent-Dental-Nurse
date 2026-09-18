@@ -10,7 +10,7 @@ import { kitchenAudio } from '@/lib/audio';
 export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
   const { notepadOpen, closeNotepad } = useKitchen();
   const panelRef = useRef<HTMLDivElement>(null);
-  useFocusTrap(panelRef, notepadOpen);
+  useFocusTrap(panelRef, notepadOpen, true);
   const { progress, unjot } = useProgress();
   
   useEffect(() => {
@@ -31,7 +31,7 @@ export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
   return (
     <AnimatePresence>
       {notepadOpen && (
-        <div className="fixed inset-0 z-50 flex pointer-events-auto" role="dialog" aria-modal="true" aria-label="Your notebook">
+        <div className="fixed inset-0 z-50 flex pointer-events-auto" role="dialog" aria-modal="false" aria-labelledby="notepad-title">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -55,7 +55,7 @@ export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
             }}
           >
             <div className="flex items-center justify-between p-4 border-b border-primary/20 bg-[#F5EFE6]">
-              <h2 className="font-bold text-lg font-mono flex items-center gap-2">
+              <h2 id="notepad-title" className="font-bold text-lg font-mono flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-primary" /> Notebook
               </h2>
               <button

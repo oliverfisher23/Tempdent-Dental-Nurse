@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, ReactNode, Suspense } from 'react';
 import { useLocation, Link } from 'wouter';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { TaskId, TASK_ORDER, Line } from '@/content/activities';
 import { getTask, taskIndex, nextTaskId, complicationRevealed } from '@/lib/simulation';
 import { useProgress } from '@/lib/progress-store';
@@ -11,7 +11,7 @@ import { KitchenMap } from './kitchen-map';
 import { NotepadDrawer } from './notepad';
 import { DialogueBar } from './dialogue-bar';
 import { SoundToggle } from './sound-toggle';
-import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, ClipboardList, X, Lock, Map as MapIcon } from 'lucide-react';
+import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, ClipboardList, X, Lock, Map as MapIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from './use-focus-trap';
@@ -19,6 +19,7 @@ import logoImg from '@/assets/artotel-logo.png';
 import type { StepGuide } from '@/content/step-guide';
 import { StepGuideBar } from './step-guide-bar';
 import { ExperienceSizeControl } from '@/components/experience-size-control';
+import { DeviceAdvice } from '@/components/device-advice';
 
 interface KitchenFrameProps {
   id: TaskId;
@@ -83,14 +84,15 @@ function HeaderTool({
 function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorkspace = false, readyToContinue = true }: KitchenFrameProps) {
   const task = getTask(id);
   const { progress, evaluations, completeTask, isUnlocked, currentTaskId, setClock } = useProgress();
-  const { place, light, mapOpen, pendingAction, openWorkspace, openNotepad, openMap } = useKitchen();
+  const { place, light, mapOpen, pendingAction, openWorkspace, openNotepad, openMap, clearAction } = useKitchen();
   const [dialogueHeight, setDialogueHeight] = useState(0);
   const onDialogueHeight = useCallback((px: number) => setDialogueHeight(Math.round(px)), []);
   const [, setLocation] = useLocation();
   const [jobCardOpen, setJobCardOpen] = useState(false);
   const navigationRef = useRef<HTMLDivElement>(null);
   const jobCardRef = useRef<HTMLDivElement>(null);
-  useFocusTrap(jobCardRef, jobCardOpen);
+  const reduceMotion = useReducedMotion();
+  useFocusTrap(jobCardRef, jobCardOpen, true);
 
   const named = progress.studentName.trim() !== "";
   const unlocked = named && isUnlocked(id);
@@ -163,7 +165,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
   const totalTicks = evaluation.checklist.length;
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-black text-white overflow-hidden select-none">
+    <div className="fixed inset-0 flex flex-col bg-black text-white overflow-hidden">
       <div ref={navigationRef} className="relative z-40 shrink-0">
       {/* HUD - Top Bar (Always z-40 so it floats above scenes but below dialogs) */}
       <header className="relative z-40 bg-foreground text-primary-foreground shadow-md shrink-0 border-b border-border/20 h-14">
@@ -174,7 +176,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
             </Link>
             <div className="h-5 w-px bg-border/20 hidden sm:block shrink-0" />
             <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4 text-xs font-medium min-w-0">
-              <div className="flex items-center gap-1.5 text-primary font-bold whitespace-nowrap">
+            <div className="flex items-center gap-1.5 text-white font-bold whitespace-nowrap">
                 Task {stepNumber} of {TASK_ORDER.length}
               </div>
               <span className="font-bold truncate">{task.title}</span>
@@ -217,7 +219,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
             </div>
 
             <div className="flex items-center">
-               <SoundToggle />
+               <SoundToggle className="text-white hover:bg-white/15" />
                <ExperienceSizeControl />
             </div>
 
@@ -245,14 +247,46 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
       </div>
       {/* Main Stage */}
       <main
-        className="relative min-h-0 flex-1 overflow-clip bg-zinc-900"
+        id="main-activity"
+        tabIndex={-1}
+        className="relative min-h-0 flex-1 overflow-clip bg-zinc-900 outline-none"
         style={{ '--dialogue-h': `${finished ? 0 : dialogueHeight}px` } as React.CSSProperties}
       >
+        {/* Pending Action Toast */}
+        <AnimatePresence>
+          {pendingAction && (
+            <motion.div
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              className="absolute top-4 left-1/2 -translate-x-1/2 bg-foreground text-background px-4 py-2 rounded-full shadow-lg flex items-center gap-3 z-50 pointer-events-auto"
+              role="status"
+              aria-live="polite"
+            >
+              {mapOpen ? (
+                <span className="text-sm font-medium">Going to {PLACES[pendingAction.place]?.name || 'destination'}...</span>
+              ) : (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  <span className="text-sm font-medium">Opening...</span>
+                </>
+              )}
+              <button 
+                onClick={clearAction}
+                className="ml-2 p-1 hover:bg-background/20 rounded-full transition-colors"
+                aria-label="Cancel opening"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
         {/* Stage Content / Scene */}
         <AnimatePresence mode="wait">
           <motion.div
             key={place}
-            initial={{ opacity: 0, scale: 1.05 }}
+            initial={{ opacity: 0, scale: reduceMotion ? 1 : 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: "easeInOut" }}
@@ -306,12 +340,12 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
                 ref={jobCardRef}
                 tabIndex={-1}
                 role="dialog"
-                aria-modal="true"
-                aria-label="Job card"
+                aria-modal="false"
+                aria-labelledby="job-card-title"
                 className="absolute right-0 top-0 bottom-0 z-40 w-full max-w-sm bg-white text-foreground shadow-2xl border-l-4 border-primary pointer-events-auto flex flex-col outline-none"
               >
                 <div className="p-4 border-b border-border bg-muted/30 shrink-0 flex items-center justify-between">
-                   <h2 className="font-bold text-sm uppercase tracking-widest">Job card</h2>
+                   <h2 id="job-card-title" className="font-bold text-sm uppercase tracking-widest">Job card</h2>
                    <button 
                      onClick={() => setJobCardOpen(false)}
                      className="p-2 hover:bg-black/5 rounded-full transition-colors"
@@ -358,6 +392,8 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
                   <div className="space-y-2 pt-2 border-t border-border text-xs text-muted-foreground">
                     <p><strong>Who you're working with:</strong> {task.interaction}</p>
                   </div>
+                  
+                  <DeviceAdvice taskId={id} compact />
                 </div>
 
                 {!finished && (

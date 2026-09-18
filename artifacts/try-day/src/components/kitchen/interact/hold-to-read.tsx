@@ -109,15 +109,23 @@ export function HoldToRead({
         onPointerCancel={release}
         onPointerLeave={release}
         onKeyDown={(event) => {
-          if (!event.repeat && (event.key === ' ' || event.key === 'Enter')) {
+          if (event.key === ' ' || event.key === 'Enter') {
             event.preventDefault();
-            start();
+            if (stateRef.current === 'idle') {
+              start();
+            } else if (stateRef.current === 'holding' || stateRef.current === 'settled') {
+              // Allows a second press to release for users who can click but not hold
+              release();
+            }
           }
         }}
         onKeyUp={(event) => {
+          // Normal press-and-hold keyup release (only works if they were holding it)
           if (event.key === ' ' || event.key === 'Enter') {
             event.preventDefault();
-            release();
+            if (stateRef.current === 'holding' || stateRef.current === 'settled') {
+               release();
+            }
           }
         }}
         className="relative flex select-none items-center gap-4 rounded-xl border-2 border-border bg-background px-4 py-3 text-left text-foreground shadow-sm outline-none transition-transform active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50 motion-reduce:transition-none"
@@ -148,6 +156,21 @@ export function HoldToRead({
           </span>
         </span>
       </button>
+      {!disabled && (
+        <button
+          type="button"
+          onClick={() => {
+            if (stateRef.current === 'idle') {
+              start();
+            } else if (stateRef.current === 'holding' || stateRef.current === 'settled') {
+              release();
+            }
+          }}
+          className="text-xs font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-1"
+        >
+          {state === 'idle' ? 'Or tap here to start' : 'Tap to stop'}
+        </button>
+      )}
       {showHint && <span className="text-sm font-medium text-primary">{hintReleasedEarly}</span>}
       <span className="sr-only" aria-live="polite">
         {state === 'settled' ? `Reading settled: ${target.toFixed(1)} ${unit}` : ''}

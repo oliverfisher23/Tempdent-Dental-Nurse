@@ -122,7 +122,7 @@ export function DialogueBar({
         <div className="mx-auto flex max-w-6xl items-start gap-3 px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
           <div className="min-w-0 flex-1">
             <div className="flex items-baseline gap-2">
-              <span className="text-xs font-bold uppercase tracking-widest text-primary">{line.speaker}</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#b91820]">{line.speaker}</span>
               {person && person.role !== person.speaker && (
                 <span className="hidden truncate text-xs text-muted-foreground sm:inline">{person.role}</span>
               )}

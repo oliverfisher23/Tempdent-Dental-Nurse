@@ -2,7 +2,7 @@ import type { HandoverState } from '@/lib/simulation';
 
 export interface HandoverRoundProps {
   state: HandoverState;
-  initials: string;
+  frozen?: boolean;
   /** Explicit acknowledgement after all four log entries have been displayed. */
   onReadLog: () => void;
   onProbe: (unitId: string) => void;

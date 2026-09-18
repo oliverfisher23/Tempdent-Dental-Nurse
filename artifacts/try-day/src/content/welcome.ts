@@ -3,7 +3,8 @@ export const WELCOME_COPY = {
   subtitle: "Interactive Try Day",
   shortBrief: "Join Terence at art'otel Hoxton to prepare tonight’s product launch for one hundred guests. Check the food, make decisions and get the evening team ready.",
   launchButton: "Expand experience",
-  launchHint: "Open the briefing, then start your shift.",
+  inlineButton: "Continue in this window",
+  launchHint: "Open the briefing, then start your shift. Fullscreen is optional.",
   returnButton: "Back to welcome",
   close: "Close",
   briefingTitle: "Before your shift",
@@ -29,4 +30,5 @@ export const WELCOME_COPY = {
   resetWarning: "Start a new shift? This will clear your saved work for the current shift.",
   confirmReset: "Yes, start again",
   cancelReset: "Keep my progress",
+  mentorRole: "Executive sous chef and mentor",
 };

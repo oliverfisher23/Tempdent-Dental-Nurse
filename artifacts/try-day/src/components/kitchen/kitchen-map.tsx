@@ -32,7 +32,7 @@ export function KitchenMap({ taskId }: { taskId: TaskId }) {
   const open = mapPhase === "open";
   // The trap covers the whole sheet, close button included, so Tab always reaches Close
   // (a one-room task has no other pin to land on).
-  useFocusTrap(dialogRef, open && !establishing);
+  useFocusTrap(dialogRef, open && !establishing, true);
   const { progress } = useProgress();
 
   useEffect(() => {
@@ -83,8 +83,8 @@ export function KitchenMap({ taskId }: { taskId: TaskId }) {
       ref={dialogRef}
       tabIndex={-1}
       role="dialog"
-      aria-modal="true"
-      aria-label="Kitchen map"
+      aria-modal="false"
+      aria-labelledby="map-title"
     >
       {/* The sheet sits under a top bar the height of the app header, centred in what is left */}
       <div className="flex-1 flex items-center justify-center pt-14">
@@ -235,7 +235,7 @@ export function KitchenMap({ taskId }: { taskId: TaskId }) {
         transition={{ duration: 0.2 }}
         className="absolute inset-x-0 top-0 h-14 flex items-center justify-between px-4 sm:px-6 pointer-events-none"
       >
-        <div className="flex items-baseline gap-3 min-w-0">
+        <div className="flex items-baseline gap-3 min-w-0" id="map-title">
           <span className="text-xs font-bold uppercase tracking-widest text-primary shrink-0">
             Map
           </span>

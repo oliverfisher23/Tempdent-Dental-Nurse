@@ -15,16 +15,16 @@ export function SoundToggle({ className }: { className?: string }) {
     <button
       onClick={() => kitchenAudio.toggleMuted()}
       className={cn(
-        "p-2 rounded-full hover:bg-muted transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none flex items-center justify-center",
+        "min-h-11 min-w-11 shrink-0 p-2 rounded-full hover:bg-muted transition-colors focus-visible:ring-2 focus-visible:ring-primary flex items-center justify-center",
         className
       )}
       aria-label={muted ? "Unmute sound" : "Mute sound"}
       title={muted ? "Unmute sound" : "Mute sound"}
     >
       {muted ? (
-        <VolumeX className="w-5 h-5 text-muted-foreground" />
+        <VolumeX className="w-5 h-5" aria-hidden />
       ) : (
-        <Volume2 className="w-5 h-5 text-foreground" />
+        <Volume2 className="w-5 h-5" aria-hidden />
       )}
     </button>
   );

@@ -34,7 +34,6 @@ export default function HandoverTask() {
             ...row,
             probed: true,
             time: row.time || progress.clock,
-            initials: row.initials || progress.initials,
             recorded: false,
           },
         },
@@ -51,7 +50,7 @@ export default function HandoverTask() {
       // their first written entry too, rather than leaving a read-only time blank.
       const measurementDetails = row.time
         ? {}
-        : { time: progress.clock, initials: row.initials || progress.initials };
+        : { time: progress.clock };
       return {
         ...prev,
         rows: {
@@ -99,7 +98,7 @@ export default function HandoverTask() {
         pass: (
           <HandoverRound
             state={state}
-            initials={progress.initials}
+            frozen={frozen}
             onReadLog={handleReadLog}
             onProbe={handleProbe}
             onRowChange={handleRowChange}

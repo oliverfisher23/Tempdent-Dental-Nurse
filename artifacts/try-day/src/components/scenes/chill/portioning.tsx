@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Minus, Plus } from 'lucide-react';
 import { PREP_SHEET } from '@/content/activities';
@@ -30,6 +30,8 @@ function Tray({
     <button
       type="button"
       onClick={() => onSelect(index)}
+      aria-pressed={selected}
+      aria-label={`${L.tray(index + 1)}, ${kg.toFixed(2)} kg, ${depth} mm deep`}
       className={cn(
         "flex flex-col gap-1.5 text-left transition-transform outline-none focus-visible:ring-4 focus-visible:ring-primary rounded-2xl",
         selected ? "scale-105" : "hover:scale-105 opacity-80"
@@ -54,7 +56,7 @@ function Tray({
         </div>
         {/* Max depth line */}
         <div className="absolute inset-x-0 z-10 border-t-2 border-red-500/50" style={{ top: 0 }}>
-          <span className="absolute left-1 top-0 text-[10px] font-bold uppercase tracking-wider text-red-500/80">MAX {TRAY_DEPTH_MM} mm</span>
+          <span className="absolute left-1 top-0 text-[10px] font-bold uppercase tracking-wider text-red-300">MAX {TRAY_DEPTH_MM} mm</span>
         </div>
         
         {/* The beef */}
@@ -111,7 +113,13 @@ export function PortioningView({
   }, [trays.length, selectedTray]);
 
   const targetDepth = PREP_SHEET.depthForKg(trays[selectedTray]);
-  const isTargetFull = targetDepth >= TRAY_DEPTH_MM;
+  const isTargetFull = trays[selectedTray] >= PREP_SHEET.kgPerTrayAtDepth;
+  const moved = PREP_SHEET.yourShareKg - remaining;
+  const selectedFeedback = isTargetFull
+    ? L.trayFull
+    : targetDepth >= PREP_SHEET.fillDepthMm
+      ? L.trayAtDepth(targetDepth)
+      : L.trayNeedsMore(targetDepth);
 
   const handlePourTick = useCallback(() => {
     if (remaining > 0 && !isTargetFull) {
@@ -150,10 +158,19 @@ export function PortioningView({
     <div className="mx-auto grid w-full max-w-5xl gap-6 pt-2 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:items-start">
       {/* The pan and controls */}
       <div className="flex flex-col gap-4">
-        <div className="rounded-lg border border-[#D9D0C1] bg-[#F5EFE6] px-3 py-2 text-[11px] leading-snug text-zinc-700 shadow">
-          <span className="font-bold uppercase tracking-widest text-zinc-500">Prep sheet</span>{' '}
+        <div className="rounded-lg border border-[#D9D0C1] bg-[#F5EFE6] px-4 py-3 text-sm leading-relaxed text-zinc-700 shadow">
+          <span className="font-bold uppercase tracking-widest text-zinc-700">Prep sheet</span>{' '}
           {PREP_SHEET.dish}: {PREP_SHEET.batchKg} kg, {PREP_SHEET.trays} trays, {PREP_SHEET.fillDepthMm} mm deep.
           Your half: <strong>{PREP_SHEET.yourShareKg} kg</strong>. {PREP_SHEET.cleanTraysAvailable} clean trays to hand.
+        </div>
+        <div className="rounded-xl border border-white/15 bg-black/70 p-3 text-white" role="status" aria-live="polite">
+          <div className="flex items-center justify-between gap-3 text-sm font-semibold">
+            <span>{L.portionProgress(moved, PREP_SHEET.yourShareKg)}</span>
+            <span className="shrink-0 font-mono">{Math.round((moved / PREP_SHEET.yourShareKg) * 100)}%</span>
+          </div>
+          <div className="mt-2 h-2 overflow-hidden rounded-full bg-white/15" aria-hidden="true">
+            <motion.div className="h-full origin-left bg-primary" initial={false} animate={{ scaleX: moved / PREP_SHEET.yourShareKg }} transition={{ duration: 0.18 }} />
+          </div>
         </div>
         
         <div className="relative rounded-[28px] border-[6px] border-zinc-500 bg-zinc-800 p-3 shadow-2xl">
@@ -180,10 +197,11 @@ export function PortioningView({
 
         {/* Portioning Controls */}
         <div className="bg-zinc-900 rounded-2xl p-4 border border-zinc-800 shadow-xl flex flex-col gap-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">Controls for {L.tray(selectedTray + 1)}</span>
-            <span className="text-xs text-zinc-500 font-mono">{trays[selectedTray].toFixed(2)} kg</span>
+            <span className="text-xs text-zinc-300 font-mono">{L.trayCapacity(trays[selectedTray], PREP_SHEET.kgPerTrayAtDepth)}</span>
           </div>
+          <p className="text-sm text-zinc-200" role="status" aria-live="polite">{selectedFeedback}</p>
           
           <button
             onPointerDown={startPouring}
@@ -193,22 +211,24 @@ export function PortioningView({
             onKeyDown={(e) => { if (e.key === ' ' || e.key === 'Enter') startPouring(e); }}
             onKeyUp={(e) => { if (e.key === ' ' || e.key === 'Enter') stopPouring(); }}
             disabled={panEmpty || isTargetFull}
+            aria-describedby="add-beef-hint"
             className={cn(
-              "w-full py-4 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center transition-all select-none touch-none",
+              "min-h-11 w-full py-3 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center transition-all select-none touch-none",
               panEmpty || isTargetFull 
                 ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
                 : pouring 
                   ? "bg-primary text-primary-foreground scale-95" 
-                  : "bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 active:scale-95"
+                  : "bg-primary/20 text-white border border-primary/60 hover:bg-primary/30 active:scale-95"
             )}
           >
-            Hold to add beef
+            {L.addBeef}
           </button>
+          <p id="add-beef-hint" className="text-center text-xs text-zinc-400">{L.addBeefHint}</p>
           
           <div className="grid grid-cols-2 gap-2">
             <Button 
               variant="outline" 
-              className="bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 font-bold"
+               className="min-h-11 bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 font-bold"
               onClick={returnScoop}
               disabled={trays[selectedTray] <= 0}
             >
@@ -216,7 +236,7 @@ export function PortioningView({
             </Button>
             <Button 
               variant="outline" 
-              className="bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 font-bold"
+               className="min-h-11 bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 font-bold"
               onClick={addScoop}
               disabled={panEmpty || isTargetFull}
             >
@@ -228,7 +248,7 @@ export function PortioningView({
 
       {/* The trays */}
       <div className="flex flex-col gap-5">
-        <div className={cn("grid gap-3 sm:gap-5", trays.length === 4 ? "grid-cols-4" : "grid-cols-3")}>
+        <div className={cn("grid grid-cols-2 gap-3 sm:gap-5", trays.length === 4 ? "sm:grid-cols-4" : "sm:grid-cols-3")}>
           {trays.map((kg, i) => (
             <Tray 
               key={i} 

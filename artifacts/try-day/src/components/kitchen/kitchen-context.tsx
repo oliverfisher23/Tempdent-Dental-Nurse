@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, ReactNode, useEffect, useRef } from 'react';
+import { useReducedMotion } from 'framer-motion';
 import { TASK_ROUTES, PlaceId, PLACES, DayLight, type Person } from '@/content/kitchen';
 import { TaskId } from '@/content/activities';
 import { useProgress } from '@/lib/progress-store';
@@ -79,8 +80,7 @@ export function KitchenProvider({ taskId, frozen = false, children }: { taskId: 
   const { advanceClock } = useProgress();
   const routeConfig = TASK_ROUTES[taskId];
 
-  const mql = useRef(typeof window !== 'undefined' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null);
-  const reduceMotion = mql.current?.matches ?? false;
+  const reduceMotion = useReducedMotion() ?? false;
   // A signed-off task and a reduced-motion student both open straight in the room.
   // The map remains available, but getting started never requires sitting through it.
   const showEstablishingShot = false;
@@ -91,6 +91,17 @@ export function KitchenProvider({ taskId, frozen = false, children }: { taskId: 
   const [walk, setWalk] = useState<Walk | null>(null);
   const [notepadOpen, setNotepadOpen] = useState(false);
   const [pendingAction, setPendingAction] = useState<{ place: PlaceId; action: string } | null>(null);
+
+  // Auto-clear pending action if it doesn't get picked up by the destination
+  useEffect(() => {
+    if (pendingAction && mapPhase === 'closed' && place === pendingAction.place) {
+      const timer = setTimeout(() => {
+        setPendingAction(null);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+    return undefined;
+  }, [pendingAction, mapPhase, place]);
   const [arrivedAt, setArrivedAt] = useState(() => (showEstablishingShot ? 0 : Date.now()));
   const arrivalCounter = useRef(0);
   const arrivalStamp = useRef(arrivedAt);

@@ -1,14 +1,12 @@
 import { useCallback } from 'react';
 import { CHILL_RULES, MARCUS_TRAY_READINGS, MEASURED_DEPTHS_MM, PREP_SHEET, type ChillInterval } from '@/content/activities';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
-import { type ChillState } from '@/lib/simulation';
+import { evaluateChill, readingIsRight, type ChillState } from '@/lib/simulation';
 import { useProgress } from '@/lib/progress-store';
 import { useNotepad } from '../../kitchen/notepad';
 import { Clipboard } from '../../kitchen/paper';
 import { CloseUp } from '../../kitchen/close-up';
 import { SignaturePad, type SignatureValue } from '../../kitchen/interact';
-import { evaluateChill } from '@/lib/simulation';
-import { kitchenAudio } from '@/lib/audio';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { fullestTray } from './chiller';
@@ -47,11 +45,12 @@ export function ChillRecord({
     <CloseUp isOpen={open} onClose={onClose} title={L.recordTitle}>
       <Clipboard>
         <div className="min-h-full px-5 pb-6 pt-9 sm:px-10 sm:py-7">
-          <h3 className="text-center font-sans text-2xl font-bold uppercase tracking-widest text-zinc-900 sm:text-3xl">{L.recordTitle}</h3>
-          <p className="mb-6 border-b-2 border-zinc-200 pb-4 text-center font-mono text-xs uppercase tracking-widest text-zinc-500 sm:text-sm">{L.recordBatch}</p>
+          <h3 className="text-center font-sans text-2xl font-bold text-zinc-900 sm:text-3xl">{L.recordTitle}</h3>
+          <p className="mb-6 border-b-2 border-zinc-200 pb-4 text-center font-mono text-xs text-zinc-500 sm:text-sm">{L.recordBatch}</p>
 
-          <table className="kitchen-table mb-6 w-full">
-            <thead>
+          <table className="kitchen-table mb-6 block w-full sm:table">
+            <caption className="sr-only">{L.comparisonNotice}</caption>
+            <thead className="sr-only sm:table-header-group">
               <tr>
                 {[L.columns.elapsed, L.columns.time, L.columns.yours, L.columns.marcus].map((h) => (
                   <th key={h} className="border-b-2 border-zinc-800 py-3 text-left text-xs font-bold uppercase tracking-widest text-zinc-500">
@@ -60,49 +59,51 @@ export function ChillRecord({
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="block sm:table-row-group">
               {INTERVALS.map((interval) => {
                 // The 120 line only exists once the batch has had to stay in past ninety.
                 if (interval === CHILL_RULES.extraInterval && state.minutesElapsed < CHILL_RULES.extraInterval) return null;
                 const reached = started && state.minutesElapsed >= interval;
                 const row = state.readings[interval];
                 const noted = notepad.entryFor('interval', interval);
+                const readingMismatch = !!row?.value && !readingIsRight(interval, row.value);
+                const errorId = `chill-record-${interval}-error`;
                 return (
-                  <tr key={interval} className={cn('border-b border-zinc-200 transition-opacity duration-500', !reached && 'opacity-30')}>
-                    <td className="py-2.5 font-mono text-lg font-bold text-zinc-800">
+                  <tr key={interval} className={cn('mb-3 block rounded-lg border border-zinc-200 p-3 transition-opacity duration-200 sm:mb-0 sm:table-row sm:rounded-none sm:border-x-0 sm:border-t-0 sm:p-0', !reached && 'opacity-40')}>
+                    <td className="flex items-center justify-between py-1 font-mono text-lg font-bold text-zinc-800 sm:table-cell sm:py-2.5">
+                      <span className="font-sans text-xs font-bold text-zinc-500 sm:hidden">{L.columns.elapsed}</span>
                       {interval} <span className="text-sm text-zinc-400">{L.min}</span>
                     </td>
-                    <td className="py-2.5 pr-4 text-lg text-zinc-600" style={{ fontFamily: 'cursive' }}>
+                    <td className="flex items-center justify-between py-1 text-lg text-zinc-600 sm:table-cell sm:py-2.5 sm:pr-4" style={{ fontFamily: 'cursive' }}>
+                      <span className="font-sans text-xs font-bold text-zinc-500 sm:hidden">{L.columns.time}</span>
                       {row?.time || <span className="text-zinc-300">–</span>}
                     </td>
-                    <td className="py-2.5 pr-4">
+                    <td className="py-2 sm:table-cell sm:py-2.5 sm:pr-4">
                       <div className="flex flex-col items-start gap-1.5">
+                        <label htmlFor={`chill-record-${interval}`} className="text-xs font-bold text-zinc-500 sm:sr-only">
+                          {L.columns.yours}, {interval} {L.min}
+                        </label>
                         <Input
+                          id={`chill-record-${interval}`}
                           value={row?.value || ''}
                           onChange={(e) => actions.onReading(interval, e.target.value)}
                           disabled={!reached}
                           placeholder="–"
                           inputMode="decimal"
-                          aria-label={`${L.columns.yours}, ${interval} ${L.min}`}
+                          aria-invalid={readingMismatch}
+                          aria-describedby={readingMismatch ? errorId : undefined}
                           className="kitchen-input w-28 text-xl"
                           style={{ fontFamily: 'cursive' }}
                           data-testid={`reading-${interval}`}
                         />
-                        {reached && noted && !row?.value && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              kitchenAudio.play('write');
-                              actions.onReading(interval, noted.value.replace(/\s*°C$/, ''));
-                            }}
-                            className="rounded bg-primary/10 px-2 py-1 text-[10px] font-bold uppercase tracking-wider text-primary shadow-sm transition-colors hover:bg-primary/20"
-                          >
-                            {L.useMyNote}
-                          </button>
-                        )}
+                        {readingMismatch && <p id={errorId} role="alert" className="text-xs font-medium text-red-700">{L.readingMismatch}</p>}
+                        {reached && noted && !row?.value && <p className="text-xs text-zinc-600">{L.savedNote(noted.value)}</p>}
                       </div>
                     </td>
-                    <td className="py-2.5 font-mono text-lg text-zinc-500">{reached ? `${MARCUS_TRAY_READINGS[interval].toFixed(1)}°C` : '–'}</td>
+                    <td className="flex items-center justify-between py-1 font-mono text-lg text-zinc-500 sm:table-cell sm:py-2.5">
+                      <span className="font-sans text-xs font-bold text-zinc-500 sm:hidden">{L.columns.marcus}</span>
+                      {reached ? `${MARCUS_TRAY_READINGS[interval].toFixed(1)}°C` : '–'}
+                    </td>
                   </tr>
                 );
               })}

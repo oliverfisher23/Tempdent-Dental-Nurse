@@ -1,19 +1,24 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react';
-import { SCENE_LABELS } from '@/content/scenes/delivery';
 import { DELIVERY_REDESIGN_COPY } from '@/content/scenes/delivery-redesign';
 import { DELIVERY_PHOTOS } from '@/content/delivery-photos';
-import { FISH_CHECKS, LineStatus, ORDER_LINES, SHORT_LINE_ID } from '@/content/activities';
+import { FISH_CHECKS, ORDER_LINES, READING_TOLERANCE_C } from '@/content/activities';
 import { useProgress } from '@/lib/progress-store';
-import { parseNumber } from '@/lib/simulation';
+import { parseNumber, within } from '@/lib/simulation';
 import { kitchenAudio } from '@/lib/audio';
+import { useKitchenAction } from '@/components/kitchen/kitchen-context';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ClipboardList, ArrowLeft, Thermometer, Scale, Radio, Send, CheckCircle2 } from 'lucide-react';
+import { ClipboardList, ArrowLeft, Radio, CheckCircle2 } from 'lucide-react';
 import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
 import { DeliveryItemPhoto } from './delivery-item-photo';
 
 type OrderLine = (typeof ORDER_LINES)[number];
+
+function GuideAction({ action, open }: { action: string; open: () => void }) {
+  useKitchenAction(action, open);
+  return null;
+}
 
 export function GoodsInSceneRedesign({
   state,
@@ -27,7 +32,7 @@ export function GoodsInSceneRedesign({
   onNoteAmended,
   onFirstArrival
 }: any) {
-  const { progress, updateTask, jot } = useProgress();
+  const { updateTask } = useProgress();
   const redesign = state.redesign!;
   const firstArrivalRef = useRef(false);
 
@@ -43,6 +48,13 @@ export function GoodsInSceneRedesign({
   const [countingId, setCountingId] = useState<string | null>(null);
   const [probingId, setProbingId] = useState<string | null>(null);
   const [probeValue, setProbeValue] = useState<number | null>(null);
+  const [mobileInspectorOpen, setMobileInspectorOpen] = useState(false);
+  const [announcement, setAnnouncement] = useState('');
+  const inspectorHeadingRef = useRef<HTMLHeadingElement>(null);
+  const sheetHeadingRef = useRef<HTMLHeadingElement>(null);
+  const reportHeadingRef = useRef<HTMLHeadingElement>(null);
+  const amendmentHeadingRef = useRef<HTMLHeadingElement>(null);
+  const initiatingButtonRef = useRef<HTMLButtonElement | null>(null);
   
   const countTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const probeTimer = useRef<ReturnType<typeof setInterval> | null>(null);
@@ -62,7 +74,36 @@ export function GoodsInSceneRedesign({
     stopWork();
     setOpenTrolley(line.trolley);
     setOpenBoxId(line.id);
+    setMobileInspectorOpen(true);
     setProbeValue(null);
+    requestAnimationFrame(() => inspectorHeadingRef.current?.focus());
+  };
+
+  const openBoxFrom = (line: OrderLine, button?: HTMLButtonElement | null) => {
+    initiatingButtonRef.current = button ?? null;
+    openBox(line);
+  };
+
+  const backToSheet = () => {
+    stopWork();
+    setMobileInspectorOpen(false);
+    requestAnimationFrame(() => (initiatingButtonRef.current ?? sheetHeadingRef.current)?.focus());
+  };
+
+  const openReport = () => {
+    setMobileInspectorOpen(false);
+    requestAnimationFrame(() => {
+      reportHeadingRef.current?.scrollIntoView({ block: 'center' });
+      reportHeadingRef.current?.focus();
+    });
+  };
+
+  const openAmendment = () => {
+    setMobileInspectorOpen(false);
+    requestAnimationFrame(() => {
+      amendmentHeadingRef.current?.scrollIntoView({ block: 'center' });
+      amendmentHeadingRef.current?.focus();
+    });
   };
 
   const handleWeigh = (line: OrderLine) => {
@@ -71,6 +112,7 @@ export function GoodsInSceneRedesign({
     countTimer.current = setTimeout(() => {
       setCountingId(null);
       onCountSettled(line.id);
+      setAnnouncement(`${line.item}: scales settled at ${line.arrived} ${line.unit}. Enter the amount you measured.`);
     }, 1500);
   };
 
@@ -87,6 +129,7 @@ export function GoodsInSceneRedesign({
         setProbingId(null);
         setProbeValue(line.actualC || 0);
         onProbeSettled(line.id);
+        setAnnouncement(`${line.item}: temperature settled at ${line.actualC?.toFixed(1)} degrees Celsius. Enter the reading you measured.`);
         kitchenAudio.play('write');
       } else {
         setProbeValue(prev => prev !== null ? prev - ((prev - (line.actualC || 0)) * 0.4) : null);
@@ -129,12 +172,12 @@ export function GoodsInSceneRedesign({
 
   const allCountedAndFilled = ORDER_LINES.every((line) => {
     const row = getRowState(line.id);
-    return row.counted && row.arrived.trim() !== '';
+    return row.counted && parseNumber(row.arrived) === line.arrived;
   });
   
   const allProbedAndFilled = ORDER_LINES.filter(l => l.chilled).every((line) => {
     const row = getRowState(line.id);
-    return row.probed && row.temperature.trim() !== '';
+    return row.probed && within(row.temperature, line.actualC ?? 0, READING_TOLERANCE_C);
   });
 
   const allStatusAndAccepted = ORDER_LINES.every((line) => {
@@ -148,18 +191,29 @@ export function GoodsInSceneRedesign({
 
   // Make note signature wait all10rows+temps+fishfinding+fishreason+report
   const canSignNote = allCountedAndFilled && allProbedAndFilled && allStatusAndAccepted && 
-                      allFishChecked && fishReasonValid && redesign?.reportSent && validAmendment;
+                      allFishChecked && fishReasonValid && redesign?.reportSent && state.radioedMarcus && validAmendment;
 
   // Render main layout
   return (
     <div className="absolute inset-0 z-0 bg-[#e9eded] flex flex-col md:flex-row overflow-hidden text-[#202427]">
+      {ORDER_LINES.map(line => (
+        <GuideAction key={line.id} action={`delivery:box:${line.id}`} open={() => openBoxFrom(line)} />
+      ))}
+      <GuideAction action="delivery:order-sheet" open={() => {
+        setMobileInspectorOpen(false);
+        setOpenBoxId(null);
+        requestAnimationFrame(() => sheetHeadingRef.current?.focus());
+      }} />
+      <GuideAction action="delivery:radio" open={openReport} />
+      <GuideAction action="delivery:note" open={openAmendment} />
+      <div className="sr-only" role="status" aria-live="polite">{announcement}</div>
       
       {/* Left pane: The Order Sheet */}
-      <div className="flex-1 md:w-3/5 border-r border-[#cdd3d5] bg-white flex flex-col overflow-hidden">
+      <div className={cn("flex-1 md:w-3/5 border-r border-[#cdd3d5] bg-white flex-col overflow-hidden", mobileInspectorOpen ? "hidden md:flex" : "flex")}>
         <header className="p-4 border-b border-[#cdd3d5] bg-[#f1f4f4] flex justify-between items-center shrink-0">
           <div>
             <div className="text-[11px] font-bold tracking-widest text-[#245b63] uppercase">Workspace</div>
-            <h2 className="text-xl font-bold mt-1">{DELIVERY_REDESIGN_COPY.sheetTitle}</h2>
+            <h2 ref={sheetHeadingRef} tabIndex={-1} className="text-xl font-bold mt-1 outline-none">{DELIVERY_REDESIGN_COPY.sheetTitle}</h2>
           </div>
           <div className="flex items-center gap-2">
             {state.signed && <div className="text-sm font-bold text-green-700 bg-green-100 px-2 py-1 rounded">Signed off</div>}
@@ -170,8 +224,41 @@ export function GoodsInSceneRedesign({
           {[1, 2, 3].map(trolley => (
             <div key={trolley} className="mb-8">
               <h3 className="font-bold text-lg mb-3">Trolley {trolley}</h3>
-              <div className="overflow-x-auto border border-[#cdd3d5] rounded-sm">
-                <table className="w-full text-sm text-left border-collapse">
+              <div className="space-y-3 sm:hidden">
+                {linesByTrolley[trolley].map(line => {
+                  const row = getRowState(line.id);
+                  const acceptance = redesign.accepted[line.id];
+                  return (
+                    <article key={line.id} className={cn("rounded border p-3", row.status === 'short' ? "border-red-300 bg-red-50" : "border-[#cdd3d5] bg-white")}>
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h4 className="font-bold text-[#202427]">{line.item}</h4>
+                          <p className="text-sm text-gray-700">Ordered: {line.ordered} {line.unit} · Supplier says: {line.onDeliveryNote} {line.unit}</p>
+                        </div>
+                        <button
+                          type="button"
+                          data-testid={`delivery-select-${line.id}-mobile`}
+                          onClick={event => openBoxFrom(line, event.currentTarget)}
+                          className="min-h-11 shrink-0 rounded bg-[#202427] px-3 font-bold text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        >
+                          Inspect
+                        </button>
+                      </div>
+                      <p className="mt-2 text-sm" role="status">
+                        {row.counted ? `Entered: ${row.arrived || 'none'} ${line.unit}` : "Amount not checked"}
+                        {line.chilled ? row.probed ? ` · ${row.temperature || 'none'} °C` : " · Temperature not checked" : ""}
+                      </p>
+                      <p className="mt-1 text-sm font-bold">
+                        {row.status ? DELIVERY_REDESIGN_COPY.statusOptions[row.status as keyof typeof DELIVERY_REDESIGN_COPY.statusOptions] : DELIVERY_REDESIGN_COPY.statusNone}
+                        {acceptance ? ` · ${DELIVERY_REDESIGN_COPY.acceptanceOptions[acceptance as keyof typeof DELIVERY_REDESIGN_COPY.acceptanceOptions]}` : ""}
+                      </p>
+                    </article>
+                  );
+                })}
+              </div>
+              <div className="hidden overflow-x-auto border border-[#cdd3d5] rounded-sm sm:block">
+                 <table className="hidden w-full text-sm text-left border-collapse sm:table">
+                   <caption className="sr-only">{`Trolley ${trolley} order and inspection results`}</caption>
                   <thead>
                     <tr className="bg-[#f1f4f4]">
                       <th className="border-b border-[#cdd3d5] p-3 w-1/4">{DELIVERY_REDESIGN_COPY.columns.kitchen}</th>
@@ -186,27 +273,26 @@ export function GoodsInSceneRedesign({
                       const isSelected = openBoxId === line.id;
                       const hasAccepted = redesign.accepted[line.id];
                       return (
-                        <tr 
+                        <tr
                           key={line.id} 
                           className={cn(
-                            "border-b border-[#cdd3d5] transition-colors cursor-pointer",
-                            isSelected ? "bg-blue-50" : "hover:bg-gray-50",
+                            "border-b border-[#cdd3d5] transition-colors motion-reduce:transition-none",
+                            isSelected && "bg-blue-50",
                             row.status === 'short' && !isSelected && "bg-red-50"
                           )}
-                          onClick={() => openBox(line)}
                         >
-                          <td className="p-3 align-top">
+                          <th scope="row" className="p-3 align-top">
                             <button
                               type="button"
                               aria-pressed={isSelected}
                               data-testid={`delivery-select-${line.id}`}
-                              className="text-left font-bold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                              onClick={event => { event.stopPropagation(); openBox(line); }}
+                              onClick={event => { event.stopPropagation(); openBoxFrom(line, event.currentTarget); }}
+                              className="min-h-11 text-left font-bold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             >
                               {line.item}
                             </button>
                             <div className="mt-1">{line.ordered} {line.unit}</div>
-                          </td>
+                          </th>
                           <td className="p-3 align-top border-l border-[#cdd3d5]">
                             <div className="text-sm">{line.onDeliveryNote} {line.unit}</div>
                             <div className="text-[11px] text-gray-500 mt-1">Note (claims)</div>
@@ -247,7 +333,7 @@ export function GoodsInSceneRedesign({
               
               {/* Report Panel */}
               <div className="border border-[#cdd3d5] bg-[#f1f4f4] p-4 rounded-sm">
-                <h4 className="font-bold mb-2 flex items-center gap-2">
+                 <h4 ref={reportHeadingRef} tabIndex={-1} className="font-bold mb-2 flex items-center gap-2 outline-none">
                   <Radio size={16} /> 
                   Report to Terence
                 </h4>
@@ -256,14 +342,18 @@ export function GoodsInSceneRedesign({
                 {salmonMeasured ? (
                   <div className="space-y-4 text-sm mt-4">
                     <div>
-                      <label className="block text-xs font-bold mb-1">{DELIVERY_REDESIGN_COPY.report.missingQuantityLabel}</label>
+                       <label htmlFor="delivery-missing-quantity" className="block text-xs font-bold mb-1">{DELIVERY_REDESIGN_COPY.report.missingQuantityLabel}</label>
                       <Input 
+                         id="delivery-missing-quantity"
+                         inputMode="decimal"
                         value={redesign.missingQuantity || ''}
                         onChange={(e) => updateTask("check-the-delivery-in", (p:any) => ({ ...p, signed: false, redesign: { ...p.redesign, reportSent: false, missingQuantity: e.target.value } }))}
                         placeholder="e.g. 4"
                         className="bg-white"
                         disabled={redesign.reportSent || state.signed}
+                         aria-describedby="delivery-missing-help"
                       />
+                       <p id="delivery-missing-help" className="mt-1 text-xs text-gray-600">Work this out from the ordered and checked amounts.</p>
                     </div>
 
                     {shortageValid && (
@@ -274,8 +364,9 @@ export function GoodsInSceneRedesign({
                     )}
 
                     <div>
-                      <label className="block text-xs font-bold mb-1">{DELIVERY_REDESIGN_COPY.report.messageTitle}</label>
+                       <label htmlFor="delivery-report-message" className="block text-xs font-bold mb-1">{DELIVERY_REDESIGN_COPY.report.messageTitle}</label>
                       <textarea 
+                         id="delivery-report-message"
                         value={redesign.report || ''}
                         onChange={(e) => updateTask("check-the-delivery-in", (p:any) => ({ ...p, signed: false, redesign: { ...p.redesign, reportSent: false, report: e.target.value } }))}
                         placeholder={DELIVERY_REDESIGN_COPY.report.messagePlaceholder}
@@ -286,16 +377,24 @@ export function GoodsInSceneRedesign({
                     </div>
                     
                     {!redesign.reportSent ? (
+                      <>
                       <Button 
                         onClick={() => {
                           onRadioMarcus();
                           updateTask("check-the-delivery-in", (p:any) => ({ ...p, redesign: { ...p.redesign, reportSent: true } }));
                         }}
                         disabled={!canSendReport || state.signed}
+                        aria-describedby="delivery-report-requirements"
                         className="w-full bg-[#245b63] hover:bg-[#1a434a] text-white disabled:opacity-50"
                       >
                         {DELIVERY_REDESIGN_COPY.report.sendAction}
                       </Button>
+                      {!canSendReport && (
+                        <p id="delivery-report-requirements" className="text-xs font-medium text-amber-800" role="status">
+                          Enter the checked salmon amount and temperature, choose Short and Accept, calculate the missing amount, then write your message.
+                        </p>
+                      )}
+                      </>
                     ) : (
                       <div className="text-green-700 font-bold flex items-center gap-2">
                         <CheckCircle2 size={16} /> Report sent
@@ -311,7 +410,7 @@ export function GoodsInSceneRedesign({
 
               {/* Note Correction Panel */}
               <div className="border border-[#cdd3d5] p-4 rounded-sm bg-white">
-                <h4 className="font-bold mb-2">Exmouth Fish note correction</h4>
+                 <h4 ref={amendmentHeadingRef} tabIndex={-1} className="font-bold mb-2 outline-none">Exmouth Fish note correction</h4>
                 {redesign.reportSent ? (
                   <div className="space-y-4 mt-4 text-sm">
                     <p className="text-gray-600">{DELIVERY_REDESIGN_COPY.amendment.instruction}</p>
@@ -323,6 +422,9 @@ export function GoodsInSceneRedesign({
                       </div>
                       <div>
                         <Input 
+                           id="delivery-amended-salmon"
+                           aria-label="Accepted salmon amount in kilograms"
+                           inputMode="decimal"
                           value={state.noteAmendedTo || ''}
                           onChange={(e) => {
                             onNoteAmended(e.target.value);
@@ -336,14 +438,22 @@ export function GoodsInSceneRedesign({
                     </div>
 
                     {!state.signed ? (
+                      <>
                       <Button 
                         onClick={onSign}
                         disabled={!canSignNote}
+                        aria-describedby="delivery-sign-requirements"
                         className="w-full"
                         variant="default"
                       >
                         Sign the delivery note
                       </Button>
+                      {!canSignNote && (
+                        <p id="delivery-sign-requirements" className="text-xs font-medium text-amber-800" role="status">
+                          Finish every measured entry and decision, explain the fish findings, send the report and correct the accepted salmon amount before signing.
+                        </p>
+                      )}
+                      </>
                     ) : (
                       <div className="text-green-700 font-bold flex items-center gap-2">
                         <CheckCircle2 size={16} /> Signed off
@@ -363,11 +473,14 @@ export function GoodsInSceneRedesign({
       </div>
       
       {/* Right pane: Inspection Area */}
-      <div className="min-h-0 min-w-0 flex-1 md:w-2/5 bg-[#202427] text-white flex flex-col relative">
+      <div className={cn("min-h-0 min-w-0 flex-1 md:w-2/5 bg-[#202427] text-white flex-col relative", mobileInspectorOpen ? "flex" : "hidden md:flex")}>
         {activeLine && activeRow ? (
           <>
             <header className="p-4 border-b border-gray-700 bg-gray-900 shrink-0">
-              <h2 className="text-lg font-bold">{DELIVERY_REDESIGN_COPY.inspectionTitle(activeLine.item)}</h2>
+              <button type="button" onClick={backToSheet} className="mb-2 flex min-h-11 items-center gap-2 rounded px-2 font-bold md:hidden focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                <ArrowLeft className="h-4 w-4" /> Back to sheet
+              </button>
+              <h2 ref={inspectorHeadingRef} tabIndex={-1} className="text-lg font-bold text-white outline-none">{DELIVERY_REDESIGN_COPY.inspectionTitle(activeLine.item)}</h2>
               <div className="text-sm text-gray-400 mt-1">Trolley {activeLine.trolley}</div>
             </header>
             
@@ -377,7 +490,7 @@ export function GoodsInSceneRedesign({
               {/* Evidence controls */}
               <div className="bg-gray-800 p-4 rounded border border-gray-700">
                 <h3 className="font-bold mb-3 text-gray-300 uppercase text-xs tracking-wider">Evidence</h3>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <Button 
                       variant="outline" 
@@ -385,7 +498,7 @@ export function GoodsInSceneRedesign({
                       disabled={countingId === activeLine.id || activeRow.counted || state.signed}
                       className="w-full bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white"
                     >
-                      {countingId === activeLine.id ? "Counting..." : `Count / Weigh`}
+                       {countingId === activeLine.id ? "Measuring…" : activeLine.unit === 'kg' ? "Weigh it" : "Count them"}
                     </Button>
                   </div>
                   {activeLine.chilled && (
@@ -396,7 +509,7 @@ export function GoodsInSceneRedesign({
                         disabled={probingId === activeLine.id || activeRow.probed || state.signed}
                         className="w-full bg-gray-700 text-white border-gray-600 hover:bg-gray-600 hover:text-white"
                       >
-                        {probingId === activeLine.id ? "Probing..." : `Take Temperature`}
+                       {probingId === activeLine.id ? "Taking temperature…" : "Take the temperature"}
                       </Button>
                     </div>
                   )}
@@ -408,32 +521,56 @@ export function GoodsInSceneRedesign({
                     <AnalogueThermometer value={probeValue} />
                   </div>
                 )}
+                {activeRow.counted && (
+                  <p className="mt-4 rounded bg-black/40 p-3 font-bold text-amber-300" role="status">
+                    Measured amount: {activeLine.arrived} {activeLine.unit}
+                  </p>
+                )}
+                {activeLine.chilled && activeRow.probed && (
+                  <p className="mt-2 rounded bg-black/40 p-3 font-bold text-amber-300" role="status">
+                    Measured temperature: {activeLine.actualC?.toFixed(1)} °C
+                  </p>
+                )}
               </div>
 
               {/* Data Entry Fields */}
               <div className="bg-gray-800 p-4 rounded border border-gray-700">
-                <h3 className="font-bold mb-3 text-gray-300 uppercase text-xs tracking-wider">Your Entries</h3>
-                <div className="grid grid-cols-2 gap-4">
+                 <h3 className="font-bold mb-3 text-white text-sm">Your entries</h3>
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-1">Quantity ({activeLine.unit})</label>
+                     <label htmlFor={`delivery-quantity-${activeLine.id}`} className="block text-sm text-gray-200 mb-1">Quantity ({activeLine.unit})</label>
                     <Input 
+                       id={`delivery-quantity-${activeLine.id}`}
+                       inputMode="decimal"
                       value={activeRow.arrived || ''}
                       onChange={(e) => onLineInput(activeLine.id, 'arrived', e.target.value)}
                       disabled={!activeRow.counted || state.signed}
                       className="bg-gray-900 border-gray-700 text-white"
                       placeholder="-"
                     />
+                     {activeRow.arrived.trim() !== '' && (
+                       <p className={cn("mt-1 text-xs font-bold", parseNumber(activeRow.arrived) === activeLine.arrived ? "text-emerald-300" : "text-amber-300")} role="status">
+                         {parseNumber(activeRow.arrived) === activeLine.arrived ? "Matches your measured amount." : "This does not match your measured amount."}
+                       </p>
+                     )}
                   </div>
                   {activeLine.chilled && (
                     <div>
-                      <label className="block text-xs text-gray-400 mb-1">Temperature (°C)</label>
+                     <label htmlFor={`delivery-temperature-${activeLine.id}`} className="block text-sm text-gray-200 mb-1">Temperature (°C)</label>
                       <Input 
+                       id={`delivery-temperature-${activeLine.id}`}
+                       inputMode="decimal"
                         value={activeRow.temperature || ''}
                         onChange={(e) => onLineInput(activeLine.id, 'temperature', e.target.value)}
                         disabled={!activeRow.probed || state.signed}
                         className="bg-gray-900 border-gray-700 text-white"
                         placeholder="-"
                       />
+                     {activeRow.temperature.trim() !== '' && (
+                       <p className={cn("mt-1 text-xs font-bold", parseNumber(activeRow.temperature) === activeLine.actualC ? "text-emerald-300" : "text-amber-300")} role="status">
+                         {parseNumber(activeRow.temperature) === activeLine.actualC ? "Matches your measured temperature." : "This does not match your measured temperature."}
+                       </p>
+                     )}
                     </div>
                   )}
                 </div>
@@ -441,19 +578,20 @@ export function GoodsInSceneRedesign({
                 {/* Sea bass special findings */}
                 {activeLine.id === 'sea-bass' && (
                   <div className="mt-6 border-t border-gray-700 pt-4">
-                    <h3 className="font-bold mb-2 text-sm text-blue-300">Fish Inspection Findings</h3>
+                    <h3 className="font-bold mb-2 text-sm text-blue-200">Fish inspection findings</h3>
                     <div className="grid grid-cols-1 gap-2 mb-4">
                       {FISH_CHECKS.map(check => (
                         <div key={check.id} className="flex items-start gap-2 bg-gray-900 p-2 rounded">
                           <input 
+                             id={`fish-check-${check.id}`}
                             type="checkbox" 
                             checked={!!state.fishChecks[check.id]}
                             onChange={() => onFishCheck(check.id)}
                             disabled={state.signed}
                             className="mt-1"
                           />
-                          <div>
-                            <div className="font-bold text-sm text-gray-200">{check.label}</div>
+                           <div>
+                             <label htmlFor={`fish-check-${check.id}`} className="font-bold text-sm text-gray-100">{check.label}</label>
                             {state.fishChecks[check.id] && <div className="text-xs text-gray-400">{check.whatYouFind}</div>}
                           </div>
                         </div>
@@ -461,8 +599,9 @@ export function GoodsInSceneRedesign({
                     </div>
                     {["eyes", "gills", "smell", "flesh"].every(id => state.fishChecks[id as any]) && (
                       <div>
-                        <label className="block text-xs text-gray-400 mb-1">{DELIVERY_REDESIGN_COPY.seaBassReason}</label>
+                         <label htmlFor="delivery-fish-reason" className="block text-sm text-gray-200 mb-1">{DELIVERY_REDESIGN_COPY.seaBassReason}</label>
                         <textarea 
+                           id="delivery-fish-reason"
                           value={redesign.fishReason || ''}
                           onChange={(e) => updateTask("check-the-delivery-in", (p:any) => ({ ...p, signed: false, redesign: { ...p.redesign, fishReason: e.target.value } }))}
                           placeholder={DELIVERY_REDESIGN_COPY.seaBassPrompt}
@@ -477,17 +616,20 @@ export function GoodsInSceneRedesign({
 
               {/* Status and Acceptance */}
               <div className="bg-gray-800 p-4 rounded border border-gray-700">
-                <h3 className="font-bold mb-3 text-gray-300 uppercase text-xs tracking-wider">Decisions</h3>
+                 <h3 className="font-bold mb-3 text-white text-sm">Decisions</h3>
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs text-gray-400 mb-2">Quantity Status</label>
-                    <div className="flex gap-2">
+                     <fieldset>
+                     <legend className="block text-sm text-gray-200 mb-2">Quantity status</legend>
+                     <div className="grid grid-cols-3 gap-2" role="radiogroup" aria-label={`Quantity status for ${activeLine.item}`}>
                       {(['arrived', 'short', 'refused'] as const).map(status => (
                         <Button
                           key={status}
                           variant="outline"
                           onClick={() => onLineStatus(activeLine.id, status)}
+                           role="radio"
+                           aria-checked={activeRow.status === status}
                           disabled={state.signed}
                           className={cn(
                             "flex-1 text-xs",
@@ -500,16 +642,25 @@ export function GoodsInSceneRedesign({
                         </Button>
                       ))}
                     </div>
+                     {activeRow.status && (
+                       <p className={cn("mt-2 text-xs font-bold", activeRow.status === activeLine.expectedStatus ? "text-emerald-300" : "text-amber-300")} role="status">
+                         {activeRow.status === activeLine.expectedStatus ? "This status matches your evidence." : "Compare the checked amount with the order again."}
+                       </p>
+                     )}
+                     </fieldset>
                   </div>
 
                   <div>
-                    <label className="block text-xs text-gray-400 mb-2">Acceptance</label>
-                    <div className="flex gap-2">
+                     <fieldset>
+                     <legend className="block text-sm text-gray-200 mb-2">Acceptance</legend>
+                     <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label={`Acceptance decision for ${activeLine.item}`}>
                       {(['accept', 'refuse'] as const).map(decision => (
                         <Button
                           key={decision}
                           variant="outline"
                           onClick={() => handleAcceptance(activeLine.id, decision)}
+                           role="radio"
+                           aria-checked={redesign.accepted[activeLine.id] === decision}
                           disabled={state.signed}
                           className={cn(
                             "flex-1 text-xs",
@@ -522,6 +673,12 @@ export function GoodsInSceneRedesign({
                         </Button>
                       ))}
                     </div>
+                     {redesign.accepted[activeLine.id] && (
+                       <p className={cn("mt-2 text-xs font-bold", redesign.accepted[activeLine.id] === 'accept' ? "text-emerald-300" : "text-amber-300")} role="status">
+                         {redesign.accepted[activeLine.id] === 'accept' ? "Accepted quantity saved." : "Refusal saved. Check the evidence and scenario guidance before moving on."}
+                       </p>
+                     )}
+                     </fieldset>
                   </div>
                 </div>
 

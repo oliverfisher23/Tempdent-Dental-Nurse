@@ -7,6 +7,7 @@ interface ExperienceViewport {
   expanding: boolean;
   notice: string | null;
   expand: () => Promise<void>;
+  openInline: () => void;
   collapse: () => Promise<void>;
 }
 
@@ -61,8 +62,13 @@ export function ExperienceViewportProvider({ children }: { children: ReactNode }
     setNotice(null);
   }, []);
 
-  const value = useMemo(() => ({ expanded, fullscreen, expanding, notice, expand, collapse }),
-    [expanded, fullscreen, expanding, notice, expand, collapse]);
+  const openInline = useCallback(() => {
+    setExpanded(true);
+    setNotice(null);
+  }, []);
+
+  const value = useMemo(() => ({ expanded, fullscreen, expanding, notice, expand, collapse, openInline }),
+    [expanded, fullscreen, expanding, notice, expand, collapse, openInline]);
   return <ViewportContext.Provider value={value}>{children}</ViewportContext.Provider>;
 }
 

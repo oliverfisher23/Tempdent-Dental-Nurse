@@ -106,3 +106,17 @@ mtime_ms = 1789731886464
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/d9b55b63-454b-4990-8494-0b3138c68170/cca5a71b-a1b0-4be3-8274-2450d74519fa"
 storage_version_token = "1789732018009421"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "92yVXnS0UBQ4G47DK2Ap5"
+uri = "file://artifacts/try-day/exports/experience-accessibility-review.html"
+type = "html"
+title = "Experience, accessibility and mobile review"
+description = "Task-by-task improvements, device recommendations, verification results and remaining learner-release checks."
+logical_id = "be156e8e-6caa-401b-8a23-8f369500ef1d"
+content_hash = "sha256:cde17d62b4e1a55a2560758989ae5c3bf23246a8b17b857b91f3ff00ea7f092e"
+size = 14188
+mtime_ms = 1789737490333
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/be156e8e-6caa-401b-8a23-8f369500ef1d/e10a3375-8af6-450f-ba0f-5fffb6527c18"
+storage_version_token = "1789737547426014"
+content_type = "text/html"

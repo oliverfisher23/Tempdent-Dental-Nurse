@@ -15,6 +15,8 @@ import { ProgressProvider, useProgress } from '@/lib/progress-store';
 import { isTestMode } from '@/lib/simulation';
 import { LearningDesignerPanel } from '@/components/learning-designer-panel';
 import { ExperienceViewportProvider } from '@/lib/experience-viewport';
+import { MotionConfig } from 'framer-motion';
+import { ACCESSIBILITY_COPY } from '@/content/experience-accessibility';
 import {
   Route,
   Switch,
@@ -50,11 +52,13 @@ function RoutedErrorBoundary({ children }: { children: ReactNode }) {
 
 function App() {
   return (
+    <MotionConfig reducedMotion="user">
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
           <ProgressProvider>
             <ExperienceViewportProvider>
+              <a className="skip-link" href="#main-activity">{ACCESSIBILITY_COPY.skip}</a>
               <TestModeNavigationGuard />
               <Router />
               <LearningDesignerPanel />
@@ -64,6 +68,7 @@ function App() {
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
+    </MotionConfig>
   );
 }
 
