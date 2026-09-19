@@ -7,4 +7,5 @@
 - [Restart file rollback](restart-file-rollback.md) — container restarts during task merges wipe /tmp and can revert the last minute of edits; grep before continuing.
 - [Dial thermometer round](dial-thermometer-round.md) — learners read an analogue dial, no digital readout anywhere; 0.7 °C tolerance for the round only; zones end at the unit limit.
 - [Image exports](image-exports.md) — ImageMagick WebP needs `-strip` (EXIF adds ~100 KB per file); manifest crops in auto-oriented pixels; blur real fridge readouts.
+- [Stage scroll shift](stage-scroll-shift.md) — overflow-hidden stages with a zoomed backdrop are scrollable by focus/scrollIntoView; use overflow-clip and scroll only the nearest scroller.
 - [Orphaned asset check](asset-orphan-check.md) — removed pictures live on in `attached_assets/` originals, `exports/` archives and Library cards; search by dir/stem, not exact names. `redesign` is not "newer".

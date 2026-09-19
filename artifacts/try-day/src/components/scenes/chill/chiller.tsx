@@ -9,6 +9,7 @@ import { parseNumber, readingIsRight, traysHaveSpace, type ChillState } from '@/
 import { useProgress } from '@/lib/progress-store';
 import { useFocusTrap } from '../../kitchen/use-focus-trap';
 import { kitchenAudio } from '@/lib/audio';
+import { scrollWithinScroller } from '@/lib/scroll';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -151,7 +152,7 @@ function Trolley({ locked, onRemove, children, empty }: { locked: boolean; onRem
       ref={ref}
       {...props}
       className={cn(
-        'flex flex-col gap-4 rounded-xl border-2 border-dashed border-zinc-600 bg-zinc-900/60 p-3 transition-colors md:self-start',
+        'flex flex-col gap-4 rounded-xl border-2 border-dashed border-zinc-600 bg-zinc-900/60 p-3 transition-colors md:col-start-1 md:row-start-1 md:self-start',
         empty ? 'pb-3' : 'min-h-[9rem] pb-5',
         (isOver || isTarget) && 'border-primary bg-primary/10',
       )}
@@ -391,8 +392,8 @@ export function ChillerView({
     setSectionTray(null);
     // Keep the controls in reach after entering the chiller, especially on a phone.
     const timer = window.setTimeout(() => {
-      if (rulerOut) toolsRef.current?.scrollIntoView({ block: 'center', behavior: 'instant' });
-      else if (started || (allShelved && probeRight)) panelRef.current?.scrollIntoView({ block: 'start', behavior: 'instant' });
+      if (rulerOut) scrollWithinScroller(toolsRef.current, 'center');
+      else if (started || (allShelved && probeRight)) scrollWithinScroller(panelRef.current, 'start');
     }, 350);
     return () => window.clearTimeout(timer);
   }, [workspaceRequest, started, allShelved, probeRight, rulerOut]);
@@ -441,14 +442,14 @@ export function ChillerView({
   );
 
   return (
-    <div className="relative mx-auto grid w-full max-w-6xl gap-4 pt-1 md:grid-cols-[minmax(0,3fr)_minmax(0,5fr)_minmax(0,4.5fr)] md:gap-5">
+    <div className="relative mx-auto grid w-full max-w-6xl gap-4 pt-1 md:grid-cols-[minmax(0,3fr)_minmax(0,5fr)_minmax(0,4.5fr)] md:grid-rows-[auto_1fr] md:gap-5">
       {/* Trolley */}
       <Trolley locked={started} onRemove={actions.onRemoveTray} empty={allShelved}>
         {state.trays.map((_, i) => (state.shelfByTray[i] === null ? renderTray(i) : null))}
       </Trolley>
 
       {/* Cabinet */}
-      <div className="relative">
+      <div className="relative md:col-start-2 md:row-span-2 md:row-start-1">
         <div className="relative overflow-hidden rounded-xl border-[10px] border-zinc-700 bg-zinc-950 shadow-2xl" data-testid="cabinet">
           {Array.from({ length: CHILLER_SHELVES }).map((_, s) => {
             const trayHere = state.shelfByTray.findIndex((shelf) => shelf === s);
@@ -478,8 +479,34 @@ export function ChillerView({
         <div className="mt-1 text-center text-[10px] font-bold uppercase tracking-widest text-zinc-400">{L.cabinet}</div>
       </div>
 
-      {/* Panel and tools: on a phone the hooks come first, right under the cabinet */}
-       <div className="flex flex-col gap-4">
+      {/* Hooks: beside the cabinet, under the trolley, so the probe is in view while the trays go in.
+          On a phone they follow the cabinet, ahead of the tray positions and the panel. */}
+      <div ref={toolsRef} className="rounded-xl border border-zinc-800 bg-zinc-900/80 px-3 py-3 text-white md:col-start-1 md:row-start-2 md:self-start">
+        <div className="flex items-start justify-around">
+          <ProbeTool locked={started} inTray={state.probePlacement ? probeTray : null} />
+          {rulerOut && <RulerTool />}
+        </div>
+        {!started && (
+          <div className="mt-3 border-t border-zinc-700 pt-3">
+            <p className="mb-2 text-sm text-zinc-300">{L.probeAlternative}</p>
+            <div className="grid grid-cols-2 gap-2 md:grid-cols-1">
+              {state.trays.map((_, i) => (
+                <Button key={i} type="button" variant="outline" className="min-h-11 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={() => openSection(i)}>
+                  {L.placeProbeIn(i + 1)}
+                </Button>
+              ))}
+            </div>
+          </div>
+        )}
+        {rulerOut && (
+          <Button type="button" variant="outline" className="mt-3 min-h-11 w-full border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={actions.onMeasure}>
+            <RulerIcon className="mr-2 h-4 w-4" /> {L.measureFullest(fullest + 1)}
+          </Button>
+        )}
+      </div>
+
+      {/* Tray positions and the panel */}
+      <div className="flex flex-col gap-4 md:col-start-3 md:row-span-2 md:row-start-1">
         {!started && (
           <section className="rounded-xl border border-zinc-700 bg-zinc-900 p-3 text-white" aria-labelledby="tray-position-heading">
             <div className="flex items-center justify-between gap-3">
@@ -620,31 +647,6 @@ export function ChillerView({
               </div>
             </div>
           )}
-        </div>
-
-        {/* Hooks */}
-         <div ref={toolsRef} className="rounded-xl border border-zinc-800 bg-zinc-900/80 px-3 py-3 text-white">
-           <div className="flex items-start justify-around">
-             <ProbeTool locked={started} inTray={state.probePlacement ? probeTray : null} />
-             {rulerOut && <RulerTool />}
-           </div>
-           {!started && (
-             <div className="mt-3 border-t border-zinc-700 pt-3">
-               <p className="mb-2 text-sm text-zinc-300">{L.probeAlternative}</p>
-               <div className="grid grid-cols-2 gap-2">
-                 {state.trays.map((_, i) => (
-                   <Button key={i} type="button" variant="outline" className="min-h-11 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={() => openSection(i)}>
-                     {L.placeProbeIn(i + 1)}
-                   </Button>
-                 ))}
-               </div>
-             </div>
-           )}
-           {rulerOut && (
-             <Button type="button" variant="outline" className="mt-3 min-h-11 w-full border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={actions.onMeasure}>
-               <RulerIcon className="mr-2 h-4 w-4" /> {L.measureFullest(fullest + 1)}
-             </Button>
-           )}
         </div>
       </div>
 

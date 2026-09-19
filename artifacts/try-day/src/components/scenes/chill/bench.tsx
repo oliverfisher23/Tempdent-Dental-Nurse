@@ -95,7 +95,10 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
 
   return (
     <DragProvider>
-      <div className="absolute inset-0 overflow-hidden bg-black">
+      {/* overflow-clip, not hidden: the zoomed backdrop overflows this box, and a hidden box is still a
+          scroll container, so focusing or scrolling to a control below the fold would shift the whole
+          stage (navigation and header included) with no way to scroll it back. */}
+      <div className="absolute inset-0 overflow-clip bg-black">
         <motion.img
           src={PLACES.bench.backdrop}
           alt=""
