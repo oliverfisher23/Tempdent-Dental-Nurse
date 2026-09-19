@@ -11,6 +11,10 @@ out-tsc
 # dependencies
 node_modules
 
+# browser test output
+test-results
+playwright-report
+
 # IDEs and editors
 /.idea
 .project
