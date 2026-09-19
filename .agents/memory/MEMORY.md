@@ -3,7 +3,7 @@
 - [Preview video codecs](preview-video-codecs.md) — some preview/test Chromium builds lack H.264 decoding; check codec support before treating a media error as a broken URL.
 - [Browser capture harness](browser-capture-harness.md) — hide the designer panel with CSS (never remove it), close the dev banner first, and don’t trust emulated touch-target sizes.
 - [Vite import.meta.glob guard](vite-import-meta-glob.md) — a typeof guard is always false in the browser and silently breaks asset URLs; use try/catch for Node-shared modules; the fridge-round browser command is the canary.
-- [Fridge inspection layout](fridge-inspection-layout.md) — portrait picture beside the panel via the `beside` variant; never crop, no black bars, no aria-pressed on the motion toggle.
+- [Fridge inspection layout](fridge-inspection-layout.md) — stage and clipboard: measured picture width, content-sized card, `beside` variant; never crop, no black bars, no aria-pressed on the motion toggle.
 - [Restart file rollback](restart-file-rollback.md) — container restarts during task merges wipe /tmp and can revert the last minute of edits; grep before continuing.
 - [Dial thermometer round](dial-thermometer-round.md) — learners read an analogue dial, no digital readout anywhere; 0.7 °C tolerance for the round only; zones end at the unit limit.
 - [Image exports](image-exports.md) — ImageMagick WebP needs `-strip` (EXIF adds ~100 KB per file); manifest crops in auto-oriented pixels; blur real fridge readouts.

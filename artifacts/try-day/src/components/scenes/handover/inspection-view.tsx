@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useLayoutEffect, type CSSProperties } from 'react';
 import { FRIDGE_UNITS, HANDOVER_LINES } from '@/content/activities';
 import { InspectionMedia } from './inspection-media';
 import { DialThermometer } from './dial-thermometer';
@@ -14,6 +14,12 @@ import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { useProgress } from '@/lib/progress-store';
 import { FRIDGE_INTERACTION_COPY } from '@/content/fridge-interaction-copy';
+
+/** Gap between the picture and the clipboard on the stage, matching `beside:gap-x-6`. */
+const STAGE_GAP_PX = 24;
+/** The clipboard keeps at least this width; on a short, wide stage the picture gives way instead. */
+const CLIPBOARD_MIN_PX = 320;
+const FRAME_MIN_PX = 160;
 
 export function InspectionView({
   unitId,
@@ -63,6 +69,27 @@ export function InspectionView({
       if (timerRef.current) clearTimeout(timerRef.current);
       if (probeTimerRef.current) clearTimeout(probeTimerRef.current);
     };
+  }, []);
+
+  // Beside the clipboard the portrait picture is sized by the stage height. The width is
+  // measured here rather than left to grid auto-sizing, which cannot see a height-derived width.
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [frameWidth, setFrameWidth] = useState<number>();
+  useLayoutEffect(() => {
+    const stage = stageRef.current!;
+    const fit = (width: number, height: number) => {
+      const byHeight = height * 9 / 16;
+      const byWidth = width - STAGE_GAP_PX - CLIPBOARD_MIN_PX;
+      setFrameWidth(Math.max(FRAME_MIN_PX, Math.floor(Math.min(byHeight, byWidth))));
+    };
+    const style = getComputedStyle(stage);
+    fit(
+      stage.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight),
+      stage.clientHeight - parseFloat(style.paddingTop) - parseFloat(style.paddingBottom),
+    );
+    const observer = new ResizeObserver(([entry]) => fit(entry.contentRect.width, entry.contentRect.height));
+    observer.observe(stage);
+    return () => observer.disconnect();
   }, []);
 
   // Focus management
@@ -174,41 +201,67 @@ export function InspectionView({
       data-unit-id={unitId}
        data-door-phase={doorPhase}
     >
-      <nav className="shrink-0 border-b border-zinc-700 bg-zinc-950 px-3 py-2 text-white" aria-label={FRIDGE_INTERACTION_COPY.roundOrientation}>
-        <div className="flex items-center gap-2 overflow-x-auto pb-1" role="list">
-          {FRIDGE_UNITS.map((fridge, index) => {
-            const saved = handoverRowComplete(fridge.id, state.rows[fridge.id]) && state.rows[fridge.id]?.recorded !== false;
-            const current = fridge.id === unitId;
-            const available = saved || current;
-            const stateLabel = current
-              ? FRIDGE_INTERACTION_COPY.currentAppliance
-              : saved
-                ? FRIDGE_INTERACTION_COPY.checkedAppliance
-                : FRIDGE_INTERACTION_COPY.waitingAppliance;
-            return (
-              <div key={fridge.id} role="listitem" className="shrink-0">
-                <button
-                  type="button"
-                  disabled={!available || frozen}
-                  onClick={() => onSelectUnit(fridge.id)}
-                  aria-current={current ? 'step' : undefined}
-                  aria-label={current ? `${fridge.name}, ${stateLabel}` : saved ? FRIDGE_INTERACTION_COPY.chooseAppliance(fridge.name) : `${fridge.name}, ${stateLabel}`}
-                  className={cn(
-                    'min-h-11 rounded-lg border px-3 py-2 text-left text-xs font-semibold outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-white motion-reduce:transition-none',
-                    current ? 'border-white bg-white text-black' : saved ? 'border-zinc-500 bg-zinc-800 text-white hover:bg-zinc-700' : 'border-zinc-800 text-zinc-500'
-                  )}
-                >
-                  <span className="block">{index + 1}. {fridge.name}</span>
-                  <span className="block text-[10px] font-normal">{stateLabel}</span>
-                </button>
-              </div>
-            );
-          })}
+      {/*
+        The stage. Stacked (phones, short windows) it is one scrolling column: rail, picture, check.
+        Beside, it is a grid with the full-height portrait picture on the left and the unit rail
+        above the clipboard on the right, the pair centred over a blurred bleed of the same picture.
+      */}
+      <div
+        ref={stageRef}
+        className="relative flex min-h-0 flex-1 flex-col overflow-y-auto beside:grid beside:grid-cols-[var(--frame-w,20rem)_minmax(0,36rem)] beside:grid-rows-[auto_minmax(0,1fr)] beside:justify-center beside:gap-x-6 beside:overflow-hidden beside:p-4"
+        style={{ '--frame-w': frameWidth ? `${frameWidth}px` : undefined } as CSSProperties}
+      >
+        <div className="pointer-events-none absolute inset-0 hidden overflow-hidden beside:block" aria-hidden="true">
+          <img src={media.poster} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover blur-3xl" />
+          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]" />
         </div>
-      </nav>
-      {/* The footage is portrait, so beside the panel the picture is sized by height, never by width. */}
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto beside:flex-row beside:overflow-hidden">
-      <div className="relative w-full shrink-0 bg-black beside:h-full beside:w-auto beside:max-w-[46%] beside:aspect-[9/16]">
+
+        <nav
+          className="sticky top-0 z-20 shrink-0 border-b border-zinc-800 bg-zinc-950/95 px-3 py-2 text-white backdrop-blur beside:relative beside:z-10 beside:mb-4 beside:border-0 beside:bg-transparent beside:p-0 beside:backdrop-blur-none beside:[grid-area:1/2]"
+          aria-label={FRIDGE_INTERACTION_COPY.roundOrientation}
+        >
+          <div className="flex items-center gap-2 overflow-x-auto beside:flex-wrap beside:overflow-visible" role="list">
+            {FRIDGE_UNITS.map((fridge, index) => {
+              const saved = handoverRowComplete(fridge.id, state.rows[fridge.id]) && state.rows[fridge.id]?.recorded !== false;
+              const current = fridge.id === unitId;
+              const available = saved || current;
+              const stateLabel = current
+                ? FRIDGE_INTERACTION_COPY.currentAppliance
+                : saved
+                  ? FRIDGE_INTERACTION_COPY.checkedAppliance
+                  : FRIDGE_INTERACTION_COPY.waitingAppliance;
+              return (
+                <div key={fridge.id} role="listitem" className="shrink-0">
+                  {/* A slim rail: numbers for every unit, the name only on the one in hand, a tick once checked. */}
+                  <button
+                    type="button"
+                    disabled={!available || frozen}
+                    onClick={() => onSelectUnit(fridge.id)}
+                    aria-current={current ? 'step' : undefined}
+                    aria-label={current ? `${fridge.name}, ${stateLabel}` : saved ? FRIDGE_INTERACTION_COPY.chooseAppliance(fridge.name) : `${fridge.name}, ${stateLabel}`}
+                    title={current ? undefined : `${fridge.name}: ${stateLabel}`}
+                    className={cn(
+                      'flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-full border text-sm font-bold outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 motion-reduce:transition-none',
+                      current
+                        ? 'border-white bg-white pl-3.5 pr-4 text-black'
+                        : saved
+                          ? 'border-zinc-500 bg-zinc-800 px-3 text-white hover:bg-zinc-700'
+                          : 'border-white/15 bg-black/50 px-3 text-zinc-400'
+                    )}
+                  >
+                    <span className="tabular-nums">{index + 1}</span>
+                    {current && <span className="whitespace-nowrap">{fridge.name}</span>}
+                    {saved && !current && <Check className="h-3.5 w-3.5" aria-hidden="true" />}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </nav>
+
+      {/* The portrait footage takes the full stage height, giving way in width only when the clipboard needs its minimum. */}
+      <div className="relative z-10 w-full shrink-0 bg-black beside:h-full beside:bg-transparent beside:[grid-area:1/1/span_2/2]">
         <InspectionMedia
            key={`${unitId}-${doorPhase}`}
           media={media}
@@ -249,9 +302,12 @@ export function InspectionView({
         </InspectionMedia>
       </div>
 
-      {/* Check panel: identity, controls, findings and the board entry share the remaining width. */}
-      <div className="flex min-h-0 flex-1 flex-col border-t border-zinc-700 bg-zinc-900 text-white beside:border-l beside:border-t-0 beside:overflow-y-auto">
-        <div className="@container flex w-full max-w-3xl flex-col gap-4 p-4 sm:p-5 lg:p-8">
+      {/*
+        The clipboard: identity, controls, findings and the board entry. Stacked it is the panel
+        under the picture; beside, a content-sized card that scrolls inside itself when the entry is long.
+      */}
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col border-t border-zinc-700 bg-zinc-900 text-white beside:min-h-0 beside:max-h-full beside:flex-none beside:self-start beside:overflow-y-auto beside:rounded-2xl beside:border beside:border-white/15 beside:bg-zinc-950/95 beside:shadow-[0_28px_70px_rgba(0,0,0,0.6)] beside:[grid-area:2/2] beside:[scroll-padding-block:1rem_6rem]">
+        <div className="@container flex w-full max-w-3xl flex-col gap-4 p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
               <h2 className="text-2xl font-bold leading-tight">{unit.name}</h2>
@@ -264,13 +320,13 @@ export function InspectionView({
 
           <div className="flex min-h-11 flex-wrap items-center gap-3">
             {doorPhase === 'closed' && (
-              <>
+              <div className="flex w-full flex-col gap-3">
                 <button ref={openBtnRef} type="button" data-testid="open-fridge" onClick={handleOpen} disabled={frozen}
-                  className="min-h-11 rounded-lg border-2 border-white bg-white px-5 py-2 text-base font-bold text-black shadow-lg hover:bg-zinc-200 disabled:opacity-60">
+                  className="min-h-12 w-full rounded-xl border-2 border-white bg-white px-5 py-3 text-lg font-bold text-black shadow-lg transition-colors hover:bg-zinc-200 disabled:opacity-60">
                   {HANDOVER_LABELS.openFridge}
                 </button>
                 <p className="text-sm text-zinc-300">{FRIDGE_INTERACTION_COPY.closedHint}</p>
-              </>
+              </div>
             )}
             {doorPhase === 'opening' && (
               <>
@@ -290,7 +346,7 @@ export function InspectionView({
           </div>
 
           {mediaState === 'open' && activeClue && (
-            <div className="rounded-lg border border-white/20 bg-black/40 px-4 py-3" data-testid="clue-finding">
+            <div className="rounded-lg border border-white/20 bg-black/40 px-3 py-2.5" data-testid="clue-finding">
               <div className="text-xs font-bold uppercase tracking-wider">{activeClue.label}</div>
               <div className="mt-1 text-sm leading-snug sm:text-base">{activeClue.finding}</div>
             </div>
@@ -302,9 +358,10 @@ export function InspectionView({
               <p className="text-sm leading-relaxed text-zinc-300">{FRIDGE_INTERACTION_COPY.checkHint}</p>
             </aside>
           ) : (
-          <form onSubmit={handleFormSubmit} aria-busy={closing} className="flex w-full flex-col gap-6 border-t border-zinc-800 pt-5">
+          <form onSubmit={handleFormSubmit} aria-busy={closing} className="flex w-full flex-col gap-5 border-t border-zinc-800 pt-5">
             
-            <div className="grid gap-6 @2xl:grid-cols-[256px_minmax(0,1fr)] @2xl:items-start">
+            {/* From 32rem of clipboard the dial sits beside the entry fields; narrower, they stack. */}
+            <div className="grid gap-5 @lg:grid-cols-[232px_minmax(0,1fr)] @lg:items-start">
             {/* The fridge's own dial thermometer: misted until the reading is taken, then read by eye. */}
             <div className="flex shrink-0 flex-col items-center gap-3 rounded-xl border border-zinc-700 bg-black p-4 shadow-inner">
                <div
@@ -348,12 +405,12 @@ export function InspectionView({
             </div>
 
             {/* Record Form Inputs */}
-             <div className={cn("flex flex-col gap-5 transition-all duration-200 motion-reduce:duration-0 shrink-0", row.probed ? "opacity-100 translate-y-0" : "opacity-30 translate-y-4 pointer-events-none")}>
-                <div className="rounded-lg border border-zinc-700 bg-zinc-800/70 p-3">
+             <div className={cn("flex flex-col gap-4 transition-all duration-200 motion-reduce:duration-0 shrink-0", row.probed ? "opacity-100 translate-y-0" : "opacity-30 translate-y-4 pointer-events-none")}>
+                <div className="rounded-lg border border-zinc-700 bg-zinc-800/70 px-3 py-2">
                   <p className="text-sm font-bold">{FRIDGE_INTERACTION_COPY.evidenceHeading}</p>
-                  <p className="mt-1 text-xs text-zinc-300">{FRIDGE_INTERACTION_COPY.evidenceProgress(checkedClueIds.size, photo.clues.length)}</p>
+                  <p className="mt-0.5 text-xs text-zinc-300">{FRIDGE_INTERACTION_COPY.evidenceProgress(checkedClueIds.size, photo.clues.length)}</p>
                 </div>
-               <div className="grid grid-cols-2 gap-4 @xl:grid-cols-3">
+               <div className="grid grid-cols-3 gap-3">
                  <div className="flex flex-col gap-2">
                    <label htmlFor={`reading-${unitId}`} className="text-xs font-bold uppercase text-zinc-400">{HANDOVER_LABELS.probeValue}</label>
                    <input
@@ -368,7 +425,7 @@ export function InspectionView({
                         setError(null);
                         onRowChange(unitId, 'reading', e.target.value);
                       }}
-                     className="min-w-0 w-full bg-black text-white px-4 py-3 rounded border border-zinc-600 font-mono text-xl focus:border-primary outline-none transition-colors"
+                     className="min-w-0 w-full rounded border border-zinc-600 bg-black px-3 py-2.5 font-mono text-lg text-white outline-none transition-colors focus:border-primary"
                      placeholder="-"
                       disabled={!row.probed || closing || frozen}
                       aria-invalid={!!error && !rowReadingIsRight(unitId, row.reading)}
@@ -384,7 +441,7 @@ export function InspectionView({
                      value={row.time}
                      readOnly
                       aria-readonly="true"
-                     className="min-w-0 w-full bg-black/50 text-zinc-400 px-4 py-3 rounded border border-zinc-700/50 font-mono text-xl outline-none cursor-not-allowed"
+                     className="min-w-0 w-full cursor-not-allowed rounded border border-zinc-700/50 bg-black/50 px-3 py-2.5 font-mono text-lg text-zinc-400 outline-none"
                      placeholder="-"
                    />
                  </div>
@@ -402,7 +459,7 @@ export function InspectionView({
                         setError(null);
                         onRowChange(unitId, 'initials', e.target.value);
                       }}
-                     className="min-w-0 w-full bg-black text-white px-4 py-3 rounded border border-zinc-600 font-mono text-xl uppercase focus:border-primary outline-none transition-colors"
+                     className="min-w-0 w-full rounded border border-zinc-600 bg-black px-3 py-2.5 font-mono text-lg uppercase text-white outline-none transition-colors focus:border-primary"
                      placeholder="-"
                       disabled={!row.probed || closing || frozen}
                       aria-invalid={!!error && row.initials.trim().length === 0}
@@ -466,7 +523,7 @@ export function InspectionView({
                       setError(null);
                       onRowChange(unitId, 'note', e.target.value);
                     }}
-                   className="bg-black text-white px-4 py-3 rounded border border-zinc-600 font-mono text-lg focus:border-primary outline-none w-full transition-colors"
+                   className="w-full rounded border border-zinc-600 bg-black px-3 py-2.5 font-mono text-base text-white outline-none transition-colors focus:border-primary"
                    placeholder={HANDOVER_LABELS.notePlaceholder}
                     disabled={!row.probed || closing || frozen}
                     aria-invalid={!!error && rowReadingIsRight(unitId, row.reading) && row.initials.trim().length > 0}
@@ -476,9 +533,13 @@ export function InspectionView({
             </div>
             </div>
 
-            {/* Error and Submit Actions */}
-            <div className="mt-auto pt-4 flex flex-col gap-3 shrink-0">
-               <div id={`handover-error-${unitId}`} className="text-destructive font-bold min-h-[1.5rem]" aria-live="assertive" role="alert">
+            {/* Error and submit. Once the reading is taken, the action stays pinned to the clipboard's bottom edge while the entry scrolls. */}
+            <div className={cn(
+              'mt-auto flex shrink-0 flex-col gap-2 pt-1',
+              row.probed && 'beside:sticky beside:bottom-0 beside:z-10 beside:-mb-5 beside:bg-zinc-950/95 beside:pb-4 beside:shadow-[0_-16px_24px_rgba(9,9,11,0.85)]'
+            )}>
+               {/* Always rendered, so the live region exists before an error lands in it. */}
+               <div id={`handover-error-${unitId}`} className="font-bold text-destructive" aria-live="assertive" role="alert">
                  {error && (
                    <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} className="text-sm bg-destructive/10 text-destructive border border-destructive/20 p-2 rounded">
                      {error}
@@ -489,7 +550,7 @@ export function InspectionView({
                  type="submit"
                  data-testid="close-fridge"
                   disabled={!row.probed || closing || frozen}
-                 className="bg-white text-black font-bold px-6 py-4 rounded-xl shadow-lg hover:bg-zinc-200 transition-colors disabled:opacity-50 text-lg w-full"
+                 className="w-full rounded-xl bg-white px-6 py-3.5 text-lg font-bold text-black shadow-lg transition-colors hover:bg-zinc-200 disabled:opacity-50"
                >
                  {HANDOVER_LABELS.saveAndClose}
                </button>

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useId, useRef, useState, type ReactNode } from 'react';
+import { useContext, useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { Pause, Play } from 'lucide-react';
 import type { FridgeMedia } from '@/content/fridge-media';
 import {
@@ -58,7 +58,9 @@ export function InspectionMedia({
     completionAllowedRef.current = false;
   }, []);
 
-  useEffect(() => {
+  // Measured before paint: the component remounts on every door phase and appliance change,
+  // so a passive effect would flash the default frame size each time.
+  useLayoutEffect(() => {
     const slot = slotRef.current!;
     const reportSize = (width: number, height: number) => {
       const availableWidth = width || slot.clientWidth || 360;
@@ -71,12 +73,16 @@ export function InspectionMedia({
       reportSize(entry.contentRect.width, entry.contentRect.height);
     });
     resize.observe(slot);
+    return () => resize.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const slot = slotRef.current!;
     const intersection = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting));
     intersection.observe(slot);
     const onVisibility = () => setVisible(document.visibilityState !== 'hidden');
     document.addEventListener('visibilitychange', onVisibility);
     return () => {
-      resize.disconnect();
       intersection.disconnect();
       document.removeEventListener('visibilitychange', onVisibility);
     };
@@ -152,24 +158,26 @@ export function InspectionMedia({
   }, [status, onStatus]);
 
   return (
-    // Stacked, the picture is a fixed-height band in the page flow; beside the panel
-    // it fills the portrait column, which is already 9:16 so the frame meets its edges.
-    <div className="relative w-full bg-black h-[clamp(220px,calc(100svh-var(--kitchen-top,150px)-var(--dialogue-h,80px)-190px),520px)] beside:absolute beside:inset-0 beside:h-auto">
+    // Stacked, the picture is a fixed-height band in the page flow; beside the clipboard it
+    // fills the portrait column. The stage sizes that column from its height, or narrower when
+    // the clipboard needs the room, and any letterbox shows the stage's blurred bleed.
+    <div className="relative w-full bg-black h-[clamp(220px,calc(100svh-var(--kitchen-top,150px)-var(--dialogue-h,80px)-190px),520px)] beside:absolute beside:inset-0 beside:h-auto beside:bg-transparent">
       {/* The poster, blurred and enlarged, fills any letterbox instead of flat black. */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div className="pointer-events-none absolute inset-0 overflow-hidden beside:hidden" aria-hidden="true">
         <img src={media.poster} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl" />
       </div>
       <div ref={slotRef} className="absolute inset-0">
+        {/* Rounded on the stage through the picture elements themselves, so markers and focus rings at the edge are never clipped. */}
         <div
           data-testid="inspection-media-frame"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black beside:rounded-xl beside:shadow-[0_28px_70px_rgba(0,0,0,0.65)] beside:ring-1 beside:ring-white/10"
           style={{ width: size.width, height: size.height, aspectRatio: '9 / 16' }}
         >
           <img
             data-testid="inspection-poster"
             src={media.poster}
             alt={description}
-            className="absolute inset-0 h-full w-full object-contain"
+            className="absolute inset-0 h-full w-full object-contain beside:rounded-xl"
           />
           {playback !== 'still' && (
             <video
@@ -186,7 +194,7 @@ export function InspectionMedia({
               disableRemotePlayback
               aria-hidden="true"
               tabIndex={-1}
-              className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+              className="pointer-events-none absolute inset-0 h-full w-full object-contain beside:rounded-xl"
               style={{ opacity: hasFrame && !failed && !blocked ? 1 : 0 }}
               onPlaying={() => {
                 if (!shouldPlay) videoRef.current?.pause();
