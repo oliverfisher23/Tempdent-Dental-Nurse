@@ -188,10 +188,14 @@ These images appear as smaller evidence cards in the goods-in activity.
 
 The full ingredient set can be completed in one controlled tabletop session.
 
-Status: outstanding. The goods-in activity currently shows the illustrated crate
-pictures under `src/assets/kitchen/`. A set of sourced stock photographs
-(credited in the `sources.json` files under `src/assets/delivery-photos/`) is
-held for the goods-in redesign, which is not wired into the app yet.
+Status: outstanding. The goods-in activity shows the illustrated crate pictures
+`src/assets/kitchen/crate-*.jpg` in each item's row. A set of sourced stock
+photographs that had been held for a superseded version of the goods-in scene
+was removed from the repository on 19 September 2026, both the exported copies
+under `src/assets/` and the downloaded originals under `attached_assets/`: that
+version never reached the app, and one of its images (the smoked haddock, taken
+from a supplier website) had no confirmed reuse permission. Nothing is held in
+reserve, so these ten photographs still need to be taken.
 
 ---
 

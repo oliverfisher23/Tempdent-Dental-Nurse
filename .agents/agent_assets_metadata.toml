@@ -42,13 +42,13 @@ id = "VVfqVhZxEKOjE1322L5Ps"
 uri = "file://artifacts/try-day/exports/artotel-try-day-current-images.zip"
 type = "unspecified"
 title = "art’otel Try Day — Current Images"
-description = "ZIP export of the 41 images the app ships as of 19 September 2026, with their project folder structure and a manifest: brand marks, the illustrated kitchen pictures still in use, the client photographs of Terence as exported, and the fridge clip poster frames. The generated scenes and portraits the photographs replaced are no longer included."
+description = "ZIP export of the 38 images the app ships as of 19 September 2026, with their project folder structure and a manifest: brand marks, the illustrated kitchen pictures still in use, the client photographs of Terence as exported, and the fridge clip poster frames. Not included: the generated scenes and portraits the photographs replaced, the interior pictures only the retired handover scenes used, and the stock ingredient photographs held for the superseded goods-in prototype, all deleted from the project on 19 September 2026."
 logical_id = "ab6e63b3-6624-4f01-9b6b-2698e434b5ad"
-content_hash = "sha256:439dd1dd88c074c86e63811fc1c7876760179ae7729f381cc3afe7ad6ac79939"
-size = 3665372
-mtime_ms = 1789815931846
-storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/ab6e63b3-6624-4f01-9b6b-2698e434b5ad/a2330274-3891-444b-82c6-6bb7a49cde21"
-storage_version_token = "1789815943937627"
+content_hash = "sha256:bd49aceb526f7b038afbe9b72f8d9ec4c4316ebe4e0c780f53a176eff6e065d3"
+size = 3228292
+mtime_ms = 1789820758397
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/ab6e63b3-6624-4f01-9b6b-2698e434b5ad/0c8bbd44-9272-44ba-a36b-1f8bf68c28e9"
+storage_version_token = "1789820764562727"
 content_type = "application/octet-stream"
 
 [[outputs]]
