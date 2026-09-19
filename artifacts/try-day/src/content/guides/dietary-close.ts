@@ -1,18 +1,17 @@
 import { ADDED_GUESTS, ELENA_QUESTION, WASTE_BINS } from '@/content/activities';
 import type { StepGuide } from '@/content/step-guide';
 import { GUIDE_COPY } from '@/content/step-guide';
-import { getDietaryRedesignStage } from '@/lib/redesign-dietary';
+import { COURSES, courseChecked, getDietaryRedesignStage } from '@/lib/redesign-dietary';
 import {
   evaluateClose,
   evaluateDietary,
-  guestAssignmentIsSafe,
   weightIsRight,
   type ChillState,
   type CloseState,
   type DietaryState,
 } from '@/lib/simulation';
 
-const DIETARY_TOTAL = 3;
+const DIETARY_TOTAL = 4;
 const CLOSE_TOTAL = 6;
 const WASTE_GUIDE_NAMES: Record<string, string> = {
   trimmings: 'the trimmings',
@@ -22,49 +21,62 @@ const WASTE_GUIDE_NAMES: Record<string, string> = {
 
 export function getDietaryGuide(state: DietaryState): StepGuide {
   const evaluation = evaluateDietary(state);
-  const chartDone = evaluation.checklist.find((item) => item.id === 'chart')?.met ?? false;
+  const stage = getDietaryRedesignStage(state);
 
-  if (!chartDone) {
+  if (stage === 'sheet') {
     return {
-      id: 'dietary-chart',
+      id: 'dietary-sheet',
       step: 1,
       total: DIETARY_TOTAL,
-      title: 'Check the allergen chart',
-      instruction: 'Read each recipe beside your chart, check all fourteen categories and ask Terence to review your entries.',
+      title: 'Read the function sheet',
+      instruction: 'Take the sheet from Yvie: what the event is, what is on the menu and who is already catered for. The added guests come later.',
+      actionLabel: 'Take the sheet',
+      place: 'pass',
+      action: 'dietary.open-function-sheet',
+    };
+  }
+
+  if (stage === 'chart') {
+    const flagged = state.flaggedDishes.length;
+    return {
+      id: flagged > 0 ? 'dietary-chart-again' : 'dietary-chart',
+      step: 2,
+      total: DIETARY_TOTAL,
+      title: flagged > 0 ? `Look again at ${flagged === 1 ? 'one row' : `${flagged} rows`}` : 'Check the allergen chart',
+      instruction: flagged > 0
+        ? 'Terence has marked the rows to revisit. Read the card beside each one, correct the marks, confirm the row and ask for another review.'
+        : 'Read each recipe card beside its row, mark all fourteen columns, confirm the row, then ask Terence to review the chart.',
       actionLabel: 'Open the chart',
       place: 'events',
       action: 'dietary.open-chart',
     };
   }
 
-  const guestIndex = ADDED_GUESTS.findIndex(
-    (guest) => !guestAssignmentIsSafe(
-      guest.id,
-      state.guests[guest.id] ?? { main: null, dessert: null },
-    ),
-  );
-  if (guestIndex !== -1 || (state.redesign && getDietaryRedesignStage(state) === 'guests')) {
-    const guest = ADDED_GUESTS[Math.max(0, guestIndex)];
+  if (stage === 'guests') {
+    // The next guest with a course Terence has not yet been asked to check.
+    const redesign = state.redesign;
+    const pending = ADDED_GUESTS.find((guest) =>
+      COURSES.some((course) => !redesign || !courseChecked(redesign, guest.id, course, state.guests[guest.id] ?? { main: null, dessert: null }, state.chart)),
+    );
     return {
-      id: `dietary-guest-${guest.id}`,
-      step: 2,
+      id: pending ? `dietary-guest-${pending.id}` : 'dietary-guests',
+      step: 3,
       total: DIETARY_TOTAL,
-      title: guestIndex !== -1 ? `Review ${guest.name.split(' ')[0]}'s courses` : 'Explain your menu decisions',
-      instruction: 'Use your chart and ingredients to explain what you would keep, swap or ask about. Preparation and service checks remain separate.',
-      actionLabel: 'Open function sheet',
+      title: pending ? `Decide ${pending.name.split(' ')[0]}’s main and dessert` : 'Explain each decision',
+      instruction: 'Use your chart: say what it shows for each course, tick the evidence, keep, swap or ask, give a reason, then check each course with Terence. Preparation checks stay with him.',
+      actionLabel: 'Open guest decisions',
       place: 'events',
-      action: 'dietary.open-function-sheet',
+      action: 'dietary.open-guests',
     };
   }
 
-  const boardDone = evaluation.checklist.find((item) => item.id === 'board')?.met ?? false;
-  if (!boardDone || !evaluation.done) {
+  if (stage === 'board' || !evaluation.done) {
     return {
       id: 'dietary-board',
-      step: 3,
+      step: 4,
       total: DIETARY_TOTAL,
-      title: 'Update the evening board',
-      instruction: 'Review each proposed change, including guest, table and reason. Keep unresolved checks on hold for Terence.',
+      title: 'Put the changes on the evening board',
+      instruction: 'Every change with the guest, table, original, replacement and reason. The preparation check stays pending for Terence.',
       actionLabel: 'Open the board',
       place: 'events',
       action: 'dietary.open-board',

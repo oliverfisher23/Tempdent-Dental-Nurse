@@ -1,142 +1,174 @@
-import { useState } from 'react';
-import { ADDED_GUESTS, DISHES } from '@/content/activities';
-import { DietaryRedesignState } from '@/lib/redesign-dietary';
-import { PREPARATION_CHECKS } from '@/content/scenes/dietary-redesign';
+import { ADDED_GUESTS } from '@/content/activities';
 import { DIETARY_UI } from '@/content/scenes/dietary-interaction';
+import { PREPARATION_CHECKS } from '@/content/scenes/dietary-redesign';
+import {
+  COURSES,
+  PLANNED_DISH,
+  boardComplete,
+  decisionKey,
+  dietaryChanges,
+  dishById,
+  openItemsForTerence,
+  renderBoardNote,
+  type DietaryRedesignState,
+} from '@/lib/redesign-dietary';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { CheckCircle2, AlertTriangle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { ArrowLeft, CheckCircle2, Clock3 } from 'lucide-react';
 
 interface BoardWorkspaceProps {
-  boardNote: string;
-  onBoardNoteChange: (val: string) => void;
-  boardPosted: boolean;
-  onPostBoard: () => void;
   redesign: DietaryRedesignState;
+  boardPosted: boolean;
   onUpdateRedesign: (updater: (prev: DietaryRedesignState) => DietaryRedesignState) => void;
-  stateGuests: Record<string, { main: string | null; dessert: string | null }>;
+  onPostBoard: () => void;
   onBack?: () => void;
 }
 
-export function BoardWorkspace({
-  boardNote,
-  onBoardNoteChange,
-  boardPosted,
-  onPostBoard,
-  redesign,
-  onUpdateRedesign,
-  stateGuests,
-  onBack
-}: BoardWorkspaceProps) {
+const COURSE_LABEL = { main: 'Main', dessert: 'Dessert' } as const;
 
-  const generateDraft = () => {
-    let draft = "";
-    ADDED_GUESTS.forEach(g => {
-      const mainDec = redesign.decisions[`${g.id}:main`];
-      const dessertDec = redesign.decisions[`${g.id}:dessert`];
+/**
+ * The evening board as a structured record (D06/D11/D12): one entry per actual change,
+ * each with a learner-written reason and, for allergy-driven changes, a preparation
+ * status that stays pending. Nothing here can be marked cleared.
+ */
+export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPostBoard, onBack }: BoardWorkspaceProps) {
+  const copy = DIETARY_UI.board;
+  const changes = dietaryChanges({ redesign });
+  const complete = boardComplete({ redesign });
+  const canPost = !boardPosted && complete && redesign.serviceHoldAcknowledged;
+  const kept = ADDED_GUESTS.flatMap((guest) =>
+    COURSES.filter((course) => {
+      const dec = redesign.decisions[decisionKey(guest.id, course)];
+      return dec?.action && (!dec.proposedDishId || dec.proposedDishId === PLANNED_DISH[course]);
+    }).map((course) => ({ guest, course })),
+  );
 
-      const changes: string[] = [];
-
-      const plannedMain = 'beef';
-      if (mainDec?.proposedDishId && mainDec.proposedDishId !== plannedMain) {
-        const proposed = DISHES.find(d => d.id === mainDec.proposedDishId);
-        if (proposed) changes.push(`Braised beef shin → ${proposed.name} (Reason: ${mainDec.reason})`);
-      }
-
-      const plannedDessert = 'frangipane';
-      if (dessertDec?.proposedDishId && dessertDec.proposedDishId !== plannedDessert) {
-        const proposed = DISHES.find(d => d.id === dessertDec.proposedDishId);
-        if (proposed) changes.push(`Pistachio and raspberry frangipane tart, crème fraîche → ${proposed.name} (Reason: ${dessertDec.reason})`);
-      }
-
-      if (changes.length > 0) {
-        draft += `${g.name} · Table ${g.table}\n${changes.join('\n')}\n\n`;
-      }
-    });
-    return draft.trim();
-  };
-
-  const handleUseDraft = () => {
-    if (!boardPosted) onBoardNoteChange(generateDraft());
-  };
-
-  const hasUnresolvedChecks = Object.values(redesign.openQuestions).some(q => q && q.trim().length > 0) ||
-                              Object.values(redesign.decisions).some(d => d.action === 'ask' || d.category === 'information-missing');
+  const setReason = (key: string, reason: string) =>
+    onUpdateRedesign((prev) => ({ ...prev, board: { ...(prev.board ?? {}), [key]: { reason } } }));
 
   return (
-    <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 space-y-4 md:space-y-6 overflow-y-auto">
+    <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 gap-4 overflow-y-auto" data-testid="board-workspace">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{DIETARY_UI.board.title}</h2>
-          <p className="text-gray-400 mt-1 text-sm md:text-base">{DIETARY_UI.board.subtitle}</p>
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
+          <p className="text-gray-400 mt-1 text-sm md:text-base max-w-2xl">{copy.subtitle}</p>
         </div>
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          {onBack && (
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          {onBack && !boardPosted && (
             <Button variant="outline" onClick={onBack} className="text-black bg-white hover:bg-gray-200 border-none">
-              {DIETARY_UI.board.back}
+              <ArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" /> {copy.back}
             </Button>
           )}
-          <Button
-            onClick={onPostBoard}
-            disabled={boardPosted || !redesign.serviceHoldAcknowledged}
-            className="bg-red-600 text-white hover:bg-red-700 flex-1 md:flex-none font-semibold"
-          >
-            {boardPosted ? <><CheckCircle2 className="w-4 h-4 mr-2" /> {DIETARY_UI.board.posted}</> : DIETARY_UI.board.postAndSignOff}
+          <Button onClick={onPostBoard} disabled={!canPost} className="bg-red-600 text-white hover:bg-red-700 font-semibold" data-testid="post-board">
+            {boardPosted ? <><CheckCircle2 className="w-4 h-4 mr-2" aria-hidden="true" /> {copy.posted}</> : copy.postAndSignOff}
           </Button>
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row flex-1 gap-6 min-h-0 pb-10 md:pb-0">
-        <div className="flex-1 flex flex-col gap-3 md:gap-4 order-2 md:order-1">
-          <div className="flex justify-between items-end">
-            <span className="uppercase tracking-widest text-xs text-gray-500 font-bold">{DIETARY_UI.board.boardMessage}</span>
-            {!boardPosted && (
-              <Button variant="ghost" size="sm" onClick={handleUseDraft} className="text-gray-400 hover:text-white h-7 text-xs px-2 md:px-3">
-                {DIETARY_UI.board.insertDraft}
-              </Button>
-            )}
-          </div>
-          <Textarea
-            value={boardNote}
-            onChange={e => onBoardNoteChange(e.target.value)}
-            disabled={boardPosted}
-            className="flex-1 min-h-[250px] md:min-h-0 bg-gray-900 border-gray-700 text-white text-base md:text-lg font-mono resize-none focus-visible:ring-red-500 rounded-md shadow-inner p-3 md:p-4 leading-relaxed"
-            placeholder={DIETARY_UI.board.placeholder}
-          />
+      {boardPosted && (
+        <div role="status" className="rounded border border-emerald-900 bg-emerald-950/30 p-3 text-sm text-emerald-100" data-testid="board-posted-notice">
+          {copy.postedNotice}
         </div>
+      )}
 
-        <div className="w-full md:w-80 shrink-0 flex flex-col gap-6 order-1 md:order-2">
-          <div className="bg-gray-900 border border-gray-800 p-4 space-y-4 rounded-md">
-            <h4 className="font-bold text-red-500 uppercase tracking-widest text-xs">{DIETARY_UI.board.prepChecksTitle}</h4>
-
-            <div className="space-y-4">
-              <div className="bg-black border border-gray-800 p-3 text-sm space-y-2 rounded">
-                <div className="font-bold text-gray-300">{DIETARY_UI.board.supplierResponses}</div>
-                <div className="text-gray-400 leading-snug">{PREPARATION_CHECKS.pear}</div>
-              </div>
-
-              {hasUnresolvedChecks && (
-                <div className="bg-amber-950/30 border border-amber-900/50 p-3 text-sm flex gap-3 text-amber-200 rounded">
-                  <AlertTriangle className="w-5 h-5 shrink-0 text-amber-500 mt-0.5" />
-                  <p className="leading-snug">{DIETARY_UI.board.serviceHoldWarning}</p>
+      <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 pb-8">
+        <div className="flex-1 space-y-4">
+          <h3 className="uppercase tracking-widest text-xs text-gray-500 font-bold">{copy.changesTitle}</h3>
+          {changes.length === 0 && <p className="text-sm text-gray-400">{copy.noChanges}</p>}
+          {changes.map((change) => {
+            const original = dishById(change.originalDishId)!;
+            const replacement = dishById(change.replacementDishId)!;
+            const reasonId = `board-reason-${change.key}`;
+            return (
+              <article key={change.key} aria-labelledby={`${change.key}-board-title`} data-testid={`board-entry-${change.key}`} className="rounded-md border border-gray-800 bg-gray-900/70 p-4 space-y-3">
+                <div className="flex flex-wrap items-baseline justify-between gap-2">
+                  <h4 id={`${change.key}-board-title`} className="font-serif font-bold text-lg">
+                    Table {change.table} · {change.guestName} <span className="text-gray-400 font-sans text-sm font-normal">· {COURSE_LABEL[change.course]}</span>
+                  </h4>
                 </div>
-              )}
+                <dl className="grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
+                  <div>
+                    <dt className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{copy.original}</dt>
+                    <dd className="text-gray-300 line-through decoration-red-500/70">{original.name}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{copy.replacement}</dt>
+                    <dd className="text-white font-semibold">{replacement.name}</dd>
+                  </div>
+                </dl>
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-1">
+                    <label htmlFor={reasonId} className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{copy.reasonLabel}</label>
+                    {!boardPosted && change.decisionReason.trim() && change.boardReason !== change.decisionReason && (
+                      <Button variant="ghost" size="sm" className="h-6 text-xs text-gray-300 hover:text-white" onClick={() => setReason(change.key, change.decisionReason)} aria-label={`${copy.useMyReason}: ${change.guestName} ${COURSE_LABEL[change.course].toLowerCase()}`}>
+                        {copy.useMyReason}
+                      </Button>
+                    )}
+                  </div>
+                  <Textarea
+                    id={reasonId}
+                    value={change.boardReason}
+                    onChange={(event) => setReason(change.key, event.target.value)}
+                    disabled={boardPosted}
+                    placeholder={copy.reasonPlaceholder}
+                    className="bg-black border-gray-700 text-white text-sm min-h-[60px]"
+                  />
+                </div>
+                <div className={cn('rounded border p-2 text-xs flex items-center gap-2', change.preparationStatus === 'pending' ? 'border-amber-800 bg-amber-950/40 text-amber-100' : 'border-gray-800 bg-black text-gray-400')} data-testid={`prep-status-${change.key}`}>
+                  {change.preparationStatus === 'pending' && <Clock3 className="w-4 h-4 shrink-0 text-amber-400" aria-hidden="true" />}
+                  <span className="font-bold uppercase tracking-wider text-[10px] mr-1">{copy.prepStatusLabel}:</span>
+                  <span>{change.preparationStatus === 'pending' ? copy.prepPending : copy.prepNotRequired}</span>
+                </div>
+              </article>
+            );
+          })}
 
-              <label className="flex items-start gap-3 cursor-pointer p-3 bg-gray-800/50 border border-gray-700 hover:bg-gray-800 transition-colors rounded-md">
-                <Checkbox
-                  checked={redesign.serviceHoldAcknowledged}
-                  onCheckedChange={(c) => onUpdateRedesign(prev => ({...prev, serviceHoldAcknowledged: c === true}))}
-                  disabled={boardPosted}
-                  className="mt-0.5 bg-black border-gray-500"
-                />
-                <span className="text-sm leading-tight text-gray-300 font-medium">
-                  {DIETARY_UI.board.holdCheckboxLabel}
-                </span>
-              </label>
+          {kept.length > 0 && (
+            <div className="rounded border border-gray-800 bg-black p-3 text-xs text-gray-400">
+              <div className="font-bold uppercase tracking-wider text-[10px] text-gray-500 mb-1">{copy.keptTitle}</div>
+              <ul className="space-y-0.5">
+                {kept.map(({ guest, course }) => (
+                  <li key={`${guest.id}:${course}`}>
+                    {guest.name}, table {guest.table} · {COURSE_LABEL[course].toLowerCase()}: {dishById(PLANNED_DISH[course])!.name}
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
         </div>
+
+        <aside className="w-full lg:w-96 shrink-0 space-y-4" aria-label={copy.forTerenceTitle}>
+          <div className="rounded-md border border-gray-800 bg-gray-900 p-4 space-y-3">
+            <h3 className="font-bold text-red-500 uppercase tracking-widest text-xs">{copy.forTerenceTitle}</h3>
+            <ul className="space-y-2 text-sm text-gray-200" data-testid="open-items">
+              {openItemsForTerence({ redesign }).map((item) => (
+                <li key={item} className="rounded border border-gray-800 bg-black p-2 leading-snug">{item}</li>
+              ))}
+            </ul>
+            <p className="text-xs text-gray-400 leading-snug">{PREPARATION_CHECKS.pear}</p>
+          </div>
+
+          <label className={cn('flex items-start gap-3 rounded-md border p-3', boardPosted ? 'border-gray-800 bg-black' : 'cursor-pointer border-gray-700 bg-gray-800/50 hover:bg-gray-800')}>
+            <Checkbox
+              checked={redesign.serviceHoldAcknowledged}
+              onCheckedChange={(checked) => onUpdateRedesign((prev) => ({ ...prev, serviceHoldAcknowledged: checked === true }))}
+              disabled={boardPosted}
+              aria-label={copy.holdCheckboxLabel}
+              data-testid="hold-acknowledged"
+              className="mt-0.5 bg-black border-gray-500"
+            />
+            <span className="text-sm leading-tight text-gray-300 font-medium">{copy.holdCheckboxLabel}</span>
+          </label>
+
+          <div className="rounded-md border border-gray-800 bg-[#111] p-4">
+            <h3 className="font-bold text-gray-300 uppercase tracking-widest text-xs mb-2">{copy.boardPreviewTitle}</h3>
+            <pre className="whitespace-pre-wrap font-mono text-xs text-gray-200 leading-relaxed" data-testid="board-preview">
+              {changes.length ? renderBoardNote({ redesign }) : copy.noChanges}
+            </pre>
+          </div>
+        </aside>
       </div>
     </div>
   );

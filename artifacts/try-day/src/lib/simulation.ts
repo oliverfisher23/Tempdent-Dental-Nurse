@@ -257,7 +257,7 @@ export function initialTaskStates(): TaskStates {
       studentSigned: false,
     },
     'check-the-dietary-list': {
-      redesign: { version: 1, decisions: {}, serviceHoldAcknowledged: false, rowReviewConfirmed: {}, openQuestions: {} },
+      redesign: { version: 1, decisions: {}, serviceHoldAcknowledged: false, rowReviewConfirmed: {}, openQuestions: {}, sheetRead: false, hintLevels: {}, board: {}, courseReviewed: {} },
       chart: Object.fromEntries(DISHES.map((d) => [d.id, []])),
       flaggedDishes: [],
       chartChecked: false,
@@ -337,9 +337,16 @@ export function testProgress(target: TaskId | null | undefined): Progress {
   const dietary: DietaryState = {
     redesign: {
       version: 1,
+      sheetRead: true,
       rowReviewConfirmed: Object.fromEntries(DISHES.map((dish) => [dish.id, true])),
-      openQuestions: { frangipane: 'Confirm allergy wording, supplier information and preparation/service controls with Terence.' },
+      openQuestions: { pear: 'How the pear has been handled and plated in the pastry fridge, before it goes to table 3.' },
       serviceHoldAcknowledged: true,
+      hintLevels: {},
+      courseReviewed: { 'priya:main': true, 'priya:dessert': true, 'tom:main': true, 'tom:dessert': true, 'anna:main': true, 'anna:dessert': true },
+      board: {
+        'priya:dessert': { reason: 'Tree-nut and peanut allergy. The frangipane has ground almonds through it and pistachios on top; the pear card lists milk only.' },
+        'tom:main': { reason: 'Vegetarian. The beef card lists beef shin and beef stock; the Wellington is the vegetarian main.' },
+      },
       decisions: {
         'priya:main': { action: 'keep', proposedDishId: 'beef', category: 'no-conflict', evidence: ['Beef shin'], reason: 'No nuts are listed in the supplied main ingredients; preparation checks remain pending.' },
         'priya:dessert': { action: 'swap', proposedDishId: 'pear', category: 'ingredient-conflict', evidence: ['Ground almonds', 'Pistachios', 'Almonds are mixed through the prepared tart'], reason: 'Almonds run throughout the filling and pistachios are present. Removing visible nuts cannot fix this. Propose pear, which still contains milk, subject to preparation checks.' },
@@ -352,7 +359,11 @@ export function testProgress(target: TaskId | null | undefined): Progress {
     chart: Object.fromEntries(DISHES.map((dish) => [dish.id, [...dish.allergens]])),
     flaggedDishes: [], chartChecked: true,
     guests: { priya: { main: 'beef', dessert: 'pear' }, tom: { main: 'wellington', dessert: 'frangipane' }, anna: { main: 'beef', dessert: 'frangipane' } },
-    boardNote: 'Table 3 Priya Nair: frangipane → pear for the nut requirement; milk remains. Table 6 Tom Reid: beef → Wellington, vegetarian. Proposals on hold for Terence’s preparation and service checks.', boardPosted: true,
+    boardNote: [
+      'Table 3 · Priya Nair · Dessert: Pistachio and raspberry frangipane tart, crème fraîche → Poached pear, vanilla ice cream · Reason: Tree-nut and peanut allergy. The frangipane has ground almonds through it and pistachios on top; the pear card lists milk only. · Preparation check pending: ask Terence before service',
+      'Table 6 · Tom Reid · Main: Braised beef shin, horseradish mash, glazed carrots, red wine jus → Wild mushroom, spinach and ricotta Wellington · Reason: Vegetarian. The beef card lists beef shin and beef stock; the Wellington is the vegetarian main.',
+      "Open for Terence: Tom Reid's starter, table 6: The smoked haddock tart is not vegetarian and there is no vegetarian starter on the cards. This needs a separate decision from Terence; it is not approved here.",
+    ].join('\n'), boardPosted: true,
   };
   const close: CloseState = {
     redesign: {
@@ -570,15 +581,17 @@ export function boardNoteIsUseful(note: string): boolean {
 
 export function evaluateDietary(s: DietaryState): Evaluation {
   const chartRight = wrongChartRows(s.chart).length === 0;
-  const allAllergensConsidered = ALLERGENS.length === 14
-    && (!s.redesign || DISHES.every((dish) => s.redesign?.rowReviewConfirmed?.[dish.id] === true));
   const guestsDone = ADDED_GUESTS.every((g) => guestAssignmentIsSafe(g.id, s.guests[g.id] ?? { main: null, dessert: null }));
-  const checklist: ChecklistItem[] = [
-    { id: 'chart', label: 'Every dish marked against all fourteen allergens', met: chartRight && allAllergensConsidered && s.chartChecked },
-    { id: 'guests', label: 'Each of the three added guests has a dish written against their name', met: guestsDone },
-    { id: 'board', label: 'The changes are up on the evening board', met: s.boardPosted && guestsDone && boardNoteIsUseful(s.boardNote) },
-    ...dietaryRedesignChecklist(s),
-  ];
+  // The menu-first record checks each clause of the same done-when more narrowly (D11):
+  // reviewed rows, evidence-backed decisions, a structured board. A legacy record keeps
+  // its original checks, so a signed-off day gains no new requirements.
+  const checklist: ChecklistItem[] = s.redesign
+    ? dietaryRedesignChecklist(s).map((item) => (item.id === 'guests' ? { ...item, met: item.met && guestsDone } : item))
+    : [
+        { id: 'chart', label: 'Every dish marked against all fourteen allergens', met: chartRight && ALLERGENS.length === 14 && s.chartChecked },
+        { id: 'guests', label: 'Each of the three added guests has a dish written against their name', met: guestsDone },
+        { id: 'board', label: 'The changes are up on the evening board', met: s.boardPosted && guestsDone && boardNoteIsUseful(s.boardNote) },
+      ];
   return { done: checklist.every((c) => c.met), checklist };
 }
 
@@ -627,10 +640,12 @@ export function complicationRevealed(id: TaskId, tasks: TaskStates): boolean {
     }
     case 'chill-the-event-batch':
       return tasks[id].readings[90] !== undefined;
-    case 'check-the-dietary-list':
-      return tasks[id].redesign
-        ? !!tasks[id].redesign?.decisions['priya:dessert']?.action
-        : tasks[id].chartChecked;
+    case 'check-the-dietary-list': {
+      const r = tasks[id].redesign;
+      // The nut-dessert complication surfaces once the learner has taken a position on
+      // Priya's dessert, or asked Terence about it (D09); never before the chart review.
+      return r ? !!r.decisions['priya:dessert']?.action || (r.hintLevels?.['priya:dessert'] ?? 0) > 0 : tasks[id].chartChecked;
+    }
     case 'hand-the-kitchen-on':
       return tasks[id].handedOver;
   }

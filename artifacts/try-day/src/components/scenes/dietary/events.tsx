@@ -1,85 +1,69 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PLACES } from '@/content/kitchen';
+import { ADDED_GUESTS } from '@/content/activities';
+import { DIETARY_UI } from '@/content/scenes/dietary-interaction';
+import { kitchenAudio } from '@/lib/audio';
+import type { DietaryState } from '@/lib/simulation';
+import {
+  dietaryDecisionsReady,
+  getDietaryRedesignStage,
+  type DecisionFeedback,
+  type DietaryCourse,
+  type DietaryDecision,
+  type DietaryRedesignState,
+} from '@/lib/redesign-dietary';
 import { Hotspot } from '../../kitchen/hotspot';
 import { CloseUp } from '../../kitchen/close-up';
-import { kitchenAudio } from '@/lib/audio';
 import { useKitchenAction } from '../../kitchen/kitchen-context';
 import { ChartWorkspace } from './chart-workspace';
 import { GuestsWorkspace } from './guests-workspace';
 import { BoardWorkspace } from './board-workspace';
-import { DietaryRedesignState } from '@/lib/redesign-dietary';
-import { wrongChartRows } from '@/lib/simulation';
-import { DISHES, ADDED_GUESTS } from '@/content/activities';
-import { getDietaryRedesignStage } from '@/lib/redesign-dietary';
 
-export function EventsScene({
-  stateChart,
-  flaggedDishes,
-  chartChecked,
-  onToggleAllergen,
-  onCheckChart,
-  boardNote,
-  onBoardNoteChange,
-  boardPosted,
-  onPostBoard,
-  allGuestsSafe,
-  stateGuests,
-  onAssignGuest,
-  redesign,
-  onUpdateRedesign,
-}: {
-  stateChart: Record<string, string[]>;
-  flaggedDishes: string[];
-  chartChecked: boolean;
+type Workspace = 'chart' | 'guests' | 'board' | null;
+
+export interface EventsSceneProps {
+  state: DietaryState;
+  redesign: DietaryRedesignState;
   onToggleAllergen: (dishId: string, allergenId: string) => void;
   onCheckChart: () => void;
-  boardNote: string;
-  onBoardNoteChange: (val: string) => void;
-  boardPosted: boolean;
-  onPostBoard: () => void;
-  allGuestsSafe: boolean;
-  stateGuests: Record<string, any>;
-  onAssignGuest: (guestId: string, field: 'main' | 'dessert', val: string) => void;
-  redesign?: DietaryRedesignState;
+  onRequestChartHint: (dishId: string) => void;
+  onDecide: (guestId: string, course: DietaryCourse, patch: Partial<DietaryDecision>) => void;
+  onCheckDecision: (guestId: string, course: DietaryCourse) => void;
+  decisionFeedback: Record<string, DecisionFeedback | undefined>;
   onUpdateRedesign: (updater: (prev: DietaryRedesignState) => DietaryRedesignState) => void;
-}) {
-  const [activeWorkspace, setActiveWorkspace] = useState<'chart' | 'board' | 'guests' | null>(null);
+  onPostBoard: () => void;
+}
 
-  const stage = getDietaryRedesignStage({
-    chart: stateChart,
-    flaggedDishes,
-    chartChecked,
-    guests: stateGuests,
-    boardNote,
-    boardPosted,
-    redesign: redesign as any,
-  } as any);
+/** The events office: chart, guest decisions and the evening board, opened in that order. */
+export function EventsScene({
+  state,
+  redesign,
+  onToggleAllergen,
+  onCheckChart,
+  onRequestChartHint,
+  onDecide,
+  onCheckDecision,
+  decisionFeedback,
+  onUpdateRedesign,
+  onPostBoard,
+}: EventsSceneProps) {
+  const [workspace, setWorkspace] = useState<Workspace>(null);
+  // Lifted so a trip back to the chart returns to the same guest.
+  const [activeGuestId, setActiveGuestId] = useState<string>(ADDED_GUESTS[0].id);
+  const stage = getDietaryRedesignStage(state);
+  const chartOpen = stage !== 'sheet';
+  const guestsOpen = stage === 'guests' || stage === 'board' || stage === 'done';
+  const boardOpen = stage === 'board' || stage === 'done';
+  const decisionsReady = dietaryDecisionsReady(redesign, state.guests, state.chart);
 
-  useKitchenAction('dietary.open-chart', () => setActiveWorkspace('chart'));
-  useKitchenAction('dietary.open-board', () => {
-    if (stage === 'board' || stage === 'done') {
-      setActiveWorkspace('board');
-    }
-  });
-  useKitchenAction('dietary.open-function-sheet', () => {
-    if (stage === 'guests' || stage === 'board' || stage === 'done') {
-      setActiveWorkspace('guests');
-    }
-  });
+  const open = (next: Exclude<Workspace, null>) => {
+    kitchenAudio.play('page');
+    setWorkspace(next);
+  };
 
-  useEffect(() => {
-    if (!redesign) {
-      onUpdateRedesign(() => ({
-        version: 1,
-        decisions: {},
-        serviceHoldAcknowledged: false,
-        rowReviewConfirmed: {},
-        openQuestions: {},
-      }));
-    }
-  }, [redesign, onUpdateRedesign]);
-
-  if (!redesign) return null;
+  useKitchenAction('dietary.open-chart', () => { if (chartOpen) open('chart'); });
+  useKitchenAction('dietary.open-guests', () => { if (guestsOpen) open('guests'); });
+  useKitchenAction('dietary.open-board', () => { if (boardOpen) open('board'); });
 
   const backdrop = PLACES['events'].backdrop;
 
@@ -88,103 +72,89 @@ export function EventsScene({
       <img src={backdrop} alt="" className="absolute inset-0 w-full h-full object-cover opacity-50" decoding="async" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-black/60 pointer-events-none" />
 
-      {activeWorkspace === null && (
+      {workspace === null && (
         <>
           <Hotspot
-            x={65}
-            y={40}
-            label="Allergen matrix & recipe cards"
-            state={stage !== 'chart' ? 'done' : 'active'}
-            onClick={() => { kitchenAudio.play('page'); setActiveWorkspace('chart'); }}
+            x={62}
+            y={42}
+            label={DIETARY_UI.chart.title}
+            hint={chartOpen ? undefined : 'Read the function sheet at the pass first'}
+            state={stage === 'chart' ? 'active' : chartOpen ? 'done' : 'todo'}
+            onClick={() => { if (chartOpen) open('chart'); }}
           />
-
           <Hotspot
-            x={15}
-            y={25}
-            label="Function sheet & guest decisions"
-            state={stage === 'guests' ? 'active' : (stage === 'chart' ? 'todo' : 'done')}
-            onClick={() => {
-              if (stage !== 'chart') {
-                kitchenAudio.play('page');
-                setActiveWorkspace('guests');
-              }
-            }}
+            x={18}
+            y={30}
+            label={DIETARY_UI.guests.title}
+            hint={guestsOpen ? undefined : 'Opens once Terence has been through your chart'}
+            state={stage === 'guests' ? 'active' : guestsOpen ? 'done' : 'todo'}
+            onClick={() => { if (guestsOpen) open('guests'); }}
           />
-
           <Hotspot
-            x={80}
-            y={35}
-            label="Evening board"
-            state={stage === 'board' ? 'active' : (stage === 'done' ? 'done' : 'todo')}
-            onClick={() => {
-              if (stage === 'board' || stage === 'done') {
-                kitchenAudio.play('page');
-                setActiveWorkspace('board');
-              }
-            }}
+            x={82}
+            y={32}
+            label={DIETARY_UI.board.title}
+            hint={boardOpen ? undefined : 'Opens once every main and dessert is decided'}
+            state={stage === 'board' ? 'active' : stage === 'done' ? 'done' : 'todo'}
+            onClick={() => { if (boardOpen) open('board'); }}
           />
         </>
       )}
 
       <CloseUp
-        isOpen={activeWorkspace === 'chart'}
-        title="Allergen Matrix"
-        onClose={() => setActiveWorkspace(null)}
-        className="max-w-[1200px] w-full h-full md:w-[95vw] md:h-[90vh] p-0 rounded-none md:rounded-lg"
+        isOpen={workspace === 'chart'}
+        title={DIETARY_UI.chart.title}
+        onClose={() => setWorkspace(null)}
+        className="max-w-[1400px] w-full h-full md:w-[96vw] md:h-[92vh] p-0 rounded-none md:rounded-lg"
       >
         <ChartWorkspace
-          chart={stateChart}
+          chart={state.chart}
+          flaggedDishes={state.flaggedDishes}
+          chartChecked={state.chartChecked}
           redesign={redesign}
-          flaggedDishes={flaggedDishes}
           onToggleAllergen={onToggleAllergen}
           onUpdateRedesign={onUpdateRedesign}
-          onReviewWithTerence={onCheckChart}
-          chartChecked={chartChecked}
-          onNext={() => {
-            kitchenAudio.play('page');
-            setActiveWorkspace('guests');
-          }}
+          onCheckChart={onCheckChart}
+          onRequestHint={onRequestChartHint}
+          onNext={guestsOpen ? () => open('guests') : undefined}
+          onBack={() => setWorkspace(null)}
         />
       </CloseUp>
 
       <CloseUp
-        isOpen={activeWorkspace === 'guests'}
-        title="Guest Decisions"
-        onClose={() => setActiveWorkspace(null)}
-        className="max-w-[1400px] w-full h-full md:w-[95vw] md:h-[90vh] p-0 flex flex-col rounded-none md:rounded-lg"
+        isOpen={workspace === 'guests'}
+        title={DIETARY_UI.guests.title}
+        onClose={() => setWorkspace(null)}
+        className="max-w-[1400px] w-full h-full md:w-[96vw] md:h-[92vh] p-0 rounded-none md:rounded-lg"
       >
-        <div className="flex-1 flex flex-col min-h-0 bg-white rounded-none md:rounded-b-lg overflow-hidden">
-          <div className="min-h-0 flex-1 overflow-hidden" data-testid="guest-decisions-scroll">
-            <GuestsWorkspace
-              redesign={redesign}
-              onUpdateRedesign={onUpdateRedesign}
-              stateGuests={stateGuests}
-              onAssignGuest={onAssignGuest}
-              stateChart={stateChart}
-            />
-          </div>
-          {/* Note: Internal navigation is now handled in GuestsWorkspace, but we can keep a fail-safe fallback or just rely on the workspace ones */}
-        </div>
+        <GuestsWorkspace
+          chart={state.chart}
+          redesign={redesign}
+          guests={state.guests}
+          activeGuestId={activeGuestId}
+          onSelectGuest={setActiveGuestId}
+          onDecide={onDecide}
+          onCheckWithTerence={onCheckDecision}
+          feedback={decisionFeedback}
+          decisionsReady={decisionsReady}
+          onOpenChart={() => open('chart')}
+          onNext={() => open('board')}
+          onBack={() => setWorkspace(null)}
+        />
       </CloseUp>
 
       <CloseUp
-        isOpen={activeWorkspace === 'board'}
-        title="Evening Board"
-        onClose={() => setActiveWorkspace(null)}
-        className="max-w-5xl w-full h-full md:w-[90vw] md:h-[80vh] p-0 rounded-none md:rounded-lg"
+        isOpen={workspace === 'board'}
+        title={DIETARY_UI.board.title}
+        onClose={() => setWorkspace(null)}
+        className="max-w-[1400px] w-full h-full md:w-[96vw] md:h-[92vh] p-0 rounded-none md:rounded-lg"
       >
         <BoardWorkspace
-          boardNote={boardNote}
-          onBoardNoteChange={onBoardNoteChange}
-          boardPosted={boardPosted}
-          onPostBoard={onPostBoard}
           redesign={redesign}
+          boardPosted={state.boardPosted}
           onUpdateRedesign={onUpdateRedesign}
-          stateGuests={stateGuests}
-          onBack={() => {
-            kitchenAudio.play('page');
-            setActiveWorkspace('guests');
-          }}
+          onPostBoard={onPostBoard}
+          onBack={() => open('guests')}
         />
       </CloseUp>
     </div>

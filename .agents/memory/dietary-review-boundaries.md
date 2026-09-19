@@ -15,6 +15,10 @@ description: Approval and safety boundaries for using the dietary learning-desig
   **Why:** the representative had no employer evidence to supply and asked the reviewer to decide; scenario parameters (starting plan, pear allocation, guest wording) can be set by a designer, but supplier declarations, cross-contact procedures and chef's safety assurances cannot be invented without fabricating safety evidence. The representative's job role was not recorded, so treat the register as the working approval and keep the employer review before rollout.
   **How to apply:** build to the register rather than re-asking the same questions; keep tree nuts and peanuts as separate exclusions; never add a "safe to serve" confirmation; reopen the open evidence items only if the employer later wants a service-clearance claim.
 
+- A working Task 4 build is not the employer's approval of its allergy content.
+  **Why:** the register was agreed under delegation without employer evidence, so the outstanding employer review is a rollout condition, not something a finished interface satisfies.
+  **How to apply:** extend the built flow rather than re-planning it; any new wording that could read as service clearance still needs the employer, not a designer.
+
 - Function-sheet accommodation notes are part of the ingredient evidence and must agree with the matrix truth.
   **Why:** a "beef without jus thickening" note for a coeliac guest implied gluten that the beef row did not carry; a sharp learner would read the chart as contradicting its own sheet.
   **How to apply:** when changing any recipe card or allergen row, re-read the existing-requirements notes and keep both consistent, or change both together.

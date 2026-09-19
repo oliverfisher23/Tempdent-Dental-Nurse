@@ -344,20 +344,20 @@ export const CHILL_LINES = {
 
 /** The fourteen allergens that have to be declared by law in the UK. */
 export const ALLERGENS = [
-  { id: 'celery', label: 'Celery' },
-  { id: 'gluten', label: 'Cereals containing gluten' },
-  { id: 'crustaceans', label: 'Crustaceans' },
-  { id: 'eggs', label: 'Eggs' },
-  { id: 'fish', label: 'Fish' },
-  { id: 'lupin', label: 'Lupin' },
-  { id: 'milk', label: 'Milk' },
-  { id: 'molluscs', label: 'Molluscs' },
-  { id: 'mustard', label: 'Mustard' },
-  { id: 'nuts', label: 'Nuts' },
-  { id: 'peanuts', label: 'Peanuts' },
-  { id: 'sesame', label: 'Sesame' },
-  { id: 'soya', label: 'Soya' },
-  { id: 'sulphites', label: 'Sulphur dioxide and sulphites' },
+  { id: 'celery', label: 'Celery', short: 'Celery' },
+  { id: 'gluten', label: 'Cereals containing gluten', short: 'Gluten' },
+  { id: 'crustaceans', label: 'Crustaceans', short: 'Crustaceans' },
+  { id: 'eggs', label: 'Eggs', short: 'Eggs' },
+  { id: 'fish', label: 'Fish', short: 'Fish' },
+  { id: 'lupin', label: 'Lupin', short: 'Lupin' },
+  { id: 'milk', label: 'Milk', short: 'Milk' },
+  { id: 'molluscs', label: 'Molluscs', short: 'Molluscs' },
+  { id: 'mustard', label: 'Mustard', short: 'Mustard' },
+  { id: 'nuts', label: 'Nuts (tree nuts)', short: 'Nuts' },
+  { id: 'peanuts', label: 'Peanuts', short: 'Peanuts' },
+  { id: 'sesame', label: 'Sesame', short: 'Sesame' },
+  { id: 'soya', label: 'Soya', short: 'Soya' },
+  { id: 'sulphites', label: 'Sulphur dioxide and sulphites', short: 'Sulphites' },
 ] as const;
 
 export type AllergenId = (typeof ALLERGENS)[number]['id'];
@@ -366,6 +366,8 @@ export interface Dish {
   id: string;
   course: 'Starter' | 'Main' | 'Vegetarian main' | 'Dessert' | 'Alternative dessert';
   name: string;
+  /** How the kitchen refers to the dish in speech: "the beef", "the frangipane". */
+  short: string;
   /** Ingredient list from the recipe card. Allergens are named plainly so a student can find them. */
   ingredients: string[];
   /** The truth the chart is checked against. */
@@ -379,6 +381,7 @@ export const DISHES: Dish[] = [
   {
     id: 'tart',
     course: 'Starter',
+    short: 'haddock tart',
     name: 'Smoked haddock and leek tart, watercress',
     ingredients: ['Shortcrust pastry (wheat flour, butter)', 'Smoked haddock', 'Leeks', 'Double cream', 'Eggs', 'Watercress', 'Lemon'],
     allergens: ['gluten', 'fish', 'milk', 'eggs'],
@@ -387,6 +390,7 @@ export const DISHES: Dish[] = [
   {
     id: 'beef',
     course: 'Main',
+    short: 'beef',
     name: 'Braised beef shin, horseradish mash, glazed carrots, red wine jus',
     ingredients: ['Beef shin', 'Onion, carrot and celery', 'Red wine (contains sulphites)', 'Beef stock', 'Potatoes', 'Butter and milk', 'Horseradish', 'Carrots', 'Thyme'],
     allergens: ['celery', 'sulphites', 'milk'],
@@ -395,6 +399,7 @@ export const DISHES: Dish[] = [
   {
     id: 'wellington',
     course: 'Vegetarian main',
+    short: 'Wellington',
     name: 'Wild mushroom, spinach and ricotta Wellington',
     ingredients: ['Puff pastry (wheat flour, butter)', 'Wild mushrooms', 'Spinach', 'Ricotta', 'Egg wash', 'Shallots', 'Thyme'],
     allergens: ['gluten', 'milk', 'eggs'],
@@ -403,20 +408,22 @@ export const DISHES: Dish[] = [
   {
     id: 'frangipane',
     course: 'Dessert',
+    short: 'frangipane',
     name: 'Pistachio and raspberry frangipane tart, crème fraîche',
     ingredients: ['Sweet pastry (wheat flour, butter, egg)', 'Ground almonds', 'Pistachios', 'Butter', 'Eggs', 'Sugar', 'Raspberries', 'Crème fraîche'],
     allergens: ['gluten', 'nuts', 'milk', 'eggs'],
     alreadyMade: true,
-    note: 'Made this morning. Nuts through the whole tart; it cannot be adapted.',
+    note: 'Made this morning. Ground almonds are mixed through the whole tart.',
   },
   {
     id: 'pear',
     course: 'Alternative dessert',
+    short: 'pear',
     name: 'Poached pear, vanilla ice cream',
     ingredients: ['Pears', 'Sugar', 'Vanilla', 'Vanilla ice cream (milk)'],
     allergens: ['milk'],
     alreadyMade: true,
-    note: 'In the pastry fridge for the bistro. Twelve portions available.',
+    note: 'In the pastry fridge. Twelve portions made for the bistro; the event can take what it needs.',
   },
 ];
 
@@ -436,7 +443,7 @@ export const FUNCTION_SHEET = {
   /** Requirements already on the earlier version of the sheet, already catered for. */
   existingRequirements: [
     { guest: 'Table 2, one guest', requirement: 'Vegetarian', catered: 'Wellington' },
-    { guest: 'Table 5, one guest', requirement: 'Coeliac (no gluten)', catered: 'Plated separately: no tart pastry, beef without jus thickening, poached pear' },
+    { guest: 'Table 5, one guest', requirement: 'Coeliac (no gluten)', catered: 'Plated separately: no tart pastry, poached pear' },
     { guest: 'Table 7, two guests', requirement: 'Vegetarian', catered: 'Wellington' },
   ],
 };
@@ -452,7 +459,7 @@ export interface AddedGuest {
 }
 
 export const ADDED_GUESTS: AddedGuest[] = [
-  { id: 'priya', name: 'Priya Nair', table: 3, requirement: 'Nut allergy (severe). Carries an adrenaline pen.', mustAvoid: ['nuts', 'peanuts'], vegetarian: false },
+  { id: 'priya', name: 'Priya Nair', table: 3, requirement: 'Tree-nut and peanut allergy (severe). Carries an adrenaline pen.', mustAvoid: ['nuts', 'peanuts'], vegetarian: false },
   { id: 'tom', name: 'Tom Reid', table: 6, requirement: 'Vegetarian', mustAvoid: [], vegetarian: true },
   { id: 'anna', name: 'Anna Kowalski', table: 9, requirement: 'None stated', mustAvoid: [], vegetarian: false },
 ];

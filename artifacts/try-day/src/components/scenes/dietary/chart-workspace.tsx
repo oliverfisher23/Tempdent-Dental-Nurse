@@ -1,230 +1,338 @@
 import { useState } from 'react';
-import { DISHES, ALLERGENS } from '@/content/activities';
-import { DietaryRedesignState } from '@/lib/redesign-dietary';
+import { ALLERGENS, DISHES, type Dish } from '@/content/activities';
+import { ALLERGEN_REFERENCE } from '@/content/scenes/dietary-redesign';
 import { DIETARY_UI } from '@/content/scenes/dietary-interaction';
+import {
+  chartHint,
+  hintTier,
+  rowStatus,
+  type DietaryRedesignState,
+  type RowStatus,
+} from '@/lib/redesign-dietary';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { CheckCircle2, AlertCircle, ChevronRight } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, HelpCircle, MessageSquare } from 'lucide-react';
 
 interface ChartWorkspaceProps {
   chart: Record<string, string[]>;
-  redesign: DietaryRedesignState;
   flaggedDishes: string[];
+  chartChecked: boolean;
+  redesign: DietaryRedesignState;
   onToggleAllergen: (dishId: string, allergenId: string) => void;
   onUpdateRedesign: (updater: (prev: DietaryRedesignState) => DietaryRedesignState) => void;
-  onReviewWithTerence: () => void;
-  chartChecked: boolean;
+  onCheckChart: () => void;
+  onRequestHint: (dishId: string) => void;
   onNext?: () => void;
+  onBack?: () => void;
+}
+
+const STATUS_STYLES: Record<RowStatus, string> = {
+  'not-started': 'bg-gray-800 text-gray-300 border-gray-700',
+  'in-progress': 'bg-sky-950 text-sky-200 border-sky-800',
+  reviewed: 'bg-emerald-950 text-emerald-200 border-emerald-800',
+  'reviewed-question': 'bg-amber-950 text-amber-200 border-amber-800',
+  flagged: 'bg-red-950 text-red-200 border-red-800',
+};
+
+function StatusChip({ status, className }: { status: RowStatus; className?: string }) {
+  return (
+    <span className={cn('inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap', STATUS_STYLES[status], className)}>
+      {status === 'flagged' && <AlertTriangle className="w-3 h-3" aria-hidden="true" />}
+      {status === 'reviewed' && <CheckCircle2 className="w-3 h-3" aria-hidden="true" />}
+      {status === 'reviewed-question' && <HelpCircle className="w-3 h-3" aria-hidden="true" />}
+      {DIETARY_UI.chart.legend[status]}
+    </span>
+  );
 }
 
 export function ChartWorkspace({
   chart,
-  redesign,
   flaggedDishes,
+  chartChecked,
+  redesign,
   onToggleAllergen,
   onUpdateRedesign,
-  onReviewWithTerence,
-  chartChecked,
-  onNext
+  onCheckChart,
+  onRequestHint,
+  onNext,
+  onBack,
 }: ChartWorkspaceProps) {
-  const [activeDishId, setActiveDishId] = useState<string>(DISHES[0].id);
-  const activeDish = DISHES.find(d => d.id === activeDishId)!;
+  const copy = DIETARY_UI.chart;
+  const isMobile = useIsMobile();
+  const [activeDishId, setActiveDishId] = useState<string>(flaggedDishes[0] ?? DISHES[0].id);
+  const [referenceId, setReferenceId] = useState<string | null>(null);
+  const activeDish = DISHES.find((dish) => dish.id === activeDishId) ?? DISHES[0];
+  const activeIndex = DISHES.findIndex((dish) => dish.id === activeDish.id);
+  const stateView = { chart, flaggedDishes, redesign };
+  const remaining = DISHES.filter((dish) => !redesign.rowReviewConfirmed?.[dish.id]).length;
 
-  const handleRowReviewChange = (dishId: string, checked: boolean) => {
-    onUpdateRedesign(prev => ({
-      ...prev,
-      rowReviewConfirmed: {
-        ...prev.rowReviewConfirmed,
-        [dishId]: checked
-      }
-    }));
+  const setConfirmed = (dishId: string, confirmed: boolean) =>
+    onUpdateRedesign((prev) => ({ ...prev, rowReviewConfirmed: { ...prev.rowReviewConfirmed, [dishId]: confirmed } }));
+  const setQuestion = (dishId: string, value: string) =>
+    onUpdateRedesign((prev) => ({ ...prev, openQuestions: { ...prev.openQuestions, [dishId]: value } }));
+
+  const cellContent = (dish: Dish, allergenId: string) => {
+    const marked = (chart[dish.id] ?? []).includes(allergenId);
+    const status = rowStatus(stateView, dish.id);
+    if (marked) return <span aria-hidden="true" className="block w-3 h-3 rounded-full bg-red-500 mx-auto" />;
+    if (status === 'reviewed' || status === 'reviewed-question') return <span aria-hidden="true" className="text-gray-500">·</span>;
+    return null;
   };
 
-  const handleOpenQuestionChange = (dishId: string, question: string) => {
-    onUpdateRedesign(prev => ({
-      ...prev,
-      openQuestions: {
-        ...prev.openQuestions,
-        [dishId]: question
-      }
-    }));
-  };
+  const renderRecipeCard = (dish: Dish) => {
+    const status = rowStatus(stateView, dish.id);
+    const flagged = flaggedDishes.includes(dish.id);
+    const tier = hintTier(redesign, `chart:${dish.id}`);
+    const pointer = flagged ? chartHint(dish.id, chart[dish.id] ?? [], Math.max(1, tier)) : null;
+    return (
+      <div className="space-y-4" data-testid={`recipe-card-${dish.id}`}>
+        <div className="bg-[#f7f3e8] text-zinc-900 rounded-sm p-4 shadow-inner border border-amber-100">
+          <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">{copy.recipeEvidence} · {dish.course}</div>
+          <h3 className="font-serif font-bold text-lg leading-tight mt-1">{dish.name}</h3>
+          <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mt-3">{copy.ingredients}</div>
+          <ul className="list-disc pl-5 text-sm mt-1 space-y-0.5">
+            {dish.ingredients.map((ingredient) => (
+              <li key={ingredient}>{ingredient}</li>
+            ))}
+          </ul>
+          {dish.note && (
+            <p className="mt-3 text-sm border-t border-amber-200 pt-2">
+              <span className="font-bold">{copy.notePrefix}:</span> {dish.note}
+            </p>
+          )}
+        </div>
 
-  const allRowsConfirmed = DISHES.every(d => redesign.rowReviewConfirmed[d.id]);
+        {pointer && (
+          <div role="status" className="bg-red-950/40 border border-red-900 rounded p-3 text-sm text-red-100 flex gap-2" data-testid={`chart-pointer-${dish.id}`}>
+            <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-red-400" aria-hidden="true" />
+            <div>
+              <div className="text-[10px] uppercase tracking-widest text-red-300 font-bold">Terence</div>
+              <p>{pointer}</p>
+              <div className="flex items-center gap-3 mt-2">
+                <Button size="sm" variant="outline" className="h-7 text-xs bg-transparent border-red-800 text-red-100 hover:bg-red-900/40" onClick={() => onRequestHint(dish.id)} aria-label={`${copy.hintButton}: ${dish.short}`}>
+                  {copy.hintButton}
+                </Button>
+                <span className="text-xs text-red-300">{copy.hintCount(tier)}</span>
+              </div>
+            </div>
+          </div>
+        )}
 
-  const currentIndex = DISHES.findIndex(d => d.id === activeDishId);
-  const isLast = currentIndex === DISHES.length - 1;
+        <div className="md:hidden space-y-2">
+          <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">{copy.allergensPresent}</div>
+          <p className="text-xs text-gray-400">{copy.allergensHint}</p>
+          <div className="grid grid-cols-2 gap-1.5">
+            {ALLERGENS.map((allergen) => {
+              const marked = (chart[dish.id] ?? []).includes(allergen.id);
+              return (
+                <label key={allergen.id} className={cn('flex items-center gap-2 rounded border px-2 py-1.5 text-xs cursor-pointer', marked ? 'bg-red-950/50 border-red-800' : 'bg-gray-900 border-gray-800')}>
+                  <Checkbox
+                    checked={marked}
+                    onCheckedChange={() => onToggleAllergen(dish.id, allergen.id)}
+                    aria-label={`${allergen.label} in the ${dish.short}`}
+                    className="bg-black border-gray-500"
+                  />
+                  <span>{allergen.label}</span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
 
-  const handleNextDish = () => {
-    if (!isLast) setActiveDishId(DISHES[currentIndex + 1].id);
+        <div className="space-y-2">
+          <label htmlFor={`question-${dish.id}`} className="text-[10px] uppercase tracking-widest text-gray-500 font-bold block">
+            {copy.openQuestionsLabel}
+          </label>
+          <Textarea
+            id={`question-${dish.id}`}
+            value={redesign.openQuestions?.[dish.id] ?? ''}
+            onChange={(event) => setQuestion(dish.id, event.target.value)}
+            placeholder={copy.openQuestionsPlaceholder}
+            className="bg-gray-900 border-gray-700 text-white text-sm min-h-[64px]"
+          />
+          <p className="text-xs text-gray-500">{copy.openQuestionHint}</p>
+        </div>
+
+        <label className={cn('flex items-start gap-3 rounded-md border p-3 cursor-pointer', status === 'reviewed' || status === 'reviewed-question' ? 'bg-emerald-950/30 border-emerald-900' : 'bg-gray-800/50 border-gray-700')}>
+          <Checkbox
+            checked={!!redesign.rowReviewConfirmed?.[dish.id]}
+            onCheckedChange={(checked) => setConfirmed(dish.id, checked === true)}
+            aria-label={`Row reviewed: ${dish.short}`}
+            className="mt-0.5 bg-black border-gray-500"
+          />
+          <span className="text-sm text-gray-200 leading-snug">{copy.reviewConfirmation}</span>
+        </label>
+
+        <div className="flex md:hidden justify-between gap-2">
+          <Button variant="outline" className="bg-transparent border-gray-700 text-white" disabled={activeIndex === 0} onClick={() => setActiveDishId(DISHES[activeIndex - 1].id)}>
+            <ArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" /> {copy.previousDish}
+          </Button>
+          <Button variant="outline" className="bg-transparent border-gray-700 text-white" disabled={activeIndex === DISHES.length - 1} onClick={() => setActiveDishId(DISHES[activeIndex + 1].id)}>
+            {copy.nextDish} <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
+          </Button>
+        </div>
+      </div>
+    );
   };
 
   return (
-    <div className="flex flex-col h-full bg-white text-black p-4 space-y-4 md:space-y-6 overflow-y-auto" data-testid="chart-workspace">
-      <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
+    <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 gap-4 overflow-y-auto" data-testid="chart-workspace">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-600">{DIETARY_UI.chart.title}</h2>
-          <p className="text-gray-600 text-sm max-w-2xl mt-1">{DIETARY_UI.chart.description}</p>
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
+          <p className="text-gray-400 mt-1 text-sm md:text-base max-w-2xl">{copy.description}</p>
+          <p className="text-xs text-gray-300 mt-2 font-medium" data-testid="rows-remaining">
+            {chartChecked ? copy.matchesSupplied : remaining === 0 ? copy.reviewedAll : copy.rowsRemaining(remaining)}
+          </p>
         </div>
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-          <Button
-            onClick={onReviewWithTerence}
-            className="bg-black text-white hover:bg-gray-800 font-semibold h-11"
-            disabled={!allRowsConfirmed || chartChecked}
-            aria-live="polite"
-          >
-            {chartChecked ? (
-              <><CheckCircle2 className="w-5 h-5 mr-2" /> {DIETARY_UI.chart.matchesSupplied}</>
-            ) : (
-              DIETARY_UI.chart.reviewWithTerence
-            )}
-          </Button>
+        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          {onBack && (
+            <Button variant="outline" onClick={onBack} className="text-black bg-white hover:bg-gray-200 border-none">
+              <ArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" /> Back to the room
+            </Button>
+          )}
+          {!chartChecked && (
+            <Button onClick={onCheckChart} className="bg-red-600 text-white hover:bg-red-700 font-semibold" data-testid="review-with-terence">
+              {copy.reviewWithTerence}
+            </Button>
+          )}
           {chartChecked && onNext && (
-            <Button onClick={onNext} className="bg-red-600 text-white hover:bg-red-700 font-semibold h-11 motion-safe:transition-all">
-              {DIETARY_UI.chart.nextDecisions}
+            <Button onClick={onNext} className="bg-emerald-600 text-white hover:bg-emerald-700 font-semibold" data-testid="next-decisions">
+              {copy.nextDecisions} <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
             </Button>
           )}
         </div>
       </div>
 
-      <div className="flex flex-col md:flex-row flex-1 gap-4 md:gap-6 min-h-0 pb-10 md:pb-0">
-        {/* Dish Navigation List */}
-        <div className="w-full md:w-64 shrink-0 flex flex-row md:flex-col overflow-x-auto md:overflow-y-auto gap-2 md:pr-2 pb-2 md:pb-0" role="tablist" aria-label="Dishes to review">
-          {DISHES.map(dish => {
-            const isFlagged = flaggedDishes.includes(dish.id);
-            const isConfirmed = redesign.rowReviewConfirmed[dish.id];
-            const isActive = activeDishId === dish.id;
-
-            return (
-              <button
-                key={dish.id}
-                role="tab"
-                aria-selected={isActive}
-                aria-controls={`dish-panel-${dish.id}`}
-                id={`dish-tab-${dish.id}`}
-                onClick={() => setActiveDishId(dish.id)}
-                className={`flex-shrink-0 md:flex-shrink flex items-center justify-between text-left p-3 min-w-[180px] md:min-w-0 md:w-full border rounded-md motion-safe:transition-all focus-visible:ring-2 focus-visible:ring-black outline-none ${
-                  isActive
-                    ? 'border-black bg-gray-50 ring-1 ring-black shadow-sm'
-                    : 'border-gray-200 bg-white hover:border-gray-300'
-                } ${isFlagged ? 'bg-red-50 border-red-200' : ''}`}
-              >
-                <div className="flex flex-col pr-2">
-                  <span className="font-semibold text-sm line-clamp-1">{dish.name}</span>
-                  <span className="text-xs text-gray-500">{dish.course}</span>
-                </div>
-                <div className="flex shrink-0">
-                  {isFlagged && <AlertCircle className="w-5 h-5 text-red-600" aria-label="Review needed" />}
-                  {isConfirmed && !isFlagged && <CheckCircle2 className="w-5 h-5 text-green-600" aria-label="Checked" />}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Active Dish Details */}
-        <div
-          id={`dish-panel-${activeDish.id}`}
-          role="tabpanel"
-          aria-labelledby={`dish-tab-${activeDish.id}`}
-          className="flex-1 flex flex-col min-h-0 bg-gray-50 border border-gray-200 rounded-lg p-4 md:p-6 overflow-y-auto"
-        >
-          <div className="mb-6">
-            <h3 className="font-serif text-xl md:text-2xl font-bold text-red-600 leading-tight mb-4">{activeDish.name}</h3>
-
-            <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-              {/* Left Column: Ingredients (Evidence) */}
-              <div className="flex-1 space-y-4">
-                <div key={activeDish.id} className="bg-white p-4 border border-gray-200 rounded-md shadow-sm activity-enter">
-                  <h4 className="font-semibold text-sm text-gray-800 uppercase tracking-wide mb-3 flex items-center gap-2">
-                    <span className="bg-black text-white px-2 py-0.5 rounded-sm text-xs">{DIETARY_UI.chart.recipeEvidence}</span>
-                    {DIETARY_UI.chart.ingredients}
-                  </h4>
-                  <ul className="space-y-1.5 text-sm list-disc pl-5 marker:text-gray-400">
-                    {activeDish.ingredients.map((ing, i) => (
-                      <li key={i} className="text-gray-800 leading-snug">{ing}</li>
-                    ))}
-                  </ul>
-                  {activeDish.note && (activeDish.id !== 'frangipane' || flaggedDishes.includes('frangipane') || chartChecked) && (
-                    <p className="mt-4 text-sm text-gray-800 border-l-4 border-red-500 pl-3 py-1.5 bg-red-50/50" role="note">
-                      <span className="font-semibold block mb-0.5 text-red-700">{DIETARY_UI.chart.notePrefix}</span>
-                      {activeDish.note}
-                    </p>
-                  )}
-                </div>
-
-                {/* Review Checkbox Area */}
-                <div className="bg-white p-4 border border-gray-200 rounded-md shadow-sm">
-                   <label className="flex items-start gap-3 cursor-pointer p-1 rounded-sm focus-within:ring-2 focus-within:ring-black outline-none motion-safe:transition-colors hover:bg-gray-50">
-                    <input
-                      type="checkbox"
-                      checked={redesign.rowReviewConfirmed[activeDish.id] || false}
-                      onChange={(e) => handleRowReviewChange(activeDish.id, e.target.checked)}
-                      className="w-6 h-6 mt-0.5 shrink-0 accent-black rounded cursor-pointer"
-                      aria-label={`Confirm review for ${activeDish.name}`}
-                    />
-                    <span className="text-sm font-medium leading-relaxed text-gray-800">
-                      {DIETARY_UI.chart.reviewConfirmation}
-                    </span>
-                  </label>
-
-                  <div className="space-y-2 mt-4 pt-4 border-t border-gray-100">
-                    <label htmlFor={`open-q-${activeDish.id}`} className="text-sm font-semibold text-gray-700">{DIETARY_UI.chart.openQuestionsLabel}</label>
-                    <Input
-                      id={`open-q-${activeDish.id}`}
-                      value={redesign.openQuestions[activeDish.id] || ''}
-                      onChange={(e) => handleOpenQuestionChange(activeDish.id, e.target.value)}
-                      placeholder={DIETARY_UI.chart.openQuestionsPlaceholder}
-                      className="text-sm bg-white min-h-[44px]"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Right Column: Allergen Checklist */}
-              <div className="flex-1 lg:max-w-md space-y-3">
-                <h4 className="font-semibold text-sm text-gray-800 uppercase tracking-wide">{DIETARY_UI.chart.allergensPresent}</h4>
-                <p className="text-xs text-gray-500 mb-2">{DIETARY_UI.chart.allergensHint}</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
-                  {ALLERGENS.map(a => {
-                    const isTicked = (chart[activeDish.id] || []).includes(a.id);
-                    return (
-                      <label
-                        key={a.id}
-                        className={`flex items-center gap-3 p-2.5 border rounded-md text-sm cursor-pointer motion-safe:transition-colors focus-within:ring-2 focus-within:ring-black outline-none ${
-                          isTicked
-                            ? 'bg-black text-white border-black shadow-sm'
-                            : 'bg-white text-gray-800 border-gray-300 hover:border-gray-400'
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          checked={isTicked}
-                          onChange={() => onToggleAllergen(activeDish.id, a.id)}
-                          className="w-5 h-5 shrink-0 accent-current rounded-sm focus:ring-0 focus:outline-none cursor-pointer"
-                        />
-                        <span className="leading-tight font-medium select-none flex-1">{a.label}</span>
-                      </label>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
+        <div className="flex-1 min-w-0 space-y-3">
+          {/* Desktop: the whole matrix, five rows by fourteen columns. */}
+          <div className="hidden md:block overflow-x-auto rounded border border-gray-800">
+            <table className="w-full text-xs border-collapse" data-testid="allergen-matrix">
+              <caption className="sr-only">{copy.tableCaption}</caption>
+              <thead>
+                <tr className="bg-gray-900">
+                  <th scope="col" className="text-left p-2 sticky left-0 bg-gray-900 z-10 min-w-[150px]">{copy.dishColumn}</th>
+                  {ALLERGENS.map((allergen) => (
+                    <th key={allergen.id} scope="col" className="p-1 text-center font-medium align-bottom" title={allergen.label}>
+                      <span className="block leading-tight" style={{ writingMode: 'vertical-rl', transform: 'rotate(180deg)', margin: '0 auto', height: '5.5rem' }}>
+                        {allergen.short}
+                      </span>
+                    </th>
+                  ))}
+                  <th scope="col" className="p-2 text-left min-w-[120px]">{copy.statusColumn}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {DISHES.map((dish) => {
+                  const status = rowStatus(stateView, dish.id);
+                  const selected = dish.id === activeDish.id;
+                  return (
+                    <tr key={dish.id} className={cn('border-t border-gray-800', selected ? 'bg-red-950/20' : 'hover:bg-gray-900/60')} aria-selected={selected}>
+                      <th scope="row" className={cn('text-left p-0 sticky left-0 z-10', selected ? 'bg-[#1d0b0b]' : 'bg-black')}>
+                        <button
+                          type="button"
+                          onClick={() => setActiveDishId(dish.id)}
+                          aria-pressed={selected}
+                          aria-label={`${copy.selectedRow}: ${dish.short}`}
+                          className={cn('w-full text-left p-2 border-l-4', selected ? 'border-red-500' : 'border-transparent')}
+                        >
+                          <span className="block text-[10px] uppercase tracking-wider text-gray-500">{dish.course}</span>
+                          <span className="block font-semibold text-sm">{dish.short}</span>
+                        </button>
+                      </th>
+                      {ALLERGENS.map((allergen) => {
+                        const marked = (chart[dish.id] ?? []).includes(allergen.id);
+                        return (
+                          <td key={allergen.id} className="p-0 text-center border-l border-gray-900">
+                            <button
+                              type="button"
+                              role="checkbox"
+                              aria-checked={marked}
+                              aria-label={`${allergen.label} in the ${dish.short}`}
+                              onClick={() => { setActiveDishId(dish.id); onToggleAllergen(dish.id, allergen.id); }}
+                              className={cn('w-full h-11 flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400', marked && 'bg-red-950/40')}
+                            >
+                              {cellContent(dish, allergen.id)}
+                            </button>
+                          </td>
+                        );
+                      })}
+                      <td className="p-2 border-l border-gray-900">
+                        <StatusChip status={status} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
 
-          {/* Internal Navigation for Mobile/Flow */}
-          {!isLast && (
-            <div className="mt-auto pt-6 border-t border-gray-200 flex justify-end">
-              <Button
-                variant="outline"
-                onClick={handleNextDish}
-                className="gap-2 bg-white text-black h-11 px-6 border-gray-300 hover:bg-gray-100"
-              >
-                {DIETARY_UI.chart.nextDish} <ChevronRight className="w-4 h-4" />
-              </Button>
+          {/* Phone: one dish at a time, the row as a list of fourteen. */}
+          {isMobile && <div className="md:hidden">
+            <div className="flex gap-1 overflow-x-auto pb-2" role="tablist" aria-label={copy.dishColumn}>
+              {DISHES.map((dish) => {
+                const status = rowStatus(stateView, dish.id);
+                const selected = dish.id === activeDish.id;
+                return (
+                  <button
+                    key={dish.id}
+                    type="button"
+                    role="tab"
+                    aria-selected={selected}
+                    onClick={() => setActiveDishId(dish.id)}
+                    className={cn('shrink-0 rounded border px-2 py-1.5 text-left', selected ? 'border-red-500 bg-red-950/30' : 'border-gray-800 bg-gray-900')}
+                  >
+                    <span className="block text-xs font-semibold">{dish.short}</span>
+                    <StatusChip status={status} className="mt-1" />
+                  </button>
+                );
+              })}
             </div>
-          )}
+            {renderRecipeCard(activeDish)}
+          </div>}
+
+          <div className="hidden md:flex flex-wrap items-center gap-2 text-xs text-gray-400">
+            <span className="font-bold uppercase tracking-wider text-[10px] text-gray-500">{copy.legendTitle}:</span>
+            {(Object.keys(copy.legend) as RowStatus[]).map((status) => (
+              <StatusChip key={status} status={status} />
+            ))}
+            <span className="ml-2">{copy.cellLegend}</span>
+          </div>
+
+          <details className="rounded border border-gray-800 bg-gray-900/60 p-3 text-sm">
+            <summary className="cursor-pointer font-semibold text-gray-200">{copy.referenceTitle}</summary>
+            <p className="text-xs text-gray-400 mt-2">{copy.referenceHint}</p>
+            <div className="flex flex-wrap gap-1.5 mt-2">
+              {ALLERGENS.map((allergen) => (
+                <button
+                  key={allergen.id}
+                  type="button"
+                  aria-pressed={referenceId === allergen.id}
+                  onClick={() => setReferenceId(referenceId === allergen.id ? null : allergen.id)}
+                  className={cn('rounded border px-2 py-1 text-xs', referenceId === allergen.id ? 'border-red-500 bg-red-950/40' : 'border-gray-700 bg-black')}
+                >
+                  {allergen.label}
+                </button>
+              ))}
+            </div>
+            {referenceId && (
+              <p className="mt-2 text-gray-200" data-testid="allergen-reference">
+                {ALLERGEN_REFERENCE.find((entry) => entry.id === referenceId)?.plain}
+              </p>
+            )}
+          </details>
         </div>
+
+        {/* Desktop: the selected row's recipe card sits beside the matrix. */}
+        {!isMobile && (
+          <aside className="hidden md:block w-full md:w-96 shrink-0" aria-label={`${copy.recipeEvidence}: ${activeDish.short}`}>
+            {renderRecipeCard(activeDish)}
+          </aside>
+        )}
       </div>
     </div>
   );
