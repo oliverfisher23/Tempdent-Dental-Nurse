@@ -13,12 +13,12 @@ export function PassScene({ onLeave }: { onLeave?: () => void }) {
 
   return (
     <div className="absolute inset-0 z-0 bg-black">
-      <img src={backdrop} alt="" className="absolute inset-0 w-full h-full object-cover opacity-60 pointer-events-none" decoding="async" />
+      <img src={backdrop} alt="" className="absolute inset-0 w-full h-full object-cover object-[55%_50%] opacity-60 pointer-events-none" decoding="async" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none" />
 
       <Hotspot
-        x={85}
-        y={40}
+        x={36}
+        y={46}
         label={SCENE_LABELS.goToBackDoor}
         hint={SCENE_LABELS.backDoorHint}
         state="active"

@@ -19,7 +19,7 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
   return (
     <div className="absolute inset-0 z-0">
       {/* Backdrop */}
-      <img src={backdrop} alt="" className="absolute inset-0 w-full h-full object-cover select-none pointer-events-none" decoding="async" />
+      <img src={backdrop} alt="" className="absolute inset-0 w-full h-full object-cover object-[55%_50%] select-none pointer-events-none" decoding="async" />
       
       {/* Darken backdrop slightly with plain semi-transparent layer instead of backdrop-filter for performance */}
       <div className="absolute inset-0 bg-black/30 pointer-events-none" />
@@ -29,8 +29,8 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
 
       {/* Hotspots */}
       <Hotspot 
-        x={65} 
-        y={55} 
+        x={16} 
+        y={42} 
         label="Read the overnight log" 
         state={allRead ? 'done' : 'active'}
         onClick={() => {
@@ -41,8 +41,8 @@ export function PassScene({ onLogRead, logRead }: { onLogRead: (time: string) =>
 
       {allRead && (
          <Hotspot 
-           x={85} 
-           y={50} 
+           x={36} 
+           y={46} 
            label="Go to the fridges" 
            state="active"
            onClick={() => goTo('corridor')} 

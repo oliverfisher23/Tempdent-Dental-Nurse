@@ -1,12 +1,14 @@
 import { Button } from "@/components/ui/button";
 import { Loader2, Maximize2 } from "lucide-react";
 import { useEffect, useRef } from "react";
-import { PLACES } from "@/content/kitchen";
 import { useExperienceViewport } from "@/lib/experience-viewport";
 import { MECHANIC } from "@/lib/simulation";
 import { motion, useReducedMotion } from "framer-motion";
 import { WELCOME_COPY } from "@/content/welcome";
 import logoImg from "@/assets/artotel-logo.png";
+// The kitchen line with Terence at the far range; the phone crop keeps him in frame under the copy.
+import heroWide from "@/assets/kitchen/photos/kitchen-line.webp";
+import heroPhone from "@/assets/kitchen/photos/kitchen-line-phone.webp";
 
 export function LaunchView() {
   const { expand, expanding, openInline } = useExperienceViewport();
@@ -20,13 +22,17 @@ export function LaunchView() {
   return (
     <main id="main-activity" tabIndex={-1} data-testid="welcome-launch" className="relative flex flex-col justify-end min-h-[100dvh] bg-secondary text-secondary-foreground overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <img 
-          src={PLACES.pass.backdrop} 
-          alt="" 
-          className="absolute inset-0 w-full h-full object-cover opacity-65"
-          aria-hidden="true"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-secondary via-secondary/70 to-secondary/10" />
+        <picture className="contents">
+          <source media="(min-width: 768px)" srcSet={heroWide} />
+          <img
+            src={heroPhone}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-65"
+            aria-hidden="true"
+          />
+        </picture>
+        {/* Phones stack the copy under Terence, so the shade comes up from the bottom; wider screens keep it on the left. */}
+        <div className="absolute inset-0 bg-gradient-to-t from-secondary via-secondary/70 to-secondary/20 md:bg-gradient-to-r md:from-secondary md:via-secondary/70 md:to-secondary/10" />
       </div>
       
       <div className="relative z-10 p-6 md:p-10 w-full max-w-6xl mx-auto flex flex-col min-h-[100dvh]">

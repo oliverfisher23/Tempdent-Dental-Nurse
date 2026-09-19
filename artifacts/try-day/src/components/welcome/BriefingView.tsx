@@ -11,6 +11,9 @@ import { Input } from "@/components/ui/input";
 import { kitchenAudio } from "@/lib/audio";
 import { WELCOME_COPY } from "@/content/welcome";
 import logoImg from "@/assets/artotel-logo.png";
+// Two sizes so the browser shows the circle close to 1:1 instead of shrinking a large export.
+import terenceBriefing from "@/assets/kitchen/photos/terence-briefing.webp";
+import terenceBriefing2x from "@/assets/kitchen/photos/terence-briefing-2x.webp";
 import { DeviceAdvice } from "@/components/device-advice";
 
 interface BriefingViewProps {
@@ -81,6 +84,16 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
       <main id="main-activity" tabIndex={-1} className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 md:px-10 py-6 md:py-9 grid grid-cols-1 md:grid-cols-12 gap-7 md:gap-10 items-center">
         <div className="min-w-0 md:col-span-7 flex flex-col justify-center">
           <motion.div {...fade(0)} className="mb-5 flex items-center gap-4">
+            <img
+              src={terenceBriefing}
+              srcSet={`${terenceBriefing} 256w, ${terenceBriefing2x} 512w`}
+              sizes="(min-width: 768px) 8rem, 7rem"
+              alt="Terence, executive sous chef at art'otel Hoxton"
+              width={512}
+              height={512}
+              decoding="async"
+              className="size-28 md:size-32 shrink-0 rounded-full object-cover bg-muted ring-1 ring-foreground/15"
+            />
             <div>
               <p className="font-bold text-xl text-foreground">Terence</p>
               <p className="text-muted-foreground text-sm">{WELCOME_COPY.mentorRole}</p>

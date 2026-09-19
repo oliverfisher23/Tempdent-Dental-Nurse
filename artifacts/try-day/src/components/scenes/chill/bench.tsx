@@ -99,7 +99,7 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
         <motion.img
           src={PLACES.bench.backdrop}
           alt=""
-          className="absolute inset-0 h-full w-full object-cover opacity-80"
+          className="absolute inset-0 h-full w-full object-cover object-[70%_50%] opacity-80"
           decoding="async"
           initial={false}
           animate={reduceMotion ? { scale: 1, x: '0%', y: '0%' } : cam}

@@ -10,10 +10,14 @@
 import type { TaskId } from '@/content/activities';
 
 import mapImg from '@/assets/kitchen/kitchen-map.jpg';
-import scenePass from '@/assets/kitchen/scene-pass.jpg';
-import sceneCorridor from '@/assets/kitchen/scene-corridor.jpg';
+// Photographs of Terence in the art'otel Hoxton kitchen: see content/kitchen-photos.json
+// for the source frame behind each export and scripts/prepare-kitchen-photos.mjs to regenerate them.
+import scenePass from '@/assets/kitchen/photos/pass.webp';
+import sceneCorridor from '@/assets/kitchen/photos/fridges.webp';
+import sceneBench from '@/assets/kitchen/photos/bench.webp';
+import terencePortrait from '@/assets/kitchen/photos/terence-square.webp';
+// Goods-in and the events kitchen keep their illustrated backdrops: no photograph of those areas was supplied.
 import sceneGoodsIn from '@/assets/kitchen/scene-goods-in.jpg';
-import sceneBench from '@/assets/kitchen/scene-bench.jpg';
 import sceneEvents from '@/assets/kitchen/scene-events.jpg';
 import fridgeInterior from '@/assets/kitchen/fridge-interior.jpg';
 import freezerInterior from '@/assets/kitchen/freezer-interior.jpg';
@@ -157,9 +161,9 @@ export interface Person {
 /** Terence is the current on-screen name; the legacy ids remain for saved progress. */
 
 export const PEOPLE: Person[] = [
-  { id: 'marcus', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: null },
+  { id: 'marcus', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: terencePortrait },
   { id: 'sarah', speaker: 'Yvie', name: 'Yvie', role: 'Events', portrait: null },
-  { id: 'elena', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: null },
+  { id: 'elena', speaker: 'Terence', name: 'Terence', role: 'Executive sous chef and mentor', portrait: terencePortrait },
   { id: 'porter', speaker: 'Night porter', name: 'Night porter', role: 'Night porter', portrait: null },
   { id: 'driver', speaker: 'Driver', name: 'Driver', role: 'Delivery driver', portrait: null },
   { id: 'evening-team', speaker: 'Evening team', name: 'Evening team', role: 'The chefs taking over at 15:00', portrait: null },

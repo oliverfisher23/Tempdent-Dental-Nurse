@@ -198,7 +198,7 @@ export function PassScene({
 
   return (
     <div className="absolute inset-0 z-0">
-      <img src={PLACES['pass'].backdrop} alt="" className="absolute inset-0 w-full h-full object-cover" decoding="async" />
+      <img src={PLACES['pass'].backdrop} alt="" className="absolute inset-0 w-full h-full object-cover object-[55%_50%]" decoding="async" />
       <div className="absolute inset-0 bg-black/10 pointer-events-none" />
 
       {/* Hotspots */}
@@ -210,7 +210,7 @@ export function PassScene({
       />
 
       <Hotspot
-        x={65} y={60}
+        x={16} y={42}
         label={CLOSE_SCENE.clipboard}
         state={rs.recipientConfirmed ? 'done' : (interpreted ? 'active' : 'todo')}
         onClick={() => { kitchenAudio.play('page'); setActiveCloseUp('clipboard'); }}
@@ -219,7 +219,7 @@ export function PassScene({
       {rs.recipientConfirmed && (
         <>
           <Hotspot
-            x={75} y={45}
+            x={30} y={74}
             label={CLOSE_SCENE.elena}
             state={(state.elenaSigned && elenaCorrect) ? 'done' : 'active'}
             onClick={() => { kitchenAudio.play('page'); setActiveCloseUp('chill'); }}
