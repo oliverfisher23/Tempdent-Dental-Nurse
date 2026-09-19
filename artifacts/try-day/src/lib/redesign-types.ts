@@ -59,10 +59,17 @@ export interface DietaryRedesignState {
 
 export interface CloseRedesignState {
   version: 1;
+  /** Optional formative choice: which waste the learner would look into ('' when skipped). */
   wasteFocus: string;
+  /** Optional free text: what the learner would check next. Never graded. */
   wasteReason: string;
+  /** Before-service / later grouping for each follow-up (keys: larder2, salmon, table3). */
   priorities: Record<string, 'before-service' | 'later'>;
   responsibilities?: Record<string, string>;
+  /** Structured answers to the evening team, keyed `${topic}.${part}` → option id (right or wrong). */
   clarifications: Record<string, string>;
+  /** The learner confirmed the evening team's read-back of the resolved handover. */
   recipientConfirmed: boolean;
+  /** The learner has walked the evening team through the sheet at least once; wording prompts appear after this. */
+  attempted?: boolean;
 }

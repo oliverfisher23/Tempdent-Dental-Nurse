@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { CHILL_RULES, TASK_ORDER } from '../src/content/activities';
+import { clearAnswersForHeading } from '../src/lib/redesign-close';
 import {
   evaluateTask,
   initialProgress,
@@ -111,15 +112,47 @@ test('asking about a compatible proposed course is legitimate while service rema
   assert.equal(evaluateTask('check-the-dietary-list', fixture.tasks).done, true);
 });
 
-test('the evening-team exchange rejects incorrect clarifications even with a confirmation flag', () => {
-  for (const [key, invalid] of [['salmon', 'tonight'], ['fridge', 'done'], ['dietary', 'beef']]) {
+test('the evening-team exchange needs supported answers, before-service timing and a confirmed read-back', () => {
+  for (const [key, invalid] of [['salmon.quantity', 'eight'], ['salmon.meal', 'tonight'], ['larder2.check', 'rechecked'], ['table3.status', 'cleared'], ['ready.beef', 'plated']]) {
     const fixture = testProgress(null);
     fixture.tasks['hand-the-kitchen-on'].redesign!.clarifications[key] = invalid;
     assert.equal(evaluateTask('hand-the-kitchen-on', fixture.tasks).done, false, key);
   }
+  for (const invalidate of [
+    (rs: NonNullable<ReturnType<typeof testProgress>['tasks']['hand-the-kitchen-on']['redesign']>) => { rs.recipientConfirmed = false; },
+    (rs: NonNullable<ReturnType<typeof testProgress>['tasks']['hand-the-kitchen-on']['redesign']>) => { rs.responsibilities = {}; },
+    (rs: NonNullable<ReturnType<typeof testProgress>['tasks']['hand-the-kitchen-on']['redesign']>) => { rs.priorities.larder2 = 'later'; },
+    (rs: NonNullable<ReturnType<typeof testProgress>['tasks']['hand-the-kitchen-on']['redesign']>) => { rs.priorities.table3 = 'later'; },
+  ]) {
+    const fixture = testProgress(null);
+    invalidate(fixture.tasks['hand-the-kitchen-on'].redesign!);
+    assert.equal(evaluateTask('hand-the-kitchen-on', fixture.tasks).done, false);
+  }
+});
+
+test('any approved priority order is accepted and the waste question never gates completion', () => {
   const fixture = testProgress(null);
-  fixture.tasks['hand-the-kitchen-on'].redesign!.responsibilities = {};
-  assert.equal(evaluateTask('hand-the-kitchen-on', fixture.tasks).done, false, 'follow-ups need an owner');
+  const rs = fixture.tasks['hand-the-kitchen-on'].redesign!;
+  rs.priorities.salmon = 'before-service';
+  assert.equal(evaluateTask('hand-the-kitchen-on', fixture.tasks).done, true, 'salmon may be grouped before service');
+  rs.priorities.salmon = 'later';
+  rs.wasteFocus = '';
+  rs.wasteReason = '';
+  assert.equal(evaluateTask('hand-the-kitchen-on', fixture.tasks).done, true, 'the waste question is optional');
+  fixture.tasks['hand-the-kitchen-on'].handover.short = 'Salmon: 8 kg of 12 kg arrived, so 4 kg short. Needed for tomorrow lunch, not tonight. Terence ringing the supplier; nothing confirmed.';
+  assert.equal(evaluateTask('hand-the-kitchen-on', fixture.tasks).done, true, 'free text is never keyword-graded');
+});
+
+test('editing a heading re-opens only the questions that heading answers', () => {
+  const answers = testProgress(null).tasks['hand-the-kitchen-on'].redesign!.clarifications;
+  const afterShort = clearAnswersForHeading(answers, 'short');
+  assert.equal(afterShort['salmon.quantity'], undefined);
+  assert.equal(afterShort['larder2.finding'], answers['larder2.finding']);
+  assert.equal(afterShort['ready.beef'], answers['ready.beef']);
+  const afterWatch = clearAnswersForHeading(answers, 'watch');
+  assert.equal(afterWatch['larder2.check'], undefined);
+  assert.equal(afterWatch['table3.dessert'], undefined);
+  assert.equal(afterWatch['salmon.meal'], answers['salmon.meal']);
 });
 
 test('unfinished draft survives persistence while signed legacy work gains no new requirements', () => {

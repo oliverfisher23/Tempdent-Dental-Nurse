@@ -12,7 +12,7 @@ import {
 } from '@/lib/simulation';
 
 const DIETARY_TOTAL = 4;
-const CLOSE_TOTAL = 6;
+const CLOSE_TOTAL = 5;
 const WASTE_GUIDE_NAMES: Record<string, string> = {
   trimmings: 'the trimmings',
   spoilage: 'the spoiled food',
@@ -107,7 +107,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
         step: index + 1,
         total: CLOSE_TOTAL,
         title: `Weigh ${binName}`,
-        instruction: 'Inspect the contents, put this tub on the scales and enter the reading beside it.',
+        instruction: 'Look in the tub, put it on the scales and write the reading on its row of the waste sheet.',
         actionLabel: 'Open the scales',
         place: 'pass',
         action: 'close.open-waste',
@@ -120,7 +120,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
         step: index + 1,
         total: CLOSE_TOTAL,
         title: `Write the weight for ${binName}`,
-        instruction: 'Read the scales and correct this weight on the same sheet.',
+        instruction: 'Read the scales again and correct this row on the waste sheet.',
         actionLabel: 'Open the scales',
         place: 'pass',
         action: 'close.open-waste',
@@ -128,27 +128,14 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
     }
   }
 
-  if (state.redesign && (!state.redesign.wasteFocus || !state.redesign.wasteReason.trim())) {
-    return {
-      id: 'close-interpret',
-      step: 4,
-      total: CLOSE_TOTAL,
-      title: 'Choose a waste follow-up',
-      instruction: 'Use the weights and contents to suggest something worth investigating. Weight alone does not tell us the cause.',
-      actionLabel: 'Review the waste',
-      place: 'pass',
-      action: 'close.open-waste',
-    };
-  }
-
   const handoverDone = evaluation.checklist.find((item) => item.id === 'handover')?.met ?? false;
-  if (!handoverDone || (state.redesign && !state.redesign.recipientConfirmed)) {
+  if (!handoverDone) {
     return {
       id: 'close-handover',
-      step: 5,
+      step: 4,
       total: CLOSE_TOTAL,
       title: 'Hand the kitchen on',
-      instruction: 'Use the saved records and supplied shift facts. Answer the evening team’s questions, clarify timing and responsibility, then hand it over.',
+      instruction: 'Write the four headings in your own words, group the follow-ups, then hand it over, answer the evening team and confirm what they read back.',
       actionLabel: 'Open handover sheet',
       place: 'pass',
       action: 'close.open-clipboard',
@@ -162,7 +149,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
     );
     return {
       id: answerIsCorrect ? 'close-elena-sign' : 'close-elena-question',
-      step: 6,
+      step: 5,
       total: CLOSE_TOTAL,
       title: answerIsCorrect ? 'Ask Terence to sign' : 'Go through the chill record',
       instruction: answerIsCorrect

@@ -549,33 +549,33 @@ export const HANDOVER_FIELDS: HandoverField[] = [
     id: 'prepared',
     label: 'What is prepared',
     prompts: [
-      'Which preparation facts are in the supplied shift notes?',
-      'What does the recorded cooling comparison show, and what does it not confirm?',
+      'What does your signed chill record show: how many trays, and the last reading and time?',
+      'Which dishes have you actually seen a record or a recipe-card note for, and which have you not?',
     ],
   },
   {
     id: 'short',
     label: 'What is short',
     prompts: [
-      'What was ordered, what was accepted and how much is missing?',
-      'Which service needs it, and who needs to follow it up?',
+      'What was ordered, what came in and how much is missing?',
+      'Which meal needs it, who is chasing it, and is a replacement confirmed or only asked for?',
     ],
   },
   {
     id: 'walkIn',
     label: 'What is in the walk-in for tonight',
     prompts: [
-      'Use the supplied storage facts; do not turn a proposed move into a completed one.',
-      'Keep preparation, example cooling readings and storage information distinct.',
+      'What did the walk-in read on your morning round, and what do you know is in there?',
+      'Keep what you have seen apart from what you have been told, and say what you have not checked.',
     ],
   },
   {
     id: 'watch',
     label: 'The one thing you would keep an eye on',
     prompts: [
-      'Which saved reading needs follow-up, and when?',
-      'Which dietary proposal is on hold for a preparation and service check?',
-      'Name who should act; a requested check has not happened yet.',
+      'Which fridge reading still needs a re-check, and by when?',
+      'Which dessert change is on the board, and which checks still have to happen before it is served?',
+      'Name who should act. A check you are asking for has not happened yet.',
     ],
   },
 ];

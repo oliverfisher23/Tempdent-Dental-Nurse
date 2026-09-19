@@ -11,7 +11,7 @@ import mechanic from '@/content/mechanic.json';
 import { deliveryReviewIssues } from '@/lib/delivery-workflow';
 import type { DeliveryRedesignState, ChillRedesignState, DietaryRedesignState, CloseRedesignState } from './redesign-types';
 import { dietaryRedesignChecklist } from './redesign-dietary';
-import { evaluateCloseRedesign } from './redesign-close';
+import { handoverDelivered } from './redesign-close';
 import {
   ADDED_GUESTS,
   ALLERGENS,
@@ -266,7 +266,7 @@ export function initialTaskStates(): TaskStates {
       boardPosted: false,
     },
     'hand-the-kitchen-on': {
-      redesign: { version: 1, wasteFocus: '', wasteReason: '', priorities: {}, clarifications: {}, recipientConfirmed: false },
+      redesign: { version: 1, wasteFocus: '', wasteReason: '', priorities: {}, clarifications: {}, recipientConfirmed: false, attempted: false },
       weighed: Object.fromEntries(WASTE_BINS.map((b) => [b.id, false])),
       weights: Object.fromEntries(WASTE_BINS.map((b) => [b.id, ''])),
       handover: Object.fromEntries(HANDOVER_FIELDS.map((f) => [f.id, ''])),
@@ -367,15 +367,21 @@ export function testProgress(target: TaskId | null | undefined): Progress {
   };
   const close: CloseState = {
     redesign: {
-      version: 1, wasteFocus: 'plate', wasteReason: 'Ask the service team what was returned and why before deciding how to reduce plate waste.',
+      version: 1, wasteFocus: 'plate', wasteReason: 'Ask the service team what came back and why before changing anything.',
       priorities: { salmon: 'later', larder2: 'before-service', table3: 'before-service' },
       responsibilities: { salmon: 'Terence', larder2: 'Evening chef', table3: 'Terence and evening service team' },
-      clarifications: { salmon: 'tomorrow', fridge: 'todo', dietary: 'pear' },
+      clarifications: {
+        'salmon.quantity': 'four', 'salmon.meal': 'tomorrow-lunch', 'salmon.status': 'terence-ringing',
+        'larder2.finding': 'signed-reading', 'larder2.check': 'recheck-requested',
+        'table3.guest': 'table3', 'table3.dessert': 'pear', 'table3.status': 'on-hold',
+        'ready.beef': 'signed', 'ready.where': 'honest',
+      },
       recipientConfirmed: true,
+      attempted: true,
     },
     weighed: Object.fromEntries(WASTE_BINS.map((bin) => [bin.id, true])),
     weights: Object.fromEntries(WASTE_BINS.map((bin) => [bin.id, String(bin.actualKg)])),
-    handover: { prepared: 'My practice share is in four trays. The supplied shift notes list prepared tarts and Wellingtons.', short: 'Salmon is 4 kg short for tomorrow lunch. Terence needs to follow up; a replacement is not confirmed.', walkIn: 'The supplied shift notes list Wellingtons and glazed carrots in the walk-in. Cooling readings are a recorded example.', watch: 'Ask the evening chef to re-check larder fridge 2 before service. Table 3 pear is a proposal on hold for Terence’s preparation and service checks.' },
+    handover: { prepared: 'My four trays of beef shin are on the signed chill record, last reading 5.9°C at 12:45. Frangipane made this morning. I have not seen a record for the tart or the Wellington.', short: 'Salmon: 8 kg came in against 12 ordered, 4 kg short, for tomorrow’s lunch. Terence said he would ring the supplier; nothing confirmed.', walkIn: 'Walk-in read 3.4°C on my morning round. The beef goes in there once it is down. Pear is in the pastry fridge for the bistro.', watch: 'Larder fridge 2 read 8.6°C at 06:50 after the door was found open; it needs re-checking before service. Table 3 pear is on the board, held for Terence’s preparation and service checks.' },
     handedOver: true, elenaAnswer: 'shallower', elenaSigned: true,
   };
   const completeStates: TaskStates = { 'take-the-handover': handover, 'check-the-delivery-in': delivery, 'chill-the-event-batch': chill, 'check-the-dietary-list': dietary, 'hand-the-kitchen-on': close };
@@ -602,13 +608,16 @@ export function weightIsRight(binId: string, value: string): boolean {
 
 export function evaluateClose(s: CloseState, chill: ChillState): Evaluation {
   const weights = WASTE_BINS.every((b) => s.weighed[b.id] && weightIsRight(b.id, s.weights[b.id] ?? ''));
+  // Redesign: the sheet's wording is never keyword-graded. The evening team's structured questions
+  // check that the critical information got across, and the learner confirms their read-back.
+  // Legacy records keep the original ten-character test so a signed-off day is not re-judged.
   const handoverFilled = HANDOVER_FIELDS.every((f) => (s.handover[f.id] ?? '').trim().length >= (s.redesign ? 1 : 10));
+  const delivered = s.redesign ? handoverDelivered(s) && s.handedOver : s.handedOver;
   const elenaAnswered = s.elenaAnswer !== null && ELENA_QUESTION.options.some((o) => o.id === s.elenaAnswer && o.correct);
   const checklist: ChecklistItem[] = [
     { id: 'waste', label: 'A weight against each of the three rows on the waste sheet', met: weights },
-    { id: 'handover', label: 'Handover sheet filled in and handed over', met: handoverFilled && s.handedOver },
+    { id: 'handover', label: 'Handover sheet filled in and handed over to the evening team', met: handoverFilled && delivered },
     { id: 'signatures', label: 'Both signatures on the chill record', met: chill.studentSigned && s.elenaSigned && elenaAnswered },
-    ...evaluateCloseRedesign(s),
   ];
   return { done: checklist.every((c) => c.met), checklist };
 }

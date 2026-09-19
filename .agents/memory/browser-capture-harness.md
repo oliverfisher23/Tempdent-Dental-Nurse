@@ -17,3 +17,10 @@ description: Lessons from driving the try-day app headlessly (CDP/Playwright) fo
   visible in Task 2 and Task 5, the bench photo in Task 3.
 - To reach a task scene headlessly, open `/?testMode=1`, press "Designer test", then a task button in the
   "Test destinations" nav; session fixtures land you at the task's first step without touching learner storage.
+- The try-day web artifact is mounted at the root preview path, so drive it at `http://localhost:80/...`,
+  not `/try-day/...`. The prefixed URL still loads the SPA (fallback) but every route 404s and in-app
+  navigation drops the prefix, which looks like a broken router. Check the dev server's `BASE_PATH` first.
+- If the hidden designer panel must be used mid-run (e.g. to load the Close fixture), remove the hiding
+  style tag first: `pointer-events: none` swallows even forced clicks.
+- playwright-core is not a workspace dependency; install it in a scratch dir and pass a Page into the
+  `e2e/*-verification.mjs` modules, which is why they take a Page rather than launching a browser.
