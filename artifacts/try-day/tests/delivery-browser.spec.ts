@@ -1,7 +1,14 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { DELIVERY, DeliveryHarness } from '../e2e/delivery-harness';
 import { deliveries, expectedMessage, expectedReport, fishFindings } from '../e2e/delivery-data';
 import { lowerFirst } from '../src/lib/utils';
+
+/** The text a sighted learner sees: everything except screen-reader-only spans. */
+const visibleText = (scope: Locator) => scope.evaluate((node) => {
+  const copy = node.cloneNode(true) as HTMLElement;
+  copy.querySelectorAll('.sr-only').forEach((el) => el.remove());
+  return copy.textContent ?? '';
+});
 
 test('delivery corrections, explicit reporting and frozen sign-off', async ({ page, baseURL }, testInfo) => {
   const d = new DeliveryHarness(page, baseURL!, testInfo.project.name === 'desktop-keyboard');
@@ -73,11 +80,28 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
       }
 
       const measure = row.getByRole('button', { name: line.unit === 'kg' ? 'Weigh it' : 'Count them', exact: true });
+      const scales = row.getByTestId('kitchen-scale');
+      const reading = `${Number(line.amount).toFixed(2)} kg`;
+      if (line.unit === 'kg') {
+        await expect(scales).toHaveAttribute('data-phase', 'idle');
+        await expect(scales).toHaveAccessibleName(/reading 0\.00 kg/);
+      } else {
+        await expect(scales).toHaveCount(0);
+      }
       await d.activate(measure);
       await expect(measure).toBeDisabled();
       await expect(row.getByText('Wait for it to settle', { exact: true })).toBeVisible();
+      if (line.unit === 'kg') await expect(scales).toHaveAttribute('data-phase', 'settling');
       await d.saved({ lines: { [line.id]: { counted: true } } });
-      await expect(row.locator('[aria-live]').first()).toContainText(`${line.amount} ${line.unit}`);
+      if (line.unit === 'kg') {
+        // Kilos are read off the bench scales' display; the number is only spoken, never printed beside it.
+        await expect(scales).toHaveAttribute('data-phase', 'stable');
+        await expect(scales).toHaveAccessibleName(new RegExp(`settled at ${reading.replace('.', '\\.')}`));
+        await expect(row.locator('[aria-live]').first()).toContainText(reading);
+        expect(await visibleText(row)).not.toContain(reading);
+      } else {
+        await expect(row.locator('[aria-live]').first()).toContainText(`${line.amount} ${line.unit}`);
+      }
       // Measurement never transcribes the learner's answer.
       await expect(quantity).toHaveValue(line.id === 'salmon' ? '12' : '');
       if (line.temperature !== undefined) {
@@ -144,6 +168,13 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
     await d.reload();
     expect((await d.progress()).tasks[DELIVERY]).toEqual(before);
     await assertDraft();
+    // A weighed box is still on the scales after reload, without weighing it again.
+    await d.go('Order sheet');
+    const salmon = d.row('salmon');
+    await d.activate(salmon.getByRole('button', { name: 'Open salmon fillet, skin on', exact: true }));
+    await expect(salmon.getByTestId('kitchen-scale')).toHaveAttribute('data-phase', 'stable');
+    await expect(salmon.getByRole('button', { name: 'Weigh it', exact: true })).toBeEnabled();
+    await d.activate(salmon.getByRole('button', { name: 'Close salmon fillet, skin on', exact: true }));
     await d.go('Compare amounts');
     await expect(app.locator('#delivery-missing')).toHaveValue('8');
     await expect(app.locator('#delivery-proposed-amount')).toHaveValue('4');

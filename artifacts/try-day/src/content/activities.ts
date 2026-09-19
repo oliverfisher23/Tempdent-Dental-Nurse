@@ -88,6 +88,11 @@ export const FRIDGE_UNITS: FridgeUnit[] = [
 
 /** How close a written reading has to be to the probe to count. */
 export const READING_TOLERANCE_C = 0.3;
+/**
+ * The fridge dials are marked in whole degrees, so a written reading counts when it is
+ * within 0.7 of the needle: any careful whole or half-degree reading passes, a tick out does not.
+ */
+export const DIAL_READING_TOLERANCE_C = 0.7;
 
 export const HANDOVER_LINES = {
   porterOpening: {
@@ -100,7 +105,7 @@ export const HANDOVER_LINES = {
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',
-    text: "Have a look at the night notes first, then we'll go round together. Let the probe settle and write down what you actually see. Add the time and your initials as you go.",
+    text: "Have a look at the night notes first, then we'll go round together. Give the thermometer in each one a second to settle and write down what you actually see. Add the time and your initials as you go.",
   } satisfies Line,
   marcusAtFlaggedUnit: {
     speaker: 'Terence',
@@ -108,11 +113,11 @@ export const HANDOVER_LINES = {
   } satisfies Line,
   marcusOnWarmReading: {
     speaker: 'Terence',
-    text: "Eight point six. That's too warm. Check what's in there. We need to move anything high-risk into larder one and keep this door shut while it cools.",
+    text: "Look where that needle is sitting. That's too warm. Check what's in there. We need to move anything high-risk into larder one and keep this door shut while it cools.",
   } satisfies Line,
   marcusOnWrongReading: {
     speaker: 'Terence',
-    text: "Take another look at the probe. Just write the number you can see.",
+    text: "Take another look at the dial. Just write the number the needle points to.",
   } satisfies Line,
   marcusDone: {
     speaker: 'Terence',

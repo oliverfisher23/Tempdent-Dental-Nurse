@@ -10,7 +10,7 @@ import {
 import { SceneMediaActiveContext } from '../../kitchen/scene-media-context';
 
 export function InspectionMedia({
-  media, description, playback, motionEnabled, setMotionEnabled, active, onComplete, children,
+  media, description, playback, motionEnabled, setMotionEnabled, active, onComplete, onStatus, children,
 }: {
   media: FridgeMedia;
   description: string;
@@ -19,6 +19,8 @@ export function InspectionMedia({
   setMotionEnabled: (enabled: boolean) => void;
   active: boolean;
   onComplete?: () => void;
+  /** Receives the playback message for the caller to show beside the picture; empty outside the loop. */
+  onStatus: (status: string) => void;
   children?: ReactNode;
 }) {
   const sceneActive = useContext(SceneMediaActiveContext);
@@ -133,22 +135,34 @@ export function InspectionMedia({
   }, []);
 
   const resume = !motionEnabled || blocked || failed;
-  const status = failed
-    ? 'Video unavailable. You can inspect the still image.'
-    : blocked
-      ? 'Playback was blocked. You can inspect the still image.'
-      : !motionEnabled
-        ? 'Motion paused. You can continue inspecting.'
-        : requested && !hasFrame
-          ? 'Showing a still image while the video loads.'
-          : 'Silent looping view. Continue whenever you are ready.';
+  const status = playback !== 'loop'
+    ? ''
+    : failed
+      ? 'Video unavailable. You can inspect the still image.'
+      : blocked
+        ? 'Playback was blocked. You can inspect the still image.'
+        : !motionEnabled
+          ? 'Motion paused. You can continue inspecting.'
+          : requested && !hasFrame
+            ? 'Showing a still image while the video loads.'
+            : 'Silent looping view. Continue whenever you are ready.';
+
+  useEffect(() => {
+    onStatus(status);
+  }, [status, onStatus]);
 
   return (
-    <div className="flex min-h-0 flex-col gap-2 md:flex-1">
-      <div ref={slotRef} className="relative h-[clamp(220px,calc(100svh-var(--kitchen-top,150px)-var(--dialogue-h,80px)-190px),520px)] w-full md:h-auto md:flex-1">
+    // Stacked, the picture is a fixed-height band in the page flow; beside the panel
+    // it fills the portrait column, which is already 9:16 so the frame meets its edges.
+    <div className="relative w-full bg-black h-[clamp(220px,calc(100svh-var(--kitchen-top,150px)-var(--dialogue-h,80px)-190px),520px)] beside:absolute beside:inset-0 beside:h-auto">
+      {/* The poster, blurred and enlarged, fills any letterbox instead of flat black. */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+        <img src={media.poster} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover opacity-60 blur-2xl" />
+      </div>
+      <div ref={slotRef} className="absolute inset-0">
         <div
           data-testid="inspection-media-frame"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-black"
           style={{ width: size.width, height: size.height, aspectRatio: '9 / 16' }}
         >
           <img
@@ -181,29 +195,30 @@ export function InspectionMedia({
             />
           )}
           {children}
+          {playback === 'loop' && (
+            // Bottom-left corner of the picture: no marker sits there, so it never covers a clue.
+            <button
+              type="button"
+              data-testid="inspection-motion"
+              aria-controls={id}
+              aria-label={resume ? 'Resume motion' : 'Pause motion'}
+              title={resume ? 'Resume motion' : 'Pause motion'}
+              onClick={() => {
+                if (resume) {
+                  setHasFrame(false);
+                  setFailed(false);
+                  setBlocked(false);
+                  setRetry(value => value + 1);
+                }
+                setMotionEnabled(resume);
+              }}
+              className="absolute bottom-2 left-2 flex h-11 w-11 items-center justify-center rounded-full border border-white/40 bg-zinc-950/80 text-white shadow-[0_2px_12px_rgba(0,0,0,0.7)] hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              {resume ? <Play size={18} aria-hidden /> : <Pause size={18} aria-hidden />}
+            </button>
+          )}
         </div>
       </div>
-      {playback === 'loop' && <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-white">
-        <button
-          type="button"
-          data-testid="inspection-motion"
-          aria-controls={id}
-          onClick={() => {
-            if (resume) {
-              setHasFrame(false);
-              setFailed(false);
-              setBlocked(false);
-              setRetry(value => value + 1);
-            }
-            setMotionEnabled(resume);
-          }}
-          className="flex min-h-11 items-center gap-2 rounded-lg border border-white/30 bg-zinc-900 px-3 py-2 text-sm font-semibold hover:bg-zinc-800 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-        >
-          {resume ? <Play size={16} aria-hidden /> : <Pause size={16} aria-hidden />}
-          {resume ? 'Resume motion' : 'Pause motion'}
-        </button>
-        <p className="max-w-xs text-center text-xs text-zinc-300" role="status">{status}</p>
-      </div>}
     </div>
   );
 }

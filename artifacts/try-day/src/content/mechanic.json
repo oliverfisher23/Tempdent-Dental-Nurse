@@ -44,15 +44,15 @@
         "place": "Main kitchen, by the walk-in fridges",
         "title": "Take the handover and walk the fridges",
         "situation": "The overnight log says larder fridge 2 was found open at four this morning, for an unknown length of time. Some of tonight's prep may have been affected.",
-        "job": "Read all the notes, then open every fridge, look inside, probe it and let it settle. Write what you actually see with the time and your initials.",
+        "job": "Read all the notes, then open every fridge, look inside and read its thermometer once the needle settles. Write what you actually see with the time and your initials.",
         "materials": [
           {
             "name": "Overnight log",
             "description": "Four timed entries between 22:00 and 06:30: the deep clean, a delivery left in the corridor, a fridge door found ajar at 04:10, and the breakfast set-up."
           },
           {
-            "name": "Temperature board and probe",
-            "description": "A paper chart on the wall with a row for every fridge and freezer, a column for the reading and a space for the time and your initials; and the probe you wipe, read, and wipe again between fridges."
+            "name": "Temperature board and fridge thermometers",
+            "description": "A paper chart on the wall with a row for every fridge and freezer, a column for the reading and a space for the time and your initials; and the dial thermometer hanging in each fridge, which you wipe and read once the needle has settled."
           }
         ],
         "interaction": "In person with the night porter, who is keen to get off, and with Terence, who walks the fridges beside you and points out larder fridge 2.",

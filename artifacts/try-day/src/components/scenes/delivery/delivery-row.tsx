@@ -8,6 +8,7 @@ import { FISH_CHECKS, ORDER_LINES } from '@/content/activities';
 import { CRATE_IMAGES } from '@/content/kitchen';
 import { lowerFirst } from '@/lib/utils';
 import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
+import { KitchenScale, scaleReading, type ScalePhase } from '../../kitchen/kitchen-scale';
 import { kitchenAudio } from '@/lib/audio';
 import { useProgress } from '@/lib/progress-store';
 import { deliveryLineIssues } from '@/lib/delivery-workflow';
@@ -144,6 +145,9 @@ export function DeliveryRow({
    const issues = deliveryLineIssues(state, line.id);
    const isSeaBass = line.id === 'sea-bass';
    const isFishTrolley = line.trolley === 1;
+   // Kilos go on the bench scales; everything else is counted by hand.
+   const isWeighed = line.unit === 'kg';
+   const scalePhase: ScalePhase = isCounting ? 'settling' : row.counted ? 'stable' : 'idle';
 
    return (
       <div className="flex flex-col border border-white/15 rounded-xl bg-zinc-900/80 backdrop-blur-sm shadow-xl overflow-hidden transition-all duration-300">
@@ -228,16 +232,35 @@ export function DeliveryRow({
                      </div>
                      
                      {/* ARIA Live region for results */}
-                     <div aria-live="polite" className="bg-black/50 p-4 rounded-lg flex items-center justify-between font-mono text-lg border border-white/5">
-                         <span className="text-zinc-400 text-sm font-sans font-bold uppercase tracking-widest">{ROW_LABELS.result}</span>
-                        {isCounting ? (
-                           <span className="text-amber-400 animate-pulse">{ROW_LABELS.measuring}</span>
-                        ) : row.counted ? (
-                           <span className="text-emerald-400 font-bold">{line.arrived} {line.unit}</span>
-                        ) : (
-                            <span className="text-zinc-400">{ROW_LABELS.notChecked}</span>
-                        )}
-                     </div>
+                     {isWeighed ? (
+                        <div className="bg-black/50 p-4 rounded-lg flex flex-col items-center gap-3 border border-white/5">
+                           {/* The scales sit outside the live region so only the status line below is read out as it changes. */}
+                           <KitchenScale kg={line.arrived} phase={scalePhase} className="max-w-[380px]" />
+                           <p aria-live="polite" className="text-sm text-center">
+                              {scalePhase === 'settling' ? (
+                                 <span className="text-amber-400 animate-pulse font-mono text-lg">{ROW_LABELS.measuring}</span>
+                              ) : scalePhase === 'stable' ? (
+                                 <>
+                                    <span className="sr-only">{ROW_LABELS.scaleSettled} {scaleReading(line.arrived)}. </span>
+                                    <span className="text-zinc-300">{ROW_LABELS.readScale}</span>
+                                 </>
+                              ) : (
+                                 <span className="text-zinc-400">{ROW_LABELS.scaleEmpty}</span>
+                              )}
+                           </p>
+                        </div>
+                     ) : (
+                        <div aria-live="polite" className="bg-black/50 p-4 rounded-lg flex items-center justify-between font-mono text-lg border border-white/5">
+                            <span className="text-zinc-400 text-sm font-sans font-bold uppercase tracking-widest">{ROW_LABELS.result}</span>
+                           {isCounting ? (
+                              <span className="text-amber-400 animate-pulse">{ROW_LABELS.measuring}</span>
+                           ) : row.counted ? (
+                              <span className="text-emerald-400 font-bold">{line.arrived} {line.unit}</span>
+                           ) : (
+                               <span className="text-zinc-400">{ROW_LABELS.notChecked}</span>
+                           )}
+                        </div>
+                     )}
                      
                      {line.chilled && (
                         <div aria-live="polite" className="bg-black/50 p-4 rounded-lg flex flex-col items-center border border-white/5 gap-4">

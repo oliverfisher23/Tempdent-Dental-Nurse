@@ -28,6 +28,7 @@ import {
   PREP_SHEET,
   PROBE_PLACEMENTS,
   READING_TOLERANCE_C,
+  DIAL_READING_TOLERANCE_C,
   SHORT_LINE_ID,
   TASK_ORDER,
   WASTE_BINS,
@@ -433,7 +434,7 @@ const flaggedUnitId = OVERNIGHT_LOG.find((e) => e.flagsUnitId)?.flagsUnitId ?? '
 
 export function rowReadingIsRight(unitId: string, reading: string): boolean {
   const unit = FRIDGE_UNITS.find((u) => u.id === unitId);
-  return !!unit && within(reading, unit.actualC, READING_TOLERANCE_C);
+  return !!unit && within(reading, unit.actualC, DIAL_READING_TOLERANCE_C);
 }
 
 export function evaluateHandover(s: HandoverState): Evaluation {

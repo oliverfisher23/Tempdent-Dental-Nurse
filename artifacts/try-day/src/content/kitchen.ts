@@ -106,7 +106,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     light: 'dawn',
     whatIsHere: {
       pass: 'The night porter is waiting with the overnight log.',
-      corridor: 'The fridges to check, the probe and the temperature board.',
+      corridor: 'The fridges to check, the thermometer in each one and the temperature board.',
     },
   },
   'check-the-delivery-in': {

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { FRIDGE_UNITS, HANDOVER_LINES } from '@/content/activities';
 import { InspectionMedia } from './inspection-media';
+import { DialThermometer } from './dial-thermometer';
 import { getInspectionSelection } from './inspection-selection';
 import { cn } from '@/lib/utils';
 import { HANDOVER_LABELS } from '@/content/scenes/handover-round';
@@ -50,6 +51,7 @@ export function InspectionView({
   const [checkedClueIds, setCheckedClueIds] = useState<Set<string>>(() => new Set());
   const [announcement, setAnnouncement] = useState('');
   const [probePending, setProbePending] = useState(false);
+  const [mediaStatus, setMediaStatus] = useState('');
   const { progress, jot } = useProgress();
   const noted = progress.notepad.some((entry) => entry.taskId === 'take-the-handover' && entry.ref?.unitId === unit.id);
   
@@ -70,6 +72,7 @@ export function InspectionView({
   const initialsInputRef = useRef<HTMLInputElement>(null);
   const noteInputRef = useRef<HTMLInputElement>(null);
    const probeButtonRef = useRef<HTMLButtonElement>(null);
+   const dialRef = useRef<SVGSVGElement>(null);
    const wasProbedRef = useRef(row.probed);
    const finishOpening = useCallback(() => {
      setDoorPhase(phase => phase === 'opening' ? 'open' : phase);
@@ -88,8 +91,9 @@ export function InspectionView({
     }
    }, [closing, doorOpen, frozen]);
 
+   // When the needle settles, focus lands on the dial itself so its label is read out before the learner types.
    useEffect(() => {
-     if (row.probed && !wasProbedRef.current && !frozen) readingInputRef.current?.focus();
+     if (row.probed && !wasProbedRef.current && !frozen) dialRef.current?.focus({ preventScroll: true });
      wasProbedRef.current = row.probed;
    }, [row.probed, frozen]);
 
@@ -158,9 +162,10 @@ export function InspectionView({
   const photo = selection.inspection;
   const activeClue = photo.clues.find(clue => clue.id === activeClueId);
   const media = selection.media;
-  const settledFeedback = isWarm
-    ? FRIDGE_INTERACTION_COPY.aboveLimit(unit.actualC.toFixed(1), unit.limitLabel)
-    : FRIDGE_INTERACTION_COPY.withinLimit(unit.actualC.toFixed(1), unit.limitLabel);
+  // With the door open the needle drifts a little warm; taking the reading lets it settle on the truth.
+  const dialPhase = row.probed ? 'settled' : probePending ? 'settling' : 'misted';
+  const dialValue = dialPhase === 'misted' ? unit.actualC + 1.6 : unit.actualC;
+  const typedReading = row.reading.trim();
 
   return (
     <div 
@@ -201,42 +206,9 @@ export function InspectionView({
           })}
         </div>
       </nav>
-      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto md:flex-row">
-      {/* Keep the markers relative to the visible portrait, not the surrounding space. */}
-      <div className="relative md:h-full md:flex-1 md:min-w-0 bg-black flex flex-col gap-3 p-4 shrink-0 md:shrink">
-        {/* We show the unit identity and saved count even when closed */}
-         <div className="flex flex-wrap justify-between items-start gap-2 shrink-0">
-           <div className="bg-black/60 text-white p-3 rounded-lg backdrop-blur-sm border border-white/10 shadow-xl">
-             <h2 className="font-bold text-xl text-white">{unit.name}</h2>
-             <div className="text-zinc-300 text-xs mt-1 uppercase tracking-wider">{unit.where} • {unit.limitLabel}</div>
-           </div>
-           <div className="bg-black/60 text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-sm border border-white/10 shadow-xl">
-             {HANDOVER_LABELS.progress(savedCount, totalCount)}
-           </div>
-        </div>
-
-         <div className="flex min-h-11 flex-wrap items-center gap-3 text-white">
-           {doorPhase === 'closed' && (
-             <>
-               <button ref={openBtnRef} type="button" data-testid="open-fridge" onClick={handleOpen} disabled={frozen}
-                 className="min-h-11 rounded-lg border-2 border-white bg-white px-5 py-2 text-base font-bold text-black shadow-lg hover:bg-zinc-200 disabled:opacity-60">
-                 {HANDOVER_LABELS.openFridge}
-               </button>
-               <p className="text-sm text-zinc-300">{FRIDGE_INTERACTION_COPY.closedHint}</p>
-             </>
-           )}
-           {doorPhase === 'opening' && (
-             <>
-               <p className="font-semibold" role="status">{FRIDGE_INTERACTION_COPY.opening}</p>
-               <button type="button" onClick={finishOpening} data-testid="skip-fridge-opening" disabled={frozen}
-                 className="min-h-11 rounded-lg border border-white/40 px-4 py-2 text-sm font-semibold hover:bg-white/10">
-                 {FRIDGE_INTERACTION_COPY.skipOpening}
-               </button>
-             </>
-           )}
-           {doorOpen && <p className="text-sm text-zinc-300">{HANDOVER_LABELS.inspectHint}</p>}
-         </div>
-
+      {/* The footage is portrait, so beside the panel the picture is sized by height, never by width. */}
+      <div className="flex min-h-0 flex-1 flex-col overflow-y-auto beside:flex-row beside:overflow-hidden">
+      <div className="relative w-full shrink-0 bg-black beside:h-full beside:w-auto beside:max-w-[46%] beside:aspect-[9/16]">
         <InspectionMedia
            key={`${unitId}-${doorPhase}`}
           media={media}
@@ -246,6 +218,7 @@ export function InspectionView({
           active={!closing && !frozen}
            playback={doorPhase === 'closed' ? 'still' : doorPhase === 'opening' ? 'once' : 'loop'}
            onComplete={finishOpening}
+           onStatus={setMediaStatus}
         >
           {mediaState === 'open' && (
             <div className="absolute inset-0" role="group" aria-label={HANDOVER_LABELS.inspectPrompt}>
@@ -263,7 +236,8 @@ export function InspectionView({
                     kitchenAudio.play('page');
                   }}
                   className="absolute -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-white bg-primary text-primary-foreground shadow-[0_2px_16px_rgba(0,0,0,0.8)] h-11 w-11 sm:h-12 sm:w-12 font-bold focus-visible:ring-4 focus-visible:ring-white/70 outline-none hover:scale-110 motion-reduce:transition-none"
-                  style={{ left: `${clue.x}%`, top: `${clue.y}%` }}
+                  // Clamped by the marker radius so a clue at the edge of the picture keeps its whole target inside the frame.
+                  style={{ left: `clamp(1.5rem, ${clue.x}%, calc(100% - 1.5rem))`, top: `clamp(1.5rem, ${clue.y}%, calc(100% - 1.5rem))` }}
                   aria-label={clue.label}
                   aria-pressed={activeClueId === clue.id}
                 >
@@ -273,90 +247,102 @@ export function InspectionView({
             </div>
           )}
         </InspectionMedia>
-        {mediaState === 'open' && activeClue && (
-          <div className="shrink-0 rounded-lg border border-white/20 bg-zinc-900 px-4 py-3 text-white">
-            <div className="text-xs font-bold uppercase tracking-wider">{activeClue.label}</div>
-            <div className="mt-1 text-sm sm:text-base leading-snug">{activeClue.finding}</div>
-          </div>
-        )}
       </div>
 
-      {/* Control Panel Area */}
-      <div 
-        className={cn(
-           "bg-zinc-900 border-t md:border-t-0 md:border-l border-zinc-700 transition-all duration-200 motion-reduce:duration-0 flex-shrink-0 md:w-[400px] lg:w-[500px]",
-           doorOpen ? "flex" : "hidden md:flex"
-        )}
-      >
+      {/* Check panel: identity, controls, findings and the board entry share the remaining width. */}
+      <div className="flex min-h-0 flex-1 flex-col border-t border-zinc-700 bg-zinc-900 text-white beside:border-l beside:border-t-0 beside:overflow-y-auto">
+        <div className="@container flex w-full max-w-3xl flex-col gap-4 p-4 sm:p-5 lg:p-8">
+          <div className="flex flex-wrap items-start justify-between gap-2">
+            <div>
+              <h2 className="text-2xl font-bold leading-tight">{unit.name}</h2>
+              <div className="mt-1 text-xs uppercase tracking-wider text-zinc-300">{unit.where} • {unit.limitLabel}</div>
+            </div>
+            <div className="rounded-full border border-white/15 bg-black/60 px-3 py-1.5 text-xs font-bold uppercase tracking-wider">
+              {HANDOVER_LABELS.progress(savedCount, totalCount)}
+            </div>
+          </div>
+
+          <div className="flex min-h-11 flex-wrap items-center gap-3">
+            {doorPhase === 'closed' && (
+              <>
+                <button ref={openBtnRef} type="button" data-testid="open-fridge" onClick={handleOpen} disabled={frozen}
+                  className="min-h-11 rounded-lg border-2 border-white bg-white px-5 py-2 text-base font-bold text-black shadow-lg hover:bg-zinc-200 disabled:opacity-60">
+                  {HANDOVER_LABELS.openFridge}
+                </button>
+                <p className="text-sm text-zinc-300">{FRIDGE_INTERACTION_COPY.closedHint}</p>
+              </>
+            )}
+            {doorPhase === 'opening' && (
+              <>
+                <p className="font-semibold" role="status">{FRIDGE_INTERACTION_COPY.opening}</p>
+                <button type="button" onClick={finishOpening} data-testid="skip-fridge-opening" disabled={frozen}
+                  className="min-h-11 rounded-lg border border-white/40 px-4 py-2 text-sm font-semibold hover:bg-white/10">
+                  {FRIDGE_INTERACTION_COPY.skipOpening}
+                </button>
+              </>
+            )}
+            {doorOpen && (
+              <div className="flex flex-col gap-1">
+                <p className="text-sm text-zinc-300">{HANDOVER_LABELS.inspectHint}</p>
+                <p className="text-xs text-zinc-400" role="status" data-testid="inspection-status">{mediaStatus}</p>
+              </div>
+            )}
+          </div>
+
+          {mediaState === 'open' && activeClue && (
+            <div className="rounded-lg border border-white/20 bg-black/40 px-4 py-3" data-testid="clue-finding">
+              <div className="text-xs font-bold uppercase tracking-wider">{activeClue.label}</div>
+              <div className="mt-1 text-sm leading-snug sm:text-base">{activeClue.finding}</div>
+            </div>
+          )}
+
           {!doorOpen ? (
-            <aside className="flex w-full flex-col justify-center gap-3 p-6 lg:p-8 text-white">
-              <h3 className="text-2xl">{FRIDGE_INTERACTION_COPY.checkHeading}</h3>
+            <aside className="flex flex-col gap-2 border-t border-zinc-800 pt-4">
+              <h3 className="text-xl">{FRIDGE_INTERACTION_COPY.checkHeading}</h3>
               <p className="text-sm leading-relaxed text-zinc-300">{FRIDGE_INTERACTION_COPY.checkHint}</p>
             </aside>
           ) : (
-          <form onSubmit={handleFormSubmit} aria-busy={closing} className="p-4 sm:p-6 lg:p-8 text-white flex flex-col gap-6 w-full h-auto md:h-full overflow-visible md:overflow-y-auto">
+          <form onSubmit={handleFormSubmit} aria-busy={closing} className="flex w-full flex-col gap-6 border-t border-zinc-800 pt-5">
             
-            {/* Probe Action / Display */}
-            <div className="bg-black border border-zinc-700 rounded-xl p-6 shadow-inner flex flex-col items-center justify-center min-h-[140px] shrink-0">
-               {row.probed ? (
-                 <div className="flex flex-col items-center gap-4">
-                   <div className="font-mono text-5xl font-bold tracking-widest text-emerald-400" data-testid="probe-display">
-                     {unit.actualC.toFixed(1)} <span className="text-2xl text-emerald-500/50">°C</span>
-                   </div>
-                   {noted ? (
-                     <p className="flex min-h-11 items-center gap-2 text-sm font-semibold text-emerald-300" role="status" data-testid="notebook-written">
-                       <Check className="h-4 w-4" aria-hidden="true" />
-                       {HANDOVER_LABELS.inNotebook}
-                     </p>
-                   ) : (
-                     <button
-                       type="button"
-                       disabled={frozen}
-                       onClick={() => {
-                         kitchenAudio.play('write');
-                         jot({
-                           taskId: 'take-the-handover',
-                           label: unit.name,
-                           value: `${unit.actualC.toFixed(1)} °C`,
-                           ref: { unitId: unit.id }
-                         });
-                         setAnnouncement(FRIDGE_INTERACTION_COPY.notebookSaved);
-                       }}
-                       className="min-h-11 text-sm bg-white/10 border border-white/20 text-white font-bold px-4 py-2 rounded hover:bg-white/20 transition-colors flex items-center gap-2 disabled:opacity-50"
-                     >
-                       {HANDOVER_LABELS.writeInNotebook}
-                     </button>
-                   )}
-                 </div>
-               ) : (
-                  <button
-                    ref={probeButtonRef}
-                    type="button"
-                    disabled={frozen || probePending}
-                    onClick={() => {
-                      if (probePending) return;
-                      setProbePending(true);
-                      setAnnouncement('The probe is settling.');
-                      probeTimerRef.current = setTimeout(() => {
-                        setProbePending(false);
-                        kitchenAudio.play('probe');
-                        onProbe(unitId);
-                      }, 1600);
-                    }}
-                    className="min-h-11 rounded-xl border-2 border-zinc-600 bg-white px-5 py-3 text-left font-bold text-black outline-none transition-transform duration-200 active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-primary/40 disabled:opacity-60 motion-reduce:transition-none"
-                  >
-                    <span className="block">{HANDOVER_LABELS.holdToRead}</span>
-                    <span className="mt-1 block text-xs font-normal text-zinc-600">{probePending ? 'The probe is settling' : 'Start the reading and wait for it to settle'}</span>
-                  </button>
-               )}
-                <div className="mt-3 text-center text-sm text-zinc-200" role="status">
+            <div className="grid gap-6 @2xl:grid-cols-[256px_minmax(0,1fr)] @2xl:items-start">
+            {/* The fridge's own dial thermometer: misted until the reading is taken, then read by eye. */}
+            <div className="flex shrink-0 flex-col items-center gap-3 rounded-xl border border-zinc-700 bg-black p-4 shadow-inner">
+               <div
+                 className="relative w-full max-w-[224px]"
+                 {...(row.probed ? { 'data-testid': 'probe-display' } : {})}
+               >
+                 <DialThermometer valueC={dialValue} limitC={unit.limitC} phase={dialPhase} focusRef={dialRef} />
+                 {/* The button leaves as soon as the wipe starts so the needle can be watched settling. */}
+                 {dialPhase === 'misted' && (
+                    <button
+                      ref={probeButtonRef}
+                      type="button"
+                      disabled={frozen}
+                      onClick={() => {
+                        if (probePending) return;
+                        setProbePending(true);
+                        dialRef.current?.focus({ preventScroll: true });
+                        probeTimerRef.current = setTimeout(() => {
+                          setProbePending(false);
+                          kitchenAudio.play('probe');
+                          onProbe(unitId);
+                        }, 1600);
+                      }}
+                      className="absolute left-1/2 top-[56%] w-[84%] min-h-11 -translate-x-1/2 -translate-y-1/2 rounded-xl border-2 border-zinc-300 bg-white px-4 py-2.5 text-left font-bold text-black shadow-[0_6px_24px_rgba(0,0,0,0.45)] outline-none transition-transform duration-200 active:scale-[0.98] focus-visible:ring-4 focus-visible:ring-primary/50 disabled:opacity-80 motion-reduce:transition-none"
+                    >
+                      <span className="block leading-tight">{HANDOVER_LABELS.holdToRead}</span>
+                      <span className="mt-1 block text-xs font-normal leading-snug text-zinc-600">{FRIDGE_INTERACTION_COPY.takeSubtitle}</span>
+                    </button>
+                 )}
+               </div>
+                <div className="text-center text-sm text-zinc-200" role="status">
                   {row.probed ? (
                     <>
                       <p>{FRIDGE_INTERACTION_COPY.probeReady}</p>
-                      <p className={cn('mt-1 font-semibold', isWarm ? 'text-amber-300' : 'text-emerald-300')}>{settledFeedback}</p>
+                      <p className="mt-1 font-semibold text-zinc-100">{FRIDGE_INTERACTION_COPY.limitReminder(unit.limitLabel)}</p>
                     </>
                   ) : (
-                    <p>{FRIDGE_INTERACTION_COPY.noteProbePrompt}</p>
+                    <p>{probePending ? FRIDGE_INTERACTION_COPY.settling : FRIDGE_INTERACTION_COPY.noteProbePrompt}</p>
                   )}
                 </div>
             </div>
@@ -367,7 +353,7 @@ export function InspectionView({
                   <p className="text-sm font-bold">{FRIDGE_INTERACTION_COPY.evidenceHeading}</p>
                   <p className="mt-1 text-xs text-zinc-300">{FRIDGE_INTERACTION_COPY.evidenceProgress(checkedClueIds.size, photo.clues.length)}</p>
                 </div>
-               <div className="grid grid-cols-2 gap-4">
+               <div className="grid grid-cols-2 gap-4 @xl:grid-cols-3">
                  <div className="flex flex-col gap-2">
                    <label htmlFor={`reading-${unitId}`} className="text-xs font-bold uppercase text-zinc-400">{HANDOVER_LABELS.probeValue}</label>
                    <input
@@ -402,30 +388,59 @@ export function InspectionView({
                      placeholder="-"
                    />
                  </div>
+                 <div className="flex flex-col gap-2">
+                   <label htmlFor={`initials-${unitId}`} className="text-xs font-bold uppercase text-zinc-400">{HANDOVER_LABELS.initials}</label>
+                   <input
+                     id={`initials-${unitId}`}
+                     name="initials"
+                     ref={initialsInputRef}
+                     data-testid="initials-input"
+                     type="text"
+                     value={row.initials}
+                     maxLength={3}
+                      onChange={(e) => {
+                        setError(null);
+                        onRowChange(unitId, 'initials', e.target.value);
+                      }}
+                     className="min-w-0 w-full bg-black text-white px-4 py-3 rounded border border-zinc-600 font-mono text-xl uppercase focus:border-primary outline-none transition-colors"
+                     placeholder="-"
+                      disabled={!row.probed || closing || frozen}
+                      aria-invalid={!!error && row.initials.trim().length === 0}
+                      aria-describedby={error && row.initials.trim().length === 0 ? `handover-error-${unitId}` : undefined}
+                   />
+                 </div>
                </div>
                
-               <div className="flex flex-col gap-2">
-                 <label htmlFor={`initials-${unitId}`} className="text-xs font-bold uppercase text-zinc-400">{HANDOVER_LABELS.initials}</label>
-                 <input
-                   id={`initials-${unitId}`}
-                   name="initials"
-                   ref={initialsInputRef}
-                   data-testid="initials-input"
-                   type="text"
-                   value={row.initials}
-                   maxLength={3}
-                    onChange={(e) => {
-                      setError(null);
-                      onRowChange(unitId, 'initials', e.target.value);
-                    }}
-                   className="min-w-0 w-full bg-black text-white px-4 py-3 rounded border border-zinc-600 font-mono text-xl uppercase focus:border-primary outline-none transition-colors"
-                   placeholder="-"
-                    disabled={!row.probed || closing || frozen}
-                    aria-invalid={!!error && row.initials.trim().length === 0}
-                    aria-describedby={error && row.initials.trim().length === 0 ? `handover-error-${unitId}` : undefined}
-                 />
+               {/* The notebook keeps the learner's own reading, never the hidden value. */}
+               <div className="flex min-h-11 flex-wrap items-center gap-3">
+                 {noted ? (
+                   <p className="flex items-center gap-2 text-sm font-semibold text-emerald-300" role="status" data-testid="notebook-written">
+                     <Check className="h-4 w-4" aria-hidden="true" />
+                     {HANDOVER_LABELS.inNotebook}
+                   </p>
+                 ) : (
+                   <>
+                     <button
+                       type="button"
+                       disabled={frozen || !row.probed || typedReading === ''}
+                       onClick={() => {
+                         kitchenAudio.play('write');
+                         jot({
+                           taskId: 'take-the-handover',
+                           label: unit.name,
+                           value: `${typedReading} °C`,
+                           ref: { unitId: unit.id }
+                         });
+                         setAnnouncement(FRIDGE_INTERACTION_COPY.notebookSaved);
+                       }}
+                       className="flex min-h-11 items-center gap-2 rounded border border-white/20 bg-white/10 px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-white/20 disabled:opacity-50"
+                     >
+                       {HANDOVER_LABELS.writeInNotebook}
+                     </button>
+                     {typedReading === '' && <p className="text-xs text-zinc-400">{FRIDGE_INTERACTION_COPY.notebookHint}</p>}
+                   </>
+                 )}
                </div>
-               
                <div className="flex flex-col gap-2 mt-2">
                   {(isFlagged || (isWarm && row.probed)) && (
                     <div className="bg-primary/15 border border-primary/50 p-3 rounded-lg mb-1 text-zinc-100 font-medium flex gap-3 items-start">
@@ -459,6 +474,7 @@ export function InspectionView({
                  />
                </div>
             </div>
+            </div>
 
             {/* Error and Submit Actions */}
             <div className="mt-auto pt-4 flex flex-col gap-3 shrink-0">
@@ -480,6 +496,7 @@ export function InspectionView({
             </div>
           </form>
           )}
+        </div>
       </div>
       </div>
       <span className="sr-only" aria-live="polite">{announcement}</span>
