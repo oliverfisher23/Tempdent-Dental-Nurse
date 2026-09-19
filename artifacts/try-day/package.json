@@ -8,6 +8,7 @@
     "build": "vite build --config vite.config.ts",
     "serve": "vite preview --config vite.config.ts --host 0.0.0.0",
     "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test:fridge-round": "playwright test --config e2e/playwright.config.mjs",
     "test:delivery:browser": "playwright test --config playwright.delivery.config.ts",
     "typecheck:delivery:browser": "tsc --noEmit -p tsconfig.delivery-tests.json"
   },

@@ -9,6 +9,7 @@ This is an LMS-embedded learner experience, not a public marketing site. Keep th
 - `pnpm --filter @workspace/try-day run dev` — run the try-day web app (workflow `artifacts/try-day: web`, binds `PORT`)
 - `pnpm --filter @workspace/try-day run typecheck` — typecheck the web app only
 - `pnpm --filter @workspace/try-day run test:delivery:browser` — delivery-only desktop/phone regression against the running web workflow; isolated designer session and iframe host checks. See `artifacts/try-day/docs/delivery-browser-regression.md`.
+- `pnpm --filter @workspace/try-day run test:fridge-round` — the complete Task 1 fridge round in a real browser, from the overnight log through all seven appliances; starts its own Vite server on port 4174. Separate from the fast `tests/*.test.ts` regression. See `artifacts/try-day/e2e/README.md`.
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-server run dev` — the scaffold API server (not used by the try-day app in v1)
