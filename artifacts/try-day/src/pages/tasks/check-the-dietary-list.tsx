@@ -8,7 +8,6 @@ import {
 } from "@/content/activities";
 import { useProgress } from "@/lib/progress-store";
 import { wrongChartRows, evaluateDietary } from "@/lib/simulation";
-import { PassScene } from "@/components/scenes/dietary/pass";
 import { EventsScene } from "@/components/scenes/dietary/events";
 import { kitchenAudio } from "@/lib/audio";
 import { getDietaryGuide } from "@/content/guides/dietary-close";

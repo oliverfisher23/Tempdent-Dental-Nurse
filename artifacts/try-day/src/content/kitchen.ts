@@ -127,11 +127,10 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     },
   },
   'check-the-dietary-list': {
-    start: 'pass',
-    places: ['pass', 'events'],
+    start: 'events',
+    places: ['events'],
     light: 'midday',
     whatIsHere: {
-      pass: 'Yvie is waiting with the function sheet.',
       events: 'The recipe cards, the allergen chart and the evening board.',
     },
   },
