@@ -3,6 +3,7 @@ import { OVERNIGHT_LOG } from '@/content/activities';
 import { HANDOVER_LABELS } from '@/content/scenes/handover-round';
 import { useKitchenAction } from '../../kitchen/kitchen-context';
 import { Clipboard } from '../../kitchen/paper';
+import { FridgeBackdrop } from './fridge-backdrop';
 
 export function LogView({ onStart }: { onStart: () => void }) {
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -12,7 +13,10 @@ export function LogView({ onStart }: { onStart: () => void }) {
   });
 
   return (
-    <div className="absolute inset-0 z-0 bg-background flex flex-col overflow-y-auto min-h-0" data-testid="handover-log">
+    <div className="absolute inset-0 z-0 bg-background" data-testid="handover-log">
+      {/* The photograph stays put behind the page; only the clipboard scrolls. */}
+      <FridgeBackdrop />
+      <div className="absolute inset-0 flex flex-col overflow-y-auto min-h-0">
        <div className="max-w-3xl w-full mx-auto p-4 sm:p-8 py-12 flex flex-col min-h-full">
          <Clipboard>
            <div className="p-8 pb-12 bg-white text-foreground">
@@ -48,6 +52,7 @@ export function LogView({ onStart }: { onStart: () => void }) {
            </div>
          </Clipboard>
        </div>
+      </div>
     </div>
   );
 }

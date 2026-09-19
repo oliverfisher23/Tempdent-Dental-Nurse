@@ -19,9 +19,6 @@ import terencePortrait from '@/assets/kitchen/photos/terence-square.webp';
 // Goods-in and the events kitchen keep their illustrated backdrops: no photograph of those areas was supplied.
 import sceneGoodsIn from '@/assets/kitchen/scene-goods-in.jpg';
 import sceneEvents from '@/assets/kitchen/scene-events.jpg';
-import fridgeInterior from '@/assets/kitchen/fridge-interior.jpg';
-import freezerInterior from '@/assets/kitchen/freezer-interior.jpg';
-import walkInInterior from '@/assets/kitchen/walk-in-interior.jpg';
 import fishBox from '@/assets/kitchen/fish-box.jpg';
 import crateSeaBass from '@/assets/kitchen/crate-sea-bass.jpg';
 import crateSmokedHaddock from '@/assets/kitchen/crate-smoked-haddock.jpg';
@@ -60,6 +57,8 @@ export const PLACES: Record<PlaceId, Place> = {
     name: 'The fridges',
     description: 'The row of fridges and freezers along the back wall, with the walk-in (the fridge you can walk into) at the end and the temperature board on the wall.',
     map: { x: 62, y: 31 },
+    // Task 1 is a focused workspace with no room navigation, so this photograph is shown
+    // faded behind its overnight log and board pages (scenes/handover/fridge-backdrop.tsx).
     backdrop: sceneCorridor,
   },
   'goods-in': {
@@ -175,14 +174,6 @@ export const YVIE_PERSON_ID = 'sarah' as const;
 export function personForSpeaker(speaker: string): Person | undefined {
   return PEOPLE.find((p) => p.speaker === speaker);
 }
-
-/** Pictures the scenes open onto. */
-export const INTERIORS = {
-  fridge: fridgeInterior,
-  freezer: freezerInterior,
-  walkIn: walkInInterior,
-  fishBox,
-};
 
 /** What is inside each box on the delivery, keyed by the order line id in `activities.ts`. */
 export const CRATE_IMAGES: Record<string, string> = {

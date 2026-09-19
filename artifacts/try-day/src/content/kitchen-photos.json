@@ -66,8 +66,8 @@
       "size": "1920x1080",
       "quality": 80,
       "redact": ["200x110+1025+585", "170x90+975+1125"],
-      "redactReason": "The two fridge display readouts are blurred so the photo cannot be read as temperature evidence behind the unit cards",
-      "use": "PLACES.corridor.backdrop"
+      "redactReason": "The two fridge display readouts are blurred so the photo cannot be read as temperature evidence behind the Task 1 paperwork",
+      "use": "PLACES.corridor.backdrop, faded behind the Task 1 overnight log and board pages"
     },
     "bench": {
       "file": "bench.webp",

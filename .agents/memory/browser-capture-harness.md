@@ -11,10 +11,11 @@ description: Lessons from driving the try-day app headlessly (CDP/Playwright) fo
   reflect the desktop branch of any pointer-media CSS; verify on a real device or force the media query.
 - A black stage is not necessarily slowness: a task route whose start place has no registered scene renders
   nothing there. Check `TASK_ROUTES` against the page's `scenes` before blaming load time.
-- Task 1 is a focused workspace (log page, then the fridge inspection viewer, then the board review); the
-  `handover/pass.tsx` and `handover/corridor.tsx` scene files are not mounted by its page. Anything placed in
-  those scenes or in `PLACES.corridor.backdrop` cannot be checked in the browser today; the pass photo is
-  visible in Task 2 and Task 5, the bench photo in Task 3.
+- Task 1 is a focused workspace (log page, then the fridge inspection viewer, then the board review) with no
+  room scenes of its own. The fridges photograph (`PLACES.corridor.backdrop`) is only seen faded behind the log
+  and board pages, so check it there, not on a map route; the pass photo is visible in Task 2 and Task 5, the
+  bench photo in Task 3. Both Task 1 paper pages scroll inside the paper (the clipboard and log book shrink to
+  the stage), so a fixed backdrop must sit outside that scroller to stay put.
 - To reach a task scene headlessly, open `/?testMode=1`, press "Designer test", then a task button in the
   "Test destinations" nav; session fixtures land you at the task's first step without touching learner storage.
 - The try-day web artifact is mounted at the root preview path, so drive it at `http://localhost:80/...`,

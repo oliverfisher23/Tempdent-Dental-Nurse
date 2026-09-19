@@ -6,6 +6,7 @@ import type { HandoverState } from '@/lib/simulation';
 import { FLAGGED_FRIDGE_ID } from '@/lib/handover-round';
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { FridgeBackdrop } from './fridge-backdrop';
 
 export function BoardReview({
   state,
@@ -23,7 +24,10 @@ export function BoardReview({
   });
 
   return (
-    <div className="absolute inset-0 z-0 bg-background flex flex-col overflow-y-auto" ref={containerRef} tabIndex={-1} data-testid="handover-board">
+    <div className="absolute inset-0 z-0 bg-background" data-testid="handover-board">
+      {/* The photograph stays put behind the page; only the log book scrolls. */}
+      <FridgeBackdrop />
+      <div className="absolute inset-0 flex flex-col overflow-y-auto" ref={containerRef} tabIndex={-1}>
       <div className="max-w-5xl w-full mx-auto p-4 sm:p-8 py-12 flex flex-col min-h-full">
         <LogBook>
           <LogBookHeader round={HANDOVER_LABELS.boardRound} />
@@ -148,6 +152,7 @@ export function BoardReview({
             </div>
           </div>
         </LogBook>
+      </div>
       </div>
     </div>
   );
