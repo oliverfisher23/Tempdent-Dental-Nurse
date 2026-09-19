@@ -28,13 +28,13 @@ id = "6yOtwSpZSFGzYe0bHGLU_"
 uri = "file://artifacts/try-day/PHOTOGRAPHY-SHOT-LIST.md"
 type = "text"
 title = "art’otel Try Day Photography Shot List"
-description = "A production-ready Markdown brief covering essential locations, staff portraits, inspection evidence, ingredient images, formats and shoot totals."
+description = "Production brief for the remaining photography, now with a delivery status: the five photographs received on 19 September 2026 and where each is used, the fridge inspections covered by the approved clips, and what is still outstanding (goods-in area, events kitchen, the rest of Terence’s working set, supporting characters, ingredients, briefing films)."
 logical_id = "5b426b24-5c03-430e-9e12-d6d113d7afea"
-content_hash = "sha256:cb051728304e8791cdea4d3f472342e562c4d84776068bea456bb93abbddd240"
-size = 7521
-mtime_ms = 1789727012093
-storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/5b426b24-5c03-430e-9e12-d6d113d7afea/2bca0b11-5f98-4b87-a11e-30effa1110a5"
-storage_version_token = "1789727018574991"
+content_hash = "sha256:566171abf9aee75b1f98a651fb5d610a165a9011eccaa2b08f0bf845b3394a30"
+size = 14118
+mtime_ms = 1789815739759
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/5b426b24-5c03-430e-9e12-d6d113d7afea/15e7b027-6639-4103-a1b8-b10368b8e415"
+storage_version_token = "1789815999128995"
 content_type = "text/markdown"
 
 [[outputs]]
@@ -42,13 +42,13 @@ id = "VVfqVhZxEKOjE1322L5Ps"
 uri = "file://artifacts/try-day/exports/artotel-try-day-current-images.zip"
 type = "unspecified"
 title = "art’otel Try Day — Current Images"
-description = "ZIP export containing all 36 image assets currently held by the app, with their project folder structure and an image manifest."
+description = "ZIP export of the 41 images the app ships as of 19 September 2026, with their project folder structure and a manifest: brand marks, the illustrated kitchen pictures still in use, the client photographs of Terence as exported, and the fridge clip poster frames. The generated scenes and portraits the photographs replaced are no longer included."
 logical_id = "ab6e63b3-6624-4f01-9b6b-2698e434b5ad"
-content_hash = "sha256:519247f9594545bcd26ed1aba2fb61bf774fc3ff455da8dc16fdece20100a7f3"
-size = 4285117
-mtime_ms = 1789727061759
-storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/ab6e63b3-6624-4f01-9b6b-2698e434b5ad/447b3481-1845-45f8-a53b-ed997cb8138d"
-storage_version_token = "1789727065969824"
+content_hash = "sha256:439dd1dd88c074c86e63811fc1c7876760179ae7729f381cc3afe7ad6ac79939"
+size = 3665372
+mtime_ms = 1789815931846
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/ab6e63b3-6624-4f01-9b6b-2698e434b5ad/a2330274-3891-444b-82c6-6bb7a49cde21"
+storage_version_token = "1789815943937627"
 content_type = "application/octet-stream"
 
 [[outputs]]

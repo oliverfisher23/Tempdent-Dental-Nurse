@@ -2,9 +2,31 @@
 
 ## Purpose
 
-This document lists the photography needed to replace the generated imagery in the art’otel Sous Chef Try Day with real, brand-appropriate photography.
+This document lists the photography needed to replace the generated imagery in the art’otel Sous Chef Try Day with real, brand-appropriate photography. The first photographs have now arrived; the [delivery status](#delivery-status-19-september-2026) below records what is in use and what is still outstanding.
 
 The images should feel cultured, confident and contemporary while remaining clear enough to support the learning activities. All operational practices shown in the photographs must be accurate.
+
+## Delivery status (19 September 2026)
+
+Five photographs from the art’otel Hoxton kitchen were received on 19 September 2026 and are in the app. Each is exported as WebP into `src/assets/kitchen/photos/`; the crops are recorded in `src/content/kitchen-photos.json` and `scripts/prepare-kitchen-photos.mjs` regenerates the exports from the archive in `attached_assets/`. The uncropped originals stay out of `src/`.
+
+| Received photograph | What it shows | Where it is used |
+|---|---|---|
+| `portrait.JPG` | Terence, head and shoulders, in the restaurant | Dialogue avatar and the briefing-screen mentor circle (`terence-square.webp`, `terence-briefing.webp`, `terence-briefing-2x.webp`) |
+| `MP_02868.JPG` | Wide view down the kitchen line, Terence cooking at the far range | Welcome hero, 16:9 on larger screens and a 3:4 crop on phones (`kitchen-line.webp`, `kitchen-line-phone.webp`) |
+| `MP_03055.JPG` | Terence plating at the pass under the heat lamps | The pass backdrop (`pass.webp`) |
+| `MP_03045.JPG` | Terence opening a fridge drawer of raw meat trays | The fridges backdrop (`fridges.webp`); both fridge readouts are blurred so the photograph cannot be read as temperature evidence |
+| `MP_02917.JPG` | Terence cooking at the induction hob, close angle | The prep bench backdrop (`bench.webp`) |
+
+The generated pictures these replaced (the pass, corridor and bench scenes and the character portraits) have been removed from the repository.
+
+Still outstanding:
+
+- **Goods-in area** (essential): the back door still uses the illustrated backdrop `src/assets/kitchen/scene-goods-in.jpg`.
+- **Events kitchen** (essential): still uses the illustrated backdrop `src/assets/kitchen/scene-events.jpg`.
+- The rest of Terence’s working set, Yvie, the supporting characters, the event-space coverage, the delivery ingredients, the contextual details and the briefing films. Yvie, the night porter, the driver and the evening team currently appear with a generic icon in dialogue.
+
+The fridge and freezer inspections (section 4) were supplied separately as short video clips rather than photographs; see the note in that section.
 
 ## General production requirements
 
@@ -23,13 +45,13 @@ The images should feel cultured, confident and contemporary while remaining clea
 
 These photographs provide the full-screen backgrounds used throughout the experience.
 
-| Photograph | Content | Required crops |
-|---|---|---|
-| Kitchen pass hero | A strong view across the pass in an art’otel kitchen, with room for welcome copy and a chef portrait | 16:9 landscape, square and mobile portrait |
-| Kitchen corridor and fridges | Back corridor showing the fridge row, walk-in entrance and temperature-recording area | Landscape and square |
-| Goods-in area | Delivery entrance with trolleys, checking bench and scales | Landscape and square |
-| Preparation bench | Stainless-steel bench beside the blast chiller, staged with shallow food trays | Landscape and square |
-| Events kitchen | Events preparation area with a visible position for the evening or allergen board | Landscape, square and portrait-safe |
+| Photograph | Content | Required crops | Status |
+|---|---|---|---|
+| Kitchen pass hero | A strong view across the pass in an art’otel kitchen, with room for welcome copy and a chef portrait | 16:9 landscape, square and mobile portrait | Received: `MP_03055.JPG` is the pass backdrop; `MP_02868.JPG` (the kitchen line) is the welcome hero in landscape and phone crops |
+| Kitchen corridor and fridges | Back corridor showing the fridge row, walk-in entrance and temperature-recording area | Landscape and square | Received: `MP_03045.JPG`, landscape only, fridge readouts blurred |
+| Goods-in area | Delivery entrance with trolleys, checking bench and scales | Landscape and square | Outstanding: illustrated backdrop still in use |
+| Preparation bench | Stainless-steel bench beside the blast chiller, staged with shallow food trays | Landscape and square | Received: `MP_02917.JPG`, landscape only |
+| Events kitchen | Events preparation area with a visible position for the evening or allergen board | Landscape, square and portrait-safe | Outstanding: illustrated backdrop still in use |
 
 ### Composition notes
 
@@ -57,14 +79,16 @@ photographed in the real kitchen and product-launch event space.
 
 Required:
 
-- Friendly square portrait
+- Friendly square portrait (received: `portrait.JPG`)
 - In the product-launch event space
 - Three-quarter standing portrait in chef’s uniform
-- At the kitchen pass
-- Inspecting a fridge
+- At the kitchen pass (received: `MP_03055.JPG`)
+- Inspecting a fridge (received: `MP_03045.JPG`, opening a fridge drawer)
 - Checking a delivery
-- Working at the preparation bench
+- Working at the preparation bench (received: `MP_02917.JPG`, cooking at the induction hob)
 - Reviewing kitchen paperwork, with space for the learner’s implied position
+
+The four photographs marked received, plus the kitchen-line hero `MP_02868.JPG`, make up the delivery of 19 September 2026. The other items are outstanding.
 
 ### Yvie — optional
 
@@ -98,11 +122,21 @@ spaces that support it, with wide compositions that leave room for interface cop
 Capture both an empty, clean setup and a lightly populated service-ready setup
 where permitted. Do not show identifiable guest information or unapproved brands.
 
+Status: the wide captures of the pass, the fridges and the bench were received on
+19 September 2026 (see the delivery status above). The event area, goods-in area
+and events kitchen are outstanding.
+
 ---
 
 ## 4. Fridge and freezer inspections — essential
 
 These photographs serve as interactive evidence. Each unit therefore needs its own clear image.
+
+Status: this set was supplied as 14 short video clips (a door-opening and an
+interior clip for each of the seven units) rather than as photographs, and was
+approved for learner use as simulation illustrations on 18 September 2026. The
+clips and the approval record live in `src/assets/kitchen/inspections/`. Still
+photographs are not needed for this section unless the clips are replaced.
 
 1. Closed fridge door
 2. Walk-in fridge interior
@@ -154,6 +188,11 @@ These images appear as smaller evidence cards in the goods-in activity.
 
 The full ingredient set can be completed in one controlled tabletop session.
 
+Status: outstanding. The goods-in activity currently shows the illustrated crate
+pictures under `src/assets/kitchen/`. A set of sourced stock photographs
+(credited in the `sources.json` files under `src/assets/delivery-photos/`) is
+held for the goods-in redesign, which is not wired into the app yet.
+
 ---
 
 ## 6. Contextual detail shots — recommended
@@ -180,6 +219,11 @@ These photographs can support future screens, responsive crops, promotional mate
 ---
 
 ## 7. Supporting characters — optional
+
+Status: outstanding. The night porter, the driver and the evening team speak
+with a generic person icon in the dialogue bar; the earlier generated portraits
+have been removed and the app switches to a photograph as soon as one is set
+on the person entry in `src/content/kitchen.ts`.
 
 ### Night porter
 
@@ -222,6 +266,9 @@ Real photography may provide context around these elements, but the functional i
 ---
 
 ## 9. Filming deliverables — essential
+
+Status: outstanding. No briefing films have been received; the briefing screen
+uses Terence’s photograph from `portrait.JPG` in the meantime.
 
 Record seven separate clips for the learner briefing stages:
 
