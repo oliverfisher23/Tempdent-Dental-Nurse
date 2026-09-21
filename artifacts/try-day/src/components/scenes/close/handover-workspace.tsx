@@ -359,7 +359,7 @@ function EvidenceRail({ evidence, rs }: { evidence: CloseEvidence; rs: CloseRede
             <p className="text-xs leading-5 text-zinc-300">{p.status}.</p>
             <p className="text-xs leading-5 text-zinc-400">
               {rs.priorities[p.id] ? (rs.priorities[p.id] === 'before-service' ? COPY.beforeService : COPY.later) : 'Not grouped yet'}
-              {rs.responsibilities?.[p.id]?.trim() ? ` — ${rs.responsibilities[p.id].trim()}` : ''}
+              {rs.responsibilities?.[p.id]?.trim() ? `: ${rs.responsibilities[p.id].trim()}` : ''}
             </p>
           </div>
         ))}

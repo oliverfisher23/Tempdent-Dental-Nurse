@@ -333,7 +333,7 @@ export function DeliveryRow({
                      <h3 className="font-bold text-white text-sm uppercase tracking-widest text-primary">1. {ROW_LABELS.youChecked}</h3>
                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-zinc-900 p-5 rounded-lg border border-white/5">
                         <div className="space-y-2">
-                           <Label htmlFor={`qty-${line.id}`} className="text-zinc-300 font-bold">{ROW_LABELS.quantity} for {line.item} ({line.unit})</Label>
+                           <Label htmlFor={`qty-${line.id}`} className="text-zinc-300 font-bold">{ROW_LABELS.quantity} for {lowerFirst(line.item)} ({line.unit})</Label>
                            <Input
                               id={`qty-${line.id}`}
                                inputMode="decimal"
@@ -345,7 +345,7 @@ export function DeliveryRow({
                         </div>
                         {line.chilled && (
                            <div className="space-y-2">
-                              <Label htmlFor={`temp-${line.id}`} className="text-zinc-300 font-bold">{ROW_LABELS.temperature} for {line.item} (°C)</Label>
+                              <Label htmlFor={`temp-${line.id}`} className="text-zinc-300 font-bold">{ROW_LABELS.temperature} for {lowerFirst(line.item)} (°C)</Label>
                               <Input
                                  id={`temp-${line.id}`}
                                   inputMode="decimal"

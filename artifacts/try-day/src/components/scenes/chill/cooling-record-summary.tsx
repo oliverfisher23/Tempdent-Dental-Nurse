@@ -32,9 +32,9 @@ export function CoolingRecordSummary({ state }: { state: ChillState }) {
           <tbody>
             {[...CHILL_RULES.intervals, CHILL_RULES.extraInterval].filter(minute => minute <= state.minutesElapsed).map(minute => (
               <tr key={minute} className="border-t border-zinc-800">
-                <td className="p-1">{state.readings[minute]?.time || '—'}</td>
+                <td className="p-1">{state.readings[minute]?.time || 'Not recorded'}</td>
                 <td className="p-1">{minute} {L.min}</td>
-                <td className="p-1">{state.readings[minute]?.value ? `${state.readings[minute]!.value}°C` : '—'}</td>
+                <td className="p-1">{state.readings[minute]?.value ? `${state.readings[minute]!.value}°C` : 'Not recorded'}</td>
                 <td className="p-1">{MARCUS_TRAY_READINGS[minute]}°C</td>
               </tr>
             ))}

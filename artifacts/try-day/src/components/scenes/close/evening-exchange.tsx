@@ -118,7 +118,7 @@ export function EveningExchange({ rs, evidence, handover, onAnswer, onMoveBefore
                   <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">{timing === 'before-service' ? EXCHANGE_COPY.beforeService : EXCHANGE_COPY.laterFollowUp}</p>
                   {items.length ? (
                     <ul className="mt-2 space-y-1 text-sm text-zinc-200">
-                      {items.map((p) => <li key={p.id}>{p.label} — {rs.responsibilities?.[p.id]?.trim()}</li>)}
+                      {items.map((p) => <li key={p.id}>{p.label}: {rs.responsibilities?.[p.id]?.trim()}</li>)}
                     </ul>
                   ) : (
                     <p className="mt-2 text-sm text-zinc-400">{EXCHANGE_COPY.nothingHere}</p>

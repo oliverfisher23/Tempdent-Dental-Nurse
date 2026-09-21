@@ -268,7 +268,7 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                         {b.label}
                       </button>
                     </td>
-                    <td className="px-2 py-3 align-top font-mono whitespace-nowrap">{value ? `${value} kg` : '—'}</td>
+                    <td className="px-2 py-3 align-top font-mono whitespace-nowrap">{value ? `${value} kg` : 'Not recorded'}</td>
                     <td className={cn('px-4 py-3 align-top text-xs', status.tone === 'right' ? 'text-emerald-700' : status.tone === 'wrong' ? 'text-amber-800' : 'text-zinc-500')}>
                       {status.tone === 'right' ? COPY.correct : status.text}
                     </td>

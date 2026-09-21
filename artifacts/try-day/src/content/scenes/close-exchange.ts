@@ -54,7 +54,7 @@ export const TEAM_EVIDENCE: Text[] = [
   'Night porter’s log, 04:10: larder fridge 2 found slightly open and shut again, no idea how long it was like that. Terence, this morning: move anything high-risk into larder 1 and keep the door shut while it cools.',
   (e) => `Yvie: table ${e.table3.table}, ${e.table3.name}, ${e.table3.requirement.toLowerCase()} Pear flagged on the table plan; the floor team will check the name against the table.`,
   'Events board: the proposed menu is a held instruction, not permission to serve. All proposals stay on hold for Terence’s supplier, preparation and service checks.',
-  (e) => `Recipe cards: frangipane — ${e.frangipaneNote || 'not recorded'} Poached pear — ${e.pearNote || 'not recorded'}`,
+  (e) => `Recipe cards: frangipane: ${e.frangipaneNote || 'not recorded'}. Poached pear: ${e.pearNote || 'not recorded'}.`,
   (e) => `Function sheet: 100 covers in the Exe Suite; starter 19:15, main 19:50, dessert ${e.dessertTime || 'not recorded'}.`,
   'Chill job card: once the batch is down it goes into the walk-in for the evening team to bring back up before service.',
 ];
@@ -72,17 +72,17 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           {
             id: 'four',
             correct: true,
-            label: (e) => `${e.salmon.missingKg} kg — ${e.salmon.arrivedKg} kg came in against the ${e.salmon.ordered} kg ordered`,
+            label: (e) => `${e.salmon.missingKg} kg. ${e.salmon.arrivedKg} kg came in against the ${e.salmon.ordered} kg ordered`,
             reply: 'Four short. That matches the note you signed.',
           },
           {
             id: 'eight',
-            label: (e) => `${e.salmon.arrivedKg} kg — the note was for ${e.salmon.ordered}`,
+            label: (e) => `${e.salmon.arrivedKg} kg. The note was for ${e.salmon.ordered}`,
             reply: (e) => `The note you signed says ${e.salmon.arrivedKg} kg came in against ${e.salmon.ordered} ordered. How much didn't turn up?`,
           },
           {
             id: 'none',
-            label: "None now — the rest is on its way",
+            label: "None now. The rest is on its way",
             reply: "Has that happened, or are you asking us to follow it up? Nothing on today's records shows a replacement. Give us the shortage as it stands.",
           },
         ],
@@ -94,7 +94,7 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           {
             id: 'tomorrow-lunch',
             correct: true,
-            label: "Tomorrow's lunch — tonight doesn't use it",
+            label: "Tomorrow's lunch. Tonight doesn't use it",
             reply: 'Good. Nothing changes for tonight, then.',
           },
           {
@@ -161,7 +161,7 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           },
           {
             id: 'unsure',
-            label: "I'm not sure — the night porter found it open",
+            label: "I'm not sure. The night porter found it open",
             reply: (e) => `You took the temperature and signed the board ${larderWhen(e)}. Use your own reading and the note beside it.`,
           },
         ],
@@ -184,7 +184,7 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           },
           {
             id: 'nothing',
-            label: "Nothing more — the door's shut now",
+            label: "Nothing more. The door's shut now",
             reply: "A shut door doesn't tell us the temperature. What still needs checking before anyone uses that fridge?",
           },
         ],
@@ -205,12 +205,12 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           {
             id: 'table3',
             correct: true,
-            label: (e) => `Table ${e.table3.table} — ${e.table3.name}. ${e.table3.requirement}`,
+            label: (e) => `Table ${e.table3.table}, ${e.table3.name}. ${e.table3.requirement}`,
             reply: 'Table 3, nut allergy. Got it.',
           },
           {
             id: 'table6',
-            label: 'Table 6 — Tom Reid',
+            label: 'Table 6, Tom Reid',
             reply: 'Table 6 is the vegetarian swap to the Wellington. Which table has the nut allergy?',
           },
           {
@@ -227,7 +227,7 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           {
             id: 'pear',
             correct: true,
-            label: 'Poached pear instead of the frangipane — the tart has nuts all the way through',
+            label: 'Poached pear instead of the frangipane. The tart has nuts all the way through',
             reply: 'Pear, not frangipane. Clear.',
           },
           {
@@ -259,7 +259,7 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           },
           {
             id: 'floor',
-            label: "Yvie's handling it — nothing for the kitchen",
+            label: "Yvie's handling it. Nothing for the kitchen",
             reply: "Yvie's flagging the table plan; the plate still comes from this kitchen. What does the kitchen still have to check?",
           },
         ],

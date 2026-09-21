@@ -97,7 +97,7 @@ export const CLOSE_INTERACTION = {
       done: 'The cooling question is answered correctly and Terence has signed.',
     },
     checkedBy: 'Checked by',
-    signature: 'Terence — Executive sous chef',
+    signature: 'Terence, Executive sous chef',
     role: 'Executive sous chef',
     askToSign: 'Ask Terence to sign',
     signReason: 'Answer Terence’s question first.',

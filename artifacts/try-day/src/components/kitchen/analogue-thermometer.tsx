@@ -125,7 +125,7 @@ export function AnalogueThermometer({ value, className, clip = true, ...props }:
           textAnchor="middle"
           fill="#18181b"
         >
-          {value === null ? '—' : value.toFixed(1)}
+          {value === null ? 'Not read' : value.toFixed(1)}
         </text>
 
         {/* Needle Group */}
