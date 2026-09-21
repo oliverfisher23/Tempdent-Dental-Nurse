@@ -1,0 +1,118 @@
+
+General notes: 
+
+Should ‘simulation’ be ‘Simulation’ as it’s a product name/ for consistency with Virtual Work Experience?
+
+Remove em dashes as not a US client and makes it look more AI.
+
+
+First screen
+
+Join Terence at art'otel Hoxton to prepare tonight’s product launch for one hundred guests. Check the food, make decisions and get the evening team ready.
+
+CHANGE TO
+
+Join Terence at art'otel Hoxton to prepare the kitchen for tonight’s product launch for one hundred guests. Check the food, make decisions, and get the evening team ready.
+
+Use a mouse, touch or keyboard. Sound is optional. 
+
+CHANGE TO 
+
+Use a mouse, touchpad or keyboard. Sound is optional.
+
+
+Compare ingredients with your allergen chart, propose changes and identify checks still needed. 
+
+CHANGE TO
+
+Compare ingredients with your allergen chart, propose changes and identify what checks are still needed. 
+
+Weigh the waste and explain what the evening team needs to know and follow up. 
+
+CHANGE TO
+
+Weigh the waste and explain what the evening team needs to know and follow up on.
+
+Task 1 of 5, step 1 of 3
+
+Night team to morning 
+
+CHANGE TO
+
+Completed by the night team
+
+
+Step 2 of 3 Walk-in fridge — 1 of 7 
+Unable to review all of the hotspot copy as the image is overlapping the text.
+
+Step 2 of 3 Larder fridge 2 — 3 of 7 
+
+Use what you find inside to explain the discrepancy and what you did.
+
+CHANGE TO 
+
+Use what you find inside to explain the issue and what you did to fix it.
+
+‘Write it in my notebook’ doesn’t prompt anything - should it?
+
+Step 3 of 3
+
+Food Temperature Log Book
+to Record Fridge Freezer Temperature
+
+Change the case type of this wording and remove the ‘to record…’
+
+Food temperature log book
+
+Task 2 of 5
+Check the delivery in
+
+CHANGE TO
+
+Task 2 of 5
+Check the new delivery
+
+General note: decapitalise Salmon, e.g. Check Salmon fillet, skin on
+
+
+Job card
+
+Who you're working with: In person with the driver, who is in a hurry, and on the kitchen radio to Terence when the salmon count does not match the sheet.
+
+This is giving a hint for the activity, so change to
+
+Who you're working with: In person with the driver, who is in a hurry, and on the kitchen radio to Terence when support is needed.
+
+Amend the ‘DONE WHEN’ copy to…
+
+Done when
+
+
+Every line on the order sheet is marked as arrived, short or refused; every chilled line is marked with a temperature, and you’ve signed for what you accepted. 
+
+Every line is marked as arrived, short or refused
+Every chilled item is marked with a temperature
+The fish is looked at and smelled
+Delivery note signed for what you actually accepted
+All 10 items inspected
+6 chilled items have temperatures measured
+Inspected and explained sea bass findings
+Status and acceptance chosen for every item
+Calculated missing quantity
+Sent shortage report to Terence
+Corrected note and signed for goods received
+
+Change copy on the radio hotspot to:
+
+Head to the back door: Where the delivery van is waiting
+
+Step 1 of 13
+
+
+Inspect the goods, measure what arrived and enter it beside the order. Decide whether to accept the checked quantity.
+
+CHANGE TO
+
+
+
+Inspect the goods, measure what has arrived and enter your findings beside the order. Decide whether to accept the checked quantity.
