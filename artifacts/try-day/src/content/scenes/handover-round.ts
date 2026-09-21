@@ -1,4 +1,21 @@
 export const HANDOVER_LABELS = {
+  opener: {
+    log: {
+      what: "Read the night team's notes.",
+      how: "Scroll through the log, then press “Let's check the fridges” at the bottom.",
+      done: "The fridge round has started.",
+    },
+    inspection: {
+      what: "Check this fridge and write down what you find.",
+      how: "Open the fridge, tick the evidence you see, press “Take the temperature”, read the dial, type the reading, then save.",
+      done: "The row is saved and you move to the next fridge.",
+    },
+    board: {
+      what: "Check the board reads right.",
+      how: "Read each row. Press Recheck on a fridge to look at it again.",
+      done: "Every row is saved and nothing needs a second look.",
+    },
+  },
   startRound: "Let's check the fridges",
   overnightLog: "Overnight log",
   openFridge: "Open the fridge",
@@ -26,4 +43,8 @@ export const HANDOVER_LABELS = {
   inspectPrompt: "Have a look around",
   inspectHint: "Check the numbered areas, then use the findings in your own note.",
   progress: (saved: number, total: number) => `${saved} of ${total} done`,
+  finishCurrentReason: "Save the current fridge before opening another one.",
+  takeReadingReason: "Take the temperature first.",
+  completeEntryReason: "Take the temperature before saving this row.",
+  frozenReason: "This board is signed off and stays as you left it.",
 };

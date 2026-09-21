@@ -23,6 +23,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, MessageSquare } from 'lucide-react';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 export interface GuestsWorkspaceProps {
   chart: Record<string, string[]>;
@@ -114,6 +115,10 @@ export function GuestsWorkspace({
 
   const assignedFor = (g: AddedGuest): GuestAssignment => guests[g.id] ?? { main: null, dessert: null };
   const guestReady = (g: AddedGuest) => COURSES.every((course) => courseChecked(redesign, g.id, course, assignedFor(g), chart));
+  const coursesChecked = ADDED_GUESTS.reduce(
+    (total, currentGuest) => total + COURSES.filter((course) => courseChecked(redesign, currentGuest.id, course, assignedFor(currentGuest), chart)).length,
+    0,
+  );
 
   const renderCourse = (course: DietaryCourse) => {
     const key = decisionKey(guest.id, course);
@@ -127,6 +132,7 @@ export function GuestsWorkspace({
     const cardOpen = !!openCards[key];
     const response = feedback[key];
     const plannedMarks = (chart[planned.id] ?? []).map(allergenLabel);
+    const checkLocked = dec.evidence.length === 0 || !dec.reason.trim();
 
     return (
       <section key={key} aria-labelledby={`${key}-title`} data-testid={`course-${key}`} className="rounded-md border border-gray-800 bg-gray-900/60 p-4 space-y-4">
@@ -262,12 +268,14 @@ export function GuestsWorkspace({
         <div className="flex flex-wrap items-center gap-3">
           <Button
             onClick={() => onCheckWithTerence(guest.id, course)}
+            disabled={checkLocked}
             className="bg-red-600 text-white hover:bg-red-700 font-semibold"
             data-testid={`check-${key}`}
             aria-label={`${copy.checkWithTerence}: ${guest.name} ${COURSE_LABEL[course].toLowerCase()}`}
           >
             {copy.checkWithTerence}
           </Button>
+          {checkLocked && <p className="text-xs text-gray-400">{copy.checkLocked}</p>}
         </div>
         {response && <TerenceLine line={response.line} kind={response.kind} testId={`feedback-${key}`} />}
       </section>
@@ -276,6 +284,15 @@ export function GuestsWorkspace({
 
   return (
     <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 gap-4 overflow-y-auto" data-testid="guests-workspace">
+      <WorkspaceOpener
+        taskId="check-the-dietary-list"
+        what={copy.opener.what}
+        how={copy.opener.how}
+        done={copy.opener.done}
+        progress={{ done: coursesChecked, total: ADDED_GUESTS.length * COURSES.length, noun: copy.progressNoun }}
+        pattern="tap"
+        tone="dark"
+      />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
@@ -292,9 +309,12 @@ export function GuestsWorkspace({
           <Button variant="outline" onClick={onOpenChart} className="bg-transparent border-gray-600 text-white" data-testid="back-to-chart">
             <ArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" /> {copy.reviewChart}
           </Button>
-          <Button onClick={onNext} disabled={!decisionsReady} className="bg-emerald-600 text-white hover:bg-emerald-700 font-semibold" data-testid="go-to-board">
-            {copy.reviewBoard} <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
-          </Button>
+          <div className="flex flex-col items-start gap-1 md:items-end">
+            <Button onClick={onNext} disabled={!decisionsReady} className="bg-emerald-600 text-white hover:bg-emerald-700 font-semibold" data-testid="go-to-board">
+              {copy.reviewBoard} <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
+            </Button>
+            {!decisionsReady && <p className="max-w-72 text-xs text-gray-400">{copy.boardLocked}</p>}
+          </div>
         </div>
       </div>
 
@@ -317,6 +337,7 @@ export function GuestsWorkspace({
               <span className={cn('mt-1 inline-block rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider', ready ? 'border-emerald-800 bg-emerald-950 text-emerald-200' : 'border-gray-700 bg-black text-gray-300')}>
                 {ready ? copy.decisionsMade : copy.needsReview}
               </span>
+              {!selected && <span className="mt-1 block text-[10px] text-gray-400">{copy.selectGuest}</span>}
             </button>
           );
         })}

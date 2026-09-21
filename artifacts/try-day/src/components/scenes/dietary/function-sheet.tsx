@@ -6,6 +6,7 @@ import { kitchenAudio } from '@/lib/audio';
 import { AlertCircle, Lock, PenTool } from 'lucide-react';
 import { CloseUp } from '../../kitchen/close-up';
 import { Clipboard } from '../../kitchen/paper';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 /**
  * Yvie's function sheet, read at the pass before anything else: the event, the menu and
@@ -39,6 +40,14 @@ export function FunctionSheetCloseUp({
     <CloseUp isOpen={isOpen} onClose={onClose} title={copy.title} className="max-w-2xl">
       <Clipboard>
         <div className="p-6 md:p-10 space-y-6 max-h-[85vh] overflow-y-auto" data-testid="function-sheet">
+          <WorkspaceOpener
+            taskId="check-the-dietary-list"
+            what={copy.opener.what}
+            how={copy.opener.how}
+            done={copy.opener.done}
+            pattern="tap"
+            tone="light"
+          />
           <div className="font-bold text-xl border-b-2 border-zinc-300 pb-2 uppercase tracking-widest text-center">
             {FUNCTION_SHEET.event}
           </div>

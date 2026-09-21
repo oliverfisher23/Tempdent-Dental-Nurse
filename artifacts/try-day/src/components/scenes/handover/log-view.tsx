@@ -4,6 +4,7 @@ import { HANDOVER_LABELS } from '@/content/scenes/handover-round';
 import { useKitchenAction } from '../../kitchen/kitchen-context';
 import { Clipboard } from '../../kitchen/paper';
 import { FridgeBackdrop } from './fridge-backdrop';
+import { WorkspaceOpener } from '@/components/kitchen/workspace-opener';
 
 export function LogView({ onStart }: { onStart: () => void }) {
   const btnRef = useRef<HTMLButtonElement>(null);
@@ -20,6 +21,15 @@ export function LogView({ onStart }: { onStart: () => void }) {
        <div className="max-w-3xl w-full mx-auto p-4 sm:p-8 py-12 flex flex-col min-h-full">
          <Clipboard>
            <div className="p-8 pb-12 bg-white text-foreground">
+              <WorkspaceOpener
+                taskId="take-the-handover"
+                what={HANDOVER_LABELS.opener.log.what}
+                how={HANDOVER_LABELS.opener.log.how}
+                done={HANDOVER_LABELS.opener.log.done}
+                pattern="tap"
+                tone="light"
+                className="mb-6"
+              />
              <div className="border-b-2 border-foreground pb-4 mb-6">
                  <h2 className="text-2xl font-bold font-sans tracking-widest text-center">{HANDOVER_LABELS.overnightLog}</h2>
                  <p className="text-center font-mono text-muted-foreground mt-1 uppercase">Completed by the night team</p>

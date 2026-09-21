@@ -2,6 +2,10 @@ export const CLOSE_SCENE = {
   wasteBins: 'Weigh the waste',
   clipboard: 'Write the handover',
   elena: 'Go through the chill record with Terence',
+  locks: {
+    clipboard: 'Weigh every tub and write each weight first.',
+    chill: 'Confirm the evening team’s read-back first.',
+  },
 
   /**
    * Optional, formative (approved decision P1). No mark, no gate. Each piece of feedback names

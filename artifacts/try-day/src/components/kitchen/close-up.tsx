@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { kitchenAudio } from '@/lib/audio';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from './use-focus-trap';
+import { isTopOverlay } from './overlay-stack';
 
 interface CloseUpProps {
   isOpen: boolean;
@@ -19,7 +20,8 @@ export function CloseUp({ isOpen, onClose, title, children, className }: CloseUp
   
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isOpen) {
+      // A modal opened on top (briefing video, "how do I do this?") takes Escape first.
+      if (e.key === 'Escape' && isOpen && isTopOverlay(contentRef.current)) {
         e.stopPropagation();
         onClose();
       }

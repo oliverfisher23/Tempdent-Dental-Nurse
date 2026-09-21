@@ -14,6 +14,7 @@ import { motion } from 'framer-motion';
 import { Check } from 'lucide-react';
 import { useProgress } from '@/lib/progress-store';
 import { FRIDGE_INTERACTION_COPY } from '@/content/fridge-interaction-copy';
+import { WorkspaceOpener } from '@/components/kitchen/workspace-opener';
 
 /** Gap between the picture and the clipboard on the stage, matching `beside:gap-x-6`. */
 const STAGE_GAP_PX = 24;
@@ -208,7 +209,7 @@ export function InspectionView({
       */}
       <div
         ref={stageRef}
-        className="relative flex min-h-0 flex-1 flex-col overflow-y-auto beside:grid beside:grid-cols-[var(--frame-w,20rem)_minmax(0,36rem)] beside:grid-rows-[auto_minmax(0,1fr)] beside:justify-center beside:gap-x-6 beside:overflow-hidden beside:p-4"
+        className="relative flex min-h-0 flex-1 flex-col overflow-y-auto beside:grid beside:grid-cols-[var(--frame-w,20rem)_minmax(0,36rem)] beside:grid-rows-[auto_auto_minmax(0,1fr)] beside:justify-center beside:gap-x-6 beside:overflow-hidden beside:p-4"
         style={{ '--frame-w': frameWidth ? `${frameWidth}px` : undefined } as CSSProperties}
       >
         <div className="pointer-events-none absolute inset-0 hidden overflow-hidden beside:block" aria-hidden="true">
@@ -217,8 +218,19 @@ export function InspectionView({
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]" />
         </div>
 
+        <WorkspaceOpener
+          taskId="take-the-handover"
+          what={HANDOVER_LABELS.opener.inspection.what}
+          how={HANDOVER_LABELS.opener.inspection.how}
+          done={HANDOVER_LABELS.opener.inspection.done}
+          progress={{ done: savedCount, total: totalCount, noun: 'fridges checked' }}
+          pattern="tap"
+          tone="dark"
+          className="relative z-20 m-3 shrink-0 beside:mb-3 beside:ml-0 beside:mr-0 beside:mt-0 beside:[grid-area:1/2]"
+        />
+
         <nav
-          className="sticky top-0 z-20 shrink-0 border-b border-zinc-800 bg-zinc-950/95 px-3 py-2 text-white backdrop-blur beside:relative beside:z-10 beside:mb-4 beside:border-0 beside:bg-transparent beside:p-0 beside:backdrop-blur-none beside:[grid-area:1/2]"
+          className="sticky top-0 z-20 shrink-0 border-b border-zinc-800 bg-zinc-950/95 px-3 py-2 text-white backdrop-blur beside:relative beside:z-10 beside:mb-4 beside:border-0 beside:bg-transparent beside:p-0 beside:backdrop-blur-none beside:[grid-area:2/2]"
           aria-label={FRIDGE_INTERACTION_COPY.roundOrientation}
         >
           <div className="flex items-center gap-2 overflow-x-auto beside:flex-wrap beside:overflow-visible" role="list">
@@ -258,10 +270,13 @@ export function InspectionView({
               );
             })}
           </div>
+          {FRIDGE_UNITS.some((fridge) => fridge.id !== unitId && !handoverRowComplete(fridge.id, state.rows[fridge.id])) && (
+            <p className="mt-1 text-xs text-zinc-400">{HANDOVER_LABELS.finishCurrentReason}</p>
+          )}
         </nav>
 
       {/* The portrait footage takes the full stage height, giving way in width only when the clipboard needs its minimum. */}
-      <div className="relative z-10 w-full shrink-0 bg-black beside:h-full beside:bg-transparent beside:[grid-area:1/1/span_2/2]">
+      <div className="relative z-10 w-full shrink-0 bg-black beside:h-full beside:bg-transparent beside:[grid-area:1/1/span_3/2]">
         <InspectionMedia
            key={`${unitId}-${doorPhase}`}
           media={media}
@@ -306,7 +321,7 @@ export function InspectionView({
         The clipboard: identity, controls, findings and the board entry. Stacked it is the panel
         under the picture; beside, a content-sized card that scrolls inside itself when the entry is long.
       */}
-      <div className="relative z-10 flex min-h-0 flex-1 flex-col border-t border-zinc-700 bg-zinc-900 text-white beside:min-h-0 beside:max-h-full beside:flex-none beside:self-start beside:overflow-y-auto beside:rounded-2xl beside:border beside:border-white/15 beside:bg-zinc-950/95 beside:shadow-[0_28px_70px_rgba(0,0,0,0.6)] beside:[grid-area:2/2] beside:[scroll-padding-block:1rem_6rem]">
+      <div className="relative z-10 flex min-h-0 flex-1 flex-col border-t border-zinc-700 bg-zinc-900 text-white beside:min-h-0 beside:max-h-full beside:flex-none beside:self-start beside:overflow-y-auto beside:rounded-2xl beside:border beside:border-white/15 beside:bg-zinc-950/95 beside:shadow-[0_28px_70px_rgba(0,0,0,0.6)] beside:[grid-area:3/2] beside:[scroll-padding-block:1rem_6rem]">
         <div className="@container flex w-full max-w-3xl flex-col gap-4 p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div>
@@ -325,6 +340,7 @@ export function InspectionView({
                   className="min-h-12 w-full rounded-xl border-2 border-white bg-white px-5 py-3 text-lg font-bold text-black shadow-lg transition-colors hover:bg-zinc-200 disabled:opacity-60">
                   {HANDOVER_LABELS.openFridge}
                 </button>
+                {frozen && <p className="text-xs text-zinc-400">{HANDOVER_LABELS.frozenReason}</p>}
                 <p className="text-sm text-zinc-300">{FRIDGE_INTERACTION_COPY.closedHint}</p>
               </div>
             )}
@@ -391,6 +407,7 @@ export function InspectionView({
                       <span className="mt-1 block text-xs font-normal leading-snug text-zinc-600">{FRIDGE_INTERACTION_COPY.takeSubtitle}</span>
                     </button>
                  )}
+                 {frozen && <p className="text-xs text-zinc-400">{HANDOVER_LABELS.frozenReason}</p>}
                </div>
                 <div className="text-center text-sm text-zinc-200" role="status">
                   {row.probed ? (
@@ -554,6 +571,8 @@ export function InspectionView({
                >
                  {HANDOVER_LABELS.saveAndClose}
                </button>
+                {!row.probed && <p className="text-xs text-zinc-400">{HANDOVER_LABELS.completeEntryReason}</p>}
+                {frozen && <p className="text-xs text-zinc-400">{HANDOVER_LABELS.frozenReason}</p>}
             </div>
           </form>
           )}

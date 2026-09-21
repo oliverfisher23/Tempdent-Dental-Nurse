@@ -13,6 +13,8 @@ export interface HoldToReadProps {
   className?: string;
   children?: ReactNode;
   hintReleasedEarly?: string;
+  /** Said before the first press, so nobody has to fail a short tap to learn it needs holding. */
+  hintIdle?: string;
 }
 
 export function HoldToRead({
@@ -26,7 +28,10 @@ export function HoldToRead({
   className,
   children,
   hintReleasedEarly = 'Hold it in until it settles',
+  hintIdle,
 }: HoldToReadProps) {
+  const seconds = Math.max(1, Math.round(settleMs / 1000));
+  const idleHint = hintIdle ?? `Press and hold for about ${seconds} seconds until it settles`;
   const [state, setState] = useState<'idle' | 'holding' | 'settled'>('idle');
   const [reading, setReading] = useState(target);
   const [progress, setProgress] = useState(0);
@@ -151,8 +156,8 @@ export function HoldToRead({
         </span>
         <span className="flex flex-col">
           <span className="text-sm font-bold leading-tight">{children ?? label}</span>
-          <span className="mt-0.5 text-xs text-muted">
-            {state === 'settled' ? `Settled at ${reading.toFixed(1)} ${unit}` : state === 'holding' ? 'Settling…' : unit}
+          <span className={cn('mt-0.5 text-xs', state === 'idle' ? 'text-foreground/70' : 'text-muted')}>
+            {state === 'settled' ? `Settled at ${reading.toFixed(1)} ${unit}` : state === 'holding' ? 'Keep holding, it is settling' : idleHint}
           </span>
         </span>
       </button>

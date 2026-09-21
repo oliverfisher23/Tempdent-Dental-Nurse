@@ -134,6 +134,7 @@ export function DeliveryReport({ state, onUpdateState, onNavigate, onClose }: De
         <Button type="button" className="h-14 w-full text-lg font-bold" disabled={!state.contextRevealed} onClick={sendReport}>
           {state.reportAttempted ? copy.resend : copy.send}
         </Button>
+        {!state.contextRevealed && <p className="text-xs text-zinc-400">{copy.sendLocked}</p>}
 
         {state.radioedMarcus && (
           <section aria-labelledby="sent-heading" aria-live="polite" className="rounded-lg border border-emerald-500/40 bg-emerald-950/40 p-4 text-emerald-200">

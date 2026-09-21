@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { fullestTray } from './chiller';
 import type { ChillActions } from './types';
+import { WorkspaceOpener } from '@/components/kitchen/workspace-opener';
 
 const INTERVALS: ChillInterval[] = [...CHILL_RULES.intervals, CHILL_RULES.extraInterval];
 
@@ -45,6 +46,15 @@ export function ChillRecord({
     <CloseUp isOpen={open} onClose={onClose} title={L.recordTitle}>
       <Clipboard>
         <div className="min-h-full px-5 pb-6 pt-9 sm:px-10 sm:py-7">
+          <WorkspaceOpener
+            taskId="chill-the-event-batch"
+            what={L.opener.record.what}
+            how={L.opener.record.how}
+            done={L.opener.record.done}
+            pattern="list"
+            tone="light"
+            className="mb-6"
+          />
           <h3 className="text-center font-sans text-2xl font-bold text-zinc-900 sm:text-3xl">{L.recordTitle}</h3>
           <p className="mb-6 border-b-2 border-zinc-200 pb-4 text-center font-mono text-xs text-zinc-500 sm:text-sm">{L.recordBatch}</p>
 
@@ -91,12 +101,13 @@ export function ChillRecord({
                           placeholder="–"
                           inputMode="decimal"
                           aria-invalid={readingMismatch}
-                          aria-describedby={readingMismatch ? errorId : undefined}
+                           aria-describedby={readingMismatch ? errorId : !reached ? `${errorId}-locked` : undefined}
                           className="kitchen-input w-28 text-xl"
                           style={{ fontFamily: 'cursive' }}
                           data-testid={`reading-${interval}`}
                         />
                         {readingMismatch && <p id={errorId} role="alert" className="text-xs font-medium text-red-700">{L.readingMismatch}</p>}
+                         {!reached && <p id={`${errorId}-locked`} className="text-xs text-zinc-500">{L.readingLockedHint(interval)}</p>}
                         {reached && noted && !row?.value && <p className="text-xs text-zinc-600">{L.savedNote(noted.value)}</p>}
                       </div>
                     </td>

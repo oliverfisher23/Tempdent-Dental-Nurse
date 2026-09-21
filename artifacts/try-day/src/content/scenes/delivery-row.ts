@@ -47,4 +47,6 @@ export const ROW_LABELS = {
    fishReasonClaim: "The supplier says the order is complete, so I would accept the fish.",
    checked: "The checks and decisions for this item match your evidence.",
    review: "Check these entries",
+    measuringReason: "Wait for this reading to settle first.",
+    fishOpenReason: "The fish findings are open below.",
 };

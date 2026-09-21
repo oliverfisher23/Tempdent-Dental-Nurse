@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Clipboard } from '../../kitchen/paper';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 import { EveningExchange } from './evening-exchange';
 
 const COPY = CLOSE_INTERACTION.handover;
@@ -40,6 +41,12 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
 
   const ready = isHandoverReady(state);
   const exchangeOpen = !!rs.attempted && ready;
+  const headingsWritten = HANDOVER_FIELDS.filter((field) => state.handover[field.id]?.trim()).length;
+  const readinessReason = !headingsFilled(state)
+    ? COPY.fieldsError
+    : !followUpsGrouped(rs)
+      ? COPY.groupingError
+      : null;
 
   useEffect(() => {
     if (exchangeRequested && exchangeOpen) {
@@ -124,10 +131,21 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 max-w-6xl mx-auto h-[90vh] overflow-y-auto lg:overflow-hidden p-4 lg:p-6">
-      <EvidenceRail evidence={evidence} rs={rs} />
+    <div className="max-w-6xl mx-auto h-[90vh] overflow-y-auto p-4 lg:p-6">
+      <WorkspaceOpener
+        taskId="hand-the-kitchen-on"
+        what={COPY.opener.what}
+        how={COPY.opener.how}
+        done={COPY.opener.done}
+        progress={{ done: headingsWritten, total: HANDOVER_FIELDS.length, noun: COPY.opener.noun }}
+        pattern="tap"
+        tone="dark"
+        className="mb-6"
+      />
+      <div className="flex flex-col lg:flex-row gap-6 lg:h-[calc(90vh-9rem)]">
+        <EvidenceRail evidence={evidence} rs={rs} />
 
-      <div className="flex-1 lg:overflow-y-auto lg:pr-2 pb-12 flex flex-col gap-6">
+        <div className="order-1 flex-1 lg:order-2 lg:overflow-y-auto lg:pr-2 pb-12 flex flex-col gap-6">
         {/* shrink-0 keeps the sheet at its full height so the column scrolls as one, not paper-inside-column. */}
         <Clipboard className="shrink-0">
           <div className="p-6 md:p-10 text-zinc-900 flex flex-col h-full min-h-[600px]">
@@ -224,7 +242,7 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
                 <div className="mt-4 text-red-700 font-bold text-sm" role="alert">{error}</div>
               )}
               {!rs.recipientConfirmed && (
-                <div className="mt-8 flex justify-end">
+                <div className="mt-8 flex flex-col items-end">
                   <button
                     type="button"
                     onClick={walkThrough}
@@ -233,6 +251,11 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
                   >
                     {COPY.walkThrough}
                   </button>
+                  {readinessReason && (
+                    <p className="mt-2 max-w-sm text-right text-xs font-bold text-red-700" role="status">
+                      {readinessReason}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -253,6 +276,7 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
             />
           </div>
         )}
+        </div>
       </div>
     </div>
   );
@@ -305,7 +329,7 @@ function EvidenceRail({ evidence, rs }: { evidence: CloseEvidence; rs: CloseRede
   const team = TEAM_EVIDENCE.map((line) => exchangeText(line, e));
 
   return (
-    <aside className="w-full lg:w-80 shrink-0 bg-zinc-900 border border-zinc-700 p-5 rounded-xl text-zinc-100 lg:overflow-y-auto shadow-2xl flex flex-col gap-5" aria-labelledby="evidence-title">
+    <aside className="order-2 w-full lg:order-1 lg:w-80 shrink-0 bg-zinc-900 border border-zinc-700 p-5 rounded-xl text-zinc-100 lg:overflow-y-auto shadow-2xl flex flex-col gap-5" aria-labelledby="evidence-title">
       <div>
         <h3 id="evidence-title" className="font-bold text-base text-zinc-100 flex items-center gap-2">
           <Info className="w-4 h-4" aria-hidden="true" /> {EVIDENCE.title}

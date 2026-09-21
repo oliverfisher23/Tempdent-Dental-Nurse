@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, CheckCircle2 } from 'lucide-react';
+import { Check, CheckCircle2, ChevronRight } from 'lucide-react';
 import { WASTE_BINS, type WasteBin } from '@/content/activities';
 import { CLOSE_SCENE } from '@/content/scenes/close';
 import { CLOSE_INTERACTION } from '@/content/scenes/close-interaction';
@@ -9,6 +9,7 @@ import { kitchenAudio } from '@/lib/audio';
 import { cn } from '@/lib/utils';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 const COPY = CLOSE_INTERACTION.waste;
 
@@ -34,6 +35,7 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
   useEffect(() => () => { if (weightTimer.current) clearInterval(weightTimer.current); }, []);
 
   const bin = WASTE_BINS.find((b) => b.id === selectedBin) ?? null;
+  const weighedCount = WASTE_BINS.filter((b) => state.weighed[b.id] && weightIsRight(b.id, state.weights[b.id] ?? '')).length;
   const weightsDone = WASTE_BINS.every((b) => state.weighed[b.id] && weightIsRight(b.id, state.weights[b.id] ?? ''));
 
   const selectBin = (id: WasteBin['id']) => {
@@ -102,7 +104,17 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
 
   return (
     <div className="p-4 md:p-8 max-w-6xl mx-auto h-[90vh] flex flex-col items-center justify-start overflow-y-auto">
-      <div className="w-full mb-6 mt-2">
+      <WorkspaceOpener
+        taskId="hand-the-kitchen-on"
+        what={COPY.opener.what}
+        how={COPY.opener.how}
+        done={COPY.opener.done}
+        progress={{ done: weighedCount, total: WASTE_BINS.length, noun: COPY.opener.noun }}
+        pattern="tap"
+        tone="dark"
+        className="w-full mb-4"
+      />
+      <div className="w-full mb-6">
         <h2 className="text-2xl font-bold text-zinc-100">{COPY.title}</h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-300">{COPY.instructions}</p>
       </div>
@@ -122,14 +134,20 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                   aria-pressed={isSelected}
                   aria-label={`Look at the tub: ${b.label}. ${status.text}`}
                   className={cn(
-                    'min-h-20 rounded-xl border-2 flex flex-col items-start justify-center text-left text-zinc-100 p-3 motion-safe:transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white',
-                    isSelected ? 'bg-zinc-800 border-primary' : 'bg-black border-zinc-800 hover:border-zinc-500 hover:bg-zinc-800',
+                    'group min-h-24 rounded-xl border-2 flex flex-col items-start justify-between text-left text-zinc-100 p-3 shadow-md motion-safe:transition-[background-color,border-color,transform] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/60',
+                    isSelected ? 'bg-zinc-800 border-primary ring-1 ring-primary/40' : 'bg-black border-zinc-700 hover:border-zinc-400 hover:bg-zinc-800 hover:-translate-y-0.5',
                   )}
                 >
                   <span className="text-sm font-bold leading-5">{b.label}</span>
-                  <span className={cn('mt-1 text-[11px] flex items-center gap-1', status.tone === 'right' ? 'text-emerald-400' : 'text-zinc-400')}>
-                    {status.tone === 'right' && <Check className="w-3 h-3" aria-hidden="true" />}
-                    {status.tone === 'right' ? COPY.weighed : status.tone === 'wrong' ? COPY.checkReading : status.text}
+                  <span className="mt-2 flex w-full items-center justify-between gap-2">
+                    <span className={cn('text-[11px] flex items-center gap-1', status.tone === 'right' ? 'text-emerald-400' : 'text-zinc-400')}>
+                      {status.tone === 'right' && <Check className="w-3 h-3" aria-hidden="true" />}
+                      {status.tone === 'right' ? COPY.weighed : status.tone === 'wrong' ? COPY.checkReading : status.text}
+                    </span>
+                    <span className={cn('inline-flex items-center gap-0.5 rounded-full px-2 py-1 text-[10px] font-bold', isSelected ? 'bg-primary text-white' : 'bg-white/10 text-zinc-200')}>
+                      {isSelected ? COPY.chosen : COPY.choose}
+                      {!isSelected && <ChevronRight className="h-3 w-3" aria-hidden="true" />}
+                    </span>
                   </span>
                 </button>
               );
@@ -162,12 +180,12 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                     <div><dt className="inline font-bold text-zinc-100">{COPY.inTheTub}: </dt><dd className="inline">{bin.description}</dd></div>
                     <div><dt className="inline font-bold text-zinc-100">{COPY.from}: </dt><dd className="inline">{bin.whereFrom}</dd></div>
                   </dl>
-                  <div className="flex flex-wrap gap-2">
+                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => putOnScales(bin)}
                       disabled={onScales === bin.id && !scaleSettled}
-                      className="min-h-11 bg-white text-black px-5 py-2 rounded-full font-bold shadow-xl hover:bg-zinc-200 text-sm disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                       className="min-h-11 bg-primary text-white px-5 py-2 rounded-full font-bold shadow-xl shadow-primary/20 hover:bg-primary/90 text-sm disabled:opacity-60 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/50"
                     >
                       {onScales === bin.id && scaleSettled ? COPY.weighAgain : COPY.putOnScales}
                     </button>
@@ -213,6 +231,14 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                       {COPY.nextTub}: {nextUnfinished.label}
                     </button>
                   )}
+                   {rowStatus(bin).tone !== 'right' && (
+                     <div>
+                       <button type="button" disabled className="min-h-11 rounded border border-zinc-700 px-4 py-2 text-sm font-bold text-zinc-500">
+                         {COPY.nextTub}
+                       </button>
+                       <p className="mt-1 text-xs text-zinc-400">{COPY.nextTubReason}</p>
+                     </div>
+                   )}
                 </div>
               ) : (
                 <p className="text-sm text-zinc-400">{COPY.chooseTub}</p>
@@ -236,7 +262,7 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                 const status = rowStatus(b);
                 const value = (state.weights[b.id] ?? '').trim();
                 return (
-                  <tr key={b.id} className={cn('border-b border-zinc-200 last:border-0', status.tone === 'right' && 'bg-emerald-50')}>
+                  <tr key={b.id} className={cn('border-b border-zinc-200 last:border-0 motion-safe:transition-colors', selectedBin === b.id && 'bg-amber-50 ring-2 ring-inset ring-amber-400', status.tone === 'right' && selectedBin !== b.id && 'bg-emerald-50')}>
                     <td className="px-4 py-3 align-top">
                       <button type="button" onClick={() => selectBin(b.id)} className="text-left font-bold text-zinc-800 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-black rounded">
                         {b.label}
@@ -252,8 +278,17 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
             </tbody>
           </table>
 
-          {weightsDone && (
-            <div className="border-t border-zinc-200 bg-zinc-50 p-5 flex flex-col gap-4">
+          <div className="border-t border-zinc-200 bg-zinc-50 p-5 flex flex-col gap-4">
+            {!weightsDone && (
+              <div>
+                <button type="button" disabled className="min-h-11 rounded bg-zinc-300 px-4 py-2 text-xs font-bold text-zinc-600">
+                  {COPY.goToHandover}
+                </button>
+                <p className="mt-1 text-xs text-zinc-600">{COPY.handoverReason}</p>
+              </div>
+            )}
+            {weightsDone && (
+              <>
               <p className="text-xs font-bold text-emerald-800 flex items-center gap-2"><CheckCircle2 className="w-4 h-4" aria-hidden="true" /> {COPY.allWeighed}</p>
 
               {rs && (
@@ -295,8 +330,9 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
               <button type="button" onClick={onGoToHandover} className="min-h-11 rounded bg-black px-4 py-2 text-xs font-bold text-white self-start">
                 {COPY.goToHandover}
               </button>
-            </div>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

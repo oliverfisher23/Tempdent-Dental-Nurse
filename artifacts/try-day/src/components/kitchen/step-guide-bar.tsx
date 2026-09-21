@@ -1,7 +1,8 @@
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { StepGuide, GUIDE_COPY } from '@/content/step-guide';
-import { Loader2, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { Loader2, ChevronRight, CheckCircle2, MapPin } from 'lucide-react';
+import { HowToButton } from './how-to-card';
 
 export interface StepGuideBarProps {
   guide: StepGuide;
@@ -10,6 +11,8 @@ export interface StepGuideBarProps {
   onNext: () => void;
   lastTask: boolean;
   busy: boolean;
+  /** The workspace this step's action opens is already on screen. */
+  atDestination?: boolean;
 }
 
 export function StepGuideBar({
@@ -18,7 +21,8 @@ export function StepGuideBar({
   onAction,
   onNext,
   lastTask,
-  busy
+  busy,
+  atDestination = false,
 }: StepGuideBarProps) {
   const progressText = GUIDE_COPY.progress(guide.step, guide.total);
   const reducedMotion = useReducedMotion();
@@ -54,7 +58,10 @@ export function StepGuideBar({
         </AnimatePresence>
       </div>
 
-      <div className="shrink-0 flex items-center">
+      <div className="shrink-0 flex flex-wrap items-center justify-end gap-x-2 gap-y-1">
+        {!done && guide.pattern && (
+          <HowToButton pattern={guide.pattern} step={{ title: guide.title, instruction: guide.instruction }} />
+        )}
         {done ? (
           <Button
             data-testid="next-job"
@@ -65,6 +72,14 @@ export function StepGuideBar({
             <CheckCircle2 className="w-4 h-4 mr-2" aria-hidden="true" />
             {lastTask ? GUIDE_COPY.finishDay : GUIDE_COPY.nextJob}
           </Button>
+        ) : atDestination && !busy ? (
+          <span
+            data-testid="guide-here"
+            className="inline-flex min-h-9 items-center gap-1.5 rounded-md border border-border bg-muted px-3 text-sm font-bold text-foreground/80"
+          >
+            <MapPin className="h-4 w-4 text-primary" aria-hidden="true" />
+            {GUIDE_COPY.here}
+          </span>
         ) : (
           <Button
             data-testid="guide-action"

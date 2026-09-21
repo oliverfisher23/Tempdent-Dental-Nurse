@@ -10,6 +10,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { kitchenAudio } from "@/lib/audio";
 import { WELCOME_COPY } from "@/content/welcome";
+import { BRIEFING_PATTERNS, PATTERN_COPY } from "@/content/interaction-patterns";
+import { PATTERN_ICONS } from "@/components/kitchen/how-to-card";
+import { BriefingVideoButton } from "@/components/briefing-video-modal";
+import { MEDIA_ACCESSIBILITY_COPY } from "@/content/accessibility-media";
 import logoImg from "@/assets/artotel-logo.png";
 // Two sizes so the browser shows the circle close to 1:1 instead of shrinking a large export.
 import terenceBriefing from "@/assets/kitchen/photos/terence-briefing.webp";
@@ -114,6 +118,22 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
                 </li>
               ))}
             </ul>
+            <section aria-labelledby="how-this-works" className="pt-1">
+              <h2 id="how-this-works" className="text-[11px] font-bold uppercase tracking-widest text-primary">{PATTERN_COPY.briefingTitle}</h2>
+              <ul className="mt-2 grid gap-2 sm:grid-cols-3" data-testid="how-this-works">
+                {BRIEFING_PATTERNS.map((pattern) => {
+                  const Icon = PATTERN_ICONS[pattern.id];
+                  return (
+                    <li key={pattern.id} className="flex flex-col gap-1.5 rounded-lg border border-border bg-white/70 p-3">
+                      <Icon className="h-5 w-5 text-primary" aria-hidden />
+                      <p className="text-sm font-bold text-foreground leading-snug">{pattern.title}</p>
+                      <p className="text-xs leading-snug text-muted-foreground">{pattern.summary}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+              <p className="mt-2 text-xs text-muted-foreground">{PATTERN_COPY.briefingIntro}</p>
+            </section>
             <p className="text-xs text-muted-foreground">{WELCOME_COPY.controls}</p>
             <DeviceAdvice />
           </motion.div>
@@ -123,10 +143,13 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
               <Clock className="h-3.5 w-3.5" aria-hidden />
               <span>{WELCOME_COPY.shift}: {FRAME.shift.start}–{FRAME.shift.end}</span>
             </div>
-            <details className="text-sm">
-              <summary className="w-fit cursor-pointer font-semibold underline decoration-border underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-primary">{WELCOME_COPY.fullBrief}</summary>
-              <p className="mt-3 leading-relaxed text-muted-foreground">{FRAME.morningBrief}</p>
-            </details>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+              <BriefingVideoButton videoId="main" label={MEDIA_ACCESSIBILITY_COPY.openMain} />
+              <details className="text-sm">
+                <summary className="w-fit cursor-pointer font-semibold underline decoration-border underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-primary">{WELCOME_COPY.fullBrief}</summary>
+                <p className="mt-3 leading-relaxed text-muted-foreground">{FRAME.morningBrief}</p>
+              </details>
+            </div>
           </motion.div>
         </div>
 

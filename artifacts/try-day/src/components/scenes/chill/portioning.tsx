@@ -4,6 +4,7 @@ import { ArrowRight, Minus, Plus } from 'lucide-react';
 import { PREP_SHEET } from '@/content/activities';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
 import { Button } from '@/components/ui/button';
+import { WorkspaceOpener } from '@/components/kitchen/workspace-opener';
 import { cn } from '@/lib/utils';
 import { POUR_KG, POUR_TICK_MS, SCOOP_KG, TRAY_DEPTH_MM, type ChillActions } from './types';
 
@@ -115,6 +116,7 @@ export function PortioningView({
   const targetDepth = PREP_SHEET.depthForKg(trays[selectedTray]);
   const isTargetFull = trays[selectedTray] >= PREP_SHEET.kgPerTrayAtDepth;
   const moved = PREP_SHEET.yourShareKg - remaining;
+  const traysAtDepth = trays.filter((kg) => PREP_SHEET.depthForKg(kg) >= PREP_SHEET.fillDepthMm).length;
   const selectedFeedback = isTargetFull
     ? L.trayFull
     : targetDepth >= PREP_SHEET.fillDepthMm
@@ -155,7 +157,17 @@ export function PortioningView({
   }, [trays, selectedTray, actions]);
 
   return (
-    <div className="mx-auto grid w-full max-w-5xl gap-6 pt-2 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:items-start">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 pt-2">
+      <WorkspaceOpener
+        taskId="chill-the-event-batch"
+        what={L.portionOpener.what}
+        how={L.portionOpener.how}
+        done={L.portionOpener.done}
+        progress={{ done: traysAtDepth, total: trays.length, noun: L.portionOpener.noun }}
+        pattern="tap"
+        tone="dark"
+      />
+      <div className="grid gap-6 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:items-start">
       {/* The pan and controls */}
       <div className="flex flex-col gap-4">
         <div className="rounded-lg border border-[#D9D0C1] bg-[#F5EFE6] px-4 py-3 text-sm leading-relaxed text-zinc-700 shadow">
@@ -213,7 +225,7 @@ export function PortioningView({
             disabled={panEmpty || isTargetFull}
             aria-describedby="add-beef-hint"
             className={cn(
-              "min-h-11 w-full py-3 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center transition-all select-none touch-none",
+              "relative min-h-11 w-full overflow-hidden py-3 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center transition-all select-none touch-none",
               panEmpty || isTargetFull 
                 ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
                 : pouring 
@@ -221,7 +233,14 @@ export function PortioningView({
                   : "bg-primary/20 text-white border border-primary/60 hover:bg-primary/30 active:scale-95"
             )}
           >
+            <span
+              className="pointer-events-none absolute inset-y-0 left-0 rounded-xl bg-primary/35 transition-[width] duration-150"
+              style={{ width: `${Math.min(100, (trays[selectedTray] / PREP_SHEET.kgPerTrayAtDepth) * 100)}%` }}
+              aria-hidden="true"
+            />
+            <span className="relative z-10">
             {L.addBeef}
+            </span>
           </button>
           <p id="add-beef-hint" className="text-center text-xs text-zinc-400">{L.addBeefHint}</p>
           
@@ -231,6 +250,7 @@ export function PortioningView({
                className="min-h-11 bg-zinc-800 border-zinc-700 text-white hover:bg-zinc-700 font-bold"
               onClick={returnScoop}
               disabled={trays[selectedTray] <= 0}
+               aria-describedby={trays[selectedTray] <= 0 ? 'return-beef-reason' : undefined}
             >
               <Minus className="w-4 h-4 mr-1" /> Return 0.5kg
             </Button>
@@ -243,6 +263,7 @@ export function PortioningView({
               <Plus className="w-4 h-4 mr-1" /> Scoop 0.5kg
             </Button>
           </div>
+           {trays[selectedTray] <= 0 && <p id="return-beef-reason" className="text-center text-xs text-zinc-400">{L.returnBeefHint}</p>}
         </div>
       </div>
 
@@ -275,12 +296,23 @@ export function PortioningView({
             </motion.div>
           ) : canAsk ? (
             <motion.div key="ask" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex justify-end">
-              <Button variant="secondary" onClick={actions.onAskForTray} className="font-bold shadow-lg">
+             <div className="flex flex-col items-end gap-1">
+             <Button variant="secondary" onClick={actions.onAskForTray} className="font-bold shadow-lg" disabled={!canAsk} aria-describedby={!canAsk ? 'ask-tray-reason' : undefined}>
                 {L.askForTray}
               </Button>
+               {!canAsk && <p id="ask-tray-reason" className="text-xs text-white/70">{L.askForTrayHint}</p>}
+             </div>
             </motion.div>
-          ) : null}
+           ) : !askedForTray ? (
+             <motion.div key="ask-locked" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-end gap-1">
+               <Button variant="secondary" className="font-bold shadow-lg" disabled aria-describedby="ask-tray-reason">
+                 {L.askForTray}
+               </Button>
+               <p id="ask-tray-reason" className="text-xs text-white/70">{L.askForTrayHint}</p>
+             </motion.div>
+           ) : null}
         </AnimatePresence>
+      </div>
       </div>
     </div>
   );

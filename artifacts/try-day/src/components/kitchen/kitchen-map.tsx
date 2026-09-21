@@ -11,6 +11,7 @@ import {
 import { TaskId } from "@/content/activities";
 import { motion, useReducedMotion } from "framer-motion";
 import { useFocusTrap } from "./use-focus-trap";
+import { isTopOverlay } from "./overlay-stack";
 import { X, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { kitchenAudio } from "@/lib/audio";
@@ -37,14 +38,15 @@ export function KitchenMap({ taskId }: { taskId: TaskId }) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open) {
+      // Only while nothing sits on top of the map ("How do I do this?" opens above it).
+      if (e.key === "Escape" && open && (establishing || isTopOverlay(dialogRef.current))) {
         e.stopPropagation();
         closeMap();
       }
     };
     if (open) window.addEventListener("keydown", handleKeyDown, true);
     return () => window.removeEventListener("keydown", handleKeyDown, true);
-  }, [open, closeMap]);
+  }, [open, establishing, closeMap]);
 
   if (mapPhase === "closed") return null;
 

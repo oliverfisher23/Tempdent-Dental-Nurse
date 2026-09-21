@@ -58,6 +58,12 @@ interface KitchenContextValue {
   pendingAction: { place: PlaceId; action: string } | null;
   openWorkspace: (place: PlaceId, action: string) => void;
   clearAction: () => void;
+  /**
+   * Guide actions whose workspace is open on screen right now, as reported by the
+   * scenes, so the step guide can say "you're here" instead of offering to open it again.
+   */
+  openWorkspaces: string[];
+  reportWorkspace: (action: string, open: boolean) => void;
 }
 
 export interface Presence {
@@ -208,6 +214,15 @@ export function KitchenProvider({ taskId, frozen = false, children }: { taskId: 
   const [working, setWorking] = useState(false);
   useEffect(() => { setWorking(false); }, [place]);
 
+  const [openWorkspaces, setOpenWorkspaces] = useState<string[]>([]);
+  const reportWorkspace = useCallback((action: string, open: boolean) => {
+    setOpenWorkspaces((prev) => {
+      const has = prev.includes(action);
+      if (open === has) return prev;
+      return open ? [...prev, action] : prev.filter((a) => a !== action);
+    });
+  }, []);
+
   const [present, setPresent] = useState<Presence[]>([]);
   const registerPresent = useCallback((presence: Presence) => {
     setPresent((prev) => [...prev, presence]);
@@ -240,6 +255,8 @@ export function KitchenProvider({ taskId, frozen = false, children }: { taskId: 
         pendingAction,
         openWorkspace,
         clearAction,
+        openWorkspaces,
+        reportWorkspace,
       }}
     >
       {children}
@@ -266,6 +283,20 @@ export function useKitchenAction(action: string, handler: () => void) {
     latest.current();
     clearAction();
   }, [pendingAction, place, mapPhase, action, clearAction]);
+}
+
+/**
+ * Tell the step guide that the workspace its action opens is on screen. Pass the
+ * exact action string while the workspace is open and null when it is not, e.g.
+ * `useWorkspaceOpen(view === 'chiller' ? 'chill:chiller' : null)`.
+ */
+export function useWorkspaceOpen(action: string | null | undefined) {
+  const { reportWorkspace } = useKitchen();
+  useEffect(() => {
+    if (!action) return undefined;
+    reportWorkspace(action, true);
+    return () => reportWorkspace(action, false);
+  }, [action, reportWorkspace]);
 }
 
 /**

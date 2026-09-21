@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { useDraggable, useDropZone, HoldToRead } from '../../kitchen/interact';
 import { TRAY_DEPTH_MM, type ChillActions } from './types';
 import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
+import { WorkspaceOpener } from '@/components/kitchen/workspace-opener';
 
 const BEEF = 'linear-gradient(to top, #3f1f0f, #7a4222 70%, #8f5330)';
 
@@ -74,20 +75,27 @@ function TrayChip({
   });
   const depth = PREP_SHEET.depthForKg(kg);
   const lit = zone.isOver || zone.isTarget;
+  const targetHint = zone.carrying?.toLowerCase().includes('probe') ? L.putProbeHere : L.measureHere;
 
   return (
     <div
       {...props}
       ref={zone.ref}
+      data-drop-zone={zone.props['data-drop-zone']}
+      data-can-drop={zone.props['data-can-drop']}
+      onClick={(event) => {
+        event.stopPropagation();
+        zone.props.onClick?.();
+      }}
       aria-label={label + (touching ? `. ${L.touching}` : '')}
       className={cn(
         'relative mx-auto h-10 w-[88%] rounded-b-lg border-x-4 border-b-4 border-zinc-300 bg-zinc-100/10 shadow-lg outline-none focus-visible:ring-4 focus-visible:ring-primary',
         isLifted && 'z-50 ring-2 ring-primary',
         touching && 'border-amber-400',
-        lit && 'ring-4 ring-primary ring-offset-2 ring-offset-zinc-950',
+        (lit || zone.canDrop) && 'ring-4 ring-primary ring-offset-2 ring-offset-zinc-950',
         locked && 'cursor-default',
       )}
-      style={props.style}
+      style={{ ...props.style, ...zone.props.style }}
       data-testid={`tray-chip-${index}`}
       data-shelved={!onTrolley}
     >
@@ -109,6 +117,11 @@ function TrayChip({
       {measuredMm !== null && (
         <span className="absolute -bottom-3 right-2 rounded bg-white px-1.5 text-[9px] font-bold uppercase tracking-widest text-black shadow">{L.depthMeasured(measuredMm)}</span>
       )}
+      {zone.canDrop && (
+        <span className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-primary px-2 py-1 text-[10px] font-bold text-white shadow-lg">
+          {targetHint}
+        </span>
+      )}
     </div>
   );
 }
@@ -116,7 +129,7 @@ function TrayChip({
 function Shelf({ index, occupied, locked, onLoad, children }: { index: number; occupied: boolean; locked: boolean; onLoad: (trayIndex: number, shelf: number) => void; children?: React.ReactNode }) {
   const accepts = useCallback((kind: string) => kind === 'tray', []);
   const onDrop = useCallback((itemId: string) => onLoad(Number(itemId.replace('tray-', '')), index), [index, onLoad]);
-  const { ref, isOver, isTarget, canDrop, props } = useDropZone({
+  const { ref, isOver, isTarget, canDrop, carrying, props } = useDropZone({
     id: `shelf-${index}`,
     label: L.shelfZone(index + 1),
     accepts,
@@ -139,6 +152,14 @@ function Shelf({ index, occupied, locked, onLoad, children }: { index: number; o
       <span className="absolute right-1 top-1/2 h-1 w-3 -translate-y-1/2 rounded bg-zinc-600" />
       <span className="absolute left-4 top-1 text-[9px] font-bold uppercase tracking-widest text-zinc-600">{L.shelf(index + 1)}</span>
       <div className="w-full pt-2">{children}</div>
+      {!occupied && !locked && (
+        <span className={cn(
+          'pointer-events-none absolute inset-x-5 bottom-1 top-4 flex items-center justify-center rounded border border-dashed text-[10px] font-bold',
+          canDrop ? 'border-primary bg-primary/10 text-white' : 'border-zinc-700 text-zinc-500',
+        )}>
+          {canDrop && carrying ? L.putHere(carrying) : L.emptyShelf}
+        </span>
+      )}
     </div>
   );
 }
@@ -421,6 +442,7 @@ export function ChillerView({
   const startHint = !allShelved ? L.startHint.trays : !spaced ? L.startHint.space : !probeRight ? L.startHint.probe : null;
   const measuredDepth = state.measuredDepths ? PREP_SHEET.depthForKg(state.trays[fullest]) : null;
   const loadedCount = state.shelfByTray.filter((s) => s !== null).length;
+  const readingsSaved = CHILL_RULES.intervals.filter((interval) => readingIsRight(interval, state.readings[interval]?.value ?? '')).length;
   const availableShelves = Array.from({ length: CHILLER_SHELVES }, (_, shelf) => shelf)
     .filter((shelf) => !state.shelfByTray.includes(shelf));
 
@@ -441,8 +463,32 @@ export function ChillerView({
     />
   );
 
+  const opener = !allShelved || !spaced
+    ? { ...L.opener.load, pattern: 'drag' as const, progress: { done: loadedCount, total: state.trays.length, noun: L.opener.load.noun } }
+    : !probeRight
+      ? { ...L.opener.probe, pattern: 'drag' as const }
+      : !started
+        ? { ...L.opener.start, pattern: 'tap' as const }
+        : mustAnswer
+          ? { ...L.opener.decision, pattern: 'tap' as const }
+          : rulerOut
+            ? { ...L.opener.ruler, pattern: 'drag' as const }
+            : m >= CHILL_RULES.extraInterval && !readingDue
+              ? { ...L.opener.sign, pattern: 'tap' as const }
+              : { ...L.opener.readings, pattern: 'hold' as const, progress: { done: readingsSaved, total: CHILL_RULES.intervals.length, noun: L.opener.readings.noun } };
+
   return (
-    <div className="relative mx-auto grid w-full max-w-6xl gap-4 pt-1 md:grid-cols-[minmax(0,3fr)_minmax(0,5fr)_minmax(0,4.5fr)] md:grid-rows-[auto_1fr] md:gap-5">
+    <div className="relative mx-auto flex w-full max-w-6xl flex-col gap-4 pt-1">
+      <WorkspaceOpener
+        taskId="chill-the-event-batch"
+        what={opener.what}
+        how={opener.how}
+        done={opener.done}
+        progress={'progress' in opener ? opener.progress : undefined}
+        pattern={opener.pattern}
+        tone="dark"
+      />
+      <div className="grid gap-4 md:grid-cols-[minmax(0,3fr)_minmax(0,5fr)_minmax(0,4.5fr)] md:grid-rows-[auto_1fr] md:gap-5">
       {/* Trolley */}
       <Trolley locked={started} onRemove={actions.onRemoveTray} empty={allShelved}>
         {state.trays.map((_, i) => (state.shelfByTray[i] === null ? renderTray(i) : null))}
@@ -499,9 +545,13 @@ export function ChillerView({
           </div>
         )}
         {rulerOut && (
-          <Button type="button" variant="outline" className="mt-3 min-h-11 w-full border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={actions.onMeasure}>
-            <RulerIcon className="mr-2 h-4 w-4" /> {L.measureFullest(fullest + 1)}
-          </Button>
+          <div className="mt-3 grid grid-cols-2 gap-2 md:grid-cols-1">
+            {state.trays.map((_, i) => (
+              <Button key={i} type="button" variant="outline" className="min-h-11 border-zinc-600 bg-zinc-800 text-white hover:bg-zinc-700 hover:text-white" onClick={actions.onMeasure}>
+                <RulerIcon className="mr-2 h-4 w-4" /> {L.rulerZone(i + 1)}
+              </Button>
+            ))}
+          </div>
         )}
       </div>
 
@@ -533,7 +583,7 @@ export function ChillerView({
                             }}
                             className="min-h-11 min-w-0 flex-1 rounded-md border border-zinc-600 bg-zinc-800 px-2 text-sm text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
                           >
-                            <option value="" disabled>Choose shelf</option>
+                            <option value="" disabled>{L.chooseShelf}</option>
                             {availableShelves.map((option) => <option key={option} value={option}>{L.shelf(option + 1)}</option>)}
                           </select>
                         </>
@@ -620,10 +670,11 @@ export function ChillerView({
                           aria-invalid={noteError}
                           aria-describedby={noteError ? 'chill-reading-error' : undefined}
                         />
-                        <Button type="submit" size="sm" variant="secondary" className="shrink-0 font-bold" disabled={!note.trim()}>
+                         <Button type="submit" size="sm" variant="secondary" className="shrink-0 font-bold" disabled={!note.trim()} aria-describedby={!note.trim() ? 'save-reading-reason' : undefined}>
                           <Check className="mr-1 h-3.5 w-3.5" /> {L.saveReading}
                         </Button>
                         </div>
+                         {!note.trim() && <p id="save-reading-reason" className="text-xs text-zinc-400">{L.saveReadingHint}</p>}
                         {noteError && <p id="chill-reading-error" role="alert" className="text-xs text-amber-300">{L.readingMismatch}</p>}
                       </form>
                   )}
@@ -655,6 +706,7 @@ export function ChillerView({
           <TraySection key="section" trayIndex={sectionTray} kg={state.trays[sectionTray]} onPlace={placeProbe} onClose={closeSection} />
         )}
       </AnimatePresence>
+      </div>
     </div>
   );
 }

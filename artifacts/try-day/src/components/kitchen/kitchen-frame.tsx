@@ -15,6 +15,7 @@ import { Clock, CheckCircle2, Circle, AlertTriangle, BookOpen, MapPin, Clipboard
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useFocusTrap } from './use-focus-trap';
+import { isTopOverlay } from './overlay-stack';
 import logoImg from '@/assets/artotel-logo.png';
 import type { StepGuide } from '@/content/step-guide';
 import { StepGuideBar } from './step-guide-bar';
@@ -85,7 +86,7 @@ function HeaderTool({
 function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorkspace = false, readyToContinue = true }: KitchenFrameProps) {
   const task = getTask(id);
   const { progress, evaluations, completeTask, isUnlocked, currentTaskId, setClock } = useProgress();
-  const { place, light, mapOpen, notepadOpen, pendingAction, openWorkspace, openNotepad, openMap, clearAction } = useKitchen();
+  const { place, light, mapOpen, notepadOpen, pendingAction, openWorkspace, openNotepad, openMap, clearAction, openWorkspaces } = useKitchen();
   const [dialogueHeight, setDialogueHeight] = useState(0);
   const onDialogueHeight = useCallback((px: number) => setDialogueHeight(Math.round(px)), []);
   const [, setLocation] = useLocation();
@@ -132,7 +133,8 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
   useEffect(() => {
     if (!jobCardOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setJobCardOpen(false);
+      // Only while nothing sits on top of the job card ("How do I do this?" opens above it).
+      if (e.key === 'Escape' && isTopOverlay(jobCardRef.current)) setJobCardOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -237,6 +239,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
             done={ready}
             lastTask={!nextTaskId(id)}
             busy={mapOpen || !!pendingAction}
+            atDestination={openWorkspaces.includes(guide.action)}
             onNext={handleNext}
             onAction={() => {
               setJobCardOpen(false);

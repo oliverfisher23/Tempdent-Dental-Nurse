@@ -4,6 +4,7 @@ import { useKitchen } from './kitchen-context';
 import { TaskId } from '@/content/activities';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFocusTrap } from './use-focus-trap';
+import { isTopOverlay } from './overlay-stack';
 import { X, BookOpen, Trash2 } from 'lucide-react';
 import { kitchenAudio } from '@/lib/audio';
 
@@ -15,7 +16,8 @@ export function NotepadDrawer({ taskId }: { taskId: TaskId }) {
   
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && notepadOpen) {
+      // Only while nothing sits on top of the notebook ("How do I do this?" opens above it).
+      if (e.key === 'Escape' && notepadOpen && isTopOverlay(panelRef.current)) {
         e.stopPropagation();
         closeNotepad();
       }

@@ -8,7 +8,7 @@ import { handoverDelivered } from '@/lib/redesign-close';
 import { kitchenAudio } from '@/lib/audio';
 import { CloseUp } from '../../kitchen/close-up';
 import { Hotspot } from '../../kitchen/hotspot';
-import { useKitchenAction } from '../../kitchen/kitchen-context';
+import { useKitchenAction, useWorkspaceOpen } from '../../kitchen/kitchen-context';
 import { WasteStation } from './waste-station';
 import { HandoverWorkspace } from './handover-workspace';
 import { ChillReview } from './chill-review';
@@ -28,6 +28,15 @@ export function PassScene({
   useKitchenAction('close.open-waste', () => setActiveCloseUp('waste'));
   useKitchenAction('close.open-clipboard', () => setActiveCloseUp('clipboard'));
   useKitchenAction('close.open-elena', () => setActiveCloseUp('chill'));
+  useWorkspaceOpen(
+    activeCloseUp === 'waste'
+      ? 'close.open-waste'
+      : activeCloseUp === 'clipboard'
+        ? 'close.open-clipboard'
+        : activeCloseUp === 'chill'
+          ? 'close.open-elena'
+          : null,
+  );
 
   const weightsDone = WASTE_BINS.every((b) => state.weighed[b.id] && weightIsRight(b.id, state.weights[b.id] ?? ''));
   const delivered = state.redesign ? handoverDelivered(state) && state.handedOver : state.handedOver;
@@ -51,18 +60,18 @@ export function PassScene({
       <Hotspot
         x={16} y={42}
         label={CLOSE_SCENE.clipboard}
-        state={delivered ? 'done' : (weightsDone ? 'active' : 'todo')}
-        onClick={openClipboard}
+        state={delivered ? 'done' : (weightsDone ? 'active' : 'locked')}
+        hint={!weightsDone ? CLOSE_SCENE.locks.clipboard : undefined}
+        onClick={weightsDone ? openClipboard : undefined}
       />
 
-      {delivered && (
-        <Hotspot
-          x={30} y={74}
-          label={CLOSE_SCENE.elena}
-          state={(state.elenaSigned && elenaCorrect) ? 'done' : 'active'}
-          onClick={openChill}
-        />
-      )}
+      <Hotspot
+        x={30} y={74}
+        label={CLOSE_SCENE.elena}
+        state={!delivered ? 'locked' : (state.elenaSigned && elenaCorrect) ? 'done' : 'active'}
+        hint={!delivered ? CLOSE_SCENE.locks.chill : undefined}
+        onClick={delivered ? openChill : undefined}
+      />
 
       <CloseUp isOpen={activeCloseUp === 'waste'} onClose={() => setActiveCloseUp(null)} title="Waste tubs and scales" className="bg-zinc-950">
         <WasteStation onGoToHandover={openClipboard} />

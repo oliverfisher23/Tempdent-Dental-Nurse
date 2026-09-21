@@ -14,7 +14,7 @@ import {
 } from '@/lib/redesign-dietary';
 import { Hotspot } from '../../kitchen/hotspot';
 import { CloseUp } from '../../kitchen/close-up';
-import { useKitchenAction } from '../../kitchen/kitchen-context';
+import { useKitchenAction, useWorkspaceOpen } from '../../kitchen/kitchen-context';
 import { ChartWorkspace } from './chart-workspace';
 import { GuestsWorkspace } from './guests-workspace';
 import { BoardWorkspace } from './board-workspace';
@@ -64,6 +64,7 @@ export function EventsScene({
   useKitchenAction('dietary.open-chart', () => { if (chartOpen) open('chart'); });
   useKitchenAction('dietary.open-guests', () => { if (guestsOpen) open('guests'); });
   useKitchenAction('dietary.open-board', () => { if (boardOpen) open('board'); });
+  useWorkspaceOpen(workspace ? `dietary.open-${workspace}` : null);
 
   const backdrop = PLACES['events'].backdrop;
 
@@ -78,24 +79,24 @@ export function EventsScene({
             x={62}
             y={42}
             label={DIETARY_UI.chart.title}
-            hint={chartOpen ? undefined : 'Read the function sheet at the pass first'}
-            state={stage === 'chart' ? 'active' : chartOpen ? 'done' : 'todo'}
+            hint={chartOpen ? undefined : DIETARY_UI.chart.hotspotLocked}
+            state={stage === 'chart' ? 'active' : chartOpen ? 'done' : 'locked'}
             onClick={() => { if (chartOpen) open('chart'); }}
           />
           <Hotspot
             x={18}
             y={30}
             label={DIETARY_UI.guests.title}
-            hint={guestsOpen ? undefined : 'Opens once Terence has been through your chart'}
-            state={stage === 'guests' ? 'active' : guestsOpen ? 'done' : 'todo'}
+            hint={guestsOpen ? undefined : DIETARY_UI.guests.hotspotLocked}
+            state={stage === 'guests' ? 'active' : guestsOpen ? 'done' : 'locked'}
             onClick={() => { if (guestsOpen) open('guests'); }}
           />
           <Hotspot
             x={82}
             y={32}
             label={DIETARY_UI.board.title}
-            hint={boardOpen ? undefined : 'Opens once every main and dessert is decided'}
-            state={stage === 'board' ? 'active' : stage === 'done' ? 'done' : 'todo'}
+            hint={boardOpen ? undefined : DIETARY_UI.board.hotspotLocked}
+            state={stage === 'board' ? 'active' : stage === 'done' ? 'done' : 'locked'}
             onClick={() => { if (boardOpen) open('board'); }}
           />
         </>

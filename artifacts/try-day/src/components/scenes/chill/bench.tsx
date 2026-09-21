@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, Check } from 'lucide-react';
 import { PLACES } from '@/content/kitchen';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
 import { traysHaveSpace } from '@/lib/simulation';
-import { useKitchen, useKitchenAction } from '../../kitchen/kitchen-context';
+import { useKitchen, useKitchenAction, useWorkspaceOpen } from '@/components/kitchen/kitchen-context';
 import { DragProvider } from '../../kitchen/interact';
 import { kitchenAudio } from '@/lib/audio';
 import { PortioningView } from './portioning';
@@ -32,7 +32,8 @@ function ViewShell({ title, onBack, children }: { title: string; onBack: () => v
       className="absolute inset-x-0 top-0 z-10 flex flex-col"
       style={{ bottom: 'var(--dialogue-h, 0px)' }}
     >
-      <div className="flex shrink-0 items-center justify-between gap-3 px-3 pt-16 sm:px-5">
+      {/* Clears the work-area navigation whatever height its wrapped labels and locked reasons give it on a phone. */}
+      <div className="flex shrink-0 items-center justify-between gap-3 px-3 sm:px-5" style={{ paddingTop: 'calc(var(--bench-nav-h, 3.5rem) + 1rem)' }}>
         <h2 className="text-sm font-bold text-white">{title}</h2>
         <button
           type="button"
@@ -56,6 +57,17 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
   const [recordOpen, setRecordOpen] = useState(false);
   const [probeTray, setProbeTray] = useState<number | null>(state.probePlacement === 'centre' ? state.trays.indexOf(Math.max(...state.trays)) : null);
   const [workspaceRequest, setWorkspaceRequest] = useState(0);
+  // The navigation's height feeds the work areas below it, so their headers never sit under it.
+  const navRef = useRef<HTMLElement | null>(null);
+  const [navHeight, setNavHeight] = useState(56);
+  useEffect(() => {
+    const node = navRef.current;
+    if (!node || typeof ResizeObserver === 'undefined') return undefined;
+    const observer = new ResizeObserver(() => setNavHeight(node.offsetHeight));
+    observer.observe(node);
+    setNavHeight(node.offsetHeight);
+    return () => observer.disconnect();
+  }, []);
   useKitchenAction('chill:portion', () => {
     setRecordOpen(false);
     setView('bench');
@@ -66,6 +78,7 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
     setWorkspaceRequest(n => n + 1);
   });
   useKitchenAction('chill:record', () => setRecordOpen(true));
+  useWorkspaceOpen(recordOpen ? 'chill:record' : view === 'bench' ? 'chill:portion' : view === 'chiller' ? 'chill:chiller' : null);
 
   useEffect(() => {
     setWorking(view !== 'room');
@@ -98,7 +111,7 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
       {/* overflow-clip, not hidden: the zoomed backdrop overflows this box, and a hidden box is still a
           scroll container, so focusing or scrolling to a control below the fold would shift the whole
           stage (navigation and header included) with no way to scroll it back. */}
-      <div className="absolute inset-0 overflow-clip bg-black">
+      <div className="absolute inset-0 overflow-clip bg-black" style={{ '--bench-nav-h': `${navHeight}px` } as CSSProperties}>
         <motion.img
           src={PLACES.bench.backdrop}
           alt=""
@@ -117,7 +130,7 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
         />
 
         {/* Persistent Workspace Navigation */}
-        <nav aria-label="Task 3 work areas" className="absolute inset-x-0 top-2 z-20 flex justify-center px-2 pointer-events-none">
+        <nav ref={navRef} aria-label="Task 3 work areas" className="absolute inset-x-0 top-2 z-20 flex justify-center px-2 pointer-events-none">
           <div className="grid w-full max-w-xl grid-cols-3 gap-1 rounded-2xl border border-white/10 bg-black/75 p-1.5 shadow-2xl backdrop-blur-md pointer-events-auto">
             <button 
               type="button"
@@ -146,7 +159,7 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
                 {L.blastChiller}
                 {chillerState === 'done' && <Check className="ml-1 inline h-3.5 w-3.5 text-emerald-400" aria-label="Finished" />}
               </div>
-              {chillerState === 'locked' && <span id="chiller-locked-reason" className="sr-only">Portion the beef first.</span>}
+              {chillerState === 'locked' && <span id="chiller-locked-reason" className="mt-0.5 text-[9px] font-medium leading-tight text-white/75">{L.navHint.chiller}</span>}
             </button>
             <button 
               type="button"
@@ -163,7 +176,7 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
                 {L.record}
                 {recordState === 'done' && <Check className="ml-1 inline h-3.5 w-3.5 text-emerald-400" aria-label="Finished" />}
               </div>
-              {recordState === 'locked' && <span id="record-locked-reason" className="sr-only">Start the chiller first.</span>}
+              {recordState === 'locked' && <span id="record-locked-reason" className="mt-0.5 text-[9px] font-medium leading-tight text-white/75">{L.navHint.record}</span>}
             </button>
           </div>
         </nav>

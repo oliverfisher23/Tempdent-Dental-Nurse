@@ -25,10 +25,15 @@ export async function verifyCloseHandover(page, { base, phone = false, snap = as
   await hideDesigner();
   await page.waitForTimeout(600);
   await snap('01-pass');
+  const lockedClipboard = page.getByRole('button', { name: /Write the handover.*Weigh every tub and write each weight first/ });
+  await lockedClipboard.focus();
+  assert.ok(await page.getByText('Weigh every tub and write each weight first.', { exact: true }).isVisible(), 'locked clipboard shows what unlocks it');
 
   // P1: inspect, weigh deliberately, write each reading once; nothing prefilled.
   await page.getByRole('button', { name: 'Weigh the waste' }).first().click();
   await page.getByRole('heading', { name: 'Weigh the waste' }).waitFor();
+  await page.getByText('You’re here', { exact: true }).waitFor();
+  await snap('01-waste-open');
   const bins = [['trimmings', '6.4'], ['spoilage', '1.8'], ['plate', '4.2']];
   for (const [index, [id, kg]] of bins.entries()) {
     await page.locator('button[aria-label^="Look at the tub"]').nth(index).click();
@@ -46,8 +51,9 @@ export async function verifyCloseHandover(page, { base, phone = false, snap = as
     }
     await input.fill(kg);
     await page.getByText('This matches the scales.').first().waitFor();
+    if (index === 0) assert.match(await page.getByTestId('opener-count').innerText(), /1 of 3 tubs weighed/, 'waste opener count follows correct rows');
   }
-  await page.getByText('All three rows are weighed and written.').waitFor();
+  await page.getByRole('paragraph').filter({ hasText: 'All three rows are weighed and written.' }).waitFor();
   const wasteQuestion = page.getByRole('group', { name: 'Which waste would you look into, and what would you check next?' });
   await wasteQuestion.getByRole('button', { name: 'Food that went off before it was used' }).click();
   await page.getByText('rice and melon binned from larder fridge 2').waitFor();
@@ -143,11 +149,12 @@ export async function verifyCloseHandover(page, { base, phone = false, snap = as
 
   // P7: visible signature. (P6 comparison content is on hold and only clicked through here.)
   await page.getByRole('heading', { name: 'Review the cooling record with Terence' }).waitFor();
+  await snap('10-review-open');
   for (const option of await page.locator('div.space-y-3.flex-1 > button').all()) {
     await option.click();
-    if (await page.getByRole('button', { name: 'Terence signs the record' }).count()) break;
+    if (await page.getByRole('button', { name: 'Ask Terence to sign', disabled: false }).count()) break;
   }
-  await page.getByRole('button', { name: 'Terence signs the record' }).click();
+  await page.getByRole('button', { name: 'Ask Terence to sign' }).click();
   await page.getByTestId('mentor-signature').waitFor();
   assert.equal((await page.getByTestId('mentor-signature').textContent()).trim(), 'Terence — Executive sous chef');
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

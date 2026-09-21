@@ -33,6 +33,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       actionLabel: 'Take the sheet',
       place: 'pass',
       action: 'dietary.open-function-sheet',
+      pattern: 'tap',
     };
   }
 
@@ -49,6 +50,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       actionLabel: 'Open the chart',
       place: 'events',
       action: 'dietary.open-chart',
+      pattern: 'tap',
     };
   }
 
@@ -67,6 +69,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       actionLabel: 'Open guest decisions',
       place: 'events',
       action: 'dietary.open-guests',
+      pattern: 'tap',
     };
   }
 
@@ -80,6 +83,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       actionLabel: 'Open the board',
       place: 'events',
       action: 'dietary.open-board',
+      pattern: 'tap',
     };
   }
 
@@ -92,6 +96,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
     actionLabel: 'Review the board',
     place: 'events',
     action: 'dietary.open-board',
+    pattern: 'tap',
   };
 }
 
@@ -107,10 +112,11 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
         step: index + 1,
         total: CLOSE_TOTAL,
         title: `Weigh ${binName}`,
-        instruction: 'Look in the tub, put it on the scales and write the reading on its row of the waste sheet.',
+        instruction: 'Tap a tub, press Put it on the scales, read the display, then type the weight on its row of the waste sheet.',
         actionLabel: 'Open the scales',
         place: 'pass',
         action: 'close.open-waste',
+        pattern: 'tap',
       };
     }
 
@@ -124,6 +130,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
         actionLabel: 'Open the scales',
         place: 'pass',
         action: 'close.open-waste',
+        pattern: 'tap',
       };
     }
   }
@@ -139,6 +146,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
       actionLabel: 'Open handover sheet',
       place: 'pass',
       action: 'close.open-clipboard',
+      pattern: 'tap',
     };
   }
 
@@ -158,6 +166,7 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
       actionLabel: 'Open chill record',
       place: 'pass',
       action: 'close.open-elena',
+      pattern: 'tap',
     };
   }
 
@@ -170,5 +179,6 @@ export function getCloseGuide(state: CloseState, chill: ChillState): StepGuide {
     actionLabel: 'Review chill record',
     place: 'pass',
     action: 'close.open-elena',
+    pattern: 'tap',
   };
 }

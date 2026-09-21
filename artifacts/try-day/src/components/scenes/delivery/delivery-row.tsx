@@ -230,6 +230,7 @@ export function DeliveryRow({
                            </Button>
                         )}
                      </div>
+                      {(isCounting || isProbing) && <p className="text-xs text-zinc-400">{ROW_LABELS.measuringReason}</p>}
                      
                      {/* ARIA Live region for results */}
                      {isWeighed ? (
@@ -285,6 +286,7 @@ export function DeliveryRow({
                            >
                               {ROW_LABELS.inspectFish}
                            </Button>
+                            {fishInspectOpen && <p className="text-xs text-zinc-400">{ROW_LABELS.fishOpenReason}</p>}
 
                            {fishInspectOpen && (
                               <div className="space-y-2 pt-2 border-t border-white/10 animate-in fade-in zoom-in duration-300">

@@ -3,7 +3,8 @@ import { ArrowLeft, ClipboardList } from 'lucide-react';
 import { PLACES } from '@/content/kitchen';
 import { DELIVERY_LINES, FISH_CHECKS, ORDER_LINES } from '@/content/activities';
 import { SCENE_LABELS } from '@/content/scenes/delivery';
-import { useKitchenAction } from '@/components/kitchen/kitchen-context';
+import { useKitchenAction, useWorkspaceOpen } from '@/components/kitchen/kitchen-context';
+import { WorkspaceOpener } from '@/components/kitchen/workspace-opener';
 import { Button } from '@/components/ui/button';
 import type { DeliveryState } from '@/lib/simulation';
 import { deliveryReviewIssues } from '@/lib/delivery-workflow';
@@ -11,6 +12,7 @@ import { DeliveryRow } from './delivery-row';
 import { DeliveryNote } from './delivery-note';
 import { DeliveryReport } from './delivery-report';
 import { DeliveryComparison } from './delivery-comparison';
+import { finishedDeliveryLineCount } from './delivery-completion';
 
 type View = 'sheet' | 'comparison' | 'note' | 'report' | 'review';
 export interface DeliveryWorkspaceProps {
@@ -43,6 +45,14 @@ export function GoodsInScene({ state, onUpdateState }: DeliveryWorkspaceProps) {
   const counted = ORDER_LINES.filter((line) => state.lines[line.id].counted).length;
   const probed = ORDER_LINES.filter((line) => line.chilled && state.lines[line.id].probed).length;
   const fish = FISH_CHECKS.filter((check) => state.fishChecks[check.id]).length;
+  const finishedRows = finishedDeliveryLineCount(state);
+  const openAction = view === 'sheet'
+    ? selectedId ? `delivery:box:${selectedId}` : null
+    : view === 'comparison' ? 'delivery:comparison'
+      : view === 'report' ? 'delivery:radio'
+        : view === 'note' ? 'delivery:note'
+          : 'delivery:review';
+  useWorkspaceOpen(openAction);
 
   const navigate = useCallback((target: string) => {
     if (ORDER_LINES.some((line) => line.id === target)) {
@@ -109,6 +119,15 @@ export function GoodsInScene({ state, onUpdateState }: DeliveryWorkspaceProps) {
       {/* Kept mounted so opening paperwork never loses the active row or scroll position. */}
       <div ref={sheetRef} hidden={view !== 'sheet'} className="relative min-h-0 flex-1 overflow-y-auto px-4 pb-8 pt-4 md:px-8">
         <div className="mx-auto max-w-6xl space-y-6">
+          <WorkspaceOpener
+            taskId="check-the-delivery-in"
+            what={copy.opener.item.what}
+            how={copy.opener.item.how}
+            done={copy.opener.item.done}
+            progress={{ done: finishedRows, total: ORDER_LINES.length, noun: 'items checked' }}
+            pattern="tap"
+            tone="dark"
+          />
           <section aria-label={copy.allItems}>
             <h2 className="font-serif text-xl">{copy.allItems}</h2>
             <p className="mt-1 text-sm text-zinc-300">{copy.introduction}</p>
@@ -146,6 +165,15 @@ export function GoodsInScene({ state, onUpdateState }: DeliveryWorkspaceProps) {
         <section className="relative min-h-0 flex-1 overflow-y-auto px-4 pb-8 pt-4 md:px-8" aria-labelledby="delivery-workspace-heading">
           <div className="mx-auto max-w-3xl">
             <Button variant="ghost" onClick={backToSheet} className="mb-4 text-white hover:bg-white/10 hover:text-white"><ArrowLeft className="mr-2 h-4 w-4" />{copy.back}</Button>
+            <WorkspaceOpener
+              taskId="check-the-delivery-in"
+              what={copy.opener[view].what}
+              how={copy.opener[view].how}
+              done={copy.opener[view].done}
+              pattern={view === 'review' ? 'list' : 'tap'}
+              tone={view === 'note' ? 'light' : 'dark'}
+              className="mb-4"
+            />
             <h2 ref={headingRef} tabIndex={-1} id="delivery-workspace-heading" className="mb-4 font-serif text-2xl focus-visible:outline focus-visible:outline-2">{sections.find((section) => section.view === view)?.label}</h2>
             {view === 'comparison' && <DeliveryComparison state={state} onUpdateState={onUpdateState} onNavigate={navigate} />}
             {view === 'note' && <DeliveryNote state={state} onUpdateState={onUpdateState} onNavigate={navigate} />}

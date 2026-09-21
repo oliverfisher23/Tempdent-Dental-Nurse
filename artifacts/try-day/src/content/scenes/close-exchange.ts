@@ -336,6 +336,12 @@ export const TIMING_CHALLENGE: Record<'larder2' | 'table3', (evidence: CloseEvid
 export const EXCHANGE_COPY = {
   title: 'The evening team take the sheet',
   help: 'Answer from the records you signed. If a check or a delivery has not happened, say so.',
+  opener: {
+    what: 'Answer the evening team’s questions and confirm their read-back.',
+    how: 'Tap an answer for each question, then press "Yes, that’s right" when their read-back is correct.',
+    done: 'Every question is answered and the read-back is confirmed.',
+    noun: 'questions answered',
+  },
   youWrote: (heading: string) => `You wrote under "${heading}"`,
   nothingWritten: 'Nothing written here yet',
   resolved: 'Understood',
@@ -349,6 +355,7 @@ export const EXCHANGE_COPY = {
   nothingHere: 'Nothing',
   readBackQuestion: 'Is that right?',
   confirm: "Yes, that's right",
+  confirmReason: 'Answer every evening team question first.',
   revise: 'Change something',
   acceptedTitle: 'Handover delivered',
   acceptedBody: 'The evening team read back the facts and the requests, and you confirmed them. Reading a request back does not mean it has been done.',

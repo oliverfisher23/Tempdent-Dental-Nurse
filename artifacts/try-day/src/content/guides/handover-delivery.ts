@@ -20,6 +20,7 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
       actionLabel: 'Read the notes',
       place: 'pass',
       action: 'handover:workspace',
+      pattern: 'tap',
     };
   }
 
@@ -35,6 +36,7 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
       actionLabel: state.rows[nextUnit.id]?.probed ? 'Carry on here' : `Check ${nextUnit.name}`,
       place: 'pass',
       action: 'handover:workspace',
+      pattern: 'tap',
     };
   }
 
@@ -47,6 +49,7 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
     actionLabel: 'Check the board',
     place: 'pass',
     action: 'handover:workspace',
+    pattern: 'tap',
   };
 }
 
@@ -68,18 +71,21 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
     instruction: 'Inspect, write your results and make your decisions. You can choose any item on the sheet.',
     actionLabel: `Open ${lowerFirst(unfinished.item)}`, place: 'goods-in',
     action: `delivery:box:${unfinished.id}`,
+    pattern: 'tap',
   };
   if (!state.contextRevealed) return {
     id: 'delivery-compare', step: 2, total: 4,
     title: 'Compare your amounts',
     instruction: 'Work out what is missing and prepare the amount you would put on the supplier note.',
     actionLabel: 'Compare amounts', place: 'goods-in', action: 'delivery:comparison',
+    pattern: 'tap',
   };
   if (!state.radioedMarcus) return {
     id: 'delivery-report', step: 3, total: 4,
     title: 'Prepare your report',
     instruction: 'Use your checked amounts and the service information to tell Terence what needs following up.',
     actionLabel: 'Open the report', place: 'goods-in', action: 'delivery:radio',
+    pattern: 'tap',
   };
   const ready = canSignDelivery(state);
   return {
@@ -90,5 +96,6 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
       : 'Resolve any unfinished checks, confirm the amendment and initial it, then sign the note.',
     actionLabel: ready ? 'Open the fish note' : 'Review my work', place: 'goods-in',
     action: ready ? 'delivery:note' : 'delivery:review',
+    pattern: 'tap',
   };
 }

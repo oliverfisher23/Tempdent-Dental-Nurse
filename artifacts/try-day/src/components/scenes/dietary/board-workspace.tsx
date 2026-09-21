@@ -17,6 +17,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { ArrowLeft, CheckCircle2, Clock3 } from 'lucide-react';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 interface BoardWorkspaceProps {
   redesign: DietaryRedesignState;
@@ -38,6 +39,7 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
   const changes = dietaryChanges({ redesign });
   const complete = boardComplete({ redesign });
   const canPost = !boardPosted && complete && redesign.serviceHoldAcknowledged;
+  const changesWritten = changes.filter((change) => change.boardReason.trim()).length;
   const kept = ADDED_GUESTS.flatMap((guest) =>
     COURSES.filter((course) => {
       const dec = redesign.decisions[decisionKey(guest.id, course)];
@@ -50,6 +52,15 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
 
   return (
     <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 gap-4 overflow-y-auto" data-testid="board-workspace">
+      <WorkspaceOpener
+        taskId="check-the-dietary-list"
+        what={copy.opener.what}
+        how={copy.opener.how}
+        done={copy.opener.done}
+        progress={changes.length > 0 ? { done: changesWritten, total: changes.length, noun: copy.progressNoun } : undefined}
+        pattern="list"
+        tone="dark"
+      />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
@@ -61,9 +72,12 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
               <ArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" /> {copy.back}
             </Button>
           )}
-          <Button onClick={onPostBoard} disabled={!canPost} className="bg-red-600 text-white hover:bg-red-700 font-semibold" data-testid="post-board">
-            {boardPosted ? <><CheckCircle2 className="w-4 h-4 mr-2" aria-hidden="true" /> {copy.posted}</> : copy.postAndSignOff}
-          </Button>
+          <div className="flex flex-col items-start gap-1 md:items-end">
+            <Button onClick={onPostBoard} disabled={!canPost} className="bg-red-600 text-white hover:bg-red-700 font-semibold" data-testid="post-board">
+              {boardPosted ? <><CheckCircle2 className="w-4 h-4 mr-2" aria-hidden="true" /> {copy.posted}</> : copy.postAndSignOff}
+            </Button>
+            {!boardPosted && !canPost && <p className="max-w-72 text-xs text-gray-400">{copy.postLocked}</p>}
+          </div>
         </div>
       </div>
 
@@ -113,8 +127,10 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
                     onChange={(event) => setReason(change.key, event.target.value)}
                     disabled={boardPosted}
                     placeholder={copy.reasonPlaceholder}
-                    className="bg-black border-gray-700 text-white text-sm min-h-[60px]"
+                    aria-invalid={!change.boardReason.trim() || undefined}
+                    className={cn('bg-black text-white text-sm min-h-[60px]', change.boardReason.trim() ? 'border-gray-700' : 'border-amber-600')}
                   />
+                  {!change.boardReason.trim() && <p className="mt-1 text-xs text-amber-200">{copy.missingReason}</p>}
                 </div>
                 <div className={cn('rounded border p-2 text-xs flex items-center gap-2', change.preparationStatus === 'pending' ? 'border-amber-800 bg-amber-950/40 text-amber-100' : 'border-gray-800 bg-black text-gray-400')} data-testid={`prep-status-${change.key}`}>
                   {change.preparationStatus === 'pending' && <Clock3 className="w-4 h-4 shrink-0 text-amber-400" aria-hidden="true" />}

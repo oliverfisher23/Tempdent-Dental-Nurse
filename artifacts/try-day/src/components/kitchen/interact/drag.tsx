@@ -32,16 +32,24 @@ interface ZoneRecord {
   rect: DOMRect | null;
 }
 
+/**
+ * How the item was picked up: dragged with the pointer, lifted with the keyboard
+ * (arrows move between places), or tapped once (tap a place to put it there).
+ */
+export type DragMode = 'pointer' | 'keyboard' | 'tap';
+
 interface DragContextValue {
   active: DragItem | null;
   hoveredId: string | null;
   targetIndex: number;
   keyboardMode: boolean;
+  mode: DragMode | null;
   registerZone: (record: ZoneRecord) => void;
   unregisterZone: (id: string) => void;
-  begin: (item: DragItem, keyboard: boolean) => void;
+  begin: (item: DragItem, mode: DragMode) => void;
   hoverAt: (x: number, y: number) => void;
   dropAt: (x: number, y: number) => boolean;
+  dropOn: (zoneId: string) => boolean;
   moveTarget: (direction: 1 | -1) => void;
   dropTarget: () => boolean;
   cancel: () => void;
@@ -63,8 +71,9 @@ export function DragProvider({ children }: { children: ReactNode }) {
   const hoveredRef = useRef<string | null>(null);
   const [targetIndex, setTargetIndex] = useState(-1);
   const targetIndexRef = useRef(-1);
-  const [keyboardMode, setKeyboardMode] = useState(false);
-  const keyboardRef = useRef(false);
+  const [mode, setMode] = useState<DragMode | null>(null);
+  const modeRef = useRef<DragMode | null>(null);
+  const keyboardMode = mode === 'keyboard';
   const [announcement, setAnnouncement] = useState('');
 
   const announce = useCallback((message: string) => {
@@ -100,8 +109,8 @@ export function DragProvider({ children }: { children: ReactNode }) {
     changeOver(null);
     activeRef.current = null;
     setActive(null);
-    keyboardRef.current = false;
-    setKeyboardMode(false);
+    modeRef.current = null;
+    setMode(null);
     targetIndexRef.current = -1;
     setTargetIndex(-1);
   }, [changeOver]);
@@ -120,21 +129,35 @@ export function DragProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const begin = useCallback((item: DragItem, keyboard: boolean) => {
+  const begin = useCallback((item: DragItem, nextMode: DragMode) => {
     activeRef.current = item;
     setActive(item);
-    keyboardRef.current = keyboard;
-    setKeyboardMode(keyboard);
+    modeRef.current = nextMode;
+    setMode(nextMode);
     measureZones();
-    if (keyboard) {
+    if (nextMode === 'keyboard') {
       const available = acceptingZones(item);
       const first = available[0];
       targetIndexRef.current = first ? 0 : -1;
       setTargetIndex(first ? 0 : -1);
       changeOver(first?.id ?? null);
       announce(`Picked up ${item.label}. Use the arrow keys to choose where to put it, Enter to drop, Escape to cancel.`);
+    } else if (nextMode === 'tap') {
+      announce(`Picked up ${item.label}. Choose where to put it, or tap it again to put it back.`);
     }
   }, [acceptingZones, announce, changeOver, measureZones]);
+
+  // A tap-lifted item goes back if the next press lands anywhere that is not a place it can go.
+  useEffect(() => {
+    if (!active || mode !== 'tap') return undefined;
+    const onPointerDown = (event: Event) => {
+      const target = event.target as Element | null;
+      if (target?.closest('[data-drop-zone]') || target?.closest('[data-drag-item]')) return;
+      cancelRef.current();
+    };
+    document.addEventListener('pointerdown', onPointerDown, true);
+    return () => document.removeEventListener('pointerdown', onPointerDown, true);
+  }, [active, mode]);
 
   useEffect(() => {
     if (!active) return;
@@ -173,6 +196,17 @@ export function DragProvider({ children }: { children: ReactNode }) {
     return Boolean(zone);
   }, [announce, clear, zoneAt]);
 
+  const dropOn = useCallback((zoneId: string) => {
+    const item = activeRef.current;
+    if (!item) return false;
+    const zone = zones.current.get(zoneId);
+    if (!zone || zone.disabled || !zone.accepts(item.kind)) return false;
+    zone.onDrop(item.id);
+    announce(`${item.label} put on ${zone.label}`);
+    clear();
+    return true;
+  }, [announce, clear]);
+
   const moveTarget = useCallback((direction: 1 | -1) => {
     const item = activeRef.current;
     if (!item) return;
@@ -203,21 +237,25 @@ export function DragProvider({ children }: { children: ReactNode }) {
     announce('Dropped back');
     clear();
   }, [announce, clear]);
+  const cancelRef = useRef(cancel);
+  cancelRef.current = cancel;
 
   const value = useMemo<DragContextValue>(() => ({
     active,
     hoveredId,
     targetIndex,
     keyboardMode,
+    mode,
     registerZone,
     unregisterZone,
     begin,
     hoverAt,
     dropAt,
+    dropOn,
     moveTarget,
     dropTarget,
     cancel,
-  }), [active, begin, cancel, dropAt, dropTarget, hoverAt, hoveredId, keyboardMode, moveTarget, registerZone, targetIndex, unregisterZone]);
+  }), [active, begin, cancel, dropAt, dropOn, dropTarget, hoverAt, hoveredId, keyboardMode, mode, moveTarget, registerZone, targetIndex, unregisterZone]);
 
   return (
     <DragContext.Provider value={value}>
@@ -235,6 +273,7 @@ export interface UseDraggableOptions {
 }
 
 type DraggableProps = {
+  'data-drag-item': string;
   onPointerDown: (event: PointerEvent<HTMLElement>) => void;
   onPointerMove: (event: PointerEvent<HTMLElement>) => void;
   onPointerUp: (event: PointerEvent<HTMLElement>) => void;
@@ -289,11 +328,18 @@ export function useDraggable({ id, kind, label, disabled = false }: UseDraggable
   }, []);
 
   const onPointerDown = useCallback((event: PointerEvent<HTMLElement>) => {
-    if (disabled || event.button !== 0 || context.active) return;
+    if (disabled || event.button !== 0) return;
+    if (context.active) {
+      // Pressing the item you have already picked up puts it back. Pressing another
+      // item that is also a place (a tray taking the probe) puts the carried item there.
+      if (context.active.id === id) context.cancel();
+      else if (context.mode !== 'pointer') context.dropAt(event.clientX, event.clientY);
+      return;
+    }
     event.currentTarget.setPointerCapture(event.pointerId);
     pointer.current = { id: event.pointerId, x: event.clientX, y: event.clientY, node: event.currentTarget };
     draggedRef.current = false;
-  }, [context.active, disabled]);
+  }, [context, disabled, id]);
 
   const onPointerMove = useCallback((event: PointerEvent<HTMLElement>) => {
     const start = pointer.current;
@@ -303,7 +349,7 @@ export function useDraggable({ id, kind, label, disabled = false }: UseDraggable
     if (!draggedRef.current && Math.hypot(x, y) >= 4) {
       draggedRef.current = true;
       setPointerDragging(true);
-      context.begin({ id, kind, label, source: start.node }, false);
+      context.begin({ id, kind, label, source: start.node }, 'pointer');
     }
     if (!draggedRef.current) return;
     event.preventDefault();
@@ -315,7 +361,15 @@ export function useDraggable({ id, kind, label, disabled = false }: UseDraggable
     const start = pointer.current;
     if (!start || start.id !== event.pointerId) return;
     pointer.current = null;
-    if (!draggedRef.current) return;
+    if (!draggedRef.current) {
+      // A tap without a drag picks the item up; the places it can go then take a tap too.
+      if (!cancelled && !disabled && !context.active) {
+        event.preventDefault();
+        kitchenAudio.play('tap');
+        context.begin({ id, kind, label, source: start.node }, 'tap');
+      }
+      return;
+    }
     event.preventDefault();
     setPointerDragging(false);
     const dropped = !cancelled && context.dropAt(event.clientX, event.clientY);
@@ -327,22 +381,24 @@ export function useDraggable({ id, kind, label, disabled = false }: UseDraggable
       resetTransform(false);
     }
     draggedRef.current = false;
-  }, [context, resetTransform]);
+  }, [context, disabled, id, kind, label, resetTransform]);
 
   const onKeyDown = useCallback((event: KeyboardEvent<HTMLElement>) => {
     if (disabled) return;
     if (!isLifted) {
       if (event.key === ' ' || event.key === 'Enter') {
         event.preventDefault();
-        context.begin({ id, kind, label, source: event.currentTarget }, true);
+        context.begin({ id, kind, label, source: event.currentTarget }, 'keyboard');
       }
       return;
     }
-    if (!context.keyboardMode) return;
     if (event.key === 'Escape') {
       event.preventDefault();
       context.cancel();
-    } else if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || (event.key === 'Tab' && !event.shiftKey)) {
+      return;
+    }
+    if (!context.keyboardMode) return;
+    if (event.key === 'ArrowRight' || event.key === 'ArrowDown' || (event.key === 'Tab' && !event.shiftKey)) {
       event.preventDefault();
       context.moveTarget(1);
     } else if (event.key === 'ArrowLeft' || event.key === 'ArrowUp' || (event.key === 'Tab' && event.shiftKey)) {
@@ -361,6 +417,7 @@ export function useDraggable({ id, kind, label, disabled = false }: UseDraggable
       onPointerUp: (event) => finishPointer(event, false),
       onPointerCancel: (event) => finishPointer(event, true),
       onKeyDown,
+      'data-drag-item': id,
       tabIndex: disabled ? -1 : 0,
       role: 'button',
       'aria-label': `${label}. ${isLifted ? 'Picked up' : 'Press Space or Enter to pick up'}`,
@@ -416,15 +473,24 @@ export function useDropZone({ id, label, accepts, onDrop, onOverChange, disabled
 
   const active = context.active;
   const compatible = Boolean(active && !disabled && accepts(active.kind));
+  const dropOn = context.dropOn;
   return {
     ref,
     isOver: context.hoveredId === id,
     canDrop: compatible,
     isTarget: compatible && context.keyboardMode && context.hoveredId === id,
+    /** The label of the item being carried, while this place can take it: "Put {carrying} here". */
+    carrying: compatible && active ? active.label : null,
+    /** The item was tapped rather than dragged, so this place is waiting for a tap. */
+    tapMode: compatible && context.mode === 'tap',
     props: {
       'data-drop-zone': id,
+      'data-can-drop': compatible || undefined,
       'aria-label': label,
       role: 'group' as const,
+      // Tapping a place while something is picked up puts it there, whatever mode lifted it.
+      onClick: compatible ? () => { dropOn(id); } : undefined,
+      style: compatible ? ({ cursor: 'pointer' } as CSSProperties) : undefined,
     },
   };
 }

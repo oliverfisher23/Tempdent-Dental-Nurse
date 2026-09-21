@@ -13,7 +13,15 @@ export interface BriefingVideo {
   id: BriefingVideoId;
   title: string;
   duration: string;
+  /** The file the filmed briefing will be delivered as. */
   filename: string;
+  /**
+   * Where the finished film is served from, once it exists. Left out while the
+   * clip is still a placeholder, which shows the poster frame and the words instead.
+   */
+  src?: string;
+  /** Optional still shown before playback, and in place of the film while it is a placeholder. */
+  poster?: string;
   transcript: string[];
 }
 

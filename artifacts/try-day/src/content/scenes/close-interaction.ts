@@ -2,7 +2,15 @@ export const CLOSE_INTERACTION = {
   waste: {
     title: 'Weigh the waste',
     instructions: 'Look in each tub, put it on the scales, then write the reading on its row of the waste sheet. Your notebook is there if you want it.',
+    opener: {
+      what: 'Weigh each tub of waste and write it on the waste sheet.',
+      how: 'Tap a tub, press "Put it on the scales", read the display, then type the weight on that tub’s row.',
+      done: 'All three rows are weighed and written.',
+      noun: 'tubs weighed',
+    },
     chooseTub: 'Choose a tub',
+    choose: 'Choose',
+    chosen: 'Chosen',
     inTheTub: 'In the tub',
     from: 'From',
     putOnScales: 'Put it on the scales',
@@ -26,7 +34,9 @@ export const CLOSE_INTERACTION = {
     sheetHelp: 'One weight per row, written once. The row goes green when it matches the scales.',
     allWeighed: 'All three rows are weighed and written.',
     nextTub: 'Next tub',
+    nextTubReason: 'Write the weight from the scales first.',
     goToHandover: 'Write the handover',
+    handoverReason: 'Weigh every tub and write each weight first.',
   },
   evidence: {
     title: 'What you are working from',
@@ -44,6 +54,12 @@ export const CLOSE_INTERACTION = {
     title: 'Kitchen handover',
     shift: 'SHIFT: 15:00 - CLOSE',
     instructions: 'Write each heading in your own words. Keep what you saw, what you were told and what you are asking for clearly apart.',
+    opener: {
+      what: 'Write the handover in your own words.',
+      how: 'Fill each of the four headings, group every follow-up by when and who, then press "Hand it over".',
+      done: 'The evening team have read it back and you have confirmed.',
+      noun: 'headings written',
+    },
     placeholder: 'In your own words',
     fieldError: 'Write something under this heading.',
     promptsTitle: 'Check your wording',
@@ -75,8 +91,15 @@ export const CLOSE_INTERACTION = {
   review: {
     title: 'Review the cooling record with Terence',
     instructions: 'Answer Terence from the recorded comparison. His signature confirms this record review, not service clearance.',
+    opener: {
+      what: 'Answer Terence’s question about cooling the beef and ask him to sign.',
+      how: 'Tap an answer, read Terence’s response, then press "Ask Terence to sign".',
+      done: 'The cooling question is answered correctly and Terence has signed.',
+    },
     checkedBy: 'Checked by',
     signature: 'Terence — Executive sous chef',
     role: 'Executive sous chef',
+    askToSign: 'Ask Terence to sign',
+    signReason: 'Answer Terence’s question first.',
   },
 } as const;

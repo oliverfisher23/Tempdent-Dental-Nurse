@@ -6,8 +6,10 @@ import { LogView } from './log-view';
 import { InspectionView } from './inspection-view';
 import { BoardReview } from './board-review';
 import { useInspectionMotion } from './use-inspection-motion';
+import { useWorkspaceOpen } from '@/components/kitchen/kitchen-context';
 
 export function HandoverRound(props: HandoverRoundProps) {
+  useWorkspaceOpen('handover:workspace');
   const [recheckUnitId, setRecheckUnitId] = useState<string | null>(null);
   const motion = useInspectionMotion();
 

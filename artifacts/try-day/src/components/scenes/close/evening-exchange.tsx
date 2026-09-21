@@ -8,6 +8,7 @@ import type { CloseRedesignState } from '@/lib/redesign-types';
 import { answerKey, timingIssues, topicResolved, type FollowUpId } from '@/lib/redesign-close';
 import { kitchenAudio } from '@/lib/audio';
 import { cn } from '@/lib/utils';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 interface EveningExchangeProps {
   rs: CloseRedesignState;
@@ -40,6 +41,17 @@ export function EveningExchange({ rs, evidence, handover, onAnswer, onMoveBefore
       aria-labelledby="evening-exchange-title"
       data-testid="evening-exchange"
     >
+      <WorkspaceOpener
+        taskId="hand-the-kitchen-on"
+        what={EXCHANGE_COPY.opener.what}
+        how={EXCHANGE_COPY.opener.how}
+        done={EXCHANGE_COPY.opener.done}
+        progress={{ done: resolvedTopics.length, total: EVENING_EXCHANGE.length, noun: EXCHANGE_COPY.opener.noun }}
+        pattern="tap"
+        tone="dark"
+        className="mb-6"
+        testId="evening-exchange-opener"
+      />
       <div className="flex items-center gap-3 mb-6 border-b border-zinc-800 pb-4">
         <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-bold text-zinc-400" aria-hidden="true">ET</div>
         <div>
@@ -80,6 +92,15 @@ export function EveningExchange({ rs, evidence, handover, onAnswer, onMoveBefore
 
       {stage === 'question' && activeTopic && (
         <TopicCard topic={activeTopic} rs={rs} evidence={evidence} handover={handover} onAnswer={onAnswer} />
+      )}
+
+      {(stage === 'timing' || stage === 'question') && (
+        <div className="mt-4">
+          <button type="button" disabled className="min-h-11 rounded bg-zinc-700 px-5 py-2 text-sm font-bold text-zinc-400">
+            {EXCHANGE_COPY.confirm}
+          </button>
+          <p className="mt-2 text-xs text-zinc-400">{EXCHANGE_COPY.confirmReason}</p>
+        </div>
       )}
 
       {stage === 'read-back' && (

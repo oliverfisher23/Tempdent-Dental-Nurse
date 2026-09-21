@@ -49,6 +49,33 @@ export const SCENE_LABELS = {
   verifyWithDriver: "Check comparison",
   sendReport: "Send report to Terence",
   workspace: {
+    opener: {
+      item: {
+        what: "Check this item beside its entry.",
+        how: "Count or weigh it, take the temperature if chilled, write what arrived, compare the papers, then choose accept or refuse.",
+        done: "The row has findings and a decision.",
+      },
+      comparison: {
+        what: "Work out the shortfall and the amount for the supplier note.",
+        how: "Choose an item, compare the three amounts, type what is missing, then prepare and check the amendment.",
+        done: "The shortfall is checked and the proposed amendment is saved.",
+      },
+      report: {
+        what: "Tell Terence what needs following up.",
+        how: "Choose the affected item, service and action, then press Send report.",
+        done: "Terence has received a correct report.",
+      },
+      note: {
+        what: "Confirm and sign the supplier note amendment.",
+        how: "Choose the fish, confirm the accepted amount, add your initials, review the note, then sign it.",
+        done: "The amendment is initialled and the note is signed.",
+      },
+      review: {
+        what: "Resolve every unfinished check.",
+        how: "Press an issue to return to its source, finish it, then come back to review.",
+        done: "No issues remain and the supplier note is ready to sign.",
+      },
+    },
     title: "Working order sheet",
     introduction: "Open each item, check it and write your results here. Your entries stay on this sheet.",
     allItems: "All ten items",
@@ -73,6 +100,11 @@ export const SCENE_LABELS = {
     support: "Start with smoked haddock for a short guide to the method, or choose any item.",
     inspectionProgress: (counted: number, probed: number, fish: number) =>
       `${counted}/10 quantities checked · ${probed}/6 temperatures taken · ${fish}/4 fish findings inspected`,
+    navigationLocked: {
+      comparison: "Finish every item check first.",
+      report: "Check the comparison first.",
+      note: "Send the report to Terence first.",
+    },
   },
   comparisonSheet: {
     title: "Compare your amounts",
@@ -91,6 +123,7 @@ export const SCENE_LABELS = {
     chooseFish: "Choose a fish-note line",
     amount: "Proposed amendment",
     useAccepted: "Use my accepted amount",
+    useAcceptedReason: "Choose a fish and save its accepted amount first.",
     check: "Check comparison",
     incomplete: "Finish the physical checks and your quantity, temperature, comparison, status and acceptance decisions. Enter your missing amount and proposed note amendment, then check again.",
     serviceContext: "What has come up",

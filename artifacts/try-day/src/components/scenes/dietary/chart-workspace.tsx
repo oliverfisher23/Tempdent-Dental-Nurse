@@ -14,7 +14,8 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, HelpCircle, MessageSquare } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, HelpCircle, MessageSquare, Minus } from 'lucide-react';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 interface ChartWorkspaceProps {
   chart: Record<string, string[]>;
@@ -68,6 +69,9 @@ export function ChartWorkspace({
   const activeIndex = DISHES.findIndex((dish) => dish.id === activeDish.id);
   const stateView = { chart, flaggedDishes, redesign };
   const remaining = DISHES.filter((dish) => !redesign.rowReviewConfirmed?.[dish.id]).length;
+  const revisiting = flaggedDishes.length > 0;
+  const confirmedRows = DISHES.length - remaining;
+  const fixedFlaggedRows = flaggedDishes.filter((dishId) => redesign.rowReviewConfirmed?.[dishId]).length;
 
   const setConfirmed = (dishId: string, confirmed: boolean) =>
     onUpdateRedesign((prev) => ({ ...prev, rowReviewConfirmed: { ...prev.rowReviewConfirmed, [dishId]: confirmed } }));
@@ -77,9 +81,8 @@ export function ChartWorkspace({
   const cellContent = (dish: Dish, allergenId: string) => {
     const marked = (chart[dish.id] ?? []).includes(allergenId);
     const status = rowStatus(stateView, dish.id);
-    if (marked) return <span aria-hidden="true" className="block w-3 h-3 rounded-full bg-red-500 mx-auto" />;
-    if (status === 'reviewed' || status === 'reviewed-question') return <span aria-hidden="true" className="text-gray-500">·</span>;
-    return null;
+    if (marked) return <Check aria-hidden="true" className="h-4 w-4 text-red-300" strokeWidth={3} />;
+    return <Minus aria-hidden="true" className={cn('h-3.5 w-3.5', status === 'reviewed' || status === 'reviewed-question' ? 'text-gray-400' : 'text-gray-600')} />;
   };
 
   const renderRecipeCard = (dish: Dish) => {
@@ -180,6 +183,19 @@ export function ChartWorkspace({
 
   return (
     <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 gap-4 overflow-y-auto" data-testid="chart-workspace">
+      <WorkspaceOpener
+        taskId="check-the-dietary-list"
+        what={revisiting ? copy.revisitOpener.what : copy.opener.what}
+        how={revisiting ? copy.revisitOpener.how : copy.opener.how}
+        done={revisiting ? copy.revisitOpener.done : copy.opener.done}
+        progress={{
+          done: revisiting ? fixedFlaggedRows : confirmedRows,
+          total: revisiting ? flaggedDishes.length : DISHES.length,
+          noun: revisiting ? copy.revisitProgressNoun : copy.progressNoun,
+        }}
+        pattern="tap"
+        tone="dark"
+      />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
           <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
@@ -195,9 +211,12 @@ export function ChartWorkspace({
             </Button>
           )}
           {!chartChecked && (
-            <Button onClick={onCheckChart} className="bg-red-600 text-white hover:bg-red-700 font-semibold" data-testid="review-with-terence">
-              {copy.reviewWithTerence}
-            </Button>
+            <div className="flex flex-col items-start gap-1 md:items-end">
+              <Button onClick={onCheckChart} disabled={remaining > 0} className="bg-red-600 text-white hover:bg-red-700 font-semibold" data-testid="review-with-terence">
+                {copy.reviewWithTerence}
+              </Button>
+              {remaining > 0 && <p className="max-w-64 text-xs text-gray-400">{copy.reviewLocked}</p>}
+            </div>
           )}
           {chartChecked && onNext && (
             <Button onClick={onNext} className="bg-emerald-600 text-white hover:bg-emerald-700 font-semibold" data-testid="next-decisions">
@@ -238,23 +257,26 @@ export function ChartWorkspace({
                           onClick={() => setActiveDishId(dish.id)}
                           aria-pressed={selected}
                           aria-label={`${copy.selectedRow}: ${dish.short}`}
-                          className={cn('w-full text-left p-2 border-l-4', selected ? 'border-red-500' : 'border-transparent')}
+                          className={cn('w-full text-left p-2 border-l-4 cursor-pointer hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400', selected ? 'border-red-500' : 'border-transparent')}
                         >
                           <span className="block text-[10px] uppercase tracking-wider text-gray-500">{dish.course}</span>
                           <span className="block font-semibold text-sm">{dish.short}</span>
+                          <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-red-300">
+                            <BookOpen className="h-3 w-3" aria-hidden="true" /> {copy.opensRecipeCard}
+                          </span>
                         </button>
                       </th>
                       {ALLERGENS.map((allergen) => {
                         const marked = (chart[dish.id] ?? []).includes(allergen.id);
                         return (
-                          <td key={allergen.id} className="p-0 text-center border-l border-gray-900">
+                          <td key={allergen.id} className="p-0 text-center border-l border-gray-700">
                             <button
                               type="button"
                               role="checkbox"
                               aria-checked={marked}
                               aria-label={`${allergen.label} in the ${dish.short}`}
                               onClick={() => { setActiveDishId(dish.id); onToggleAllergen(dish.id, allergen.id); }}
-                              className={cn('w-full h-11 flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400', marked && 'bg-red-950/40')}
+                              className={cn('w-full h-11 flex items-center justify-center cursor-pointer border-y border-transparent hover:border-red-500 hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400', marked && 'bg-red-950/40')}
                             >
                               {cellContent(dish, allergen.id)}
                             </button>

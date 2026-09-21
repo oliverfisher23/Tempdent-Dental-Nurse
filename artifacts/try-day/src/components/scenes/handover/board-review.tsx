@@ -3,10 +3,11 @@ import { HANDOVER_LABELS } from '@/content/scenes/handover-round';
 import { LogBook, LogBookHeader } from '../../kitchen/log-book';
 import { useKitchenAction } from '../../kitchen/kitchen-context';
 import type { HandoverState } from '@/lib/simulation';
-import { FLAGGED_FRIDGE_ID } from '@/lib/handover-round';
+import { FLAGGED_FRIDGE_ID, handoverRowSaved } from '@/lib/handover-round';
 import { useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { FridgeBackdrop } from './fridge-backdrop';
+import { WorkspaceOpener } from '@/components/kitchen/workspace-opener';
 
 export function BoardReview({
   state,
@@ -18,6 +19,7 @@ export function BoardReview({
   onRecheck: (unitId: string) => void;
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const savedRows = FRIDGE_UNITS.filter((unit) => handoverRowSaved(unit.id, state.rows[unit.id])).length;
 
   useKitchenAction('handover:workspace', () => {
     containerRef.current?.focus();
@@ -30,7 +32,18 @@ export function BoardReview({
       <div className="absolute inset-0 flex flex-col overflow-y-auto" ref={containerRef} tabIndex={-1}>
       <div className="max-w-5xl w-full mx-auto p-4 sm:p-8 py-12 flex flex-col min-h-full">
         <LogBook>
+          <WorkspaceOpener
+            taskId="take-the-handover"
+            what={HANDOVER_LABELS.opener.board.what}
+            how={HANDOVER_LABELS.opener.board.how}
+            done={HANDOVER_LABELS.opener.board.done}
+            progress={{ done: savedRows, total: FRIDGE_UNITS.length, noun: 'rows saved' }}
+            pattern="list"
+            tone="light"
+            className="mb-5"
+          />
           <LogBookHeader round={HANDOVER_LABELS.boardRound} />
+          {frozen && <p className="mb-3 text-xs text-slate-600">{HANDOVER_LABELS.frozenReason}</p>}
 
           <div className="overflow-x-auto pb-4 hide-scrollbar">
             {/* Desktop Table */}

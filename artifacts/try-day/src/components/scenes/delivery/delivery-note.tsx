@@ -112,6 +112,7 @@ export function DeliveryNote({ state, onUpdateState, onNavigate }: DeliveryNoteP
           <p className="text-xs text-zinc-600">
             {selectedLine && !acceptedAmount.trim() ? copy.acceptedAmountUnavailable : copy.amendedAmountHint}
           </p>
+           {!selectedLine && <p className="text-xs text-zinc-600">{copy.chooseFishReason}</p>}
         </div>
 
         <div className="space-y-2">
@@ -136,6 +137,7 @@ export function DeliveryNote({ state, onUpdateState, onNavigate }: DeliveryNoteP
             </Button>
           </div>
           {!hasAmendment && <p className="text-xs text-zinc-600">{copy.initialHint}</p>}
+           {hasAmendment && !progress.initials && <p className="text-xs text-zinc-600">{copy.savedInitialsReason}</p>}
         </div>
       </div>
 
@@ -168,6 +170,7 @@ export function DeliveryNote({ state, onUpdateState, onNavigate }: DeliveryNoteP
             </Button>
           </div>
         )}
+        {!state.signed && (!isSignable || !progress.initials) && <p className="mt-2 text-xs text-zinc-600">{copy.signReason}</p>}
         {reviewed && reviewIssues.length > 0 && (
           <section aria-labelledby="note-review-heading" aria-live="polite" className="mt-4 rounded border border-red-300 bg-red-50 p-4">
             <h3 id="note-review-heading" className="mb-2 font-bold text-red-900">{copy.reviewHeading}</h3>

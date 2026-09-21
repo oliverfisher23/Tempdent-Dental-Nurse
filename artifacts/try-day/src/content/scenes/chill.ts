@@ -11,12 +11,9 @@ export const CHILL_LABELS = {
 
   // Portioning at the bench
   benchTitle: 'Bratt pan and GN trays',
-  ladle: 'The ladle',
-  ladleHint: 'Hold it over a tray to pour',
   pan: 'The bratt pan',
   left: 'left to pan',
   tray: (n: number) => `Tray ${n}`,
-  trayZone: (n: number) => `Tray ${n}: hold the ladle here to pour`,
   sheetDepth: 'Sheet says 50 mm',
   portionProgress: (moved: number, total: number) => `${moved.toFixed(2)} of ${total.toFixed(1)} kg moved from the pan`,
   trayCapacity: (kg: number, max: number) => `${kg.toFixed(2)} of ${max.toFixed(1)} kg in this tray`,
@@ -25,9 +22,17 @@ export const CHILL_LABELS = {
   trayFull: 'This tray is at its 4 kg limit. Choose another tray.',
   addBeef: 'Add beef',
   addBeefHint: 'Hold to pour steadily, or use the 0.5 kg buttons.',
+  returnBeefHint: 'Add beef to this tray first.',
   askForTray: 'Ask Terence for another tray',
+  askForTrayHint: 'Fill every tray to the depth on the prep sheet first.',
   panEmpty: 'The pan is empty: all of your half is in the trays',
   toTheChiller: 'Take the trays to the chiller',
+  portionOpener: {
+    what: 'Portion your half of the pan into GN trays to the depth on the prep sheet.',
+    how: 'Tap a tray to choose it, then press and hold Add beef to pour, or use the 0.5 kg buttons.',
+    done: 'The pan is empty and every tray is at the depth on the sheet.',
+    noun: 'trays at depth',
+  },
 
   // The blast chiller
   chillerTitle: 'Blast chiller',
@@ -37,7 +42,10 @@ export const CHILL_LABELS = {
   shelf: (n: number) => `Shelf ${n}`,
   shelfZone: (n: number) => `Shelf ${n} of the blast chiller`,
   shelfChoice: (n: number) => `Shelf for tray ${n}`,
+  chooseShelf: 'Choose shelf',
   putOnShelf: 'Put on shelf',
+  emptyShelf: 'Empty shelf',
+  putHere: (carrying: string) => `Put ${carrying.toLowerCase()} here`,
   returnToTrolley: (n: number) => `Return tray ${n} to the trolley`,
   loadStatus: (loaded: number, total: number) => `${loaded} of ${total} trays in the chiller`,
   spacingReady: 'Every tray is loaded with an empty shelf between each one.',
@@ -50,6 +58,8 @@ export const CHILL_LABELS = {
   probeHint: 'Drag it into the food',
   probeAlternative: 'Choose a tray, then choose where the probe goes.',
   placeProbeIn: (n: number) => `Place probe in tray ${n}`,
+  putProbeHere: 'Put the probe here',
+  measureHere: 'Measure here',
   sectionTitle: (n: number) => `Tray ${n}, cut through`,
   sectionQuestion: 'Where in the food does the probe go?',
   sectionZones: {
@@ -77,6 +87,7 @@ export const CHILL_LABELS = {
     space: 'Leave an empty shelf between the trays.',
     probe: 'Put the probe in the food first.',
   },
+  saveReadingHint: 'Type the thermometer reading first.',
   holdToRead: 'Hold to take the temperature',
   readAt: (m: number) => `Reading at ${m} minutes`,
   wait: 'Leave it 30 minutes',
@@ -109,8 +120,58 @@ export const CHILL_LABELS = {
   checkedBy: 'Checked by',
   signHere: 'Sign here',
   signHint: 'Write the 120-minute reading first.',
+  readingLockedHint: (m: number) => `Take the ${m}-minute reading first.`,
   execChef: 'Exec chef',
   elenaSigns: 'Terence signs at the end of the day',
+  navHint: {
+    chiller: 'Portion the beef first.',
+    record: 'Start the chiller first.',
+  },
+
+  opener: {
+    load: {
+      what: 'Load the trays into the blast chiller.',
+      how: 'Drag each tray from the trolley onto a shelf, or tap a tray and then tap a shelf.',
+      done: 'Every tray is on its own shelf with an empty shelf between.',
+      noun: 'trays loaded',
+    },
+    probe: {
+      what: 'Put the temperature probe into the food.',
+      how: 'Drag the probe onto a tray, or press its Place probe in tray button, then choose where the tip goes.',
+      done: 'The probe is placed and the cut-through shows where its tip sits.',
+    },
+    start: {
+      what: 'Start the chill cycle.',
+      how: 'Press Start on the control panel.',
+      done: 'The clock is running.',
+    },
+    readings: {
+      what: 'Take the reading the chill record asks for.',
+      how: 'Press and hold the thermometer until the needle stops, read it, type it in the box and save.',
+      done: 'The reading is saved and matches what you read.',
+      noun: 'readings saved',
+    },
+    decision: {
+      what: 'Decide what to do with the batch.',
+      how: 'Read Terence’s question, then tap one answer.',
+      done: 'Terence confirms that your decision fits the recorded case.',
+    },
+    ruler: {
+      what: 'Compare the tray depths.',
+      how: 'Drag the ruler onto a tray, or tap the ruler and then tap the tray.',
+      done: 'Each tray you measure shows its depth.',
+    },
+    sign: {
+      what: 'Sign the chill record.',
+      how: 'Open the chill record, check every reading, then write or type your signature.',
+      done: 'Your name appears on the checked by line.',
+    },
+    record: {
+      what: 'Read and correct the chill record.',
+      how: 'Tap a reading box to type a correction, then review every row.',
+      done: 'Every reached reading matches the thermometer and the record is ready to sign.',
+    },
+  },
 
   // What to do next, one line at a time
   next: {

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PLACES } from '@/content/kitchen';
 import { kitchenAudio } from '@/lib/audio';
 import { Hotspot } from '../../kitchen/hotspot';
-import { useKitchenAction } from '../../kitchen/kitchen-context';
+import { useKitchenAction, useWorkspaceOpen } from '../../kitchen/kitchen-context';
 import { FunctionSheetCloseUp } from './function-sheet';
 
 /** The pass: Yvie hands over the function sheet. Purpose and menu come before any guest detail. */
@@ -22,6 +22,7 @@ export function PassScene({
     if (!sheetRead) onSheetRead();
   };
   useKitchenAction('dietary.open-function-sheet', open);
+  useWorkspaceOpen(sheetOpen ? 'dietary.open-function-sheet' : null);
 
   const backdrop = PLACES['pass'].backdrop;
 

@@ -22,8 +22,12 @@ the way you read signs in a building you have just walked into.
    or just "take the temperature", "scales", "clipboard". Never "jot", "log", "capture", "record" as verbs
    for the student's own notes. Say "write it in your notebook", "write it down", "use my note".
 4. **Describe the kitchen, not the software.** "Come back in 30 minutes", not "Each wait moves the clock on".
-   "Nothing to do here yet", not "Location unavailable". Never mention clicks, taps, pins, hotspots, modals,
-   panels, states, mechanics or the simulation.
+   "Nothing to do here yet", not "Location unavailable". Never mention pins, hotspots, modals, panels, states,
+   mechanics or the simulation in dialogue, feedback or labels. The one exception is the instruction layer,
+   which is allowed to say how the screen works because the client asked for it: the "How this works" tiles
+   and cards (`content/interaction-patterns.ts`), the "How" line of a workspace opener, and the step guide's
+   instruction. There, name the gesture and its alternative in plain words ("Drag a tray onto a shelf, or tap
+   the tray and then the shelf"), keep it to one sentence, and never let it reveal an answer.
 5. **Sentence case for everything the app says.** Titles printed on real paperwork (a form's heading, a
    supplier's delivery note) can be in whatever case a real form would be, but the app's own words are not shouted.
 6. **No filler and no trailing dots.** "Read this entry", not "Read entry...". "Look", not "Click to inspect".
@@ -59,7 +63,11 @@ the way you read signs in a building you have just walked into.
 - Button that saves something to the notebook: "Write it in your notebook".
 - Chip that fills a form field from a note: "Use my note".
 - Hint under a disabled button: say what unblocks it, in the world. "Write the 30-minute reading on the
-  chill record first."
+  chill record first." Every disabled or locked control carries one, visibly, not only for screen readers.
+- Workspace opener (`components/kitchen/workspace-opener.tsx`), at the top of every workspace, three lines:
+  What to do (one imperative sentence), How (the gesture on this screen and its button alternative), Done when
+  (what finished looks like, with a live count where there are several items: "0 of 4 trays loaded"). It also
+  holds "Watch the task briefing" and "How do I do this?". The opener never names an answer.
 - Close-up title: the object's plain name. "Overnight log", "Fridge 2", "Order sheet", "Trolley 1: fish".
 - Map: "Where do you want to go?"; pin tooltip says what is waiting there; a pin with nothing to do says
   "Nothing to do here yet".

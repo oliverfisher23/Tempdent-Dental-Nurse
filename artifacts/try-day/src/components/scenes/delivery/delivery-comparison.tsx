@@ -58,6 +58,7 @@ export function DeliveryComparison({ state, onUpdateState, onNavigate }: Deliver
           <Input id="delivery-proposed-amount" inputMode="decimal" value={state.noteAmendedTo} onChange={(event) => onUpdateState((previous) => ({ ...previous, noteAmendedTo: event.target.value }))} className="mt-2 max-w-48 border-white/25 bg-zinc-900 text-white" />
         </div>
         <Button variant="secondary" disabled={!noteLine || !state.lines[noteLine.id]?.acceptedAmount} onClick={() => onUpdateState((previous) => ({ ...previous, noteAmendedTo: previous.lines[previous.noteLineId]?.acceptedAmount ?? previous.noteAmendedTo }))}>{copy.useAccepted}</Button>
+        {(!noteLine || !state.lines[noteLine.id]?.acceptedAmount) && <p className="text-xs text-zinc-400">{copy.useAcceptedReason}</p>}
       </fieldset>
       <details className="rounded border border-white/15 p-3">
         <summary className="cursor-pointer font-bold focus-visible:outline focus-visible:outline-2">{copy.hintTitle}</summary>

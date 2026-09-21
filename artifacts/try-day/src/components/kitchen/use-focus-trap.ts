@@ -1,4 +1,5 @@
 import { useEffect, type RefObject } from 'react';
+import { isTopOverlay, popOverlay, pushOverlay } from './overlay-stack';
 
 const FOCUSABLE =
   'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])';
@@ -7,12 +8,15 @@ const FOCUSABLE =
  * Keeps keyboard focus inside an open overlay (close-up, map, notepad, job card):
  * moves focus in when it opens, cycles Tab/Shift+Tab within it, and hands focus
  * back to whatever had it when it closes. Pointer users are unaffected.
+ * When overlays stack (a briefing video opened from a close-up), only the topmost
+ * one handles Tab; the ones underneath wait until it closes.
  */
 export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean, includeGuide = false) {
   useEffect(() => {
     if (!active) return undefined;
     const root = ref.current;
     if (!root) return undefined;
+    pushOverlay(root);
     const previouslyFocused = document.activeElement as HTMLElement | null;
 
     const focusables = () =>
@@ -27,7 +31,7 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean
     (first ?? root).focus({ preventScroll: true });
 
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab' || !isTopOverlay(root)) return;
       const items = focusables();
       if (items.length === 0) {
         e.preventDefault();
@@ -55,6 +59,7 @@ export function useFocusTrap(ref: RefObject<HTMLElement | null>, active: boolean
     document.addEventListener('keydown', onKeyDown, true);
     return () => {
       document.removeEventListener('keydown', onKeyDown, true);
+      popOverlay(root);
       previouslyFocused?.focus?.({ preventScroll: true });
     };
   }, [ref, active, includeGuide]);

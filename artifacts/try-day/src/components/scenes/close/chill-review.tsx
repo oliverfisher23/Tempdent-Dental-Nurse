@@ -4,6 +4,7 @@ import { useProgress } from '@/lib/progress-store';
 import { kitchenAudio } from '@/lib/audio';
 import { cn } from '@/lib/utils';
 import { Sheet } from '../../kitchen/paper';
+import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 /**
  * Terence reviews the chill record. The cooling comparison content (question, reference
@@ -17,16 +18,26 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
   const elenaCorrect = !!state.elenaAnswer && !!ELENA_QUESTION.options.find((o) => o.id === state.elenaAnswer)?.correct;
 
   return (
-    <div className="flex flex-col md:flex-row gap-6 w-full max-w-5xl mx-auto h-[85vh] overflow-y-auto md:overflow-hidden p-4 lg:p-6 min-w-0">
+    <div className="w-full max-w-5xl mx-auto h-[85vh] overflow-y-auto p-4 lg:p-6 min-w-0">
+      <WorkspaceOpener
+        taskId="hand-the-kitchen-on"
+        what={CLOSE_INTERACTION.review.opener.what}
+        how={CLOSE_INTERACTION.review.opener.how}
+        done={CLOSE_INTERACTION.review.opener.done}
+        pattern="tap"
+        tone="dark"
+        className="mb-6"
+      />
+      <div className="flex flex-col md:flex-row gap-6 md:h-[calc(85vh-9rem)]">
       {/* Left: Chill Record Sheet */}
-      <div className="flex-1 min-w-0 md:overflow-y-auto pb-8">
+      <div className="order-2 flex-1 min-w-0 md:order-1 md:overflow-y-auto pb-8">
         <Sheet>
           <div className="p-8 font-sans text-zinc-900">
             <div className="border-b-4 border-zinc-900 pb-4 mb-8">
               <h2 className="text-3xl font-black uppercase tracking-tighter text-center">Chill Record</h2>
             </div>
 
-            <div className="grid grid-cols-2 gap-y-4 gap-x-8 mb-10 text-sm bg-zinc-50 p-5 rounded border border-zinc-200">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 mb-10 text-sm bg-zinc-50 p-5 rounded border border-zinc-200">
               <div className="flex justify-between border-b border-zinc-200 pb-2">
                 <span className="font-bold text-zinc-500 uppercase text-[10px] tracking-widest mt-1">Product</span>
                 <span className="font-bold text-base">Braised Beef Shin</span>
@@ -107,7 +118,7 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
       </div>
 
       {/* Right: Terence's question */}
-      <div className="w-full md:w-[400px] shrink-0 bg-zinc-900 border border-zinc-700 p-6 rounded-xl shadow-2xl flex flex-col text-zinc-100 overflow-y-auto">
+      <div className="order-1 w-full md:order-2 md:w-[400px] shrink-0 bg-zinc-900 border border-zinc-700 p-6 rounded-xl shadow-2xl flex flex-col text-zinc-100 overflow-y-auto">
         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-zinc-800">
           <div>
             <div className="font-bold text-lg">Terence</div>
@@ -149,19 +160,23 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
           </div>
         )}
 
-        {elenaCorrect && !state.elenaSigned && (
+        {!state.elenaSigned && (
           <div className="mt-8 pt-6 border-t border-zinc-800 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:duration-200">
             <button
+              type="button"
+              disabled={!elenaCorrect}
               onClick={() => {
                 kitchenAudio.play('write');
                 updateTask('hand-the-kitchen-on', (prev) => ({ ...prev, elenaSigned: true }));
               }}
-              className="w-full min-h-11 bg-white text-black font-bold py-4 rounded-lg shadow-xl hover:bg-zinc-200 motion-safe:transition-colors motion-safe:duration-200 text-sm"
+              className="w-full min-h-11 bg-white text-black font-bold py-4 rounded-lg shadow-xl hover:bg-zinc-200 disabled:bg-zinc-700 disabled:text-zinc-400 disabled:shadow-none motion-safe:transition-colors motion-safe:duration-200 text-sm"
             >
-              Terence signs the record
+              {CLOSE_INTERACTION.review.askToSign}
             </button>
+            {!elenaCorrect && <p className="mt-2 text-xs text-zinc-400">{CLOSE_INTERACTION.review.signReason}</p>}
           </div>
         )}
+      </div>
       </div>
     </div>
   );
