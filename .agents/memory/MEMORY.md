@@ -1,7 +1,7 @@
 - [Try-day conventions](try-day-content.md) — approved copy, frozen sign-offs, brand rules, and guidance that simplifies navigation without doing students’ practical work.
 - [Dietary review boundaries](dietary-review-boundaries.md) — agreed exercise covers ingredient planning and pending preparation checks, never "cleared to serve".
 - [Preview video codecs](preview-video-codecs.md) — some preview/test Chromium builds lack H.264 decoding; check codec support before treating a media error as a broken URL.
-- [Browser capture harness](browser-capture-harness.md) — hide the designer panel with CSS (never remove it), close the dev banner first, and don’t trust emulated touch-target sizes.
+- [Browser capture harness](browser-capture-harness.md) — hide the designer panel with CSS, wait for `hidden` on closing modals (exit animations fake bugs), CDP touch for press-and-hold, job card is first-visit only.
 - [Vite import.meta.glob guard](vite-import-meta-glob.md) — a typeof guard is always false in the browser and silently breaks asset URLs; use try/catch for Node-shared modules; the fridge-round browser command is the canary.
 - [Fridge inspection layout](fridge-inspection-layout.md) — stage and clipboard: measured picture width, content-sized card, `beside` variant; never crop, no black bars, no aria-pressed on the motion toggle.
 - [Restart file rollback](restart-file-rollback.md) — container restarts during task merges wipe /tmp and can revert the last minute of edits; grep before continuing.

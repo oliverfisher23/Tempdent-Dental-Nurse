@@ -133,8 +133,12 @@ export async function verifyFridgeMedia(page) {
     const board = page.getByTestId('handover-board');
     await board.waitFor({ timeout: 15_000 });
     await board.getByRole('heading', { name: /food temperature\s*log book/i }).first().waitFor({ timeout: 15_000 });
+    // The log book is a table from the md breakpoint up and a stack of cards below it.
+    const phone = (page.viewportSize()?.width ?? 1024) < 768;
+    const layout = phone ? board.locator('div.md\\:hidden') : board.locator('table.log-book-table');
+    await layout.waitFor({ timeout: 5_000 });
     for (const [unit, reading] of units) {
-      await board.getByText(reading, { exact: true }).first().waitFor({ timeout: 5_000 }).catch(error => {
+      await layout.getByText(reading, { exact: true }).first().waitFor({ timeout: 5_000 }).catch(error => {
         throw new Error(`the log book does not show the ${reading} °C reading recorded for "${unit}"`, { cause: error });
       });
     }

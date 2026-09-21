@@ -25,3 +25,11 @@ description: Lessons from driving the try-day app headlessly (CDP/Playwright) fo
   style tag first: `pointer-events: none` swallows even forced clicks.
 - playwright-core is not a workspace dependency; install it in a scratch dir and pass a Page into the
   `e2e/*-verification.mjs` modules, which is why they take a Page rather than launching a browser.
+- Kitchen modals and close-ups animate out for a few hundred ms. `isVisible()` straight after Escape or a
+  close click still says true, and a click on the closing button dies with "element detached". Assert with
+  `waitFor({ state: 'hidden' })` instead, or a QA script logs "Escape does not close X" as a false bug.
+- Playwright's `touchscreen` only taps. For a phone-context press-and-hold (the probe/hold-to-read buttons),
+  send CDP `Input.dispatchTouchEvent` touchStart, wait for `[data-state="settled"]`, then touchEnd. Mouse
+  events still work in a touch context but only prove the layout, not the gesture.
+- The job card opens on a task's first visit only; a resumed or reloaded session lands straight in the scene,
+  so treat "Close the job card" as optional in any harness.

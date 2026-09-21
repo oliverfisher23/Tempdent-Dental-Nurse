@@ -1,6 +1,29 @@
-# Complete fridge round browser check
+# Browser checks
 
-Run from the workspace root:
+All commands run from the workspace root.
+
+## Full learner run (QA)
+
+```sh
+pnpm --filter @workspace/try-day run test:learner-run
+pnpm --filter @workspace/try-day run test:learner-run -- --from=task3   # resume a stage
+VIEWPORT=phone pnpm --filter @workspace/try-day run test:learner-run   # 390x844, touch
+```
+
+Drives the whole experience the way a learner would: welcome, briefing, name,
+Tasks 1 to 5, close of day, then a return visit. It uses only controls a learner
+can see (no designer harness, no seeded fixtures) and reloads the page mid-task
+to check saved progress. It targets the running web workflow (`BASE` defaults to
+`http://localhost:80`). Output goes to `test-results/learner-run/` (or
+`learner-run-phone/`): a screenshot per stage, a saved browser state per stage
+for `--from=<stage>`, and `qa-log.json` with console errors, page errors, failed
+requests, timings and any findings. The command exits non-zero when a stage
+fails, on any page or console error, on any failed request other than a media
+fetch the app itself aborted, or on a "major" finding; "minor" and "info"
+findings are QA observations only. The phone run uses touch input for the
+hold-to-read gestures.
+
+## Complete fridge round
 
 ```sh
 pnpm --filter @workspace/try-day run test:fridge-round
@@ -17,7 +40,15 @@ Unlike the delivery browser suite (`test:delivery:browser`, which targets the
 running web workflow), this check does not need the preview to be up: it starts
 its own Vite server on port 4174 at the root path and stops it afterwards.
 
+## Task 5 closing handover
+
+`close-handover-verification.mjs` exports `verifyCloseHandover(page, { base, phone })`
+for a caller-supplied Playwright page. It starts from the designer harness at
+Task 5 and covers the approved closing-handover decisions on desktop and phone.
+
+## Browser binary
+
 Chromium can be selected with `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH`. When that
 is unset, Replit's `/repl/tools/bin/chromium` is used when present; otherwise
 the installed Playwright Chromium is used. Traces and screenshots for failures
-are written to `test-results/fridge-round/` (git-ignored).
+are written to `test-results/` (git-ignored).

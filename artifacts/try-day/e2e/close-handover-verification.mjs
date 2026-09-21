@@ -103,11 +103,11 @@ export async function verifyCloseHandover(page, { base, phone = false, snap = as
   await page.getByTestId('exchange-salmon').waitFor();
   assert.ok(await page.getByText('You wrote under "What is short"').count(), 'quotes the learner heading');
   await snap('07-salmon-question');
-  await page.getByRole('button', { name: 'None now — the rest is on its way' }).click();
+  await page.getByRole('button', { name: 'None now. The rest is on its way' }).click();
   await page.getByRole('alert').filter({ hasText: 'Has that happened, or are you asking us to follow it up?' }).waitFor();
   const answerSalmon = async () => {
-    await page.getByRole('button', { name: /4 kg — 8 kg came in against the 12 kg ordered/ }).click();
-    await page.getByRole('button', { name: "Tomorrow's lunch — tonight doesn't use it" }).click();
+    await page.getByRole('button', { name: /4 kg\. 8 kg came in against the 12 kg ordered/ }).click();
+    await page.getByRole('button', { name: "Tomorrow's lunch. Tonight doesn't use it" }).click();
     await page.getByRole('button', { name: /Terence said he'd ring the supplier before ten/ }).click();
   };
   await answerSalmon();
@@ -122,7 +122,7 @@ export async function verifyCloseHandover(page, { base, phone = false, snap = as
   await page.getByRole('button', { name: /It read 8.6°C at 06:50, above the/ }).click();
   await page.getByRole('button', { name: /It needs re-checking before service/ }).click();
   await page.getByTestId('exchange-table3').waitFor();
-  await page.getByRole('button', { name: /Table 3 — Priya Nair/ }).click();
+  await page.getByRole('button', { name: /Table 3, Priya Nair/ }).click();
   await page.getByRole('button', { name: /Poached pear instead of the frangipane/ }).click();
   await page.getByRole('button', { name: /It's on the events board/ }).click();
   await page.getByTestId('exchange-ready').waitFor();
@@ -156,7 +156,7 @@ export async function verifyCloseHandover(page, { base, phone = false, snap = as
   }
   await page.getByRole('button', { name: 'Ask Terence to sign' }).click();
   await page.getByTestId('mentor-signature').waitFor();
-  assert.equal((await page.getByTestId('mentor-signature').textContent()).trim(), 'Terence — Executive sous chef');
+  assert.equal((await page.getByTestId('mentor-signature').textContent()).trim(), 'Terence, Executive sous chef');
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   assert.ok(overflow <= 0, `review must not overflow horizontally (${overflow}px)`);
   await snap('10-signed');

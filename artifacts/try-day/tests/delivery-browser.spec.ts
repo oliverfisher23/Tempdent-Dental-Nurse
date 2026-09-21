@@ -58,7 +58,7 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
       await d.go('Order sheet');
       const row = d.row(line.id);
       await d.activate(row.getByRole('button', { name: `Open ${lowerFirst(line.item)}`, exact: true }));
-      const quantity = row.getByLabel(`Quantity for ${line.item} (${line.unit})`, { exact: true });
+      const quantity = row.getByLabel(`Quantity for ${lowerFirst(line.item)} (${line.unit})`, { exact: true });
       const temperature = row.locator(`#temp-${line.id}`);
       const check = row.getByRole('button', { name: 'Check your decisions', exact: true });
 
