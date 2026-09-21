@@ -1,3 +1,5 @@
+import { CheckFeedback } from '@/components/kitchen/check-feedback';
+import { CHECK_COPY } from '@/content/check';
 import { useState } from 'react';
 import { ADDED_GUESTS, type AddedGuest, type Line } from '@/content/activities';
 import { DECISION_ACTIONS, DECISION_CATEGORIES, OUT_OF_SCOPE_ITEMS } from '@/content/scenes/dietary-redesign';
@@ -22,7 +24,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
-import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2, MessageSquare } from 'lucide-react';
+import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 export interface GuestsWorkspaceProps {
@@ -36,7 +38,6 @@ export interface GuestsWorkspaceProps {
   feedback: Record<string, DecisionFeedback | undefined>;
   decisionsReady: boolean;
   onOpenChart: () => void;
-  onNext: () => void;
   onBack?: () => void;
 }
 
@@ -82,15 +83,11 @@ function ChoiceGroup<T extends string>({
 }
 
 function TerenceLine({ line, kind, testId }: { line: Line; kind: DecisionFeedback['kind']; testId: string }) {
-  const tone = kind === 'stands' ? 'border-emerald-900 bg-emerald-950/30 text-emerald-100' : kind === 'unnecessary-change' ? 'border-amber-900 bg-amber-950/30 text-amber-100' : 'border-red-900 bg-red-950/30 text-red-100';
+  const outcome = kind === 'stands' ? 'ok' : kind === 'unnecessary-change' ? 'note' : 'issue';
   return (
-    <div role="status" data-testid={testId} className={cn('rounded border p-3 text-sm flex gap-2', tone)}>
-      <MessageSquare className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-      <div>
-        <div className="text-[10px] uppercase tracking-widest font-bold opacity-80">{line.speaker}</div>
-        <p>{line.text}</p>
-      </div>
-    </div>
+    <CheckFeedback kind={outcome} speaker={line.speaker} testId={testId}>
+      <p>{line.text}</p>
+    </CheckFeedback>
   );
 }
 
@@ -105,7 +102,6 @@ export function GuestsWorkspace({
   feedback,
   decisionsReady,
   onOpenChart,
-  onNext,
   onBack,
 }: GuestsWorkspaceProps) {
   const copy = DIETARY_UI.guests;
@@ -138,7 +134,7 @@ export function GuestsWorkspace({
       <section key={key} aria-labelledby={`${key}-title`} data-testid={`course-${key}`} className="rounded-md border border-gray-800 bg-gray-900/60 p-4 space-y-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <h4 id={`${key}-title`} className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">{COURSE_LABEL[course]} · {copy.plannedDish}</h4>
+            <h4 id={`${key}-title`} className="text-xs uppercase tracking-widest text-gray-400 font-bold">{COURSE_LABEL[course]} · {copy.plannedDish}</h4>
             <p className="font-serif font-bold text-lg leading-tight">{planned.name}</p>
             <p className="text-xs text-gray-400 mt-1">
               {copy.chartRow(planned.short)}: <span className="text-gray-200">{plannedMarks.length ? plannedMarks.join(', ') : copy.noMarks}</span>
@@ -146,7 +142,7 @@ export function GuestsWorkspace({
           </div>
           <div className="flex items-center gap-2">
             {valid && (
-              <span className="inline-flex items-center gap-1 rounded border border-emerald-800 bg-emerald-950 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-200">
+              <span className="inline-flex items-center gap-1 rounded border border-emerald-800 bg-emerald-950 px-2 py-0.5 text-xs font-bold uppercase tracking-wider text-emerald-200">
                 <CheckCircle2 className="w-3 h-3" aria-hidden="true" /> {copy.checked}
               </span>
             )}
@@ -167,7 +163,7 @@ export function GuestsWorkspace({
           <div className="grid gap-3 sm:grid-cols-2">
             {[planned, ...(proposed && proposed.id !== planned.id ? [proposed] : [])].map((dish) => (
               <div key={dish.id} className="bg-[#f7f3e8] text-zinc-900 rounded-sm p-3 text-sm border border-amber-100">
-                <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">{dish.course}</div>
+                <div className="text-xs uppercase tracking-widest text-zinc-400 font-bold">{dish.course}</div>
                 <div className="font-serif font-bold leading-tight">{dish.name}</div>
                 <ul className="list-disc pl-4 mt-1 space-y-0.5 text-xs">
                   {dish.ingredients.map((ingredient) => (
@@ -212,7 +208,7 @@ export function GuestsWorkspace({
                     className="mt-0.5 bg-black border-gray-500"
                   />
                   <span>
-                    <span className="block text-[10px] uppercase tracking-wider text-gray-500">
+                    <span className="block text-xs uppercase tracking-wider text-gray-400">
                       {option.group === 'sheet'
                         ? 'Function sheet'
                         : option.group === 'chart'
@@ -271,9 +267,9 @@ export function GuestsWorkspace({
             disabled={checkLocked}
             className="bg-red-600 text-white hover:bg-red-700 font-semibold"
             data-testid={`check-${key}`}
-            aria-label={`${copy.checkWithTerence}: ${guest.name} ${COURSE_LABEL[course].toLowerCase()}`}
+            aria-label={`${CHECK_COPY.check}: ${guest.name} ${COURSE_LABEL[course].toLowerCase()}`}
           >
-            {copy.checkWithTerence}
+            {CHECK_COPY.check}
           </Button>
           {checkLocked && <p className="text-xs text-gray-400">{copy.checkLocked}</p>}
         </div>
@@ -295,7 +291,7 @@ export function GuestsWorkspace({
       />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
+          <h2 data-dialog-title className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
           <p className="text-gray-400 mt-1 text-sm md:text-base">{copy.subtitle}</p>
           <p className="text-xs text-gray-300 mt-2">{copy.scopeNotice}</p>
           <p className="text-xs text-amber-200 mt-1">{copy.holdNotice}</p>
@@ -309,12 +305,7 @@ export function GuestsWorkspace({
           <Button variant="outline" onClick={onOpenChart} className="bg-transparent border-gray-600 text-white" data-testid="back-to-chart">
             <ArrowLeft className="w-4 h-4 mr-1" aria-hidden="true" /> {copy.reviewChart}
           </Button>
-          <div className="flex flex-col items-start gap-1 md:items-end">
-            <Button onClick={onNext} disabled={!decisionsReady} className="bg-emerald-600 text-white hover:bg-emerald-700 font-semibold" data-testid="go-to-board">
-              {copy.reviewBoard} <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
-            </Button>
-            {!decisionsReady && <p className="max-w-72 text-xs text-gray-400">{copy.boardLocked}</p>}
-          </div>
+          {!decisionsReady && <p className="max-w-72 text-xs text-gray-300" role="status">{copy.boardLocked}</p>}
         </div>
       </div>
 
@@ -334,10 +325,10 @@ export function GuestsWorkspace({
             >
               <span className="block text-sm font-semibold">{g.name}</span>
               <span className="block text-xs text-gray-400">{copy.tablePrefix} {g.table}</span>
-              <span className={cn('mt-1 inline-block rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider', ready ? 'border-emerald-800 bg-emerald-950 text-emerald-200' : 'border-gray-700 bg-black text-gray-300')}>
+              <span className={cn('mt-1 inline-block rounded border px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider', ready ? 'border-emerald-800 bg-emerald-950 text-emerald-200' : 'border-gray-700 bg-black text-gray-300')}>
                 {ready ? copy.decisionsMade : copy.needsReview}
               </span>
-              {!selected && <span className="mt-1 block text-[10px] text-gray-400">{copy.selectGuest}</span>}
+              {!selected && <span className="mt-1 block text-xs text-gray-400">{copy.selectGuest}</span>}
             </button>
           );
         })}
@@ -357,7 +348,7 @@ export function GuestsWorkspace({
             <div className="rounded border border-amber-900/60 bg-amber-950/30 p-3 text-xs text-amber-100 flex gap-2" data-testid="tom-starter-note">
               <AlertTriangle className="w-4 h-4 shrink-0 text-amber-400" aria-hidden="true" />
               <div>
-                <div className="font-bold uppercase tracking-wider text-[10px]">{copy.tomStarterTitle}</div>
+                <div className="font-bold uppercase tracking-wider text-xs">{copy.tomStarterTitle}</div>
                 <p>{OUT_OF_SCOPE_ITEMS.tomStarter.detail}</p>
               </div>
             </div>

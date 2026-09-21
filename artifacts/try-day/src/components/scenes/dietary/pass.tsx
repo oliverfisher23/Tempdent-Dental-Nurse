@@ -34,7 +34,7 @@ export function PassScene({
       <Hotspot
         x={45}
         y={55}
-        label="Take the function sheet from Yvie"
+        label="Read the function sheet from Yvie"
         state={sheetRead ? 'done' : 'active'}
         onClick={open}
       />

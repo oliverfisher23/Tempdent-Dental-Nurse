@@ -15,6 +15,7 @@ import { ProgressProvider, useProgress } from '@/lib/progress-store';
 import { isTestMode } from '@/lib/simulation';
 import { LearningDesignerPanel } from '@/components/learning-designer-panel';
 import { ExperienceViewportProvider } from '@/lib/experience-viewport';
+import { useDocumentTitle } from '@/lib/use-document-title';
 import { MotionConfig } from 'framer-motion';
 import { ACCESSIBILITY_COPY } from '@/content/experience-accessibility';
 import {
@@ -29,6 +30,7 @@ const queryClient = new QueryClient();
 
 function Router() {
   const { progress } = useProgress();
+  useDocumentTitle();
   return (
     <RoutedErrorBoundary key={isTestMode() ? progress.startedAt ?? 'new-test' : undefined}>
       <Switch>

@@ -48,9 +48,9 @@ export function FunctionSheetCloseUp({
             pattern="tap"
             tone="light"
           />
-          <div className="font-bold text-xl border-b-2 border-zinc-300 pb-2 uppercase tracking-widest text-center">
+          <h2 data-dialog-title className="font-bold text-xl border-b-2 border-zinc-300 pb-2 uppercase tracking-widest text-center">
             {FUNCTION_SHEET.event}
-          </div>
+          </h2>
 
           <div className="grid grid-cols-2 gap-4 text-sm font-medium">
             <div>
@@ -119,7 +119,7 @@ export function FunctionSheetCloseUp({
               {ADDED_GUESTS.map((guest) => {
                 const jotted = notepad.entryFor('guestId', guest.id);
                 return (
-                  <li key={guest.id} role="group" aria-label={`${guest.name}, table ${guest.table}`} className="bg-zinc-50 border border-zinc-200 p-3 rounded-sm shadow-sm">
+                  <li key={guest.id} aria-label={`${guest.name}, table ${guest.table}`} className="bg-zinc-50 border border-zinc-200 p-3 rounded-sm shadow-sm">
                     <div className="font-bold flex flex-wrap items-center justify-between gap-2">
                       <span>
                         {guest.name} <span className="font-normal text-zinc-500">(Table {guest.table})</span>
@@ -135,7 +135,7 @@ export function FunctionSheetCloseUp({
                         </button>
                       )}
                       {guestDetailsOpen && jotted && (
-                        <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">
+                        <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-200 uppercase tracking-wider">
                           {copy.noted}
                         </span>
                       )}

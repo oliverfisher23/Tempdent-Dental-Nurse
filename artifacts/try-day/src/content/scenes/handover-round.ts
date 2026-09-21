@@ -34,7 +34,7 @@ export const HANDOVER_LABELS = {
   boardTitle: "Temperature board",
   boardRound: "06:45 ROUND",
   recheck: "Recheck",
-  saveBoard: "Sign off board",
+  saveBoard: "Save the board",
   readingError: "Have another look at the probe and write that number.",
   initialsError: "Don't forget your initials.",
   noteError: "Check inside the fridge, then write what you found and what you did.",

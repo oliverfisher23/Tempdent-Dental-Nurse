@@ -338,7 +338,7 @@ export const EXCHANGE_COPY = {
   help: 'Answer from the records you signed. If a check or a delivery has not happened, say so.',
   opener: {
     what: 'Answer the evening team’s questions and confirm their read-back.',
-    how: 'Tap an answer for each question, then press "Yes, that’s right" when their read-back is correct.',
+    how: 'Choose an answer for each question, then press "Yes, that’s right" when their read-back is correct.',
     done: 'Every question is answered and the read-back is confirmed.',
     noun: 'questions answered',
   },

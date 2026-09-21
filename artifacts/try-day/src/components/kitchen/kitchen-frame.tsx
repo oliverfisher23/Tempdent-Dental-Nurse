@@ -71,11 +71,11 @@ function HeaderTool({
       aria-label={label}
     >
       {icon}
-      <span className="hidden text-[11px] font-bold uppercase tracking-widest text-foreground/70 md:inline">
+      <span className="hidden text-xs font-bold uppercase tracking-widest text-foreground/70 md:inline">
         {label.replace(/^Open (the |your )?/, '')}
       </span>
       {badge !== undefined && (
-        <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+        <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
           {badge}
         </span>
       )}
@@ -94,7 +94,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
   const navigationRef = useRef<HTMLDivElement>(null);
   const jobCardRef = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion();
-  useFocusTrap(jobCardRef, jobCardOpen, true);
+  useFocusTrap(jobCardRef, jobCardOpen, 'hud');
 
   const named = progress.studentName.trim() !== "";
   const unlocked = named && isUnlocked(id);
@@ -170,7 +170,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
 
   return (
     <div className="fixed inset-0 flex flex-col bg-black text-white overflow-hidden">
-      <div ref={navigationRef} className="relative z-40 shrink-0">
+      <div ref={navigationRef} data-kitchen-hud className="relative z-40 shrink-0">
       {/* HUD - Top Bar (Always z-40 so it floats above scenes but below dialogs) */}
       <header className="relative z-40 bg-foreground text-primary-foreground shadow-md shrink-0 border-b border-border/20 min-h-14 sm:h-14">
         <div className="px-4 md:px-6 py-2 sm:py-0 sm:h-full flex flex-wrap sm:flex-nowrap items-center justify-between gap-x-2 gap-y-1 sm:gap-4 overflow-hidden">
@@ -247,6 +247,7 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
             lastTask={!nextTaskId(id)}
             busy={mapOpen || !!pendingAction}
             atDestination={openWorkspaces.includes(guide.action)}
+            workspaceOpen={openWorkspaces.length > 0}
             onNext={handleNext}
             onAction={() => {
               setJobCardOpen(false);

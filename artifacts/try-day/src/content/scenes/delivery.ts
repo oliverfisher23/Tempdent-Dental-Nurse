@@ -1,5 +1,5 @@
 export const SCENE_LABELS = {
-  goToBackDoor: "Head to the back door",
+  goToBackDoor: "Check the delivery at the back door",
   backDoorHint: "Where the delivery van is waiting",
   takeDeliveryNote: "Take the delivery note",
   readDeliveryNote: "Read the delivery note",

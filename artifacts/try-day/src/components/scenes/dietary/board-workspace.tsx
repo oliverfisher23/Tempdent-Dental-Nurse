@@ -63,7 +63,7 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
       />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
+          <h2 data-dialog-title className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
           <p className="text-gray-400 mt-1 text-sm md:text-base max-w-2xl">{copy.subtitle}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -89,7 +89,7 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
 
       <div className="flex flex-col lg:flex-row gap-6 flex-1 min-h-0 pb-8">
         <div className="flex-1 space-y-4">
-          <h3 className="uppercase tracking-widest text-xs text-gray-500 font-bold">{copy.changesTitle}</h3>
+          <h3 className="uppercase tracking-widest text-xs text-gray-400 font-bold">{copy.changesTitle}</h3>
           {changes.length === 0 && <p className="text-sm text-gray-400">{copy.noChanges}</p>}
           {changes.map((change) => {
             const original = dishById(change.originalDishId)!;
@@ -104,17 +104,17 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
                 </div>
                 <dl className="grid gap-x-4 gap-y-1 text-sm sm:grid-cols-2">
                   <div>
-                    <dt className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{copy.original}</dt>
+                    <dt className="text-xs uppercase tracking-wider text-gray-400 font-bold">{copy.original}</dt>
                     <dd className="text-gray-300 line-through decoration-red-500/70">{original.name}</dd>
                   </div>
                   <div>
-                    <dt className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{copy.replacement}</dt>
+                    <dt className="text-xs uppercase tracking-wider text-gray-400 font-bold">{copy.replacement}</dt>
                     <dd className="text-white font-semibold">{replacement.name}</dd>
                   </div>
                 </dl>
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-1">
-                    <label htmlFor={reasonId} className="text-[10px] uppercase tracking-wider text-gray-500 font-bold">{copy.reasonLabel}</label>
+                    <label htmlFor={reasonId} className="text-xs uppercase tracking-wider text-gray-400 font-bold">{copy.reasonLabel}</label>
                     {!boardPosted && change.decisionReason.trim() && change.boardReason !== change.decisionReason && (
                       <Button variant="ghost" size="sm" className="h-6 text-xs text-gray-300 hover:text-white" onClick={() => setReason(change.key, change.decisionReason)} aria-label={`${copy.useMyReason}: ${change.guestName} ${COURSE_LABEL[change.course].toLowerCase()}`}>
                         {copy.useMyReason}
@@ -134,7 +134,7 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
                 </div>
                 <div className={cn('rounded border p-2 text-xs flex items-center gap-2', change.preparationStatus === 'pending' ? 'border-amber-800 bg-amber-950/40 text-amber-100' : 'border-gray-800 bg-black text-gray-400')} data-testid={`prep-status-${change.key}`}>
                   {change.preparationStatus === 'pending' && <Clock3 className="w-4 h-4 shrink-0 text-amber-400" aria-hidden="true" />}
-                  <span className="font-bold uppercase tracking-wider text-[10px] mr-1">{copy.prepStatusLabel}:</span>
+                  <span className="font-bold uppercase tracking-wider text-xs mr-1">{copy.prepStatusLabel}:</span>
                   <span>{change.preparationStatus === 'pending' ? copy.prepPending : copy.prepNotRequired}</span>
                 </div>
               </article>
@@ -143,7 +143,7 @@ export function BoardWorkspace({ redesign, boardPosted, onUpdateRedesign, onPost
 
           {kept.length > 0 && (
             <div className="rounded border border-gray-800 bg-black p-3 text-xs text-gray-400">
-              <div className="font-bold uppercase tracking-wider text-[10px] text-gray-500 mb-1">{copy.keptTitle}</div>
+              <div className="font-bold uppercase tracking-wider text-xs text-gray-400 mb-1">{copy.keptTitle}</div>
               <ul className="space-y-0.5">
                 {kept.map(({ guest, course }) => (
                   <li key={`${guest.id}:${course}`}>

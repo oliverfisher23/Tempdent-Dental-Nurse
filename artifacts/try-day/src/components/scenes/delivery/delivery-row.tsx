@@ -1,3 +1,5 @@
+import { CheckFeedback } from '@/components/kitchen/check-feedback';
+import { CHECK_COPY } from '@/content/check';
 import { useEffect, useRef, useState } from 'react';
 import { Scale, Thermometer, ChevronDown, ChevronUp, Search, Check, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -165,20 +167,20 @@ export function DeliveryRow({
             </div>
             <div className="flex gap-4 w-full md:w-[30%] text-sm font-mono bg-black/40 px-3 py-2 rounded-md">
                <div className="text-zinc-300 min-w-[50%]">
-                  <span className="text-zinc-500 block text-xs font-sans font-bold uppercase tracking-wider">{ROW_LABELS.order}</span> 
+                  <span className="text-zinc-400 block text-xs font-sans font-bold uppercase tracking-wider">{ROW_LABELS.order}</span> 
                   {line.ordered} {line.unit}
                </div>
                <div className="text-zinc-300 min-w-[50%]">
-                  <span className="text-zinc-500 block text-xs font-sans font-bold uppercase tracking-wider">{ROW_LABELS.supplierSays}</span> 
+                  <span className="text-zinc-400 block text-xs font-sans font-bold uppercase tracking-wider">{ROW_LABELS.supplierSays}</span> 
                   {line.onDeliveryNote} {line.unit}
                </div>
             </div>
             <div className="w-full md:w-[25%] text-sm text-zinc-300 font-mono bg-black/40 px-3 py-2 rounded-md">
-               <span className="text-zinc-500 block text-xs font-sans font-bold uppercase tracking-wider">{ROW_LABELS.youChecked}</span>
+               <span className="text-zinc-400 block text-xs font-sans font-bold uppercase tracking-wider">{ROW_LABELS.youChecked}</span>
                {row.arrived ? `${row.arrived} ${line.unit}` : '-'} {row.temperature ? ` | ${row.temperature}°C` : ''}
             </div>
             <div className="w-full md:w-[20%] text-left md:text-right font-bold text-primary">
-               <span className="text-zinc-500 block text-xs font-sans font-bold md:text-right uppercase tracking-wider">{ROW_LABELS.decision}</span>
+               <span className="text-zinc-400 block text-xs font-sans font-bold md:text-right uppercase tracking-wider">{ROW_LABELS.decision}</span>
                <span className="block truncate">
                    {row.status ? { arrived: ROW_LABELS.allHere, short: ROW_LABELS.short, refused: ROW_LABELS.refused }[row.status] : ROW_LABELS.noDecision} {row.acceptance === 'accept' ? `(${ROW_LABELS.accept} ${row.acceptedAmount} ${line.unit})` : row.acceptance === 'refuse' ? `(${ROW_LABELS.refuse})` : ''}
                </span>
@@ -468,28 +470,24 @@ export function DeliveryRow({
                         className="w-full h-14 font-bold text-lg bg-black text-white hover:bg-white/10 border-white/20 transition-colors"
                         onClick={handleCheckRow}
                      >
-                        {ROW_LABELS.checkRow}
+                        {CHECK_COPY.check}
                      </Button>
                      
                      {/* Feedback Panel (only after attempted) */}
                      {attempted && (
-                        <div className="mt-4 p-4 rounded-lg animate-in slide-in-from-top-2 duration-200" aria-live="polite">
+                        <div className="mt-4 animate-in slide-in-from-top-2 duration-200">
                            {issues.length === 0 ? (
-                              <div className="space-y-2 text-emerald-400 font-bold bg-emerald-950/30 border border-emerald-500/30 p-3 rounded">
-                                 <p className="flex items-center gap-2"><Check className="w-5 h-5" /> {ROW_LABELS.checked}</p>
-                                 {line.id === REFUSED_LINE_ID && <p className="text-sm text-emerald-100"><strong>{DELIVERY_LINES.marcusOnRefusal.speaker}: </strong>{DELIVERY_LINES.marcusOnRefusal.text}</p>}
-                              </div>
+                              <CheckFeedback kind="ok" title={ROW_LABELS.checked} testId={`row-feedback-${line.id}`}>
+                                 {line.id === REFUSED_LINE_ID && <p><strong>{DELIVERY_LINES.marcusOnRefusal.speaker}: </strong>{DELIVERY_LINES.marcusOnRefusal.text}</p>}
+                              </CheckFeedback>
                            ) : (
-                              <div className="text-red-400 bg-red-950/30 border border-red-500/30 p-4 rounded space-y-2">
-                                 <p className="font-bold flex items-center gap-2">
-                                    <AlertCircle className="w-5 h-5" /> {ROW_LABELS.review}
-                                 </p>
-                                 <ul className="list-disc pl-5 space-y-1 text-sm font-medium">
+                              <CheckFeedback kind="issue" title={ROW_LABELS.review} testId={`row-feedback-${line.id}`}>
+                                 <ul className="list-disc pl-5 space-y-1 font-medium">
                                     {issues.map((iss, i) => (
                                        <li key={i}>{iss.message}</li>
                                     ))}
                                  </ul>
-                              </div>
+                              </CheckFeedback>
                            )}
                         </div>
                      )}

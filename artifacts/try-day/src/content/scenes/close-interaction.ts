@@ -4,7 +4,7 @@ export const CLOSE_INTERACTION = {
     instructions: 'Look in each tub, put it on the scales, then write the reading on its row of the waste sheet. Your notebook is there if you want it.',
     opener: {
       what: 'Weigh each tub of waste and write it on the waste sheet.',
-      how: 'Tap a tub, press "Put it on the scales", read the display, then type the weight on that tub’s row.',
+      how: 'Choose a tub, press "Put it on the scales", read the display, then type the weight on that tub’s row.',
       done: 'All three rows are weighed and written.',
       noun: 'tubs weighed',
     },
@@ -93,7 +93,7 @@ export const CLOSE_INTERACTION = {
     instructions: 'Answer Terence from the recorded comparison. His signature confirms this record review, not service clearance.',
     opener: {
       what: 'Answer Terence’s question about cooling the beef and ask him to sign.',
-      how: 'Tap an answer, read Terence’s response, then press "Ask Terence to sign".',
+      how: 'Choose an answer, read Terence’s response, then press "Ask Terence to sign".',
       done: 'The cooling question is answered correctly and Terence has signed.',
     },
     checkedBy: 'Checked by',

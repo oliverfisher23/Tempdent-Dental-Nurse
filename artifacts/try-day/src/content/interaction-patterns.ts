@@ -23,12 +23,12 @@ export interface InteractionPattern {
 export const INTERACTION_PATTERNS: Record<InteractionPatternId, InteractionPattern> = {
   tap: {
     id: 'tap',
-    title: 'Tap to choose',
-    summary: 'Cards, rows, trays and tubs are things you can pick. Tap one and it highlights.',
+    title: 'Choose one',
+    summary: 'Cards, rows, trays and tubs are things you can pick. Choose one and it highlights.',
     steps: [
-      'Tap a card, row or object to pick it. It highlights so you know it is chosen.',
+      'Choose a card, row or object by pressing it. It highlights so you know it is chosen.',
       'The controls for whatever you picked sit right beside it.',
-      'Tap something else to change your mind. Nothing is final until you save or sign.',
+      'Choose something else to change your mind. Nothing is final until you save or sign.',
     ],
     keyboard: 'Tab moves between things you can pick, Enter or Space picks one.',
     onBriefing: true,
@@ -39,7 +39,7 @@ export const INTERACTION_PATTERNS: Record<InteractionPatternId, InteractionPatte
     summary: 'Press on a tray, probe or ruler and drag it where it goes. The places it can go light up.',
     steps: [
       'Press on the item and drag it. The places it can go light up while you carry it.',
-      'Prefer not to drag? Tap the item once, then tap the place you want it.',
+      'Prefer not to drag? Choose the item, then choose the place you want it.',
       'There are buttons for the same job beside the item, if you would rather.',
     ],
     keyboard: 'Space picks the item up, the arrow keys choose the place, Enter puts it down, Escape puts it back.',
@@ -54,7 +54,7 @@ export const INTERACTION_PATTERNS: Record<InteractionPatternId, InteractionPatte
       'Let go once it has settled, then read the number off the instrument and type it in.',
       'The app never writes the number for you. That is the job.',
     ],
-    keyboard: 'Press Space once to start and once to stop, or use the "tap here to start" link.',
+    keyboard: 'Hold Space until the reading settles, or use the "Start without holding" button, which starts with one press and stops with another.',
     onBriefing: true,
   },
   list: {
@@ -89,6 +89,8 @@ export const PATTERN_COPY = {
   howLink: 'How do I do this?',
   cardEyebrow: 'How this works',
   thisStep: 'This step',
+  onThisScreen: 'On this screen',
+  doneWhen: 'Done when',
   keyboardLabel: 'Keyboard',
   close: 'Got it',
 };

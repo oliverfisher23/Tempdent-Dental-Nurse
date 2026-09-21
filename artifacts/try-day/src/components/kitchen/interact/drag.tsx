@@ -143,7 +143,7 @@ export function DragProvider({ children }: { children: ReactNode }) {
       changeOver(first?.id ?? null);
       announce(`Picked up ${item.label}. Use the arrow keys to choose where to put it, Enter to drop, Escape to cancel.`);
     } else if (nextMode === 'tap') {
-      announce(`Picked up ${item.label}. Choose where to put it, or tap it again to put it back.`);
+      announce(`Picked up ${item.label}. Choose where to put it, or choose it again to put it back.`);
     }
   }, [acceptingZones, announce, changeOver, measureZones]);
 

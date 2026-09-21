@@ -1,4 +1,4 @@
-import { useEffect, useRef, ReactNode } from 'react';
+import { useEffect, useId, useLayoutEffect, useRef, useState, ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -15,9 +15,19 @@ interface CloseUpProps {
   className?: string;
 }
 
+/**
+ * A workspace panel that sits over the room but under the kitchen header, which stays
+ * usable: the job card, map and notebook can all be opened from here. So it is a
+ * non-modal dialog whose Tab cycle also covers the header and step guide. Its accessible
+ * name is the workspace's own title: the element marked `data-dialog-title`, else the
+ * first h1 or h2, else the `title` prop. The name is set before focus moves in.
+ */
 export function CloseUp({ isOpen, onClose, title, children, className }: CloseUpProps) {
   const contentRef = useRef<HTMLDivElement>(null);
-  
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const generatedHeadingId = useId();
+  const [headingId, setHeadingId] = useState<string | null>(null);
+
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // A modal opened on top (briefing video, "how do I do this?") takes Escape first.
@@ -32,7 +42,26 @@ export function CloseUp({ isOpen, onClose, title, children, className }: CloseUp
     return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [isOpen, onClose]);
 
-  useFocusTrap(contentRef, isOpen, true);
+  useFocusTrap(contentRef, isOpen, 'hud');
+
+  // Name the dialog after its visible title, so what is read out matches what is seen.
+  // A layout effect runs before the focus trap moves focus in, and the attribute is written
+  // to the element straight away so the first announcement already carries the right name.
+  useLayoutEffect(() => {
+    if (!isOpen) {
+      setHeadingId(null);
+      return;
+    }
+    const heading = contentRef.current?.querySelector<HTMLElement>('[data-dialog-title], h1, h2');
+    if (!heading) {
+      setHeadingId(null);
+      return;
+    }
+    if (!heading.id) heading.id = generatedHeadingId;
+    dialogRef.current?.setAttribute('aria-labelledby', heading.id);
+    dialogRef.current?.removeAttribute('aria-label');
+    setHeadingId(heading.id);
+  }, [isOpen, generatedHeadingId]);
 
   if (typeof document === 'undefined') return null;
 
@@ -42,9 +71,11 @@ export function CloseUp({ isOpen, onClose, title, children, className }: CloseUp
         <div
           className="fixed inset-x-0 bottom-0 z-50 flex flex-col items-center justify-center p-4 sm:p-6"
           style={{ top: 'var(--kitchen-top, 56px)' }}
+          ref={dialogRef}
           role="dialog"
           aria-modal="false"
-          aria-label={title || "Close up view"}
+          aria-labelledby={headingId ?? undefined}
+          aria-label={headingId ? undefined : title || 'Close up view'}
         >
           {/* Plain semi-transparent background */}
           <motion.div 
@@ -71,13 +102,13 @@ export function CloseUp({ isOpen, onClose, title, children, className }: CloseUp
             )}
             tabIndex={-1}
           >
-            {/* Standard Close Button Inside the panel's top-right */}
+            {/* Close button in the panel's top-right corner, sized for a thumb */}
             <button 
               onClick={() => { kitchenAudio.play('page'); onClose(); }}
-              className="absolute -top-4 -right-4 md:-top-6 md:-right-6 z-50 bg-black hover:bg-zinc-800 text-white rounded-full p-2 transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none shadow-xl border-2 border-white/20"
+              className="absolute -top-4 -right-4 md:-top-6 md:-right-6 z-50 flex h-11 w-11 items-center justify-center bg-black hover:bg-zinc-800 text-white rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-primary outline-none shadow-xl border-2 border-white/20"
               aria-label={title ? `Close ${title.toLowerCase()}` : "Close"}
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5" aria-hidden="true" />
             </button>
 
             {children}

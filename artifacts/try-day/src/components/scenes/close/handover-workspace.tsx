@@ -145,12 +145,12 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
       <div className="flex flex-col lg:flex-row gap-6 lg:h-[calc(90vh-9rem)]">
         <EvidenceRail evidence={evidence} rs={rs} />
 
-        <div className="order-1 flex-1 lg:order-2 lg:overflow-y-auto lg:pr-2 pb-12 flex flex-col gap-6">
+        <div className="order-1 flex-1 lg:order-2 lg:overflow-y-auto lg:pr-2 pb-12 flex flex-col gap-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded-xl" role="region" aria-label={COPY.title} tabIndex={0}>
         {/* shrink-0 keeps the sheet at its full height so the column scrolls as one, not paper-inside-column. */}
         <Clipboard className="shrink-0">
           <div className="p-6 md:p-10 text-zinc-900 flex flex-col h-full min-h-[600px]">
             <div className="border-b-2 border-zinc-800 pb-3 mb-6 flex justify-between items-end gap-2 bg-zinc-100/50 -mx-6 md:-mx-10 px-6 md:px-10 pt-4">
-              <h2 className="font-bold text-lg uppercase tracking-widest font-sans">{COPY.title}</h2>
+              <h2 data-dialog-title className="font-bold text-lg uppercase tracking-widest font-sans">{COPY.title}</h2>
               <div className="text-xs font-mono text-zinc-500 font-bold bg-zinc-200 px-2 py-1 rounded">{COPY.shift}</div>
             </div>
 
@@ -165,7 +165,7 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
                     const showError = showFieldErrors && empty;
                     return (
                       <div key={field.id} className="space-y-2 group">
-                        <label htmlFor={`handover-${field.id}`} className="text-[11px] font-bold uppercase tracking-widest text-zinc-500 group-focus-within:text-primary motion-safe:transition-colors">{field.label}</label>
+                        <label htmlFor={`handover-${field.id}`} className="text-xs font-bold uppercase tracking-widest text-zinc-500 group-focus-within:text-primary motion-safe:transition-colors">{field.label}</label>
                         <Textarea
                           id={`handover-${field.id}`}
                           value={state.handover[field.id] || ''}
@@ -178,7 +178,7 @@ export function HandoverWorkspace({ onHandover, onReviewWithTerence }: { onHando
                         {showError && <p id={`handover-${field.id}-error`} className="text-xs font-bold text-red-700">{COPY.fieldError}</p>}
                         {rs.attempted && (
                           <div id={`handover-${field.id}-prompts`} className="rounded bg-zinc-50 border border-zinc-200 p-3">
-                            <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{COPY.promptsTitle}</p>
+                            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{COPY.promptsTitle}</p>
                             <ul className="mt-1 list-disc space-y-1 pl-4 text-xs leading-5 text-zinc-600">
                               {field.prompts.map((prompt) => <li key={prompt}>{prompt}</li>)}
                             </ul>
@@ -329,7 +329,7 @@ function EvidenceRail({ evidence, rs }: { evidence: CloseEvidence; rs: CloseRede
   const team = TEAM_EVIDENCE.map((line) => exchangeText(line, e));
 
   return (
-    <aside className="order-2 w-full lg:order-1 lg:w-80 shrink-0 bg-zinc-900 border border-zinc-700 p-5 rounded-xl text-zinc-100 lg:overflow-y-auto shadow-2xl flex flex-col gap-5" aria-labelledby="evidence-title">
+    <aside tabIndex={0} className="order-2 w-full lg:order-1 lg:w-80 shrink-0 bg-zinc-900 border border-zinc-700 p-5 rounded-xl text-zinc-100 lg:overflow-y-auto shadow-2xl flex flex-col gap-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60" aria-labelledby="evidence-title">
       <div>
         <h3 id="evidence-title" className="font-bold text-base text-zinc-100 flex items-center gap-2">
           <Info className="w-4 h-4" aria-hidden="true" /> {EVIDENCE.title}
@@ -340,7 +340,7 @@ function EvidenceRail({ evidence, rs }: { evidence: CloseEvidence; rs: CloseRede
       <EvidenceGroup label={EVIDENCE.signed} help={EVIDENCE.signedHelp} tone="signed" defaultOpen>
         {signed.map((group) => (
           <div key={group.title} className="bg-black/50 p-3 rounded border border-zinc-800">
-            <p className="text-[10px] text-zinc-400 uppercase font-bold mb-1">{group.title}</p>
+            <p className="text-xs text-zinc-400 uppercase font-bold mb-1">{group.title}</p>
             {group.lines.map((line) => <p key={line} className="text-xs leading-5 text-zinc-300">{line}</p>)}
           </div>
         ))}
@@ -392,7 +392,7 @@ function EvidenceGroup({ label, help, tone, defaultOpen, children }: {
         <span className={cn('text-xs font-bold uppercase tracking-widest', tone === 'proposed' ? 'text-primary' : tone === 'team' ? 'text-sky-300' : 'text-emerald-300')}>
           {label}
         </span>
-        <span className="text-[11px] leading-4 text-zinc-400">{help}</span>
+        <span className="text-xs leading-4 text-zinc-400">{help}</span>
       </summary>
       <div className="flex flex-col gap-2 p-3 pt-0">{children}</div>
     </details>

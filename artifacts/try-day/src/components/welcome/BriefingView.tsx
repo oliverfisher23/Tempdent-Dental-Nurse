@@ -119,7 +119,7 @@ export function BriefingView({ name, setName, confirmReset, setConfirmReset }: B
               ))}
             </ul>
             <section aria-labelledby="how-this-works" className="pt-1">
-              <h2 id="how-this-works" className="text-[11px] font-bold uppercase tracking-widest text-primary">{PATTERN_COPY.briefingTitle}</h2>
+              <h2 id="how-this-works" className="text-xs font-bold uppercase tracking-widest text-primary">{PATTERN_COPY.briefingTitle}</h2>
               <ul className="mt-2 grid gap-2 sm:grid-cols-3" data-testid="how-this-works">
                 {BRIEFING_PATTERNS.map((pattern) => {
                   const Icon = PATTERN_ICONS[pattern.id];

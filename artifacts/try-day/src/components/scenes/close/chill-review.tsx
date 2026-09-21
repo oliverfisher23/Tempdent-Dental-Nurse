@@ -31,28 +31,28 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
       />
       <div className="flex flex-col md:flex-row gap-6 md:h-[calc(85vh-9rem)]">
       {/* Left: Chill Record Sheet */}
-      <div className="order-2 flex-1 min-w-0 md:order-1 md:overflow-y-auto pb-8">
+      <div className="order-2 flex-1 min-w-0 md:order-1 md:overflow-y-auto pb-8 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60 rounded-xl" role="region" aria-label="Chill record" tabIndex={0}>
         <Sheet>
           <div className="p-8 font-sans text-zinc-900">
             <div className="border-b-4 border-zinc-900 pb-4 mb-8">
-              <h2 className="text-3xl font-black uppercase tracking-tighter text-center">Chill Record</h2>
+              <h2 data-dialog-title className="text-3xl font-black uppercase tracking-tighter text-center">Chill Record</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 mb-10 text-sm bg-zinc-50 p-5 rounded border border-zinc-200">
               <div className="flex justify-between border-b border-zinc-200 pb-2">
-                <span className="font-bold text-zinc-500 uppercase text-[10px] tracking-widest mt-1">Product</span>
+                <span className="font-bold text-zinc-500 uppercase text-xs tracking-widest mt-1">Product</span>
                 <span className="font-bold text-base">Braised Beef Shin</span>
               </div>
               <div className="flex justify-between border-b border-zinc-200 pb-2">
-                <span className="font-bold text-zinc-500 uppercase text-[10px] tracking-widest mt-1">Date</span>
+                <span className="font-bold text-zinc-500 uppercase text-xs tracking-widest mt-1">Date</span>
                 <span className="font-bold text-base">{new Date().toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit' })}</span>
               </div>
               <div className="flex justify-between border-b border-zinc-200 pb-2">
-                <span className="font-bold text-zinc-500 uppercase text-[10px] tracking-widest mt-1">Batch Size</span>
+                <span className="font-bold text-zinc-500 uppercase text-xs tracking-widest mt-1">Batch Size</span>
                 <span className="font-bold text-base">{chillState.trays.reduce((a, b) => a + b, 0).toFixed(1)} kg</span>
               </div>
               <div className="flex justify-between border-b border-zinc-200 pb-2">
-                <span className="font-bold text-zinc-500 uppercase text-[10px] tracking-widest mt-1">Trays</span>
+                <span className="font-bold text-zinc-500 uppercase text-xs tracking-widest mt-1">Trays</span>
                 <span className="font-bold text-base">{chillState.trays.filter((t) => t > 0).length}</span>
               </div>
             </div>
@@ -63,8 +63,8 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b-2 border-zinc-900">
-                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-[10px]">Time</th>
-                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-[10px]">Temp °C</th>
+                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-xs">Time</th>
+                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-xs">Temp °C</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -82,8 +82,8 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
                 <table className="w-full text-left border-collapse opacity-70">
                   <thead>
                     <tr className="border-b border-zinc-400">
-                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-[10px]">Time</th>
-                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-[10px]">Temp °C</th>
+                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-xs">Time</th>
+                      <th className="py-2 px-3 font-bold uppercase tracking-widest text-xs">Temp °C</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -97,11 +97,11 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
 
             <div className="flex flex-col sm:flex-row justify-between sm:items-end gap-6 mt-12 pt-8 border-t-2 border-zinc-900">
               <div>
-                <div className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest mb-2">Prepared By</div>
+                <div className="text-xs uppercase text-zinc-500 font-bold tracking-widest mb-2">Prepared By</div>
                 <div className="font-mono text-2xl text-zinc-800" style={{ fontFamily: 'cursive' }}>{progress.initials || 'Not provided'}</div>
               </div>
               <div>
-                <div className="text-[10px] uppercase text-zinc-500 font-bold tracking-widest mb-2">{CLOSE_INTERACTION.review.checkedBy}</div>
+                <div className="text-xs uppercase text-zinc-500 font-bold tracking-widest mb-2">{CLOSE_INTERACTION.review.checkedBy}</div>
                 {state.elenaSigned && elenaCorrect ? (
                   <div className="text-base font-bold text-zinc-900 border-b-2 border-zinc-900 pb-1 pr-4" data-testid="mentor-signature">
                     {CLOSE_INTERACTION.review.signature}
@@ -118,11 +118,11 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
       </div>
 
       {/* Right: Terence's question */}
-      <div className="order-1 w-full md:order-2 md:w-[400px] shrink-0 bg-zinc-900 border border-zinc-700 p-6 rounded-xl shadow-2xl flex flex-col text-zinc-100 overflow-y-auto">
+      <div className="order-1 w-full md:order-2 md:w-[400px] shrink-0 bg-zinc-900 border border-zinc-700 p-6 rounded-xl shadow-2xl flex flex-col text-zinc-100 overflow-y-auto focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60" role="region" aria-label="Terence’s question" tabIndex={0}>
         <div className="flex items-center gap-4 mb-6 pb-6 border-b border-zinc-800">
           <div>
             <div className="font-bold text-lg">Terence</div>
-            <div className="text-[10px] uppercase tracking-widest text-zinc-400 font-bold mt-1">{CLOSE_INTERACTION.review.role}</div>
+            <div className="text-xs uppercase tracking-widest text-zinc-400 font-bold mt-1">{CLOSE_INTERACTION.review.role}</div>
           </div>
         </div>
         <h2 className="text-xl font-bold">{CLOSE_INTERACTION.review.title}</h2>
@@ -155,7 +155,7 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
 
         {state.elenaAnswer && (
           <div className={cn('p-4 mt-6 rounded-lg border text-sm leading-relaxed motion-safe:animate-in motion-safe:fade-in motion-safe:duration-200', elenaCorrect ? 'bg-emerald-950/40 border-emerald-500/30 text-emerald-200' : 'bg-red-950/40 border-red-500/30 text-red-200')} role={elenaCorrect ? 'status' : 'alert'}>
-            <strong className="block mb-1 opacity-70 text-[10px] uppercase tracking-widest">Terence</strong>
+            <strong className="block mb-1 opacity-70 text-xs uppercase tracking-widest">Terence</strong>
             {ELENA_QUESTION.options.find((o) => o.id === state.elenaAnswer)?.response}
           </div>
         )}

@@ -17,7 +17,7 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
       total: 3,
       title: 'See what happened overnight',
       instruction: "Have a quick read of the night team's notes. One fridge needs a closer look.",
-      actionLabel: 'Read the notes',
+      actionLabel: 'Read the overnight log',
       place: 'pass',
       action: 'handover:workspace',
       pattern: 'tap',
@@ -69,7 +69,7 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
     id: `delivery-check-${unfinished.id}`, step: 1, total: 4,
     title: 'Check each item beside its entry',
     instruction: 'Inspect, write your results and make your decisions. You can choose any item on the sheet.',
-    actionLabel: `Open ${lowerFirst(unfinished.item)}`, place: 'goods-in',
+    actionLabel: `Check ${lowerFirst(unfinished.item)}`, place: 'goods-in',
     action: `delivery:box:${unfinished.id}`,
     pattern: 'tap',
   };
@@ -84,7 +84,7 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
     id: 'delivery-report', step: 3, total: 4,
     title: 'Prepare your report',
     instruction: 'Use your checked amounts and the service information to tell Terence what needs following up.',
-    actionLabel: 'Open the report', place: 'goods-in', action: 'delivery:radio',
+    actionLabel: 'Report to Terence', place: 'goods-in', action: 'delivery:radio',
     pattern: 'tap',
   };
   const ready = canSignDelivery(state);
@@ -94,7 +94,7 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
     instruction: state.signed && ready
       ? 'The note is signed. Sign off this task when you are ready to continue.'
       : 'Resolve unfinished checks. Complete and initial every amendment. Then sign the note.',
-    actionLabel: ready ? 'Open the delivery note' : 'Review my work', place: 'goods-in',
+    actionLabel: ready ? 'Sign the delivery note' : 'See what is unfinished', place: 'goods-in',
     action: ready ? 'delivery:note' : 'delivery:review',
     pattern: 'tap',
   };

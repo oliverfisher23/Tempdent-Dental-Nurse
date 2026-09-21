@@ -19,7 +19,7 @@
 // Exit code: 1 when any stage throws, on any page error or console error, on any
 // failed request other than a media fetch the app itself aborted, or on a
 // "major" finding. "minor" and "info" findings are QA observations only.
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { chromium } from '@playwright/test';
 import { verifyFridgeMedia } from './fridge-round-verification.mjs';
@@ -105,11 +105,57 @@ if (KEYBOARD) {
   };
 }
 
+// AXE=1 runs an axe-core scan at every screenshot. Serious and critical violations are listed
+// under `axe` in the QA log (deduplicated by rule and element) and each one fails the run.
+const AXE = process.env.AXE === '1';
+const axeSource = AXE ? readFileSync(path.resolve(import.meta.dirname, '../node_modules/axe-core/axe.min.js'), 'utf8') : null;
+const axeSeen = new Set();
+log.axe = [];
+const axeScan = async (name) => {
+  if (!axeSource) return;
+  try {
+    // Text still fading in reads as washed out, so wait for entrance animations (staggered
+    // ones included) to finish before scanning. Looping animations are left alone.
+    await page.waitForTimeout(300);
+    await page.evaluate(() => Promise.race([
+      Promise.all(document.getAnimations()
+        .filter((a) => a.effect?.getTiming().iterations !== Infinity)
+        .map((a) => a.finished.catch(() => undefined))),
+      new Promise((resolve) => setTimeout(resolve, 2500)),
+    ]));
+    await page.waitForTimeout(400);
+    await page.evaluate(axeSource);
+    // While a true modal is open the page behind it is out of reach, so only the modal is scanned.
+    const results = await page.evaluate(() => window.axe.run(document.querySelector('[role="dialog"][aria-modal="true"]') ?? document, { resultTypes: ['violations'] }));
+    for (const violation of results.violations) {
+      if (!['serious', 'critical'].includes(violation.impact)) continue;
+      for (const node of violation.nodes) {
+        const key = `${violation.id}|${node.target.join(' ')}`;
+        if (axeSeen.has(key)) continue;
+        axeSeen.add(key);
+        const entry = { screen: name, rule: violation.id, impact: violation.impact, target: node.target.join(' '), summary: node.failureSummary?.split('\n').slice(0, 2).join(' ') ?? violation.help };
+        log.axe.push(entry);
+        finding('major', `axe ${violation.impact} on ${name}: ${violation.id} at ${entry.target}. ${entry.summary}`);
+      }
+    }
+  } catch (error) {
+    finding('major', `axe scan failed on ${name}: ${error.message.split('\n')[0]}`);
+  }
+};
+// Hotspots and workspace controls live in the room (the main region). The step guide above it
+// now names the same outcome as the hotspot it points at, so room lookups are scoped here.
+const room = page.getByRole('main');
 const snap = async (name) => {
   shot += 1;
   await page.screenshot({ path: path.join(OUT, `${String(shot).padStart(2, '0')}-${name}.png`) });
+  await axeScan(name);
 };
 const saveState = async (stage) => context.storageState({ path: path.join(OUT, `state-${stage}.json`) });
+// A close-up must be announced by the title the learner can see, not a subsection or a fallback.
+const expectDialogNamed = async (name, what) => {
+  const named = await page.getByRole('dialog', { name, exact: true }).isVisible({ timeout: 3000 }).catch(() => false);
+  if (!named) finding('major', `The ${what} close-up is not announced as "${name}" (its accessible name is wrong or missing).`);
+};
 const timed = async (stage, fn) => {
   if (STAGES.indexOf(stage) < startIndex) return;
   console.log(`\n== ${stage} ==`);
@@ -149,10 +195,19 @@ const holdUntilSettled = async (button) => {
   const y = box.y + box.height / 2;
   const settled = page.locator('[data-state="settled"]').first();
   if (KEYBOARD) {
-    // Holding Space on the focused button must work like holding the mouse down.
+    // Holding Space on the focused button must work like holding the mouse down. A real
+    // keyboard auto-repeats keydown while the key is held (every ~33 ms after ~500 ms), and
+    // Playwright only sends repeats when down() is called again, so emulate the repeats.
     await button.focus();
     await page.keyboard.down('Space');
+    let held = true;
+    const repeats = (async () => {
+      await page.waitForTimeout(500);
+      while (held) { await page.keyboard.down('Space'); await page.waitForTimeout(33); }
+    })();
     const ok = await settled.waitFor({ timeout: 15_000 }).then(() => true, () => false);
+    held = false;
+    await repeats.catch(() => {});
     await page.keyboard.up('Space');
     if (ok) return;
     finding('major', 'Keyboard: holding Space on the hold-to-read button never settles a reading; used the mouse.');
@@ -238,7 +293,7 @@ try {
     if (startIndex === STAGES.indexOf('task2')) await page.goto(`${BASE}/task/check-the-delivery-in`, { waitUntil: 'domcontentloaded' });
     await closeJobCard();
     await snap('task2-pass');
-    await page.getByRole('button', { name: /Head to the back door/ }).click();
+    await room.getByRole('button', { name: /back door/ }).click();
     const heading = page.getByRole('heading', { name: 'Working order sheet', exact: true });
     await heading.waitFor();
     const nav = (name) => page.getByRole('navigation', { name: 'Working order sheet' }).getByRole('button', { name, exact: true });
@@ -273,11 +328,11 @@ try {
       if (line.acceptance === 'refuse') {
         // Wrong path first: accepting a delivery that must be refused.
         await r.getByRole('button', { name: `Accept ${line.amount} ${line.unit}`, exact: true }).click();
-        await r.getByRole('button', { name: 'Check your decisions', exact: true }).click();
+        await r.getByRole('button', { name: 'Check my work', exact: true }).click();
         await expectRejected(r, matchText, `Task 2 accepting the ${lowerFirst(line.item)}`);
       }
       await r.getByRole('button', { name: line.acceptance === 'refuse' ? 'Refuse' : `Accept ${line.amount} ${line.unit}`, exact: true }).click();
-      await r.getByRole('button', { name: 'Check your decisions', exact: true }).click();
+      await r.getByRole('button', { name: 'Check my work', exact: true }).click();
       await r.getByText(matchText).waitFor();
       if (line.id === 'salmon') await snap('task2-salmon-row');
     }
@@ -290,7 +345,7 @@ try {
       finding('info', 'After a reload mid-Task 2 the learner returns straight to the working order sheet.');
     } else {
       finding('minor', 'After a reload mid-Task 2 the learner is put back at the pass and has to walk to the back door again.');
-      await page.getByRole('button', { name: /Head to the back door/ }).click();
+      await room.getByRole('button', { name: /back door/ }).click();
       await heading.waitFor();
     }
     await page.getByText('6/6 quantities checked', { exact: false }).waitFor();
@@ -331,7 +386,7 @@ try {
     if (startIndex === STAGES.indexOf('task3')) await page.goto(`${BASE}/task/chill-the-event-batch`, { waitUntil: 'domcontentloaded' });
     await closeJobCard();
     await snap('task3-open');
-    await page.getByRole('button', { name: 'Portion the beef', exact: true }).click();
+    await room.getByRole('button', { name: 'Portion the beef', exact: true }).click();
     const scoop = page.getByRole('button', { name: 'Scoop 0.5kg' });
     for (const tray of [0, 1, 2]) {
       await page.getByTestId(`tray-${tray}`).click();
@@ -343,7 +398,7 @@ try {
     await page.getByTestId('remaining').filter({ hasText: '0.00 kg' }).waitFor();
     await snap('task3-portioned');
     await page.getByRole('button', { name: 'Take the trays to the chiller' }).click();
-    const openChiller = page.getByRole('button', { name: 'Open the blast chiller', exact: true });
+    const openChiller = room.getByRole('button', { name: 'Load and run the blast chiller', exact: true });
     if (await openChiller.isVisible({ timeout: 3000 }).catch(() => false) && await openChiller.isEnabled()) await openChiller.click();
     for (const [tray, shelf] of [[0, '1'], [1, '3'], [2, '5'], [3, '7']]) await page.locator(`#tray-${tray}-shelf`).selectOption(shelf);
     await page.getByText('Every tray is loaded with an empty shelf between each one').waitFor();
@@ -380,9 +435,10 @@ try {
     const openRecord = page.getByTestId('open-record');
     if (!(await openRecord.isVisible({ timeout: 3000 }).catch(() => false))) {
       finding('minor', 'After a reload late in Task 3 the learner is not at the chiller and has to navigate back to it.');
-      await page.getByRole('button', { name: 'Open the blast chiller', exact: true }).click();
+      await room.getByRole('button', { name: 'Load and run the blast chiller', exact: true }).click();
     }
     await openRecord.click();
+    await expectDialogNamed('Blast chill record', 'chill record');
     const rec120 = page.locator('#chill-record-120');
     await rec120.waitFor();
     if ((await rec120.inputValue()) !== '5.9') finding('major', `Chill record 120-minute value is "${await rec120.inputValue()}" after reload, expected 5.9.`);
@@ -399,8 +455,9 @@ try {
     if (startIndex === STAGES.indexOf('task4')) await page.goto(`${BASE}/task/check-the-dietary-list`, { waitUntil: 'domcontentloaded' });
     await closeJobCard();
     await snap('task4-pass');
-    await page.getByRole('button', { name: /Take the function sheet from Yvie/ }).click();
+    await room.getByRole('button', { name: /function sheet from Yvie/ }).click();
     await page.getByTestId('function-sheet').waitFor();
+    await expectDialogNamed("art'otel Hoxton product launch", 'function sheet');
     await snap('task4-sheet');
     await page.keyboard.press('Escape');
     const sheetClosed = await page.getByTestId('function-sheet').waitFor({ state: 'hidden', timeout: 4000 }).then(() => true, () => false);
@@ -409,7 +466,7 @@ try {
       await page.getByRole('button', { name: 'Close function sheet' }).click();
       await page.getByTestId('function-sheet').waitFor({ state: 'hidden', timeout: 4000 });
     }
-    const chartHotspot = page.getByRole('button', { name: /^Allergen chart/ });
+    const chartHotspot = room.getByRole('button', { name: /^Mark the allergen chart/ });
     const chart = page.getByTestId('chart-workspace');
     const openChart = async () => {
       // Closing the function sheet can start the walk to the events kitchen by itself, so the
@@ -432,7 +489,8 @@ try {
     else if (await earlyReview.isDisabled()) finding('info', 'Task 4 early review: the review button stays disabled until the rows are reviewed.');
     else {
       await earlyReview.click();
-      if (await page.getByTestId('next-decisions').isVisible({ timeout: 1500 }).catch(() => false)) finding('major', 'Task 4 early review: the chart moved on to the guest decisions with no row reviewed.');
+      const movedOn = await page.getByTestId('guide-action').filter({ hasText: /guest/i }).isVisible({ timeout: 1500 }).catch(() => false);
+      if (movedOn) finding('major', 'Task 4 early review: the chart moved on to the guest decisions with no row reviewed.');
       else finding('info', 'Task 4 early review: not accepted with no row reviewed.');
     }
     const cell = (name) => page.getByRole('checkbox', { name, exact: true });
@@ -465,10 +523,12 @@ try {
       await cell(`Row reviewed: ${dish}`).check();
     }
     await page.getByTestId('review-with-terence').click();
-    const nextDecisions = page.getByTestId('next-decisions');
-    await nextDecisions.waitFor();
+    // The step guide is the only forward control: once Terence has reviewed the chart it moves on to the guests.
+    const toGuests = page.getByTestId('guide-action').filter({ hasText: /guest/i });
+    await toGuests.waitFor();
+    await expectDialogNamed('Allergen chart', 'allergen chart');
     await snap('task4-chart');
-    await nextDecisions.click();
+    await toGuests.click();
 
     await page.getByTestId('guests-workspace').waitFor();
     const decide = async ({ key, category, action, proposed, evidence, reason }) => {
@@ -488,7 +548,7 @@ try {
     await decide({ key: 'tom:dessert', category: 'no-conflict', action: 'keep', evidence: [/Ground almonds \(Tom Reid dessert\)/], reason: 'Nothing on the frangipane card conflicts with a vegetarian diet. Keep it.' });
     if (!(await page.getByTestId('tom-starter-note').count())) finding('minor', "Tom's starter note is not shown on his panel.");
     await snap('task4-guests');
-    await page.getByTestId('go-to-board').click();
+    await page.getByTestId('guide-action').filter({ hasText: /board/i }).click();
 
     await byId('board-reason-priya:dessert').fill('Severe tree nut and peanut allergy. Almonds through the tart, so pear instead, pending preparation check.');
     await byId('board-reason-tom:main').fill('Vegetarian. Beef swapped to the Wellington.');
@@ -510,6 +570,7 @@ try {
     await snap('task5-pass');
     await page.getByRole('button', { name: 'Weigh the waste' }).first().click();
     await page.getByRole('heading', { name: 'Weigh the waste' }).waitFor();
+    await expectDialogNamed('Weigh the waste', 'waste station');
     for (const [index, [id, kg]] of [['trimmings', '6.4'], ['spoilage', '1.8'], ['plate', '4.2']].entries()) {
       await page.locator('button[aria-label^="Look at the tub"]').nth(index).click();
       await page.getByRole('button', { name: 'Put it on the scales' }).click();

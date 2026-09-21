@@ -16,8 +16,8 @@ export interface StepGuide {
 }
 
 export const GUIDE_COPY = {
-  complete: 'Ready to sign off',
-  completeHint: 'Everything for this job is finished. Carry on when you’re ready.',
+  complete: 'This job is done',
+  completeHint: 'Everything here is finished. Move on when you are ready.',
   nextJob: 'On to the next job',
   finishDay: 'Finish the day',
   opening: 'Opening workspace…',

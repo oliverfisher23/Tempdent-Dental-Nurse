@@ -1,3 +1,4 @@
+import { CHECK_COPY } from '@/content/check';
 import { useState } from 'react';
 import { ALLERGENS, DISHES, type Dish } from '@/content/activities';
 import { ALLERGEN_REFERENCE } from '@/content/scenes/dietary-redesign';
@@ -18,6 +19,7 @@ import { cn } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { AlertTriangle, ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, HelpCircle, MessageSquare, Minus } from 'lucide-react';
 import { WorkspaceOpener } from '../../kitchen/workspace-opener';
+import { CheckFeedback } from '../../kitchen/check-feedback';
 
 interface ChartWorkspaceProps {
   chart: Record<string, string[]>;
@@ -28,7 +30,6 @@ interface ChartWorkspaceProps {
   onUpdateRedesign: (updater: (prev: DietaryRedesignState) => DietaryRedesignState) => void;
   onCheckChart: () => void;
   onRequestHint: (dishId: string) => void;
-  onNext?: () => void;
   onBack?: () => void;
 }
 
@@ -42,7 +43,7 @@ const STATUS_STYLES: Record<RowStatus, string> = {
 
 function StatusChip({ status, className }: { status: RowStatus; className?: string }) {
   return (
-    <span className={cn('inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap', STATUS_STYLES[status], className)}>
+    <span className={cn('inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap', STATUS_STYLES[status], className)}>
       {status === 'flagged' && <AlertTriangle className="w-3 h-3" aria-hidden="true" />}
       {status === 'reviewed' && <CheckCircle2 className="w-3 h-3" aria-hidden="true" />}
       {status === 'reviewed-question' && <HelpCircle className="w-3 h-3" aria-hidden="true" />}
@@ -60,7 +61,6 @@ export function ChartWorkspace({
   onUpdateRedesign,
   onCheckChart,
   onRequestHint,
-  onNext,
   onBack,
 }: ChartWorkspaceProps) {
   const copy = DIETARY_UI.chart;
@@ -87,7 +87,7 @@ export function ChartWorkspace({
       <span
         data-testid={`chart-attribution-${dishId}`}
         className={cn(
-          'inline-flex rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap',
+          'inline-flex rounded border px-1.5 py-0.5 text-xs font-bold uppercase tracking-wider whitespace-nowrap',
           corrected ? 'border-violet-700 bg-violet-950 text-violet-200' : 'border-sky-800 bg-sky-950 text-sky-200',
         )}
       >
@@ -112,9 +112,9 @@ export function ChartWorkspace({
     return (
       <div className="space-y-4" data-testid={`recipe-card-${dish.id}`}>
         <div className="bg-[#f7f3e8] text-zinc-900 rounded-sm p-4 shadow-inner border border-amber-100">
-          <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold">{copy.recipeEvidence} · {dish.course}</div>
+          <div className="text-xs uppercase tracking-widest text-zinc-600 font-bold">{copy.recipeEvidence} · {dish.course}</div>
           <h3 className="font-serif font-bold text-lg leading-tight mt-1">{dish.name}</h3>
-          <div className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold mt-3">{copy.ingredients}</div>
+          <div className="text-xs uppercase tracking-widest text-zinc-600 font-bold mt-3">{copy.ingredients}</div>
           <ul className="list-disc pl-5 text-sm mt-1 space-y-0.5">
             {dish.ingredients.map((ingredient) => (
               <li key={ingredient}>{ingredient}</li>
@@ -131,7 +131,7 @@ export function ChartWorkspace({
           <div role="status" className="bg-red-950/40 border border-red-900 rounded p-3 text-sm text-red-100 flex gap-2" data-testid={`chart-pointer-${dish.id}`}>
             <MessageSquare className="w-4 h-4 shrink-0 mt-0.5 text-red-400" aria-hidden="true" />
             <div>
-              <div className="text-[10px] uppercase tracking-widest text-red-300 font-bold">Terence</div>
+              <div className="text-xs uppercase tracking-widest text-red-300 font-bold">Terence</div>
               <p>{pointer}</p>
               <div className="flex items-center gap-3 mt-2">
                 <Button size="sm" variant="outline" className="h-7 text-xs bg-transparent border-red-800 text-red-100 hover:bg-red-900/40" onClick={() => onRequestHint(dish.id)} aria-label={`${copy.hintButton}: ${dish.short}`}>
@@ -144,7 +144,7 @@ export function ChartWorkspace({
         )}
 
         <div className="md:hidden space-y-2">
-          <div className="text-[10px] uppercase tracking-widest text-gray-500 font-bold">{copy.allergensPresent}</div>
+          <div className="text-xs uppercase tracking-widest text-gray-400 font-bold">{copy.allergensPresent}</div>
           <p className="text-xs text-gray-400">{copy.allergensHint}</p>
           <div className="grid grid-cols-2 gap-1.5">
             {ALLERGENS.map((allergen) => {
@@ -165,7 +165,7 @@ export function ChartWorkspace({
         </div>
 
         <div className="space-y-2">
-          <label htmlFor={`question-${dish.id}`} className="text-[10px] uppercase tracking-widest text-gray-500 font-bold block">
+          <label htmlFor={`question-${dish.id}`} className="text-xs uppercase tracking-widest text-gray-400 font-bold block">
             {copy.openQuestionsLabel}
           </label>
           <Textarea
@@ -175,7 +175,7 @@ export function ChartWorkspace({
             placeholder={copy.openQuestionsPlaceholder}
             className="bg-gray-900 border-gray-700 text-white text-sm min-h-[64px]"
           />
-          <p className="text-xs text-gray-500">{copy.openQuestionHint}</p>
+          <p className="text-xs text-gray-400">{copy.openQuestionHint}</p>
         </div>
 
         <label className={cn('flex items-start gap-3 rounded-md border p-3 cursor-pointer', status === 'reviewed' || status === 'reviewed-question' ? 'bg-emerald-950/30 border-emerald-900' : 'bg-gray-800/50 border-gray-700')}>
@@ -219,11 +219,15 @@ export function ChartWorkspace({
       />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
         <div>
-          <h2 className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
+          <h2 data-dialog-title className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
           <p className="text-gray-400 mt-1 text-sm md:text-base max-w-2xl">{copy.description}</p>
-          <p className="text-xs text-gray-300 mt-2 font-medium" data-testid="rows-remaining">
-            {chartChecked ? copy.matchesSupplied : remaining === 0 ? copy.reviewedAll : copy.rowsRemaining(remaining)}
-          </p>
+          {chartChecked ? (
+            <CheckFeedback kind="ok" title={copy.matchesSupplied} tone="dark" className="mt-3 w-fit py-2" testId="rows-remaining" />
+          ) : (
+            <p className="text-xs text-gray-300 mt-2 font-medium" data-testid="rows-remaining">
+              {remaining === 0 ? copy.reviewedAll : copy.rowsRemaining(remaining)}
+            </p>
+          )}
         </div>
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
           {onBack && (
@@ -234,15 +238,10 @@ export function ChartWorkspace({
           {!chartChecked && (
             <div className="flex flex-col items-start gap-1 md:items-end">
               <Button onClick={onCheckChart} disabled={remaining > 0} className="bg-red-600 text-white hover:bg-red-700 font-semibold" data-testid="review-with-terence">
-                {copy.reviewWithTerence}
+                {CHECK_COPY.check}
               </Button>
               {remaining > 0 && <p className="max-w-64 text-xs text-gray-400">{copy.reviewLocked}</p>}
             </div>
-          )}
-          {chartChecked && onNext && (
-            <Button onClick={onNext} className="bg-emerald-600 text-white hover:bg-emerald-700 font-semibold" data-testid="next-decisions">
-              {copy.nextDecisions} <ArrowRight className="w-4 h-4 ml-1" aria-hidden="true" />
-            </Button>
           )}
         </div>
       </div>
@@ -280,9 +279,9 @@ export function ChartWorkspace({
                           aria-label={`${copy.selectedRow}: ${dish.short}`}
                           className={cn('w-full text-left p-2 border-l-4 cursor-pointer hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400', selected ? 'border-red-500' : 'border-transparent')}
                         >
-                          <span className="block text-[10px] uppercase tracking-wider text-gray-500">{dish.course}</span>
+                          <span className="block text-xs uppercase tracking-wider text-gray-400">{dish.course}</span>
                           <span className="block font-semibold text-sm">{dish.short}</span>
-                          <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-semibold text-red-300">
+                          <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-red-300">
                             <BookOpen className="h-3 w-3" aria-hidden="true" /> {copy.opensRecipeCard}
                           </span>
                         </button>
@@ -343,7 +342,7 @@ export function ChartWorkspace({
           </div>}
 
           <div className="hidden md:flex flex-wrap items-center gap-2 text-xs text-gray-400">
-            <span className="font-bold uppercase tracking-wider text-[10px] text-gray-500">{copy.legendTitle}:</span>
+            <span className="font-bold uppercase tracking-wider text-xs text-gray-400">{copy.legendTitle}:</span>
             {(Object.keys(copy.legend) as RowStatus[]).map((status) => (
               <StatusChip key={status} status={status} />
             ))}

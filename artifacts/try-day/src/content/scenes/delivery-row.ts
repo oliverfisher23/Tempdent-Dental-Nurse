@@ -27,7 +27,6 @@ export const ROW_LABELS = {
   accept: "Accept",
   refuse: "Refuse",
   acceptChanged: "Quantity changed. Re-confirm acceptance.",
-  checkRow: "Check your decisions",
   chickenHint: "Method: count what came in. Take the temperature. Compare with both figures. Choose to accept or refuse from your findings.",
    openItem: "Open",
    closeItem: "Close",

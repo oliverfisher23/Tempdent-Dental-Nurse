@@ -95,7 +95,7 @@ export function BoardReview({
                            aria-label={`Recheck ${unit.name}`}
                            onClick={() => onRecheck(unit.id)}
                             disabled={frozen}
-                            className="min-h-11 text-xs font-bold text-primary hover:bg-primary/10 px-3 py-2 rounded transition-colors whitespace-nowrap disabled:opacity-50"
+                            className="min-h-11 text-xs font-bold text-red-700 hover:bg-primary/10 px-3 py-2 rounded transition-colors whitespace-nowrap disabled:opacity-50"
                          >
                            {HANDOVER_LABELS.recheck}
                          </button>
@@ -124,7 +124,7 @@ export function BoardReview({
                         aria-label={`Recheck ${unit.name}`}
                         onClick={() => onRecheck(unit.id)}
                         disabled={frozen}
-                        className="min-h-11 text-xs font-bold text-primary bg-primary/10 hover:bg-primary/20 px-3 py-2 rounded shrink-0 transition-colors disabled:opacity-50"
+                        className="min-h-11 text-xs font-bold text-red-700 bg-primary/10 hover:bg-primary/20 px-3 py-2 rounded shrink-0 transition-colors disabled:opacity-50"
                       >
                         {HANDOVER_LABELS.recheck}
                       </button>
@@ -132,19 +132,19 @@ export function BoardReview({
 
                     <div className="grid grid-cols-3 gap-3">
                       <div className="border-r-2 border-slate-200 pr-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Reading</label>
+                        <label className="text-xs font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Reading</label>
                         <span className="font-mono text-lg block text-[#272b3b]" style={{ fontFamily: 'cursive' }}>
                           {row?.reading || '-'}
                         </span>
                       </div>
                       <div className="border-r-2 border-slate-200 pr-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Time</label>
+                        <label className="text-xs font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Time</label>
                         <span className="font-mono text-sm block text-slate-500" style={{ fontFamily: 'cursive' }}>
                           {row?.time || '-'}
                         </span>
                       </div>
                       <div>
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Initials</label>
+                        <label className="text-xs font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Initials</label>
                         <span className="font-mono text-base block uppercase text-[#272b3b]" style={{ fontFamily: 'cursive' }}>
                           {row?.initials || '-'}
                         </span>
@@ -153,7 +153,7 @@ export function BoardReview({
 
                     {(row?.note || isWarm || isFlagged) && (
                       <div className="border-t-2 border-slate-200 pt-2">
-                        <label className="text-[10px] font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Note</label>
+                        <label className="text-xs font-bold uppercase tracking-wider text-[#272b3b] block mb-1">Note</label>
                         <span className={cn("font-mono text-sm block", !row?.note && "text-slate-400 opacity-50")} style={{ fontFamily: 'cursive' }}>
                           {row?.note || '-'}
                         </span>

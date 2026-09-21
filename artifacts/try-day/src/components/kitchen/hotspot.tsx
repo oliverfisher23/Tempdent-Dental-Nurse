@@ -47,17 +47,16 @@ export function Hotspot({ x, y, label, hint, state = 'todo', onClick, className 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [arrivedAt]);
 
-  // Tapping a locked spot shows its reason for a few seconds, which is how a phone user asks "why not?".
+  // Tapping a locked spot shows its reason, which is how a phone user asks "why not?". The
+  // reason stays until the spot unlocks or is tapped again, so there is time to read it.
   const [asked, setAsked] = useState(false);
   useEffect(() => {
-    if (!asked) return undefined;
-    const timer = window.setTimeout(() => setAsked(false), LABELS_SHOWN_FOR_MS);
-    return () => window.clearTimeout(timer);
-  }, [asked]);
+    if (!locked) setAsked(false);
+  }, [locked]);
 
   const handleClick = () => {
     if (!isClickable) {
-      if (locked && hint) setAsked(true);
+      if (locked && hint) setAsked((was) => !was);
       return;
     }
     kitchenAudio.play('tap');
@@ -137,6 +136,12 @@ export function Hotspot({ x, y, label, hint, state = 'todo', onClick, className 
           </div>
         )}
       </div>
+      {/* Read out when a locked spot is pressed, since pressing it does nothing else. */}
+      {locked && hint && (
+        <span className="sr-only" aria-live="polite">
+          {asked ? `Not yet: ${hint}` : ''}
+        </span>
+      )}
     </motion.div>
   );
 }

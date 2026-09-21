@@ -100,14 +100,14 @@ function TrayChip({
       data-shelved={!onTrolley}
     >
       <div className="absolute inset-x-0 bottom-0 h-full origin-bottom overflow-hidden rounded-b-md" style={{ background: BEEF, transform: `scaleY(${Math.min(1, depth / TRAY_DEPTH_MM)})` }} />
-      <div className="relative flex h-full items-center justify-between px-2 text-[11px] font-bold text-white drop-shadow">
+      <div className="relative flex h-full items-center justify-between px-2 text-xs font-bold text-white drop-shadow">
         <span className="uppercase tracking-wider">{L.tray(index + 1)}</span>
         <span className="font-mono">
           {kg.toFixed(2)} kg · {depth} mm
         </span>
       </div>
       {touching && (
-        <span className="absolute -top-3 left-2 rounded bg-amber-400 px-1.5 text-[9px] font-bold uppercase tracking-widest text-black">{L.touching}</span>
+        <span className="absolute -top-3 left-2 rounded bg-amber-400 px-1.5 text-xs font-bold uppercase tracking-widest text-black">{L.touching}</span>
       )}
       {hasProbe && (
         <span className="absolute -right-3 -top-4 flex items-center gap-0.5 rounded-full bg-emerald-500 p-1 text-black shadow" title={L.probe}>
@@ -115,10 +115,10 @@ function TrayChip({
         </span>
       )}
       {measuredMm !== null && (
-        <span className="absolute -bottom-3 right-2 rounded bg-white px-1.5 text-[9px] font-bold uppercase tracking-widest text-black shadow">{L.depthMeasured(measuredMm)}</span>
+        <span className="absolute -bottom-3 right-2 rounded bg-white px-1.5 text-xs font-bold uppercase tracking-widest text-black shadow">{L.depthMeasured(measuredMm)}</span>
       )}
       {zone.canDrop && (
-        <span className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-primary px-2 py-1 text-[10px] font-bold text-white shadow-lg">
+        <span className="pointer-events-none absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-primary px-2 py-1 text-xs font-bold text-white shadow-lg">
           {targetHint}
         </span>
       )}
@@ -150,12 +150,12 @@ function Shelf({ index, occupied, locked, onLoad, children }: { index: number; o
       {/* runners */}
       <span className="absolute left-1 top-1/2 h-1 w-3 -translate-y-1/2 rounded bg-zinc-600" />
       <span className="absolute right-1 top-1/2 h-1 w-3 -translate-y-1/2 rounded bg-zinc-600" />
-      <span className="absolute left-4 top-1 text-[9px] font-bold uppercase tracking-widest text-zinc-600">{L.shelf(index + 1)}</span>
+      <span className="absolute left-4 top-1 text-xs font-bold uppercase tracking-widest text-zinc-400">{L.shelf(index + 1)}</span>
       <div className="w-full pt-2">{children}</div>
       {!occupied && !locked && (
         <span className={cn(
-          'pointer-events-none absolute inset-x-5 bottom-1 top-4 flex items-center justify-center rounded border border-dashed text-[10px] font-bold',
-          canDrop ? 'border-primary bg-primary/10 text-white' : 'border-zinc-700 text-zinc-500',
+          'pointer-events-none absolute inset-x-5 bottom-1 top-4 flex items-center justify-center rounded border border-dashed text-xs font-bold',
+          canDrop ? 'border-primary bg-primary/10 text-white' : 'border-zinc-700 text-zinc-400',
         )}>
           {canDrop && carrying ? L.putHere(carrying) : L.emptyShelf}
         </span>
@@ -179,8 +179,8 @@ function Trolley({ locked, onRemove, children, empty }: { locked: boolean; onRem
       )}
       data-testid="trolley"
     >
-      <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">{L.trolley}</span>
-      {empty && <span className="text-xs text-zinc-500">{L.trolleyEmpty}</span>}
+      <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">{L.trolley}</span>
+      {empty && <span className="text-xs text-zinc-400">{L.trolleyEmpty}</span>}
       {children}
     </div>
   );
@@ -204,7 +204,7 @@ function ProbeTool({ locked, inTray }: { locked: boolean; inTray: number | null 
         <AnalogueThermometer value={null} className="w-16 h-20 pointer-events-none" />
         <div className="h-10 w-1.5 -mt-3 rounded-b-full bg-gradient-to-b from-zinc-300 to-zinc-500 shadow-sm pointer-events-none" />
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center max-w-[80px]">
+      <span className="text-xs font-bold uppercase tracking-widest text-zinc-400 text-center max-w-[80px]">
         {inTray !== null ? `${L.probe.replace('The temperature ', '')} in tray ${inTray + 1}` : L.probe.replace('The temperature ', 'Temperature ')}
       </span>
     </div>
@@ -226,7 +226,7 @@ function RulerTool() {
           <span key={i} className={cn('absolute left-0 h-px bg-amber-900', i % 2 === 0 ? 'w-3' : 'w-2')} style={{ top: `${8 + i * 10}%` }} />
         ))}
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{L.ruler.replace('The ', '')}</span>
+      <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">{L.ruler.replace('The ', '')}</span>
     </div>
   );
 }
@@ -246,7 +246,7 @@ function SectionZoneBox({ id, label, style, onPlace }: { id: SectionZone; label:
       {...props}
       style={style}
       className={cn(
-        'absolute flex min-h-11 items-center justify-center rounded-md border-2 border-dashed border-white/50 text-center text-[10px] font-bold uppercase tracking-wider text-white/90 transition-colors focus-visible:ring-4 focus-visible:ring-primary sm:text-[11px]',
+        'absolute flex min-h-11 items-center justify-center rounded-md border-2 border-dashed border-white/50 text-center text-xs font-bold uppercase tracking-wider text-white/90 transition-colors focus-visible:ring-4 focus-visible:ring-primary sm:text-xs',
         (isOver || isTarget) && 'border-primary bg-primary/40 text-white',
       )}
       data-testid={`probe-zone-${id}`}
@@ -321,8 +321,8 @@ function TraySection({ trayIndex, kg, onPlace, onClose }: { trayIndex: number; k
             {/* the tray, cut through */}
             <div className="absolute inset-x-6 bottom-2 top-6 rounded-b-3xl border-x-8 border-b-8 border-zinc-300 bg-zinc-800/70">
               <div className="absolute inset-x-0 bottom-0" style={{ height: pct(depth), background: BEEF }} />
-              <span className="absolute -right-1 top-0 translate-x-full text-[10px] font-bold uppercase tracking-widest text-zinc-400 pl-2">{TRAY_DEPTH_MM} mm</span>
-              <span className="absolute -right-1 translate-x-full pl-2 text-[10px] font-bold uppercase tracking-widest text-amber-300" style={{ bottom: pct(depth) }}>
+              <span className="absolute -right-1 top-0 translate-x-full text-xs font-bold uppercase tracking-widest text-zinc-400 pl-2">{TRAY_DEPTH_MM} mm</span>
+              <span className="absolute -right-1 translate-x-full pl-2 text-xs font-bold uppercase tracking-widest text-amber-300" style={{ bottom: pct(depth) }}>
                 {depth} mm
               </span>
               <SectionZoneBox
@@ -342,7 +342,7 @@ function TraySection({ trayIndex, kg, onPlace, onClose }: { trayIndex: number; k
           </div>
           <div className="flex flex-col items-center gap-2">
             <SectionProbe />
-            <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{L.probeHint}</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">{L.probeHint}</span>
           </div>
         </div>
         <div className="mt-4 grid gap-2 sm:grid-cols-3" aria-label={L.sectionQuestion}>
@@ -522,7 +522,7 @@ export function ChillerView({
             )}
           </AnimatePresence>
         </div>
-        <div className="mt-1 text-center text-[10px] font-bold uppercase tracking-widest text-zinc-400">{L.cabinet}</div>
+        <div className="mt-1 text-center text-xs font-bold uppercase tracking-widest text-zinc-400">{L.cabinet}</div>
       </div>
 
       {/* Hooks: beside the cabinet, under the trolley, so the probe is in view while the trays go in.
@@ -606,19 +606,19 @@ export function ChillerView({
 
         <div ref={panelRef} className="rounded-2xl border-4 border-zinc-700 bg-zinc-900 p-4 text-zinc-100 shadow-2xl" data-testid="panel">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-zinc-400">{L.chillerTitle}</span>
-            <span className={cn('flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest', started ? 'text-emerald-400' : 'text-zinc-500')}>
+            <span className="text-xs font-bold uppercase tracking-widest text-zinc-400">{L.chillerTitle}</span>
+            <span className={cn('flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest', started ? 'text-emerald-400' : 'text-zinc-400')}>
               <span className={cn('h-2 w-2 rounded-full', started ? 'bg-emerald-400 animate-pulse motion-reduce:animate-none' : 'bg-zinc-600')} />
               {started ? L.cycleRunning : L.doorOpen}
             </span>
           </div>
 
           <div className="mt-3 rounded-xl border-2 border-zinc-800 bg-black p-3 shadow-[inset_0_4px_12px_rgba(0,0,0,0.6)]">
-            <div className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{waiting ? L.waiting : L.coreTemp}</div>
+            <div className="text-xs font-bold uppercase tracking-widest text-zinc-400">{waiting ? L.waiting : L.coreTemp}</div>
             <div className="my-2 text-center font-mono text-4xl font-bold text-emerald-400 sm:text-5xl" style={{ textShadow: '0 0 12px rgba(52,211,153,0.5)' }} data-testid="display">
               {waiting ? progress.clock : displayReading !== null ? displayReading.toFixed(1) : '--.-'}
             </div>
-            <div className="flex justify-between border-t border-zinc-800 pt-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            <div className="flex justify-between border-t border-zinc-800 pt-2 text-xs font-bold uppercase tracking-widest text-zinc-400">
               <span className="truncate">{started ? L.readAt(m) : placementLabel ? `${L.probe.replace('The temperature ', '')}: ${placementLabel.toLowerCase()}` : L.probeOut}</span>
               <span className="shrink-0 pl-2">{started ? L.elapsed(m) : L.doorOpen}</span>
             </div>

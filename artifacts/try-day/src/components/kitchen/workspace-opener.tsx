@@ -1,11 +1,11 @@
 import { useId } from 'react';
-import { CheckCircle2, Flag, Hand } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { BriefingVideoButton } from '@/components/briefing-video-modal';
 import type { TaskId } from '@/content/activities';
 import { TASK_BRIEFING_VIDEO } from '@/content/briefing-videos';
 import type { InteractionPatternId } from '@/content/interaction-patterns';
 import { cn } from '@/lib/utils';
-import { HowToButton, PATTERN_ICONS } from './how-to-card';
+import { HowToButton } from './how-to-card';
 
 export interface OpenerProgress {
   done: number;
@@ -18,9 +18,9 @@ export interface WorkspaceOpenerProps {
   taskId: TaskId;
   /** What to do here, one sentence starting with a verb. */
   what: string;
-  /** How to do it on this screen: the gesture and its button alternative. */
+  /** How to do it on this screen: the gesture and its button alternative. Shown from "How do I do this?". */
   how: string;
-  /** What finished looks like. */
+  /** What finished looks like. Shown from "How do I do this?" and, for counted steps, as the live count. */
   done: string;
   /** A visible count for steps with several items. */
   progress?: OpenerProgress;
@@ -37,6 +37,7 @@ export const OPENER_COPY = {
   what: 'What to do',
   how: 'How',
   done: 'Done when',
+  briefing: 'Task briefing',
   count: (p: OpenerProgress) => `${p.done} of ${p.total} ${p.noun}`,
   allDone: (p: OpenerProgress) => `All ${p.total} ${p.noun}`,
 };
@@ -45,23 +46,14 @@ export const OPENER_COPY = {
 const MAX_NOTCHES = 12;
 
 /**
- * The short instruction at the top of every workspace, laid out like the card a head
- * chef clips to your station: the job in one line, how to do it on this screen, what
- * finished looks like, and a progress rail where there are several things to get through.
- * Also where Terence's task briefing lives.
+ * The one-line card at the top of every workspace: the job here in one sentence, the live
+ * count where there are several things to get through, and one "How do I do this?" that
+ * holds how to do it on this screen, what finished looks like and the control's pattern.
+ * The step guide above the room keeps the current step, so nothing is said twice.
  */
-export function WorkspaceOpener({ taskId, what, how, done, progress, pattern, step, tone = 'light', className, testId = 'workspace-opener' }: WorkspaceOpenerProps) {
+export function WorkspaceOpener({ taskId, what, how, done, progress, pattern = 'tap', step, tone = 'light', className, testId = 'workspace-opener' }: WorkspaceOpenerProps) {
   const dark = tone === 'dark';
   const headingId = useId();
-  const HowIcon = pattern ? PATTERN_ICONS[pattern] : Hand;
-
-  const label = cn('text-[10px] font-bold uppercase tracking-[0.18em]', dark ? 'text-white/55' : 'text-muted-foreground');
-  const body = cn('text-sm leading-snug', dark ? 'text-white/90' : 'text-foreground/90');
-  const iconWell = cn(
-    'mt-px flex h-7 w-7 shrink-0 items-center justify-center rounded-full',
-    dark ? 'bg-white/10 text-white' : 'bg-primary/10 text-primary',
-  );
-  const rule = dark ? 'border-white/10' : 'border-border';
 
   return (
     <section
@@ -74,44 +66,21 @@ export function WorkspaceOpener({ taskId, what, how, done, progress, pattern, st
         className,
       )}
     >
-      {/* The job, in the display face, with the count beside it once the card is wide enough */}
-      <div className="flex flex-col gap-3 px-4 pb-2.5 pt-2.5 @md/opener:flex-row @md/opener:items-start @md/opener:justify-between @md/opener:gap-6 sm:px-5">
+      <div className="flex flex-col gap-2 px-4 py-2.5 @2xl/opener:flex-row @2xl/opener:items-center @2xl/opener:gap-6 sm:px-5">
         <div className="min-w-0 flex-1">
-          <p className={cn(label, 'text-primary')}>{OPENER_COPY.what}</p>
+          <p className={cn('text-xs font-bold uppercase tracking-[0.18em]', dark ? 'text-red-400' : 'text-primary')}>{OPENER_COPY.what}</p>
           <p id={headingId} className="mt-0.5 font-serif text-lg font-medium leading-snug tracking-tight @xl/opener:text-xl">
             {what}
           </p>
         </div>
-        {progress && <ProgressRail progress={progress} dark={dark} />}
-      </div>
-
-      {/* How and done-when, side by side only when the card is wide enough for both to read in two lines */}
-      <dl className={cn('grid gap-x-8 gap-y-2 border-t px-4 py-2.5 @2xl/opener:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] sm:px-5', rule)}>
-        <div className="flex gap-3">
-          <span className={iconWell} aria-hidden="true"><HowIcon className="h-3.5 w-3.5" /></span>
-          <div className="min-w-0">
-            <dt className={label}>{OPENER_COPY.how}</dt>
-            <dd className={cn(body, 'mt-0.5')}>{how}</dd>
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5 @2xl/opener:justify-end">
+          {progress && <ProgressRail progress={progress} dark={dark} />}
+          <div className="flex items-center gap-1">
+            <HowToButton pattern={pattern} step={step} screen={{ how, done }} tone={tone} className="-ml-2.5" />
+            <span className={cn('h-4 w-px', dark ? 'bg-white/15' : 'bg-border')} aria-hidden="true" />
+            <BriefingVideoButton videoId={TASK_BRIEFING_VIDEO[taskId]} tone={tone} variant="ghost" label={OPENER_COPY.briefing} className="min-h-11" />
           </div>
         </div>
-        <div className="flex gap-3">
-          <span className={iconWell} aria-hidden="true"><Flag className="h-3.5 w-3.5" /></span>
-          <div className="min-w-0">
-            <dt className={label}>{OPENER_COPY.done}</dt>
-            <dd className={cn(body, 'mt-0.5')}>{done}</dd>
-          </div>
-        </div>
-      </dl>
-
-      {/* Help lives in one quiet row at the bottom, so the instruction gets the full width above */}
-      <div className={cn('flex flex-wrap items-center gap-x-1 gap-y-1 border-t px-2 py-1 sm:px-3', rule, dark ? 'bg-white/[0.04]' : 'bg-muted/40')}>
-        <BriefingVideoButton videoId={TASK_BRIEFING_VIDEO[taskId]} tone={tone} variant="ghost" />
-        {pattern && (
-          <>
-            <span className={cn('hidden h-4 w-px @sm/opener:block', dark ? 'bg-white/15' : 'bg-border')} aria-hidden="true" />
-            <HowToButton pattern={pattern} step={step} tone={tone} />
-          </>
-        )}
       </div>
     </section>
   );
@@ -127,7 +96,7 @@ function ProgressRail({ progress, dark }: { progress: OpenerProgress; dark: bool
   const filled = complete ? 'bg-emerald-500' : 'bg-primary';
 
   return (
-    <div className="flex w-full shrink-0 flex-col gap-1.5 @md/opener:w-44 @md/opener:items-end @xl/opener:w-52">
+    <div className="flex w-full shrink-0 flex-col gap-1.5 @md/opener:w-44 @xl/opener:w-52">
       <div className="flex h-1.5 w-full gap-0.5" aria-hidden="true">
         {total <= MAX_NOTCHES ? (
           Array.from({ length: total }, (_, index) => (

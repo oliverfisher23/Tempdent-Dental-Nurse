@@ -40,7 +40,7 @@ function Tray({
       data-testid={`tray-${index}`}
     >
       <div className="flex items-baseline justify-between gap-2 px-1">
-        <span className={cn("text-[11px] font-bold uppercase tracking-widest", selected ? "text-primary" : "text-white/70")}>{L.tray(index + 1)}</span>
+        <span className={cn("text-xs font-bold uppercase tracking-widest", selected ? "text-primary" : "text-white/70")}>{L.tray(index + 1)}</span>
         <span className={cn('whitespace-nowrap font-mono text-base font-bold', overSheet ? 'text-amber-300' : 'text-white')} aria-live="polite">
           {depth} mm
         </span>
@@ -53,11 +53,11 @@ function Tray({
       >
         {/* The line the sheet asks for */}
         <div className="absolute inset-x-0 z-10 border-t-2 border-dashed border-white/60" style={{ bottom: `${(PREP_SHEET.fillDepthMm / TRAY_DEPTH_MM) * 100}%` }}>
-          <span className="absolute right-1 top-0.5 text-[10px] font-bold uppercase tracking-wider text-white/80">{PREP_SHEET.fillDepthMm} mm</span>
+          <span className="absolute right-1 top-0.5 text-xs font-bold uppercase tracking-wider text-white/80">{PREP_SHEET.fillDepthMm} mm</span>
         </div>
         {/* Max depth line */}
         <div className="absolute inset-x-0 z-10 border-t-2 border-red-500/50" style={{ top: 0 }}>
-          <span className="absolute left-1 top-0 text-[10px] font-bold uppercase tracking-wider text-red-300">MAX {TRAY_DEPTH_MM} mm</span>
+          <span className="absolute left-1 top-0 text-xs font-bold uppercase tracking-wider text-red-300">MAX {TRAY_DEPTH_MM} mm</span>
         </div>
         
         {/* The beef */}
@@ -82,7 +82,7 @@ function Tray({
           )}
         </AnimatePresence>
       </div>
-      <span className="px-1 text-right font-mono text-[11px] text-white/60">{kg.toFixed(2)} kg</span>
+      <span className="px-1 text-right font-mono text-xs text-white/70">{kg.toFixed(2)} kg</span>
     </button>
   );
 }
@@ -202,8 +202,8 @@ export function PortioningView({
             </div>
           </div>
           <div className="mt-3 flex items-baseline justify-between px-1">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-white/60">{L.pan}</span>
-            <span className="text-[11px] font-bold uppercase tracking-widest text-white/60">{L.left}</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-white/70">{L.pan}</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-white/70">{L.left}</span>
           </div>
         </div>
 
@@ -227,7 +227,7 @@ export function PortioningView({
             className={cn(
               "relative min-h-11 w-full overflow-hidden py-3 rounded-xl font-bold text-lg shadow-lg flex items-center justify-center transition-all select-none touch-none",
               panEmpty || isTargetFull 
-                ? "bg-zinc-800 text-zinc-500 cursor-not-allowed" 
+                ? "bg-zinc-800 text-zinc-400 cursor-not-allowed" 
                 : pouring 
                   ? "bg-primary text-primary-foreground scale-95" 
                   : "bg-primary/20 text-white border border-primary/60 hover:bg-primary/30 active:scale-95"

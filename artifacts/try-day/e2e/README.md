@@ -9,6 +9,7 @@ pnpm --filter @workspace/try-day run test:learner-run
 pnpm --filter @workspace/try-day run test:learner-run -- --from=task3   # resume a stage
 VIEWPORT=phone pnpm --filter @workspace/try-day run test:learner-run   # 390x844, touch
 INPUT=keyboard pnpm --filter @workspace/try-day run test:learner-run   # every control by focus + Enter/Space
+AXE=1 pnpm --filter @workspace/try-day run test:learner-run            # axe-core scan at every screenshot
 ```
 
 Drives the whole experience the way a learner would: welcome, briefing, name,
@@ -29,6 +30,13 @@ run tries a wrong answer first (accepting the cream that must be refused,
 reviewing with Terence before any row is reviewed, a wrong waste weight) and
 records the kitchen's feedback as "info". Reloads mid-Task 2, 3 and 4 check
 that the learner is put back at the workspace they were in.
+
+`AXE=1` also runs axe-core at every screenshot. Serious and critical violations
+are listed under `axe` in `qa-log.json` (deduplicated by rule and element) and
+each one is a major finding, so the run fails. The scan waits for entrance
+animations to finish first and, while a true modal is open, scans only the modal.
+If a contrast failure names a colour far lighter than the design, look at the
+screenshot: text still fading in reads as washed out.
 
 ## Before a merge
 

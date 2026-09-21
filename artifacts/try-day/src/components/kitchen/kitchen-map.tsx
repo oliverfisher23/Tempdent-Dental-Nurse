@@ -167,7 +167,7 @@ export function KitchenMap({ taskId }: { taskId: TaskId }) {
                 {/* Always-on name under the pins on this task's route; other rooms only on hover */}
                 <div
                   className={cn(
-                    "absolute top-full left-1/2 -translate-x-1/2 mt-1.5 whitespace-nowrap text-[11px] font-bold px-2 py-0.5 rounded-sm shadow-sm pointer-events-none transition-opacity",
+                    "absolute top-full left-1/2 -translate-x-1/2 mt-1.5 whitespace-nowrap text-xs font-bold px-2 py-0.5 rounded-sm shadow-sm pointer-events-none transition-opacity",
                     isHere
                       ? "bg-primary text-primary-foreground"
                       : "bg-white/90 text-foreground",
@@ -304,7 +304,7 @@ export function MiniMap() {
         className="absolute w-3 h-3 bg-primary rounded-full shadow border border-white transform -translate-x-1/2 -translate-y-1/2"
         style={{ left: `${p.map.x}%`, top: `${p.map.y}%` }}
       />
-      <span className="relative mt-auto mb-1 text-[10px] font-bold uppercase tracking-widest text-foreground/80 bg-white/80 px-1.5 rounded-sm">
+      <span className="relative mt-auto mb-1 text-xs font-bold uppercase tracking-widest text-foreground/80 bg-white/80 px-1.5 rounded-sm">
         Map
       </span>
     </button>

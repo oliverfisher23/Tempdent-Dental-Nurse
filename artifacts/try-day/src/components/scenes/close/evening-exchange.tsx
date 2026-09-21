@@ -73,7 +73,7 @@ export function EveningExchange({ rs, evidence, handover, onAnswer, onMoveBefore
 
       {stage === 'timing' && (
         <div className="bg-black/50 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4" role="group" aria-label={EXCHANGE_COPY.timingTitle}>
-          <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">{EXCHANGE_COPY.timingTitle}</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">{EXCHANGE_COPY.timingTitle}</p>
           {issues.map((id) => (
             <div key={id} className="flex flex-col gap-3">
               <p className="text-sm leading-6 text-zinc-200">“{TIMING_CHALLENGE[id as 'larder2' | 'table3'](evidence)}”</p>
@@ -105,7 +105,7 @@ export function EveningExchange({ rs, evidence, handover, onAnswer, onMoveBefore
 
       {stage === 'read-back' && (
         <div className="bg-black/50 p-4 rounded-lg border border-zinc-800 flex flex-col gap-4" data-testid="read-back">
-          <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-500">{EXCHANGE_COPY.readBackTitle}</h4>
+          <h4 className="text-xs font-bold uppercase tracking-widest text-zinc-400">{EXCHANGE_COPY.readBackTitle}</h4>
           <p className="text-sm leading-6 text-zinc-200">“{EXCHANGE_COPY.readBackIntro}</p>
           <ul className="space-y-2 text-sm leading-6 text-zinc-200">
             {EVENING_EXCHANGE.map((topic) => <li key={topic.id}>{topic.readBack(evidence)}</li>)}
@@ -209,7 +209,7 @@ function TopicCard({ topic, rs, evidence, handover, onAnswer }: {
             })}
             {chosenOption && (
               <p className={cn('text-sm leading-6 border-l-2 pl-3', isRight ? 'border-emerald-500 text-emerald-200' : 'border-red-500 text-red-200')} role={isRight ? 'status' : 'alert'}>
-                <span className="block text-[10px] font-bold uppercase tracking-widest opacity-70">Evening team</span>
+                <span className="block text-xs font-bold uppercase tracking-widest opacity-70">Evening team</span>
                 {exchangeText(chosenOption.reply, evidence)}
               </p>
             )}

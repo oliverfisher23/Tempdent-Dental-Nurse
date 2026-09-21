@@ -147,36 +147,36 @@ export function BenchScene({ state, remaining, started, waiting, actions }: Chil
             <button 
               type="button"
               onClick={() => chillerState !== 'locked' && view !== 'chiller' && go('chiller')}
-              disabled={chillerState === 'locked'}
+              aria-disabled={chillerState === 'locked' || undefined}
               aria-current={view === 'chiller' ? 'page' : undefined}
               aria-describedby={chillerState === 'locked' ? 'chiller-locked-reason' : undefined}
               className={cn(
                 "min-h-11 rounded-xl px-2 py-2 text-xs font-bold transition-colors flex flex-col items-center justify-center",
-                view === 'chiller' ? "bg-primary text-white shadow-md cursor-default" : chillerState === 'locked' ? "opacity-50 cursor-not-allowed" : "text-white/80 hover:bg-white/10 hover:text-white"
+                view === 'chiller' ? "bg-primary text-white shadow-md cursor-default" : chillerState === 'locked' ? "cursor-not-allowed text-white/70" : "text-white/80 hover:bg-white/10 hover:text-white"
               )}
             >
               <div>
                 {L.blastChiller}
                 {chillerState === 'done' && <Check className="ml-1 inline h-3.5 w-3.5 text-emerald-400" aria-label="Finished" />}
               </div>
-              {chillerState === 'locked' && <span id="chiller-locked-reason" className="mt-0.5 text-[9px] font-medium leading-tight text-white/75">{L.navHint.chiller}</span>}
+              {chillerState === 'locked' && <span id="chiller-locked-reason" className="mt-0.5 text-xs font-medium leading-tight text-white/75">{L.navHint.chiller}</span>}
             </button>
             <button 
               type="button"
               onClick={() => recordState !== 'locked' && !recordOpen && openRecord()}
-              disabled={recordState === 'locked'}
+              aria-disabled={recordState === 'locked' || undefined}
               aria-current={recordOpen ? 'page' : undefined}
               aria-describedby={recordState === 'locked' ? 'record-locked-reason' : undefined}
               className={cn(
                 "min-h-11 rounded-xl px-2 py-2 text-xs font-bold transition-colors flex flex-col items-center justify-center",
-                recordOpen ? "bg-primary text-white shadow-md cursor-default" : recordState === 'locked' ? "opacity-50 cursor-not-allowed" : "text-white/80 hover:bg-white/10 hover:text-white"
+                recordOpen ? "bg-primary text-white shadow-md cursor-default" : recordState === 'locked' ? "cursor-not-allowed text-white/70" : "text-white/80 hover:bg-white/10 hover:text-white"
               )}
             >
               <div>
                 {L.record}
                 {recordState === 'done' && <Check className="ml-1 inline h-3.5 w-3.5 text-emerald-400" aria-label="Finished" />}
               </div>
-              {recordState === 'locked' && <span id="record-locked-reason" className="mt-0.5 text-[9px] font-medium leading-tight text-white/75">{L.navHint.record}</span>}
+              {recordState === 'locked' && <span id="record-locked-reason" className="mt-0.5 text-xs font-medium leading-tight text-white/75">{L.navHint.record}</span>}
             </button>
           </div>
         </nav>

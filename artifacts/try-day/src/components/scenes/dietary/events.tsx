@@ -78,7 +78,7 @@ export function EventsScene({
           <Hotspot
             x={62}
             y={42}
-            label={DIETARY_UI.chart.title}
+            label={DIETARY_UI.chart.hotspot}
             hint={chartOpen ? undefined : DIETARY_UI.chart.hotspotLocked}
             state={stage === 'chart' ? 'active' : chartOpen ? 'done' : 'locked'}
             onClick={() => { if (chartOpen) open('chart'); }}
@@ -86,7 +86,7 @@ export function EventsScene({
           <Hotspot
             x={18}
             y={30}
-            label={DIETARY_UI.guests.title}
+            label={DIETARY_UI.guests.hotspot}
             hint={guestsOpen ? undefined : DIETARY_UI.guests.hotspotLocked}
             state={stage === 'guests' ? 'active' : guestsOpen ? 'done' : 'locked'}
             onClick={() => { if (guestsOpen) open('guests'); }}
@@ -94,7 +94,7 @@ export function EventsScene({
           <Hotspot
             x={82}
             y={32}
-            label={DIETARY_UI.board.title}
+            label={DIETARY_UI.board.hotspot}
             hint={boardOpen ? undefined : DIETARY_UI.board.hotspotLocked}
             state={stage === 'board' ? 'active' : stage === 'done' ? 'done' : 'locked'}
             onClick={() => { if (boardOpen) open('board'); }}
@@ -117,7 +117,6 @@ export function EventsScene({
           onUpdateRedesign={onUpdateRedesign}
           onCheckChart={onCheckChart}
           onRequestHint={onRequestChartHint}
-          onNext={guestsOpen ? () => open('guests') : undefined}
           onBack={() => setWorkspace(null)}
         />
       </CloseUp>
@@ -139,7 +138,6 @@ export function EventsScene({
           feedback={decisionFeedback}
           decisionsReady={decisionsReady}
           onOpenChart={() => open('chart')}
-          onNext={() => open('board')}
           onBack={() => setWorkspace(null)}
         />
       </CloseUp>

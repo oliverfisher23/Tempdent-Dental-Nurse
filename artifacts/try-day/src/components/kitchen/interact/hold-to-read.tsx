@@ -114,18 +114,14 @@ export function HoldToRead({
         onPointerCancel={release}
         onPointerLeave={release}
         onKeyDown={(event) => {
-          if (event.key === ' ' || event.key === 'Enter') {
-            event.preventDefault();
-            if (stateRef.current === 'idle') {
-              start();
-            } else if (stateRef.current === 'holding' || stateRef.current === 'settled') {
-              // Allows a second press to release for users who can click but not hold
-              release();
-            }
-          }
+          if (event.key !== ' ' && event.key !== 'Enter') return;
+          event.preventDefault();
+          // A held key auto-repeats keydown; only the first press starts the hold. Releasing
+          // happens on keyup, and the toggle link below serves anyone who cannot hold a key.
+          if (event.repeat) return;
+          if (stateRef.current === 'idle') start();
         }}
         onKeyUp={(event) => {
-          // Normal press-and-hold keyup release (only works if they were holding it)
           if (event.key === ' ' || event.key === 'Enter') {
             event.preventDefault();
             if (stateRef.current === 'holding' || stateRef.current === 'settled') {
@@ -173,12 +169,12 @@ export function HoldToRead({
           }}
           className="text-xs font-medium text-primary underline underline-offset-4 outline-none focus-visible:ring-2 focus-visible:ring-primary rounded px-1"
         >
-          {state === 'idle' ? 'Or tap here to start' : 'Tap to stop'}
+          {state === 'idle' ? 'Or start without holding' : 'Stop the reading'}
         </button>
       )}
       {showHint && <span className="text-sm font-medium text-primary">{hintReleasedEarly}</span>}
       <span className="sr-only" aria-live="polite">
-        {state === 'settled' ? `Reading settled: ${target.toFixed(1)} ${unit}` : ''}
+        {state === 'settled' ? `Reading settled: ${target.toFixed(1)} ${unit}` : showHint ? hintReleasedEarly : ''}
       </span>
     </div>
   );

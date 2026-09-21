@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Check, CheckCircle2, ChevronRight } from 'lucide-react';
+import { AlertCircle, Check, CheckCircle2, ChevronRight } from 'lucide-react';
 import { WASTE_BINS, type WasteBin } from '@/content/activities';
 import { CLOSE_SCENE } from '@/content/scenes/close';
 import { CLOSE_INTERACTION } from '@/content/scenes/close-interaction';
@@ -115,7 +115,7 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
         className="w-full mb-4"
       />
       <div className="w-full mb-6">
-        <h2 className="text-2xl font-bold text-zinc-100">{COPY.title}</h2>
+        <h2 data-dialog-title className="text-2xl font-bold text-zinc-100">{COPY.title}</h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-zinc-300">{COPY.instructions}</p>
       </div>
 
@@ -140,11 +140,11 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                 >
                   <span className="text-sm font-bold leading-5">{b.label}</span>
                   <span className="mt-2 flex w-full items-center justify-between gap-2">
-                    <span className={cn('text-[11px] flex items-center gap-1', status.tone === 'right' ? 'text-emerald-400' : 'text-zinc-400')}>
+                    <span className={cn('text-xs flex items-center gap-1', status.tone === 'right' ? 'text-emerald-400' : 'text-zinc-400')}>
                       {status.tone === 'right' && <Check className="w-3 h-3" aria-hidden="true" />}
                       {status.tone === 'right' ? COPY.weighed : status.tone === 'wrong' ? COPY.checkReading : status.text}
                     </span>
-                    <span className={cn('inline-flex items-center gap-0.5 rounded-full px-2 py-1 text-[10px] font-bold', isSelected ? 'bg-primary text-white' : 'bg-white/10 text-zinc-200')}>
+                    <span className={cn('inline-flex items-center gap-0.5 rounded-full px-2 py-1 text-xs font-bold', isSelected ? 'bg-primary text-white' : 'bg-white/10 text-zinc-200')}>
                       {isSelected ? COPY.chosen : COPY.choose}
                       {!isSelected && <ChevronRight className="h-3 w-3" aria-hidden="true" />}
                     </span>
@@ -269,8 +269,13 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                       </button>
                     </td>
                     <td className="px-2 py-3 align-top font-mono whitespace-nowrap">{value ? `${value} kg` : 'Not recorded'}</td>
-                    <td className={cn('px-4 py-3 align-top text-xs', status.tone === 'right' ? 'text-emerald-700' : status.tone === 'wrong' ? 'text-amber-800' : 'text-zinc-500')}>
-                      {status.tone === 'right' ? COPY.correct : status.text}
+                    <td className={cn('px-4 py-3 align-top text-xs', status.tone === 'right' ? 'text-emerald-700' : status.tone === 'wrong' ? 'text-red-700' : 'text-zinc-600')}>
+                      {/* The same green tick and red mark as every other check in the day. */}
+                      <span className="flex items-start gap-1.5" data-kind={status.tone === 'right' ? 'ok' : status.tone === 'wrong' ? 'issue' : undefined}>
+                        {status.tone === 'right' && <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+                        {status.tone === 'wrong' && <AlertCircle className="mt-0.5 h-3.5 w-3.5 shrink-0" aria-hidden="true" />}
+                        <span>{status.tone === 'right' ? COPY.correct : status.text}</span>
+                      </span>
                     </td>
                   </tr>
                 );
@@ -321,7 +326,7 @@ export function WasteStation({ onGoToHandover }: { onGoToHandover: () => void })
                         placeholder={CLOSE_SCENE.wasteQuestion.nextPlaceholder}
                         className="text-xs min-h-[72px] bg-white"
                       />
-                      <p className="text-[11px] leading-4 text-zinc-500">{CLOSE_SCENE.wasteQuestion.savedNote}</p>
+                      <p className="text-xs leading-4 text-zinc-500">{CLOSE_SCENE.wasteQuestion.savedNote}</p>
                     </div>
                   )}
                 </fieldset>

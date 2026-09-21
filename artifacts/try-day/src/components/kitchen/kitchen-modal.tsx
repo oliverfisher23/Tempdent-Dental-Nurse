@@ -76,13 +76,13 @@ export function KitchenModal({ isOpen, onClose, title, eyebrow, children, classN
           >
             <div className="flex items-start justify-between gap-4 border-b border-border px-5 py-4 sm:px-6">
               <div className="min-w-0">
-                {eyebrow && <p className="text-[11px] font-bold uppercase tracking-widest text-primary">{eyebrow}</p>}
+                {eyebrow && <p className="text-xs font-bold uppercase tracking-widest text-primary">{eyebrow}</p>}
                 <h2 id={headingId} className="text-lg font-bold leading-snug sm:text-xl">{title}</h2>
               </div>
               <button
                 type="button"
                 onClick={() => { kitchenAudio.play('tap'); onClose(); }}
-                className="-mr-1 -mt-1 shrink-0 rounded-full p-2 text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary outline-none"
+                className="-mr-2 -mt-2 flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-foreground/70 transition-colors hover:bg-muted hover:text-foreground focus-visible:ring-2 focus-visible:ring-primary outline-none"
                 aria-label={closeLabel}
               >
                 <X className="h-5 w-5" aria-hidden="true" />

@@ -10,7 +10,7 @@ export const CHILL_LABELS = {
   // Objects in the room
   brattPan: 'Portion the beef',
   brattPanHint: 'From the bratt pan (the big tilting pan) into GN trays',
-  blastChiller: 'Open the blast chiller',
+  blastChiller: 'Load and run the blast chiller',
   blastChillerHint: 'The cabinet that takes hot food down fast',
   record: 'Fill in the chill record',
   recordHint: 'On the clipboard by the chiller',
@@ -36,7 +36,7 @@ export const CHILL_LABELS = {
   toTheChiller: 'Take the trays to the chiller',
   portionOpener: {
     what: 'Portion your half of the pan into GN trays to the depth on the prep sheet.',
-    how: 'Tap a tray to choose it, then press and hold Add beef to pour, or use the 0.5 kg buttons.',
+    how: 'Choose a tray, then press and hold Add beef to pour, or use the 0.5 kg buttons.',
     done: 'The pan is empty and every tray is at the depth on the sheet.',
     noun: 'trays at depth',
   },
@@ -138,7 +138,7 @@ export const CHILL_LABELS = {
   opener: {
     load: {
       what: 'Load the trays into the blast chiller.',
-      how: 'Drag each tray from the trolley onto a shelf, or tap a tray and then tap a shelf.',
+      how: 'Drag each tray from the trolley onto a shelf, or choose a tray and then choose a shelf.',
       done: 'Every tray is on its own shelf with an empty shelf between.',
       noun: 'trays loaded',
     },
@@ -160,12 +160,12 @@ export const CHILL_LABELS = {
     },
     decision: {
       what: 'Decide what to do with the batch.',
-      how: 'Read Terence’s question, then tap one answer.',
+      how: 'Read Terence’s question, then choose one answer.',
       done: 'Terence confirms that your decision fits the recorded case.',
     },
     ruler: {
       what: 'Compare the tray depths.',
-      how: 'Drag the ruler onto a tray, or tap the ruler and then tap the tray.',
+      how: 'Drag the ruler onto a tray, or choose the ruler and then choose the tray.',
       done: 'Each tray you measure shows its depth.',
     },
     sign: {
@@ -175,7 +175,7 @@ export const CHILL_LABELS = {
     },
     record: {
       what: 'Read and correct the chill record.',
-      how: 'Tap a reading box to type a correction, then review every row.',
+      how: 'Choose a reading box to type a correction, then review every row.',
       done: 'Every reached reading matches the thermometer and the record is ready to sign.',
     },
   },

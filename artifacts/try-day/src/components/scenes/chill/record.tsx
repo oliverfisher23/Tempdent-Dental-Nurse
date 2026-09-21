@@ -55,7 +55,7 @@ export function ChillRecord({
             tone="light"
             className="mb-6"
           />
-          <h3 className="text-center font-sans text-2xl font-bold text-zinc-900 sm:text-3xl">{L.recordTitle}</h3>
+          <h3 data-dialog-title className="text-center font-sans text-2xl font-bold text-zinc-900 sm:text-3xl">{L.recordTitle}</h3>
           <p className="mb-6 border-b-2 border-zinc-200 pb-4 text-center font-mono text-xs text-zinc-500 sm:text-sm">{L.recordBatch}</p>
 
           <table className="kitchen-table mb-6 block w-full sm:table">
@@ -82,7 +82,7 @@ export function ChillRecord({
                   <tr key={interval} className={cn('mb-3 block rounded-lg border border-zinc-200 p-3 transition-opacity duration-200 sm:mb-0 sm:table-row sm:rounded-none sm:border-x-0 sm:border-t-0 sm:p-0', !reached && 'opacity-40')}>
                     <td className="flex items-center justify-between py-1 font-mono text-lg font-bold text-zinc-800 sm:table-cell sm:py-2.5">
                       <span className="font-sans text-xs font-bold text-zinc-500 sm:hidden">{L.columns.elapsed}</span>
-                      {interval} <span className="text-sm text-zinc-400">{L.min}</span>
+                      {interval} <span className="text-sm text-zinc-600">{L.min}</span>
                     </td>
                     <td className="flex items-center justify-between py-1 text-lg text-zinc-600 sm:table-cell sm:py-2.5 sm:pr-4" style={{ fontFamily: 'cursive' }}>
                       <span className="font-sans text-xs font-bold text-zinc-500 sm:hidden">{L.columns.time}</span>
@@ -143,7 +143,7 @@ export function ChillRecord({
             </div>
             <div className="text-right">
               <div className="mb-3 text-xs font-bold uppercase tracking-widest text-zinc-500">{L.execChef}</div>
-              <div className="inline-block min-w-[200px] border-b-2 border-zinc-200 px-6 py-3 text-sm italic text-zinc-400">{L.elenaSigns}</div>
+              <div className="inline-block min-w-[200px] border-b-2 border-zinc-200 px-6 py-3 text-sm italic text-zinc-600">{L.elenaSigns}</div>
             </div>
           </div>
         </div>
