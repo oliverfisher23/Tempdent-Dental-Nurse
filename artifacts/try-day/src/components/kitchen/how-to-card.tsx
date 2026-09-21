@@ -80,12 +80,12 @@ export function HowToButton({ pattern, step, tone = 'light', className }: HowToB
         data-testid="how-to-button"
         onClick={() => { kitchenAudio.play('tap'); setOpen(true); }}
         className={cn(
-          'inline-flex min-h-9 items-center gap-1.5 rounded-md px-2 text-sm font-semibold underline decoration-current/40 underline-offset-4 outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary',
-          tone === 'dark' ? 'text-white/85 hover:text-white' : 'text-foreground/80 hover:text-foreground',
+          'inline-flex min-h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-bold outline-none transition-colors focus-visible:ring-2 focus-visible:ring-primary',
+          tone === 'dark' ? 'text-white hover:bg-white/10' : 'text-foreground hover:bg-black/5',
           className,
         )}
       >
-        <CircleHelp className="h-4 w-4 shrink-0" aria-hidden="true" />
+        <CircleHelp className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
         {PATTERN_COPY.howLink}
       </button>
       <HowToCard pattern={pattern} isOpen={open} onClose={() => setOpen(false)} step={step} />

@@ -75,23 +75,27 @@ interface BriefingVideoButtonProps {
   tone?: 'light' | 'dark';
   label?: string;
   size?: 'sm' | 'default';
+  /** Outline on its own; ghost when it sits in a row of quiet help links. */
+  variant?: 'outline' | 'ghost';
   className?: string;
 }
 
 /** A button that opens the briefing film for one task or for the whole day. */
-export function BriefingVideoButton({ videoId, tone = 'light', label = COPY.open, size = 'sm', className }: BriefingVideoButtonProps) {
+export function BriefingVideoButton({ videoId, tone = 'light', label = COPY.open, size = 'sm', variant = 'outline', className }: BriefingVideoButtonProps) {
   const [open, setOpen] = useState(false);
+  const dark = tone === 'dark';
   return (
     <>
       <Button
         type="button"
-        variant="outline"
+        variant={variant}
         size={size}
         data-testid="briefing-video-button"
         onClick={() => { kitchenAudio.play('tap'); setOpen(true); }}
         className={cn(
           'gap-2 font-bold',
-          tone === 'dark' && 'border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white',
+          variant === 'outline' && dark && 'border-white/30 bg-white/10 text-white hover:bg-white/20 hover:text-white',
+          variant === 'ghost' && (dark ? 'text-white hover:bg-white/10 hover:text-white' : 'text-foreground hover:bg-black/5'),
           className,
         )}
       >
