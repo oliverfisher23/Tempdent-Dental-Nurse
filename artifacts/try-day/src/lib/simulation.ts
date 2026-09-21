@@ -208,6 +208,17 @@ export interface NotepadEntry {
   ref?: Record<string, string | number>;
 }
 
+/**
+ * Where the learner was in a task when the page was last saved, so a reload puts
+ * them back at their work instead of at the task's first room.
+ */
+export interface TaskPosition {
+  /** The room they were standing in (a PlaceId from the kitchen content). */
+  place: string;
+  /** The step-guide action of the workspace that was open, or null when they were in the room itself. */
+  workspace: string | null;
+}
+
 export interface Progress {
   version: 1;
   studentName: string;
@@ -222,6 +233,8 @@ export interface Progress {
   clock: string;
   /** The student's own notepad, kept all day. */
   notepad: NotepadEntry[];
+  /** Last known room and open workspace per task; navigation only, never assessed. */
+  positions: Partial<Record<TaskId, TaskPosition>>;
 }
 
 // ---------------------------------------------------------------------------
@@ -302,6 +315,7 @@ export function initialProgress(): Progress {
     completedAt: null,
     clock: getTask(TASK_ORDER[0]).time,
     notepad: [],
+    positions: {},
   };
 }
 
@@ -777,6 +791,7 @@ export function loadProgress(testMode = isTestMode()): Progress {
               TASK_ORDER.includes(e.taskId as TaskId),
           ) as NotepadEntry[])
         : [],
+      positions: loadPositions(parsed.positions),
     };
   } catch {
     return initialProgress();
@@ -785,6 +800,18 @@ export function loadProgress(testMode = isTestMode()): Progress {
 
 function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === 'object' && v !== null && !Array.isArray(v);
+}
+
+/** Saved positions are advisory: anything malformed is dropped and the task opens at its start room. */
+function loadPositions(stored: unknown): Progress['positions'] {
+  const positions: Progress['positions'] = {};
+  if (!isRecord(stored)) return positions;
+  for (const id of TASK_ORDER) {
+    const value = stored[id];
+    if (!isRecord(value) || typeof value.place !== 'string') continue;
+    positions[id] = { place: value.place, workspace: typeof value.workspace === 'string' ? value.workspace : null };
+  }
+  return positions;
 }
 
 /** Merge a stored task state over its initial shape. Nested records (rows, lines, guests...) are merged per key. */

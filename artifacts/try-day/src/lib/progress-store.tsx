@@ -34,6 +34,7 @@ import {
   type Evaluation,
   type NotepadEntry,
   type Progress,
+  type TaskPosition,
   type TaskStates,
 } from '@/lib/simulation';
 import { reconcileDeliveryUpdate } from '@/lib/delivery-workflow';
@@ -45,6 +46,8 @@ interface ProgressContextValue {
   /** The first task that has not been completed, or null once the day is done. */
   currentTaskId: TaskId | null;
   dayComplete: boolean;
+  /** Remember where the learner is in a task (room and open workspace) so a reload returns them there. */
+  setPosition: (id: TaskId, position: TaskPosition | null) => void;
   /** True when this task may be opened (all earlier tasks are complete). */
   isUnlocked: (id: TaskId) => boolean;
   isCompleted: (id: TaskId) => boolean;
@@ -131,6 +134,20 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     [],
   );
 
+  const setPosition = useCallback((id: TaskId, position: TaskPosition | null) => {
+    setProgress((prev) => {
+      const current = prev.positions[id];
+      const same = position
+        ? current?.place === position.place && current?.workspace === position.workspace
+        : !current;
+      if (same) return prev;
+      const positions = { ...prev.positions };
+      if (position) positions[id] = position;
+      else delete positions[id];
+      return { ...prev, positions };
+    });
+  }, []);
+
   const completeTask = useCallback(
     (id: TaskId): boolean => {
       if (!TASK_ORDER.slice(0, TASK_ORDER.indexOf(id)).every((task) => progress.completed.includes(task))) return false;
@@ -211,6 +228,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       isCompleted,
       startDay,
       updateTask,
+      setPosition,
       completeTask,
       reset,
       advanceClock,
@@ -219,7 +237,7 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       jot,
       unjot,
     }),
-    [progress, evaluations, currentTaskId, isUnlocked, isCompleted, startDay, updateTask, completeTask, reset, advanceClock, setClock, jumpToTestTarget, jot, unjot],
+    [progress, evaluations, currentTaskId, isUnlocked, isCompleted, startDay, updateTask, setPosition, completeTask, reset, advanceClock, setClock, jumpToTestTarget, jot, unjot],
   );
 
   return <ProgressContext.Provider value={value}>{children}</ProgressContext.Provider>;

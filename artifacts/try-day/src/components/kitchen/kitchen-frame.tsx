@@ -127,8 +127,9 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
          setClock(task.time);
        }
     }
-    kitchenAudio.setPlace(TASK_ROUTES[id].start);
-  }, [unlocked, named, id, currentTaskId, setLocation, finished, task.time, progress.clock, progress.tasks, setClock]);
+    // The ambient bed follows the room the learner is actually in (a reload may restore a later room).
+    kitchenAudio.setPlace(place);
+  }, [unlocked, named, id, currentTaskId, setLocation, finished, task.time, progress.clock, progress.tasks, setClock, place]);
 
   useEffect(() => {
     if (!jobCardOpen) return;
@@ -171,21 +172,27 @@ function KitchenFrameInner({ id, scenes, dialogue, guide, choices, focusedWorksp
     <div className="fixed inset-0 flex flex-col bg-black text-white overflow-hidden">
       <div ref={navigationRef} className="relative z-40 shrink-0">
       {/* HUD - Top Bar (Always z-40 so it floats above scenes but below dialogs) */}
-      <header className="relative z-40 bg-foreground text-primary-foreground shadow-md shrink-0 border-b border-border/20 h-14">
-        <div className="px-4 md:px-6 h-full flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
+      <header className="relative z-40 bg-foreground text-primary-foreground shadow-md shrink-0 border-b border-border/20 min-h-14 sm:h-14">
+        <div className="px-4 md:px-6 py-2 sm:py-0 sm:h-full flex flex-wrap sm:flex-nowrap items-center justify-between gap-x-2 gap-y-1 sm:gap-4 overflow-hidden">
           <div className="flex items-center gap-2 sm:gap-4 min-w-0">
             <Link href="/" aria-label="Back to the start" className="shrink-0 block bg-black px-2 py-1 rounded-sm border border-white/20 transition-colors hover:bg-white/10">
               <img src={logoImg} alt="art'otel" className="h-4 sm:h-5 object-contain" />
             </Link>
             <div className="h-5 w-px bg-border/20 hidden sm:block shrink-0" />
-            <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-4 text-xs font-medium min-w-0">
-            <div className="flex items-center gap-1.5 text-white font-bold whitespace-nowrap">
+            <div className="hidden sm:flex sm:items-center sm:gap-4 text-xs font-medium min-w-0">
+              <div className="flex items-center gap-1.5 text-white font-bold whitespace-nowrap">
                 Task {stepNumber} of {TASK_ORDER.length}
               </div>
               <span className="font-bold truncate">{task.title}</span>
             </div>
           </div>
-          
+
+          {/* Phones: the title takes its own line under the tools, so it is never squeezed to a few letters. */}
+          <div className="order-last basis-full sm:hidden flex items-baseline gap-2 text-xs font-medium min-w-0">
+            <span className="text-white font-bold whitespace-nowrap">Task {stepNumber} of {TASK_ORDER.length}</span>
+            <span className="font-bold truncate">{task.title}</span>
+          </div>
+
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {/* The three tools live up here so the room itself has nothing floating over it */}
             {!finished && (

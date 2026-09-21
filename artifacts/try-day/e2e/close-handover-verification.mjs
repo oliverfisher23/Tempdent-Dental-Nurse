@@ -113,10 +113,9 @@ export async function verifyCloseHandover(page, { base, phone = false, snap = as
   await answerSalmon();
   await page.getByTestId('exchange-larder2').waitFor();
 
-  // Refresh mid-exchange: answers kept, resumes on the next open question.
+  // Refresh mid-exchange: the clipboard re-opens by itself, answers kept, resumes on the next open question.
   await page.reload({ waitUntil: 'networkidle' });
   await hideDesigner();
-  await page.getByRole('button', { name: 'Write the handover' }).first().click();
   await page.getByTestId('exchange-larder2').waitFor();
   assert.ok(await page.getByText('Salmon: 4 kg short (8 of 12 kg came in)').count(), 'resolved salmon read-back kept after refresh');
   await page.getByRole('button', { name: /It read 8.6°C at 06:50, above the/ }).click();

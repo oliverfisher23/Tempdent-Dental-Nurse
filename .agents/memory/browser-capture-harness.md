@@ -33,3 +33,5 @@ description: Lessons from driving the try-day app headlessly (CDP/Playwright) fo
   events still work in a touch context but only prove the layout, not the gesture.
 - The job card opens on a task's first visit only; a resumed or reloaded session lands straight in the scene,
   so treat "Close the job card" as optional in any harness.
+
+**Keyboard mode of the learner run:** INPUT=keyboard patches Playwright's Locator click/check to focus + Enter/Space (Space for radio/checkbox/switch), holds Space for hold-to-read, and falls back to the mouse with a major finding. It checks focusability and key activation, not tab order. Wrong-path checks look for live-region feedback (`[aria-live]`, alert, status) and take the last match: the delivery row has an earlier live region for the count result.

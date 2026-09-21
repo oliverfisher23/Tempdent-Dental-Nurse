@@ -8,6 +8,7 @@ All commands run from the workspace root.
 pnpm --filter @workspace/try-day run test:learner-run
 pnpm --filter @workspace/try-day run test:learner-run -- --from=task3   # resume a stage
 VIEWPORT=phone pnpm --filter @workspace/try-day run test:learner-run   # 390x844, touch
+INPUT=keyboard pnpm --filter @workspace/try-day run test:learner-run   # every control by focus + Enter/Space
 ```
 
 Drives the whole experience the way a learner would: welcome, briefing, name,
@@ -21,7 +22,19 @@ requests, timings and any findings. The command exits non-zero when a stage
 fails, on any page or console error, on any failed request other than a media
 fetch the app itself aborted, or on a "major" finding; "minor" and "info"
 findings are QA observations only. The phone run uses touch input for the
-hold-to-read gestures.
+hold-to-read gestures. The keyboard run operates every control by focusing it
+and pressing Enter or Space (Space held for the hold-to-read); a control that
+cannot take focus or ignores the key is a "major" finding. At a few points the
+run tries a wrong answer first (accepting the cream that must be refused,
+reviewing with Terence before any row is reviewed, a wrong waste weight) and
+records the kitchen's feedback as "info". Reloads mid-Task 2, 3 and 4 check
+that the learner is put back at the workspace they were in.
+
+## Before a merge
+
+`typecheck`, `unit-tests`, `fridge-round` and `learner-run` are registered as
+validation checks in the workspace, so they can be run together before a task
+is merged. `learner-run` needs the web workflow to be up; the others do not.
 
 ## Complete fridge round
 

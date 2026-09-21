@@ -83,20 +83,33 @@ export const MAP_ESTABLISH_MS = 2200;
 const KitchenContext = createContext<KitchenContextValue | null>(null);
 
 export function KitchenProvider({ taskId, frozen = false, children }: { taskId: TaskId; frozen?: boolean; children: ReactNode }) {
-  const { advanceClock } = useProgress();
+  const { advanceClock, progress, setPosition } = useProgress();
   const routeConfig = TASK_ROUTES[taskId];
+  // A reload puts the learner back in the room they were in, with the same workspace open.
+  // Task 1 is the exception: its round resumes from the saved rows by itself, and re-sending
+  // its action would open a fridge door the learner has not opened.
+  const [saved] = useState(() => {
+    const position = progress.positions[taskId];
+    const place = position && routeConfig.places.includes(position.place as PlaceId) ? (position.place as PlaceId) : routeConfig.start;
+    const restoresWorkspace = taskId !== 'take-the-handover';
+    return { place, workspace: restoresWorkspace && position?.place === place ? position.workspace : null };
+  });
 
   const reduceMotion = useReducedMotion() ?? false;
   // A signed-off task and a reduced-motion student both open straight in the room.
   // The map remains available, but getting started never requires sitting through it.
   const showEstablishingShot = false;
 
-  const [place, setPlace] = useState<PlaceId>(routeConfig.start);
+  const [place, setPlace] = useState<PlaceId>(saved.place);
   const [mapPhase, setMapPhase] = useState<MapPhase>(showEstablishingShot ? 'open' : 'closed');
   const [establishing, setEstablishing] = useState(showEstablishingShot);
   const [walk, setWalk] = useState<Walk | null>(null);
   const [notepadOpen, setNotepadOpen] = useState(false);
-  const [pendingAction, setPendingAction] = useState<{ place: PlaceId; action: string } | null>(null);
+  // The saved workspace is re-opened the same way the step guide opens one: the scene
+  // picks the action up once the room is on screen (see useKitchenAction).
+  const [pendingAction, setPendingAction] = useState<{ place: PlaceId; action: string } | null>(
+    saved.workspace ? { place: saved.place, action: saved.workspace } : null,
+  );
 
   // Auto-clear pending action if it doesn't get picked up by the destination
   useEffect(() => {
@@ -127,8 +140,12 @@ export function KitchenProvider({ taskId, frozen = false, children }: { taskId: 
   }, []);
   useEffect(() => () => { timers.current.forEach(clearTimeout); }, []);
 
+  // Reset to the start place if the task changes under the provider (it should normally
+  // unmount instead). Not on mount: that would undo a restored position.
+  const mountedFor = useRef(taskId);
   useEffect(() => {
-    // Reset to start place if task changes (should normally unmount anyway)
+    if (mountedFor.current === taskId) return;
+    mountedFor.current = taskId;
     setPlace(routeConfig.start);
   }, [taskId, routeConfig.start]);
 
@@ -222,6 +239,26 @@ export function KitchenProvider({ taskId, frozen = false, children }: { taskId: 
       return open ? [...prev, action] : prev.filter((a) => a !== action);
     });
   }, []);
+
+  // Remember the room and the open workspace once the learner has actually arrived,
+  // never mid-walk. After a reload the saved workspace is kept until the scene reports
+  // it open again, so an early save cannot replace it with "nothing open"; if the scene
+  // never re-opens it (or the learner moves on), what is actually open is saved instead.
+  const [restoringAction, setRestoringAction] = useState(saved.workspace);
+  useEffect(() => {
+    if (!restoringAction) return;
+    const timer = setTimeout(() => setRestoringAction(null), 5000);
+    return () => clearTimeout(timer);
+  }, [restoringAction]);
+  useEffect(() => {
+    if (mapPhase !== 'closed' || establishing) return;
+    const workspace = openWorkspaces[openWorkspaces.length - 1] ?? null;
+    if (restoringAction) {
+      if (place === saved.place && workspace !== restoringAction) return;
+      setRestoringAction(null);
+    }
+    setPosition(taskId, { place, workspace });
+  }, [taskId, place, mapPhase, establishing, openWorkspaces, restoringAction, saved.place, setPosition]);
 
   const [present, setPresent] = useState<Presence[]>([]);
   const registerPresent = useCallback((presence: Presence) => {

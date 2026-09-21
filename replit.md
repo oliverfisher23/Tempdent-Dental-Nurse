@@ -10,6 +10,8 @@ This is an LMS-embedded learner experience, not a public marketing site. Keep th
 - `pnpm --filter @workspace/try-day run typecheck` — typecheck the web app only
 - `pnpm --filter @workspace/try-day run test:delivery:browser` — delivery-only desktop/phone regression against the running web workflow; isolated designer session and iframe host checks. See `artifacts/try-day/docs/delivery-browser-regression.md`.
 - `pnpm --filter @workspace/try-day run test:fridge-round` — the complete Task 1 fridge round in a real browser, from the overnight log through all four appliances on the learner’s round; starts its own Vite server on port 4174. Separate from the fast `tests/*.test.ts` regression. See `artifacts/try-day/e2e/README.md`.
+- `pnpm --filter @workspace/try-day run test:learner-run` — the whole experience as a learner (welcome to return visit) against the running web workflow; `VIEWPORT=phone` for 390x844 touch, `INPUT=keyboard` for focus + Enter/Space only; tries wrong answers first at a few points and reloads mid-task. Exits non-zero on page/console errors or a major finding; `qa-log.json` under `artifacts/try-day/test-results/`. See `artifacts/try-day/e2e/README.md`.
+- Before a merge, run the registered validation checks `typecheck`, `unit-tests`, `fridge-round` and `learner-run` (the last needs the web workflow up).
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-server run dev` — the scaffold API server (not used by the try-day app in v1)

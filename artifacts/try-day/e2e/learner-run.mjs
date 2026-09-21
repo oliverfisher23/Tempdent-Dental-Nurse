@@ -5,6 +5,11 @@
 //   BASE=http://127.0.0.1:4174 pnpm --filter @workspace/try-day run test:learner-run
 //   pnpm --filter @workspace/try-day run test:learner-run -- --from=task3   # resume from a saved stage state
 //   VIEWPORT=phone pnpm --filter @workspace/try-day run test:learner-run   # 390x844, touch input for the hold gestures
+//   INPUT=keyboard pnpm --filter @workspace/try-day run test:learner-run   # every control operated by focus + Enter/Space
+//
+// Wrong answers are tried first at a few points (a wrong acceptance, an early
+// review, a wrong weight) to confirm the kitchen does not accept them; the
+// feedback text is recorded as an "info" finding so the wording can be read.
 //
 // Runs through tsx because it shares e2e/delivery-data.ts with the delivery suite.
 // Saves browser state after every successful stage to test-results/learner-run/state-<stage>.json,
@@ -23,7 +28,8 @@ import { deliveries, fishFindings } from './delivery-data.ts';
 const BASE = (process.env.BASE ?? 'http://localhost:80').replace(/\/$/, '');
 const FROM = (process.argv.find((a) => a.startsWith('--from=')) ?? '--from=welcome').slice(7);
 const PHONE = process.env.VIEWPORT === 'phone';
-const OUT = path.resolve(import.meta.dirname, `../test-results/learner-run${PHONE ? '-phone' : ''}`);
+const KEYBOARD = process.env.INPUT === 'keyboard';
+const OUT = path.resolve(import.meta.dirname, `../test-results/learner-run${PHONE ? '-phone' : ''}${KEYBOARD ? '-keyboard' : ''}`);
 const STAGES = ['welcome', 'task1', 'task2', 'task3', 'task4', 'task5', 'close'];
 const NAME = 'QA Learner';
 mkdirSync(OUT, { recursive: true });
@@ -54,6 +60,50 @@ page.on('console', (m) => {
 page.on('pageerror', (e) => log.pageErrors.push(e.message));
 page.on('response', (r) => { if (r.status() >= 400) log.failedRequests.push(`${r.status()} ${r.url()}`); });
 page.on('requestfailed', (r) => { if (!/favicon/.test(r.url())) log.failedRequests.push(`FAILED ${r.failure()?.errorText} ${r.url()}`); });
+
+if (KEYBOARD) {
+  // Every click or check becomes focus + key press. A control that cannot take focus,
+  // or does nothing on Enter/Space, is a keyboard-accessibility bug: it is recorded
+  // as a major finding and the mouse is used so the rest of the run still runs.
+  const proto = Object.getPrototypeOf(page.locator('body'));
+  const mouseClick = proto.click;
+  const keyFor = (locator) => locator.evaluate((el) => {
+    const role = el.getAttribute('role');
+    const type = el instanceof HTMLInputElement ? el.type : '';
+    return ['radio', 'checkbox', 'switch'].includes(role ?? type) ? 'Space' : 'Enter';
+  });
+  const hasFocus = (locator) => locator.evaluate((el) => el === document.activeElement || el.contains(document.activeElement)).catch(() => false);
+  const focusOn = async (locator) => {
+    // The kitchen moves focus itself right after some choices (a selected tub, a returned
+    // sheet), which can land between our focus() and the check; a real learner tabs after
+    // that move, so focus is tried a few times before the control is called unreachable.
+    for (let attempt = 0; attempt < 4; attempt++) {
+      if (await locator.focus().then(() => true, () => false) && await hasFocus(locator)) return true;
+      await locator.page().waitForTimeout(150);
+    }
+    return false;
+  };
+  const describe = async (locator) => (await locator.evaluate((el) => el.getAttribute('aria-label') || el.textContent?.trim().slice(0, 60) || el.id || el.tagName).catch(() => String(locator)));
+  // This checks that each control can take focus and responds to its key. It does not
+  // check tab order; typing (fill) and native selects are keyboard input already.
+  proto.click = async function (options) {
+    if (await focusOn(this)) {
+      await this.page().keyboard.press(await keyFor(this));
+      return;
+    }
+    finding('major', `Keyboard: "${await describe(this)}" cannot take focus; used the mouse.`);
+    await mouseClick.call(this, options);
+  };
+  proto.check = async function (options) {
+    if (await this.isChecked().catch(() => false)) return;
+    if (await focusOn(this)) {
+      await this.page().keyboard.press('Space');
+      if (await this.isChecked().catch(() => false)) return;
+      finding('major', `Keyboard: Space does not tick "${await describe(this)}"; used the mouse.`);
+    } else finding('major', `Keyboard: "${await describe(this)}" cannot take focus; used the mouse.`);
+    await mouseClick.call(this, options);
+  };
+}
 
 const snap = async (name) => {
   shot += 1;
@@ -97,15 +147,33 @@ const holdUntilSettled = async (button) => {
   const box = await button.boundingBox();
   const x = box.x + box.width / 2;
   const y = box.y + box.height / 2;
+  const settled = page.locator('[data-state="settled"]').first();
+  if (KEYBOARD) {
+    // Holding Space on the focused button must work like holding the mouse down.
+    await button.focus();
+    await page.keyboard.down('Space');
+    const ok = await settled.waitFor({ timeout: 15_000 }).then(() => true, () => false);
+    await page.keyboard.up('Space');
+    if (ok) return;
+    finding('major', 'Keyboard: holding Space on the hold-to-read button never settles a reading; used the mouse.');
+  }
   // A learner on a phone presses and holds with a finger; on a desktop, with the mouse.
   if (cdp) await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
   else { await page.mouse.move(x, y); await page.mouse.down(); }
   try {
-    await page.locator('[data-state="settled"]').first().waitFor({ timeout: 15_000 });
+    await settled.waitFor({ timeout: 15_000 });
   } finally {
     if (cdp) await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
     else await page.mouse.up();
   }
+};
+/** Try a wrong answer: the success text must not appear; whatever feedback shows is recorded. */
+const expectRejected = async (scope, successText, label) => {
+  const accepted = await scope.getByText(successText).first().isVisible({ timeout: 1500 }).catch(() => false);
+  if (accepted) { finding('major', `${label}: the kitchen accepted a wrong answer ("${successText}" appeared).`); return; }
+  const feedback = (await scope.locator('[role="alert"], [role="status"], [aria-live]').filter({ hasText: /\S/ }).last().innerText({ timeout: 1500 }).catch(() => '')).trim().replace(/\s+/g, ' ');
+  if (!feedback) { finding('minor', `${label}: not accepted, but no feedback was announced to say why.`); return; }
+  finding('info', `${label}: not accepted. Feedback: "${feedback.slice(0, 160)}"`);
 };
 
 let failure = null;
@@ -201,9 +269,16 @@ try {
         }
         await r.locator('#fish-reason-condition-and-temperature').click();
       }
+      const matchText = 'The checks and decisions for this item match your evidence.';
+      if (line.acceptance === 'refuse') {
+        // Wrong path first: accepting a delivery that must be refused.
+        await r.getByRole('button', { name: `Accept ${line.amount} ${line.unit}`, exact: true }).click();
+        await r.getByRole('button', { name: 'Check your decisions', exact: true }).click();
+        await expectRejected(r, matchText, `Task 2 accepting the ${lowerFirst(line.item)}`);
+      }
       await r.getByRole('button', { name: line.acceptance === 'refuse' ? 'Refuse' : `Accept ${line.amount} ${line.unit}`, exact: true }).click();
       await r.getByRole('button', { name: 'Check your decisions', exact: true }).click();
-      await r.getByText('The checks and decisions for this item match your evidence.').waitFor();
+      await r.getByText(matchText).waitFor();
       if (line.id === 'salmon') await snap('task2-salmon-row');
     }
     await page.getByText('6/6 quantities checked', { exact: false }).waitFor();
@@ -336,15 +411,30 @@ try {
     }
     const chartHotspot = page.getByRole('button', { name: /^Allergen chart/ });
     const chart = page.getByTestId('chart-workspace');
-    if (await chartHotspot.isVisible({ timeout: 1500 }).catch(() => false)) {
-      await chartHotspot.click();
-    } else {
-      // Move to the events kitchen with the step guide's own action ("Open the chart").
-      await page.getByTestId('guide-action').click();
-      await chartHotspot.or(chart).first().waitFor();
-      if (await chartHotspot.isVisible().catch(() => false)) await chartHotspot.click();
+    const openChart = async () => {
+      // Closing the function sheet can start the walk to the events kitchen by itself, so the
+      // hotspot may appear while the room is still settling; a click that lands mid-arrival is retried.
+      for (let attempt = 0; attempt < 3 && !(await chart.isVisible().catch(() => false)); attempt++) {
+        if (await chartHotspot.isVisible({ timeout: 2500 }).catch(() => false)) {
+          await chartHotspot.click({ timeout: 5000 }).catch(() => {});
+        } else if (await page.getByTestId('guide-action').isVisible().catch(() => false)) {
+          // Move to the events kitchen with the step guide's own action ("Open the chart").
+          await page.getByTestId('guide-action').click();
+        }
+        await chart.or(chartHotspot).first().waitFor({ timeout: 5000 }).catch(() => {});
+      }
+      await chart.waitFor();
+    };
+    await openChart();
+    // Wrong path first: reviewing with Terence before any row is reviewed must not move on.
+    const earlyReview = page.getByTestId('review-with-terence');
+    if ((await earlyReview.count()) === 0) finding('info', 'Task 4 early review: the review button is not offered until the rows are reviewed.');
+    else if (await earlyReview.isDisabled()) finding('info', 'Task 4 early review: the review button stays disabled until the rows are reviewed.');
+    else {
+      await earlyReview.click();
+      if (await page.getByTestId('next-decisions').isVisible({ timeout: 1500 }).catch(() => false)) finding('major', 'Task 4 early review: the chart moved on to the guest decisions with no row reviewed.');
+      else finding('info', 'Task 4 early review: not accepted with no row reviewed.');
     }
-    await chart.waitFor();
     const cell = (name) => page.getByRole('checkbox', { name, exact: true });
     const chartPlan = [
       ['haddock tart', []],
@@ -353,7 +443,20 @@ try {
       ['frangipane', ['Cereals containing gluten in the frangipane', 'Eggs in the frangipane', 'Milk in the frangipane', 'Nuts (tree nuts) in the frangipane']],
       ['pear', ['Milk in the pear']],
     ];
-    for (const [dish, marks] of chartPlan) {
+    for (const [index, [dish, marks]] of chartPlan.entries()) {
+      if (index === 2) {
+        // Reload mid-chart: the reviewed rows must survive and the chart should still be open.
+        await page.reload({ waitUntil: 'domcontentloaded' });
+        await closeJobCard();
+        if (await chart.isVisible({ timeout: 4000 }).catch(() => false)) finding('info', 'After a reload mid-Task 4 the learner returns straight to the allergen chart.');
+        else { finding('minor', 'After a reload mid-Task 4 the learner has to open the allergen chart again.'); await openChart(); }
+        for (const [done] of chartPlan.slice(0, index)) {
+          const rowButton = page.getByRole('button', { name: `Selected row: ${done}`, exact: true });
+          if (await rowButton.isVisible().catch(() => false)) await rowButton.click();
+          else await page.getByRole('tab', { name: done }).click();
+          if (!(await cell(`Row reviewed: ${done}`).isChecked())) finding('major', `Task 4: the reviewed ${done} row was lost on reload.`);
+        }
+      }
       // Desktop: a row header in the matrix. Phone: a dish tab above the recipe card.
       const rowButton = page.getByRole('button', { name: `Selected row: ${dish}`, exact: true });
       if (await rowButton.isVisible().catch(() => false)) await rowButton.click();
@@ -413,6 +516,11 @@ try {
       const input = page.locator(`#waste-${id}-weight`);
       await input.waitFor();
       await page.getByText('The scales have settled').waitFor();
+      if (index === 0) {
+        // Wrong path first: a weight that is not what the scales show.
+        await input.fill('9.9');
+        await expectRejected(page, 'This matches the scales.', 'Task 5 wrong waste weight');
+      }
       await input.fill(kg);
       await page.getByText('This matches the scales.').first().waitFor();
     }
