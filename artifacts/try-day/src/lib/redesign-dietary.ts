@@ -4,7 +4,17 @@ import type {
   DietaryDecision as BaseDietaryDecision,
   DietaryCourse,
 } from './redesign-types';
-import { ADDED_GUESTS, ALLERGENS, DISHES, type AddedGuest, type AllergenId, type Dish, type Line } from '@/content/activities';
+import {
+  ADDED_GUESTS,
+  ALLERGENS,
+  DISHES,
+  TERENCE_CHART_MARKS,
+  TERENCE_CHART_ROWS,
+  type AddedGuest,
+  type AllergenId,
+  type Dish,
+  type Line,
+} from '@/content/activities';
 import { wrongChartRows } from '@/lib/simulation';
 import {
   ALLERGEN_REFERENCE,
@@ -69,6 +79,17 @@ export function allergenLabel(id: string): string {
 // ---------------------------------------------------------------------------
 
 export type RowStatus = 'not-started' | 'in-progress' | 'reviewed' | 'reviewed-question' | 'flagged';
+
+export function isTerenceChartRow(dishId: string): dishId is (typeof TERENCE_CHART_ROWS)[number] {
+  return (TERENCE_CHART_ROWS as readonly string[]).includes(dishId);
+}
+
+/** Attribution is derived from the marks, so returning a row to Terence's version restores its original label. */
+export function chartRowMatchesTerenceMarks(dishId: string, ticked: string[]): boolean {
+  if (!isTerenceChartRow(dishId)) return false;
+  const original = TERENCE_CHART_MARKS[dishId];
+  return [...ticked].sort().join(',') === [...original].sort().join(',');
+}
 
 export function rowStatus(state: { chart: Record<string, string[]>; flaggedDishes: string[]; redesign?: DietaryRedesignState }, dishId: string): RowStatus {
   if (state.flaggedDishes.includes(dishId)) return 'flagged';
@@ -236,7 +257,7 @@ export function isValidDecision(
     if (dec.category !== 'vegetarian-conflict' && !(dec.action === 'ask' && dec.category === 'information-missing')) return false;
     if (!dec.evidence.some((item) => item.toLowerCase().includes('beef'))) return false;
   } else if (dec.category !== 'no-conflict' && dec.category !== 'information-missing') {
-    // Anna's courses, Tom's dessert and Priya's main have no conflict on the cards.
+    // Tom's dessert and Priya's main have no conflict on the cards.
     return false;
   }
   return true;
@@ -536,7 +557,7 @@ export function dietaryRedesignChecklist(state: DietaryState): ChecklistItem[] {
   if (!r) return [];
   const decided = dietaryDecisionsReady(r, state.guests, state.chart);
   return [
-    { id: 'chart', label: 'Chart matches the recipe cards; all five rows reviewed', met: chartReviewed(state) },
+    { id: 'chart', label: 'Chart matches the recipe cards; Terence’s three rows checked and both dessert rows filled', met: chartReviewed(state) },
     { id: 'guests', label: 'A main and a dessert decided for each added guest, with evidence and a reason', met: decided },
     {
       id: 'board',

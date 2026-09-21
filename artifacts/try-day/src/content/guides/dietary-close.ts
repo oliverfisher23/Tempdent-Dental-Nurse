@@ -46,7 +46,7 @@ export function getDietaryGuide(state: DietaryState): StepGuide {
       title: flagged > 0 ? `Look again at ${flagged === 1 ? 'one row' : `${flagged} rows`}` : 'Check the allergen chart',
       instruction: flagged > 0
         ? 'Terence has marked the rows to revisit. Read the card beside each one, correct the marks, confirm the row and ask for another review.'
-        : 'Read each recipe card beside its row, mark all fourteen columns, confirm the row, then ask Terence to review the chart.',
+        : 'Read each recipe card beside its row. Check Terence’s three rows against their cards and mark the two dessert rows yourself, all fourteen columns. Confirm each row, then ask Terence to review the chart.',
       actionLabel: 'Open the chart',
       place: 'events',
       action: 'dietary.open-chart',

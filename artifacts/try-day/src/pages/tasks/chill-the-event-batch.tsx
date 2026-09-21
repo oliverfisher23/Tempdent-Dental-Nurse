@@ -5,7 +5,7 @@ import { BenchScene } from "@/components/scenes/chill/bench";
 import type { ChillActions } from "@/components/scenes/chill/types";
 import { TRAY_DEPTH_MM } from "@/components/scenes/chill/types";
 import { useProgress } from "@/lib/progress-store";
-import { PREP_SHEET, CHILL_RULES, PROBE_PLACEMENTS, NINETY_MINUTE_CHOICES, CHILL_LINES, type Line, type ProbePlacementId, type NinetyMinuteChoiceId, type ChillInterval } from "@/content/activities";
+import { PREP_SHEET, CHILL_RULES, PROBE_PLACEMENTS, NINETY_MINUTE_CHOICES, CHILL_LINES, nextChillMark, type Line, type ProbePlacementId, type NinetyMinuteChoiceId, type ChillInterval } from "@/content/activities";
 import { CHILL_LABELS as L } from "@/content/scenes/chill";
 import { addMinutes, traysHaveSpace } from "@/lib/simulation";
 import { kitchenAudio } from "@/lib/audio";
@@ -111,7 +111,9 @@ export default function ChillTask() {
     if (waiting) return;
     kitchenAudio.play('tap');
     const from = state.minutesElapsed;
-    const next = (from === 90 ? 120 : from + 30) as ChillInterval;
+    const next = nextChillMark(from);
+    if (next === null) return;
+    const gap = next - from;
     const arrive = () => {
       updateTask(TASK, prev => ({ ...prev, minutesElapsed: next }));
       setWaiting(false);
@@ -119,7 +121,7 @@ export default function ChillTask() {
       else if (next === 120) setDialogue(CHILL_LINES.marcusDone);
     };
     if (reduceMotion) {
-      advanceClock(30);
+      advanceClock(gap);
       arrive();
       return;
     }
@@ -127,7 +129,7 @@ export default function ChillTask() {
     let step = 0;
     waitTimer.current = window.setInterval(() => {
       step += 1;
-      advanceClock(30 / WAIT_STEPS);
+      advanceClock(gap / WAIT_STEPS);
       if (step >= WAIT_STEPS) {
         if (waitTimer.current) window.clearInterval(waitTimer.current);
         waitTimer.current = null;
@@ -185,7 +187,7 @@ export default function ChillTask() {
     : readingDue ? L.next.read(m)
     : m === 90 && state.ninetyChoice !== 'keep-logging' ? L.next.answer
     : m >= 90 && !state.measuredDepths ? L.next.measure
-    : m < 120 ? L.next.wait
+    : m < 120 ? L.next.wait((nextChillMark(m) ?? 120) - m)
     : !state.studentSigned ? L.next.sign
     : L.next.done;
 

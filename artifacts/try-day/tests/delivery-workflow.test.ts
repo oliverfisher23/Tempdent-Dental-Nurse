@@ -1,13 +1,14 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { ORDER_LINES, SHORT_LINE_ID } from '../src/content/activities';
+import { ORDER_LINES, REFUSED_LINE_ID, SHORT_LINE_ID } from '../src/content/activities';
 import {
   canSignDelivery,
   deliveryDisclosureReady,
   deliveryReportIssues,
   deliveryReportSnapshot,
   deliveryReviewIssues,
+  lineNeedsAmendment,
   reconcileDeliveryUpdate,
 } from '../src/lib/delivery-workflow';
 import {
@@ -17,6 +18,8 @@ import {
   initialProgress,
   loadProgress,
   type DeliveryState,
+  expectedAcceptance,
+  expectedAcceptedAmount,
 } from '../src/lib/simulation';
 
 function completeDelivery(): DeliveryState {
@@ -30,8 +33,8 @@ function completeDelivery(): DeliveryState {
       temperature: line.chilled ? String(line.actualC) : '',
       status: line.expectedStatus,
       comparison: line.id === SHORT_LINE_ID ? 'differs-both' : 'matches-both',
-      acceptance: 'accept',
-      acceptedAmount: String(line.arrived),
+      acceptance: expectedAcceptance(line),
+      acceptedAmount: String(expectedAcceptedAmount(line)),
     };
   }
   for (const check of Object.keys(state.fishChecks)) state.fishChecks[check as keyof typeof state.fishChecks] = true;
@@ -40,6 +43,10 @@ function completeDelivery(): DeliveryState {
   state.noteLineId = SHORT_LINE_ID;
   state.noteAmendedTo = String(shortLine.arrived);
   state.amendmentInitials = 'LD';
+  state.amendments = {
+    [SHORT_LINE_ID]: { amendedTo: String(shortLine.arrived), initials: 'LD', refused: false, temperature: '' },
+    [REFUSED_LINE_ID]: { amendedTo: '0', initials: 'LD', refused: true, temperature: '7.8' },
+  };
   state.contextRevealed = true;
   state.report = {
     productId: SHORT_LINE_ID,
@@ -101,7 +108,7 @@ test('all quantities, temperatures, comparisons and decisions are evaluated', ()
   state.lines.lemons.arrived = '59';
   assert.equal(evaluateDelivery(state).done, false);
   state.lines.lemons.arrived = '60';
-  state.lines.butter.temperature = '9';
+  state.lines.cream.temperature = '9';
   assert.equal(evaluateDelivery(state).done, false);
 });
 
@@ -149,10 +156,27 @@ test('every comparison and acceptance decision individually prevents signing', (
     assert.equal(canSignDelivery(comparison), false, `${line.id} comparison`);
 
     const acceptance = completeDelivery();
-    acceptance.lines[line.id].acceptance = 'refuse';
-    acceptance.lines[line.id].acceptedAmount = '0';
+    acceptance.lines[line.id].acceptance = line.id === REFUSED_LINE_ID ? 'accept' : 'refuse';
+    acceptance.lines[line.id].acceptedAmount = line.id === REFUSED_LINE_ID ? String(line.arrived) : '0';
     assert.equal(canSignDelivery(acceptance), false, `${line.id} acceptance`);
   }
+});
+
+test('a refusal of suitable goods and accepting the warm cream both prevent signing', () => {
+  const refusedChicken = completeDelivery();
+  refusedChicken.lines.chicken.acceptance = 'refuse';
+  refusedChicken.lines.chicken.acceptedAmount = '0';
+  assert.equal(canSignDelivery(refusedChicken), false);
+
+  const acceptedCream = completeDelivery();
+  acceptedCream.lines.cream.status = 'arrived';
+  acceptedCream.lines.cream.acceptance = 'accept';
+  acceptedCream.lines.cream.acceptedAmount = '6';
+  assert.equal(canSignDelivery(acceptedCream), false);
+  // The sheet sends the learner back to the cream; the note must not name the refusal for them.
+  const issues = deliveryReviewIssues(acceptedCream);
+  assert.ok(issues.some((issue) => issue.target === REFUSED_LINE_ID));
+  assert.equal(issues.some((issue) => issue.target === 'note' && /cream/i.test(issue.message)), false);
 });
 
 test('a sent report becomes stale when its own saved facts change', () => {
@@ -234,11 +258,11 @@ test('missing amount, accepted amount and amendment are distinct', () => {
   assert.equal(state.missingAmount, '4');
   assert.equal(state.lines.salmon.acceptedAmount, '8');
   assert.equal(canSignDelivery(state), true);
-  state.noteAmendedTo = state.missingAmount;
+  state.amendments[SHORT_LINE_ID].amendedTo = state.missingAmount;
   assert.equal(canSignDelivery(state), false);
-  const wrongLine = completeDelivery();
-  wrongLine.noteLineId = 'sea-bass';
-  assert.equal(canSignDelivery(wrongLine), false);
+  const missingCreamRefusal = completeDelivery();
+  delete missingCreamRefusal.amendments[REFUSED_LINE_ID];
+  assert.equal(canSignDelivery(missingCreamRefusal), false);
 });
 
 test('changing amendment facts clears initials and signed paperwork', () => {
@@ -246,9 +270,9 @@ test('changing amendment facts clears initials and signed paperwork', () => {
   state.signature = 'LD';
   state.signed = true;
   const changed = structuredClone(state);
-  changed.noteLineId = 'sea-bass';
+  changed.amendments[REFUSED_LINE_ID].temperature = '7.7';
   const reconciled = reconcileDeliveryUpdate(state, changed);
-  assert.equal(reconciled.amendmentInitials, '');
+  assert.equal(reconciled.amendments[REFUSED_LINE_ID].initials, '');
   assert.equal(reconciled.signature, '');
   assert.equal(reconciled.signed, false);
 });
@@ -306,10 +330,10 @@ test('the complete delivery progression invalidates and repairs dependent decisi
         temperature: line.chilled ? String(line.actualC) : '',
         status: line.expectedStatus,
         comparison: line.id === SHORT_LINE_ID ? 'differs-both' : 'matches-both',
-        acceptance: 'accept',
+        acceptance: expectedAcceptance(line),
       });
     });
-    assert.equal(state.lines[line.id].acceptedAmount, String(line.arrived));
+    assert.equal(state.lines[line.id].acceptedAmount, String(expectedAcceptedAmount(line)));
   }
   for (const check of Object.keys(state.fishChecks)) {
     update((draft) => { draft.fishChecks[check as keyof typeof draft.fishChecks] = true; });
@@ -335,6 +359,16 @@ test('the complete delivery progression invalidates and repairs dependent decisi
     draft.radioedMarcus = true;
   });
   update((draft) => { draft.amendmentInitials = 'LD'; });
+  update((draft) => {
+    draft.amendments = {
+      [SHORT_LINE_ID]: { amendedTo: '8', initials: '', refused: false, temperature: '' },
+      [REFUSED_LINE_ID]: { amendedTo: '0', initials: '', refused: true, temperature: '7.8' },
+    };
+  });
+  update((draft) => {
+    draft.amendments[SHORT_LINE_ID].initials = 'LD';
+    draft.amendments[REFUSED_LINE_ID].initials = 'LD';
+  });
   assert.equal(canSignDelivery(state), true);
   update((draft) => { draft.signature = 'LD'; draft.signed = true; });
   assert.equal(state.signed, true);
@@ -352,6 +386,7 @@ test('the complete delivery progression invalidates and repairs dependent decisi
   assert.equal(state.amendmentInitials, '');
   update((draft) => { draft.noteAmendedTo = String(shortLine.arrived); });
   update((draft) => { draft.amendmentInitials = 'LD'; });
+  update((draft) => { draft.amendments[SHORT_LINE_ID].initials = 'LD'; });
   update((draft) => {
     draft.reportSentSnapshot = deliveryReportSnapshot(draft);
     draft.radioedMarcus = true;
@@ -359,6 +394,38 @@ test('the complete delivery progression invalidates and repairs dependent decisi
   assert.equal(canSignDelivery(state), true);
   update((draft) => { draft.signature = 'LD'; draft.signed = true; });
   assert.equal(evaluateDelivery(state).done, true);
+});
+
+test('an amendment against a line the learner later corrects is dropped and cannot be signed over', () => {
+  const start = completeDelivery();
+  // Wrong decision first: the lemons are refused and amended on the note.
+  const refusedLemons = reconcileDeliveryUpdate(start, {
+    ...start,
+    lines: { ...start.lines, lemons: { ...start.lines.lemons, status: 'refused', acceptance: 'refuse', acceptedAmount: '0' } },
+  });
+  assert.equal(lineNeedsAmendment(refusedLemons, 'lemons'), true);
+  const amended = reconcileDeliveryUpdate(refusedLemons, {
+    ...refusedLemons,
+    amendments: {
+      ...refusedLemons.amendments,
+      lemons: { amendedTo: '0', initials: 'LD', refused: true, temperature: '' },
+    },
+  });
+  assert.equal(canSignDelivery(amended), false);
+
+  // A stale amendment left behind by any route is rejected on review, not just pruned.
+  const stale = { ...start, amendments: { ...start.amendments, lemons: { amendedTo: '0', initials: 'LD', refused: true, temperature: '' } } };
+  assert.equal(canSignDelivery(stale), false);
+  assert.ok(deliveryReviewIssues(stale).some((issue) => issue.target === 'note' && /Lemons/.test(issue.message)));
+
+  // Correcting the row back to accepted removes the amendment and the note signs cleanly.
+  const corrected = reconcileDeliveryUpdate(amended, {
+    ...amended,
+    lines: { ...amended.lines, lemons: { ...start.lines.lemons } },
+  });
+  assert.equal(lineNeedsAmendment(corrected, 'lemons'), false);
+  assert.equal(corrected.amendments.lemons, undefined);
+  assert.equal(canSignDelivery(corrected), true);
 });
 
 test('partial legacy saves retain old entries and receive blank new decisions', () => {

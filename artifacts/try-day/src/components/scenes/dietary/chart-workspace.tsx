@@ -3,8 +3,10 @@ import { ALLERGENS, DISHES, type Dish } from '@/content/activities';
 import { ALLERGEN_REFERENCE } from '@/content/scenes/dietary-redesign';
 import { DIETARY_UI } from '@/content/scenes/dietary-interaction';
 import {
+  chartRowMatchesTerenceMarks,
   chartHint,
   hintTier,
+  isTerenceChartRow,
   rowStatus,
   type DietaryRedesignState,
   type RowStatus,
@@ -78,10 +80,27 @@ export function ChartWorkspace({
   const setQuestion = (dishId: string, value: string) =>
     onUpdateRedesign((prev) => ({ ...prev, openQuestions: { ...prev.openQuestions, [dishId]: value } }));
 
+  const terenceAttribution = (dishId: string) => {
+    if (!isTerenceChartRow(dishId)) return null;
+    const corrected = !chartRowMatchesTerenceMarks(dishId, chart[dishId] ?? []);
+    return (
+      <span
+        data-testid={`chart-attribution-${dishId}`}
+        className={cn(
+          'inline-flex rounded border px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap',
+          corrected ? 'border-violet-700 bg-violet-950 text-violet-200' : 'border-sky-800 bg-sky-950 text-sky-200',
+        )}
+      >
+        {corrected ? copy.correctedByYou : copy.filledByTerence}
+      </span>
+    );
+  };
+
   const cellContent = (dish: Dish, allergenId: string) => {
     const marked = (chart[dish.id] ?? []).includes(allergenId);
     const status = rowStatus(stateView, dish.id);
-    if (marked) return <Check aria-hidden="true" className="h-4 w-4 text-red-300" strokeWidth={3} />;
+    const terenceMark = isTerenceChartRow(dish.id) && chartRowMatchesTerenceMarks(dish.id, chart[dish.id] ?? []);
+    if (marked) return <Check aria-hidden="true" className={cn('h-4 w-4', terenceMark ? 'text-sky-300' : 'text-red-300')} strokeWidth={3} />;
     return <Minus aria-hidden="true" className={cn('h-3.5 w-3.5', status === 'reviewed' || status === 'reviewed-question' ? 'text-gray-400' : 'text-gray-600')} />;
   };
 
@@ -166,7 +185,9 @@ export function ChartWorkspace({
             aria-label={`Row reviewed: ${dish.short}`}
             className="mt-0.5 bg-black border-gray-500"
           />
-          <span className="text-sm text-gray-200 leading-snug">{copy.reviewConfirmation}</span>
+          <span className="text-sm text-gray-200 leading-snug">
+            {isTerenceChartRow(dish.id) ? copy.terenceReviewConfirmation : copy.reviewConfirmation}
+          </span>
         </label>
 
         <div className="flex md:hidden justify-between gap-2">
@@ -284,7 +305,10 @@ export function ChartWorkspace({
                         );
                       })}
                       <td className="p-2 border-l border-gray-900">
-                        <StatusChip status={status} />
+                        <div className="flex flex-col items-start gap-1">
+                          {terenceAttribution(dish.id)}
+                          <StatusChip status={status} />
+                        </div>
                       </td>
                     </tr>
                   );
@@ -309,6 +333,7 @@ export function ChartWorkspace({
                     className={cn('shrink-0 rounded border px-2 py-1.5 text-left', selected ? 'border-red-500 bg-red-950/30' : 'border-gray-800 bg-gray-900')}
                   >
                     <span className="block text-xs font-semibold">{dish.short}</span>
+                     {terenceAttribution(dish.id)}
                     <StatusChip status={status} className="mt-1" />
                   </button>
                 );

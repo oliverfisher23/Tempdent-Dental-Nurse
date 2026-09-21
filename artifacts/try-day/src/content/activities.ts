@@ -78,12 +78,9 @@ export interface FridgeUnit {
 
 export const FRIDGE_UNITS: FridgeUnit[] = [
   { id: 'walk-in', name: 'Walk-in fridge', where: 'Back corridor', limitLabel: '5°C or below', limitC: 5, actualC: 3.4 },
-  { id: 'larder-1', name: 'Larder fridge 1', where: 'Larder section', limitLabel: '5°C or below', limitC: 5, actualC: 2.8 },
   { id: 'larder-2', name: 'Larder fridge 2', where: 'Larder section', limitLabel: '5°C or below', limitC: 5, actualC: 8.6 },
   { id: 'fish', name: 'Fish fridge', where: 'Fish section', limitLabel: '2°C or below', limitC: 2, actualC: 1.2 },
-  { id: 'dairy', name: 'Dairy fridge', where: 'Pastry corner', limitLabel: '5°C or below', limitC: 5, actualC: 4.1 },
   { id: 'freezer-1', name: 'Freezer 1', where: 'Back corridor', limitLabel: '-18°C or below', limitC: -18, actualC: -20.5 },
-  { id: 'freezer-2', name: 'Freezer 2', where: 'Back corridor', limitLabel: '-18°C or below', limitC: -18, actualC: -19.0 },
 ];
 
 /** How close a written reading has to be to the probe to count. */
@@ -105,7 +102,7 @@ export const HANDOVER_LINES = {
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',
-    text: "Have a look at the night notes first, then we'll go round together. Give the thermometer in each one a second to settle and write down what you actually see. Add the time and your initials as you go.",
+    text: "Have a look at the night notes first. Then take the walk-in, larder two, the fish fridge and freezer one; I'll do the rest. Give the thermometer in each one a second to settle and write down what you actually see. Add the time and your initials as you go.",
   } satisfies Line,
   marcusAtFlaggedUnit: {
     speaker: 'Terence',
@@ -153,18 +150,17 @@ export interface OrderLine {
 export const ORDER_LINES: OrderLine[] = [
   { id: 'salmon', trolley: 1, item: 'Salmon fillet, skin on', unit: 'kg', ordered: 12, arrived: 8, onDeliveryNote: 12, chilled: true, actualC: 2.1, limitC: 5, expectedStatus: 'short' },
   { id: 'sea-bass', trolley: 1, item: 'Sea bass, whole, gutted', unit: 'fish', ordered: 10, arrived: 10, onDeliveryNote: 10, chilled: true, actualC: 1.8, limitC: 5, expectedStatus: 'arrived' },
-  { id: 'smoked-haddock', trolley: 1, item: 'Smoked haddock, undyed', unit: 'kg', ordered: 3, arrived: 3, onDeliveryNote: 3, chilled: true, actualC: 2.4, limitC: 5, expectedStatus: 'arrived' },
   { id: 'chicken', trolley: 2, item: 'Chicken supreme, skin on', unit: 'pieces', ordered: 96, arrived: 96, onDeliveryNote: 96, chilled: true, actualC: 3.2, limitC: 5, expectedStatus: 'arrived' },
-  { id: 'cream', trolley: 2, item: 'Double cream, 2 litre', unit: 'bottles', ordered: 6, arrived: 6, onDeliveryNote: 6, chilled: true, actualC: 4.0, limitC: 5, expectedStatus: 'arrived' },
-  { id: 'butter', trolley: 2, item: 'Unsalted butter, 250 g', unit: 'blocks', ordered: 20, arrived: 20, onDeliveryNote: 20, chilled: true, actualC: 4.4, limitC: 5, expectedStatus: 'arrived' },
+  { id: 'cream', trolley: 2, item: 'Double cream, 2 litre', unit: 'bottles', ordered: 6, arrived: 6, onDeliveryNote: 6, chilled: true, actualC: 7.8, limitC: 5, expectedStatus: 'refused' },
   { id: 'spinach', trolley: 3, item: 'Baby spinach, 1 kg bag', unit: 'bags', ordered: 8, arrived: 8, onDeliveryNote: 8, chilled: false, expectedStatus: 'arrived' },
-  { id: 'shallots', trolley: 3, item: 'Banana shallots, 5 kg', unit: 'sacks', ordered: 2, arrived: 2, onDeliveryNote: 2, chilled: false, expectedStatus: 'arrived' },
   { id: 'lemons', trolley: 3, item: 'Lemons', unit: 'each', ordered: 60, arrived: 60, onDeliveryNote: 60, chilled: false, expectedStatus: 'arrived' },
-  { id: 'parsley', trolley: 3, item: 'Flat-leaf parsley', unit: 'bunches', ordered: 10, arrived: 10, onDeliveryNote: 10, chilled: false, expectedStatus: 'arrived' },
 ];
 
-/** The line the complication hangs on. */
+/** The line the shortage complication hangs on. */
 export const SHORT_LINE_ID = 'salmon';
+
+/** The chilled line that comes in over its limit and goes back on the van. */
+export const REFUSED_LINE_ID = 'cream';
 
 /** What a fresh fish looks, feels and smells like; the student checks each one. */
 export const FISH_CHECKS = [
@@ -192,6 +188,14 @@ export const DELIVERY_LINES = {
   marcusOnRadio: {
     speaker: 'Terence',
     text: "Four short on the salmon? Right. Tonight doesn't need it; tomorrow's lunch does. Mark it short, cross the twelve out on his note, write eight and sign next to it. Put it on my list and I'll ring them before ten.",
+  } satisfies Line,
+  marcusOnRefusal: {
+    speaker: 'Terence',
+    text: "Good. Send the cream back. Write refused on the driver's note with 7.8 °C, then initial it.",
+  } satisfies Line,
+  driverOnRefusal: {
+    speaker: 'Driver',
+    text: "Right. Mark it refused and I'll take it back.",
   } satisfies Line,
   marcusOnWrongStatus: {
     speaker: 'Terence',
@@ -247,17 +251,24 @@ export const CHILL_RULES = {
   /** Above this at ninety minutes a batch does not go to service at all. */
   serviceLineC: 21,
   /** Minutes at which a reading is written. */
-  intervals: [0, 30, 60, 90] as const,
+  intervals: [0, 60, 90] as const,
   extraInterval: 120 as const,
   startClock: '10:45',
 };
 
 export type ChillInterval = (typeof CHILL_RULES.intervals)[number] | 120;
 
+/** Every minute mark on the chill record, in order. */
+export const CHILL_MARKS: readonly ChillInterval[] = [...CHILL_RULES.intervals, CHILL_RULES.extraInterval];
+
+/** The next mark after the given minute, or null once the record is full. */
+export function nextChillMark(from: number): ChillInterval | null {
+  return CHILL_MARKS.find((mark) => mark > from) ?? null;
+}
+
 /** Authored 56 mm example-batch readings, not a physical prediction of learner portioning. */
 export const YOUR_TRAY_READINGS: Record<ChillInterval, number> = {
   0: 74.2,
-  30: 41.5,
   60: 19.8,
   90: 11.2,
   120: 5.9,
@@ -266,7 +277,6 @@ export const YOUR_TRAY_READINGS: Record<ChillInterval, number> = {
 /** Authored comparison readings for Terence's 48 mm example tray. */
 export const MARCUS_TRAY_READINGS: Record<ChillInterval, number> = {
   0: 73.8,
-  30: 36.1,
   60: 14.6,
   90: 6.4,
   120: 3.2,
@@ -461,8 +471,20 @@ export interface AddedGuest {
 export const ADDED_GUESTS: AddedGuest[] = [
   { id: 'priya', name: 'Priya Nair', table: 3, requirement: 'Tree-nut and peanut allergy (severe). Carries an adrenaline pen.', mustAvoid: ['nuts', 'peanuts'], vegetarian: false },
   { id: 'tom', name: 'Tom Reid', table: 6, requirement: 'Vegetarian', mustAvoid: [], vegetarian: true },
-  { id: 'anna', name: 'Anna Kowalski', table: 9, requirement: 'None stated', mustAvoid: [], vegetarian: false },
 ];
+
+/** Rows Terence filled in before the learner arrived, in the order they sit on the chart. */
+export const TERENCE_CHART_ROWS = ['tart', 'beef', 'wellington'] as const;
+
+/**
+ * Terence's marks as he left them. One is incomplete: the beef row misses the celery that
+ * the stock and the onion, carrot and celery base carry. The learner has to find it.
+ */
+export const TERENCE_CHART_MARKS: Record<(typeof TERENCE_CHART_ROWS)[number], AllergenId[]> = {
+  tart: ['gluten', 'fish', 'milk', 'eggs'],
+  beef: ['sulphites', 'milk'],
+  wellington: ['gluten', 'milk', 'eggs'],
+};
 
 export const MAIN_OPTIONS = ['beef', 'wellington'] as const;
 export const DESSERT_OPTIONS = ['frangipane', 'pear'] as const;
@@ -470,11 +492,11 @@ export const DESSERT_OPTIONS = ['frangipane', 'pear'] as const;
 export const DIETARY_LINES = {
   sarahOpening: {
     speaker: 'Yvie',
-    text: "Final sheet. Three added since Tuesday, tables three, six and nine. One of them's a nut allergy. I need to know what they're eating before I print the table plan, and I'd like to print it by one.",
+    text: "Final sheet. Two added since Tuesday, tables three and six. One of them's a nut allergy. I need to know what they're eating before I print the table plan, and I'd like to print it by one.",
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',
-    text: "Recipe cards are on the pass. Work the chart dish by dish, all fourteen columns, before you promise Yvie anything. Then we go through it together.",
+    text: "Recipe cards are on the pass. I've done the tart, the beef and the Wellington; check my rows against the cards, then do the two desserts, all fourteen columns, before you promise Yvie anything. Then we go through it together.",
   } satisfies Line,
   marcusOnChartErrors: {
     speaker: 'Terence',

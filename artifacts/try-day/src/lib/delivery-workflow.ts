@@ -1,6 +1,12 @@
-import { FISH_CHECKS, ORDER_LINES, READING_TOLERANCE_C, SHORT_LINE_ID } from '@/content/activities';
+import { FISH_CHECKS, ORDER_LINES, READING_TOLERANCE_C, REFUSED_LINE_ID, SHORT_LINE_ID } from '@/content/activities';
 import { DELIVERY_FEEDBACK as FEEDBACK } from '@/content/delivery-feedback';
-import type { DeliveryState, OrderLineState } from '@/lib/simulation';
+import {
+  expectedAcceptance,
+  expectedAcceptedAmount,
+  type DeliveryAmendment,
+  type DeliveryState,
+  type OrderLineState,
+} from '@/lib/simulation';
 
 export interface DeliveryIssue {
   target: string;
@@ -38,11 +44,6 @@ function temperatureIsRight(entry: OrderLineState, expected: number): boolean {
     && Math.abs(temperature - expected) <= READING_TOLERANCE_C + 1e-9;
 }
 
-function packageWeightTotal(line: (typeof ORDER_LINES)[number]): number | null {
-  const packageKg = Number(line.item.match(/(\d+(?:\.\d+)?)\s*kg/i)?.[1]);
-  return Number.isFinite(packageKg) ? packageKg * line.ordered : null;
-}
-
 export function deliveryLineIssues(state: DeliveryState, lineId: string): DeliveryIssue[] {
   const line = ORDER_LINES.find((candidate) => candidate.id === lineId);
   const entry = state.lines[lineId];
@@ -53,11 +54,7 @@ export function deliveryLineIssues(state: DeliveryState, lineId: string): Delive
   if (!sameNumber(entry.arrived, line.arrived)) {
     const message = line.id === SHORT_LINE_ID && sameNumber(entry.arrived, line.onDeliveryNote)
       ? FEEDBACK.salmonClaimedAsObserved
-      : line.id === 'shallots'
-        && packageWeightTotal(line) !== null
-        && sameNumber(entry.arrived, packageWeightTotal(line)!)
-        ? FEEDBACK.shallotUnit
-        : FEEDBACK.quantity(line.unit);
+      : FEEDBACK.quantity(line.unit);
     issues.push({ target: lineId, message });
   }
   if (line.chilled) {
@@ -72,18 +69,24 @@ export function deliveryLineIssues(state: DeliveryState, lineId: string): Delive
   if (entry.status !== line.expectedStatus) {
     issues.push({
       target: lineId,
-      message: line.id === SHORT_LINE_ID ? FEEDBACK.salmonQuantityAndCondition : FEEDBACK.status,
+      message: line.id === SHORT_LINE_ID
+        ? FEEDBACK.salmonQuantityAndCondition
+        : line.id === REFUSED_LINE_ID && entry.status === 'arrived'
+          ? FEEDBACK.creamTemperatureDecision
+          : FEEDBACK.status,
     });
   }
-  if (entry.acceptance !== 'accept') {
+  if (entry.acceptance !== expectedAcceptance(line)) {
     issues.push({
       target: lineId,
       message: line.id === SHORT_LINE_ID && entry.acceptance === 'refuse'
         ? FEEDBACK.salmonQuantityAndCondition
-        : FEEDBACK.acceptance,
+        : line.id === REFUSED_LINE_ID && entry.acceptance === 'accept'
+          ? FEEDBACK.creamTemperatureDecision
+          : FEEDBACK.acceptance,
     });
   }
-  if (!sameNumber(entry.acceptedAmount, line.arrived)) {
+  if (!sameNumber(entry.acceptedAmount, expectedAcceptedAmount(line))) {
     issues.push({
       target: lineId,
       message: line.id === SHORT_LINE_ID && sameNumber(entry.acceptedAmount, expectedMissingAmount)
@@ -115,6 +118,50 @@ export function deliveryDisclosureReady(state: DeliveryState): boolean {
     && state.missingAmount.trim() !== ''
     && state.noteLineId.trim() !== ''
     && state.noteAmendedTo.trim() !== '';
+}
+
+const amendmentLineIds = [SHORT_LINE_ID, REFUSED_LINE_ID] as const;
+
+/**
+ * A line needs an amendment on the note when the learner's own sheet decision differs from
+ * the supplier's claim: a refusal, or an accepted amount that is not the claimed amount.
+ * Driven by the learner's decisions, never by the answer key.
+ */
+export function lineNeedsAmendment(state: DeliveryState, lineId: string): boolean {
+  const line = ORDER_LINES.find((candidate) => candidate.id === lineId);
+  const entry = state.lines[lineId];
+  if (!line || !entry) return false;
+  if (entry.acceptance === 'refuse') return true;
+  const accepted = number(entry.acceptedAmount);
+  return accepted !== null && accepted !== line.onDeliveryNote;
+}
+
+function amendmentIsBlank(amendment: DeliveryAmendment): boolean {
+  return amendment.amendedTo.trim() === '' && amendment.initials.trim() === ''
+    && !amendment.refused && amendment.temperature.trim() === '';
+}
+
+/** Drop written amendments against lines whose sheet decision no longer differs from the claim. */
+function pruneStaleAmendments(state: DeliveryState): DeliveryState {
+  const amendments = state.amendments ?? {};
+  const stale = Object.keys(amendments).filter((lineId) => !lineNeedsAmendment(state, lineId));
+  if (stale.length === 0) return state;
+  const kept = Object.fromEntries(Object.entries(amendments).filter(([lineId]) => !stale.includes(lineId)));
+  return { ...state, amendments: kept };
+}
+
+export function deliveryAmendment(state: DeliveryState, lineId: string): DeliveryAmendment {
+  const saved = state.amendments?.[lineId];
+  if (saved) return saved;
+  if (lineId === SHORT_LINE_ID && state.noteLineId === SHORT_LINE_ID) {
+    return {
+      amendedTo: state.noteAmendedTo,
+      initials: state.amendmentInitials,
+      refused: false,
+      temperature: '',
+    };
+  }
+  return { amendedTo: '', initials: '', refused: false, temperature: '' };
 }
 
 export function deliveryReportIssues(state: DeliveryState): DeliveryIssue[] {
@@ -219,15 +266,32 @@ export function deliveryReviewIssues(state: DeliveryState, includeSignature = fa
     issues.push({ target: 'report', message: FEEDBACK.reportSend });
   }
 
-  const salmon = state.lines[SHORT_LINE_ID];
-  if (state.noteLineId !== SHORT_LINE_ID) {
-    issues.push({ target: 'note', message: FEEDBACK.noteLine });
+  for (const lineId of amendmentLineIds) {
+    const line = ORDER_LINES.find((candidate) => candidate.id === lineId)!;
+    const entry = state.lines[lineId];
+    // A refusal the learner has not made yet is a sheet issue, raised above. Naming
+    // the note amendment here would hand them the decision.
+    if (lineId === REFUSED_LINE_ID && entry?.acceptance !== 'refuse') continue;
+    const amendment = deliveryAmendment(state, lineId);
+    if (!entry || !sameNumber(amendment.amendedTo, expectedAcceptedAmount(line))) {
+      issues.push({ target: 'note', message: FEEDBACK.noteAmountFor(line.item) });
+    }
+    if (lineId === REFUSED_LINE_ID) {
+      if (!amendment.refused) issues.push({ target: 'note', message: FEEDBACK.noteRefusal });
+      if (!sameNumber(amendment.temperature, line.actualC ?? Number.NaN)) {
+        issues.push({ target: 'note', message: FEEDBACK.noteTemperature });
+      }
+    }
+    if (amendment.initials.trim() === '') {
+      issues.push({ target: 'note', message: FEEDBACK.noteInitialsFor(line.item) });
+    }
   }
-  if (!salmon || !sameNumber(state.noteAmendedTo, number(salmon.acceptedAmount) ?? Number.NaN)) {
-    issues.push({ target: 'note', message: FEEDBACK.noteAmount });
-  }
-  if (state.amendmentInitials.trim() === '') {
-    issues.push({ target: 'note', message: FEEDBACK.noteInitials });
+  for (const line of ORDER_LINES) {
+    if ((amendmentLineIds as readonly string[]).includes(line.id)) continue;
+    const written = state.amendments?.[line.id];
+    if (written && !amendmentIsBlank(written)) {
+      issues.push({ target: 'note', message: FEEDBACK.noteUnexpectedAmendmentFor(line.item) });
+    }
   }
   if (includeSignature && (!state.signed || state.signature.trim() === '')) {
     issues.push({ target: 'signature', message: FEEDBACK.signature });
@@ -254,6 +318,7 @@ function substantiveSnapshot(state: DeliveryState): string {
     missingAmount: state.missingAmount,
     noteLineId: state.noteLineId,
     amendmentInitials: state.amendmentInitials,
+    amendments: state.amendments,
     report: state.report,
     reportSentSnapshot: state.reportSentSnapshot,
   });
@@ -286,6 +351,34 @@ export function reconcileDeliveryUpdate(previous: DeliveryState, proposed: Deliv
     || acceptedAmountsChanged(previous, next);
   if (amendmentFactsChanged) next = { ...next, amendmentInitials: '' };
 
+  const amendmentsChanged = JSON.stringify(previous.amendments ?? {}) !== JSON.stringify(next.amendments ?? {});
+  if (amendmentsChanged) {
+    const amendments = { ...(next.amendments ?? {}) };
+    for (const lineId of amendmentLineIds) {
+      const before = deliveryAmendment(previous, lineId);
+      const after = deliveryAmendment(next, lineId);
+      if (
+        before.amendedTo !== after.amendedTo
+        || before.refused !== after.refused
+        || before.temperature !== after.temperature
+      ) {
+        amendments[lineId] = { ...after, initials: '' };
+      }
+    }
+    next = { ...next, amendments };
+  }
+  if (acceptedAmountsChanged(previous, next)) {
+    const amendments = { ...(next.amendments ?? {}) };
+    for (const lineId of amendmentLineIds) {
+      if (previous.lines[lineId]?.acceptedAmount !== next.lines[lineId]?.acceptedAmount && amendments[lineId]) {
+        amendments[lineId] = { ...amendments[lineId], initials: '' };
+      }
+    }
+    next = { ...next, amendments };
+  }
+
+  next = pruneStaleAmendments(next);
+
   if (deliveryReportSnapshot(previous) !== deliveryReportSnapshot(next)) {
     next = { ...next, radioedMarcus: false, reportSentSnapshot: '' };
   }
@@ -299,6 +392,7 @@ export function reconcileDeliveryUpdate(previous: DeliveryState, proposed: Deliv
     previous.signed
     && (
       previous.signature !== next.signature
+      || amendmentsChanged
       || substantiveSnapshot(previous) !== substantiveSnapshot(next)
     )
   ) {

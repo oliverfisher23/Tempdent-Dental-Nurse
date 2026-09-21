@@ -48,7 +48,7 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
     await expect(app.getByRole('region', { name: 'What has come up' })).toHaveCount(0);
     await expect(d.button('Work it through')).toHaveCount(0);
     await d.saved({ contextRevealed: false, missingAmount: '8', noteAmendedTo: '4', ...unsent, ...unsigned });
-    await d.go('Fish supplier note');
+    await d.go('Delivery note');
     await expect(sign()).toBeDisabled();
     await assertDraft();
   });
@@ -120,9 +120,9 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
         await expect(temperature).toHaveCount(0);
         await expect(row.getByRole('button', { name: 'Take the temperature' })).toHaveCount(0);
       }
-      await d.fill(quantity, line.id === 'shallots' ? '10' : line.amount);
+      await d.fill(quantity, line.amount);
       await d.activate(row.getByRole('radio', { name: line.id === 'salmon' ? 'Differs from both' : 'Matches both', exact: true }));
-      await d.activate(row.getByRole('radio', { name: line.id === 'salmon' ? 'Short' : 'All here', exact: true }));
+      await d.activate(row.getByRole('radio', { name: line.status, exact: true }));
 
       if (line.id === 'sea-bass') {
         await d.activate(row.getByRole('button', { name: 'Inspect fish condition', exact: true }));
@@ -140,30 +140,27 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
         await d.activate(row.locator('#fish-reason-condition-and-temperature'));
       }
 
-      await d.activate(row.getByRole('button', { name: `Accept ${line.id === 'shallots' ? '10' : line.amount} ${line.unit}`, exact: true }));
+      await d.activate(row.getByRole('button', {
+        name: line.acceptance === 'refuse' ? 'Refuse' : `Accept ${line.amount} ${line.unit}`,
+        exact: true,
+      }));
       await d.activate(check);
-      if (line.id === 'shallots') {
-        await expect(row).toContainText('The bag weight is in kilos. The order asks you to count sacks.');
-        await d.fill(quantity, line.amount);
-        await d.saved({ lines: { shallots: { arrived: '2', acceptedAmount: '10' } } });
-        await expect(row).toContainText('Quantity changed. Re-confirm acceptance.');
-        await d.activate(row.getByRole('button', { name: 'Confirm 2 sacks', exact: true }));
-      }
       await expect(row).toContainText('The checks and decisions for this item match your evidence.');
       await d.saved({
         lines: { [line.id]: {
           counted: true, arrived: line.amount, probed: line.temperature !== undefined,
           temperature: line.temperature ?? '', comparison: line.id === 'salmon' ? 'differs-both' : 'matches-both',
-          status: line.id === 'salmon' ? 'short' : 'arrived', acceptance: 'accept', acceptedAmount: line.amount,
+           status: line.id === 'salmon' ? 'short' : line.id === 'cream' ? 'refused' : 'arrived',
+           acceptance: line.acceptance, acceptedAmount: line.acceptance === 'refuse' ? '0' : line.amount,
         } },
         contextRevealed: false, ...unsigned, ...unsent,
       });
-      await expect(app.getByText(`${index + 1}/10 quantities checked`, { exact: false })).toBeVisible();
+      await expect(app.getByText(`${index + 1}/6 quantities checked`, { exact: false })).toBeVisible();
     });
   }
 
   await test.step('all inspections and the unfinished draft survive reload', async () => {
-    await expect(app.getByText('10/10 quantities checked · 6/6 temperatures taken · 4/4 fish findings inspected', { exact: true })).toBeVisible();
+    await expect(app.getByText('6/6 quantities checked · 4/4 temperatures taken · 4/4 fish findings inspected', { exact: true })).toBeVisible();
     const before = (await d.progress()).tasks[DELIVERY];
     await d.reload();
     expect((await d.progress()).tasks[DELIVERY]).toEqual(before);
@@ -221,42 +218,45 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
   });
 
   await test.step('show the actual amendment, then invalidate initials and signatures on edits', async () => {
-    await d.go('Fish supplier note');
+    await d.go('Delivery note');
     // These assertions check rendered paperwork, not just the editor's value.
     const crossed = app.locator('.line-through');
     await expect(crossed).toHaveCount(1);
     await expect(crossed).toHaveText('12 kg');
     await expect(crossed.locator('..')).toContainText('4 kg');
     await expect(sign()).toBeDisabled();
-    await d.activate(app.getByRole('region', { name: 'Fish supplier note', exact: true }).getByRole('button', { name: 'Review before signing', exact: true }));
-    await expect(app.getByRole('region', { name: 'Check these before signing' })).toContainText('Amend the note to the amount you accepted, not the amount missing.');
-    await d.activate(d.button('Use my accepted amount'));
-    await expect(app.locator('#amended-amount')).toHaveValue('8');
-    await expect(crossed.locator('..')).toContainText('8 kg');
-    await d.activate(d.button('Initial amendment'));
-    await expect(app.locator('#amendment-initials')).toHaveValue('LD');
-    await expect(crossed.locator('..')).toContainText('8 kg(LD)');
+    await d.activate(app.getByRole('region', { name: 'Delivery note', exact: true }).getByRole('button', { name: 'Review before signing', exact: true }));
+    await expect(app.getByRole('region', { name: 'Check these before signing' })).toContainText('Amend Salmon fillet, skin on to the amount you accepted.');
+    await d.activate(d.button('Use my accepted amount').nth(0));
+    await expect(app.locator('#amended-amount-salmon')).toHaveValue('8');
+    await d.activate(d.button('Initial amendment').nth(0));
+    await expect(app.locator('#amendment-initials-salmon')).toHaveValue('LD');
+    await d.activate(d.button('Use my accepted amount').nth(1));
+    await app.getByLabel('Record as refused').check();
+    await d.fill(app.locator('#refusal-temperature-cream'), '7.8');
+    await d.activate(d.button('Initial amendment').nth(1));
+    await expect(app.locator('#amended-amount-cream')).toHaveValue('0');
+    await expect(app.locator('#amendment-initials-cream')).toHaveValue('LD');
+    await expect(crossed).toHaveCount(2);
     await d.activate(sign());
-    await d.saved({ signed: true, signature: 'LD', amendmentInitials: 'LD' });
+    await d.saved({ signed: true, signature: 'LD' });
     await expect(next()).toBeVisible();
     expect((await d.progress()).completed).toEqual(['take-the-handover']); // Note != task sign-off.
 
-    await d.select(app.locator('#affected-fish'), 'sea-bass');
-    await d.saved({ ...unsigned, amendmentInitials: '', radioedMarcus: true });
+    await d.fill(app.locator('#refusal-temperature-cream'), '7.7');
+    await d.saved({ ...unsigned, radioedMarcus: true });
     await expect(app.getByRole('status').filter({ hasText: 'The note changed after you signed it.' })).toBeVisible();
-    await expect(crossed).toHaveText('10 fish');
-    await expect(crossed.locator('..')).toContainText('8 fish');
     await expect(sign()).toBeDisabled();
-    await d.select(app.locator('#affected-fish'), 'salmon');
-    await d.activate(d.button('Initial amendment'));
-    await d.activate(sign());
-    await d.fill(app.locator('#amended-amount'), '7');
-    await d.saved({ ...unsigned, amendmentInitials: '' });
-    await expect(app.locator('#amendment-initials')).toHaveValue('');
-    await d.fill(app.locator('#amended-amount'), '8');
+    await d.fill(app.locator('#refusal-temperature-cream'), '7.8');
+    await expect(app.locator('#amendment-initials-cream')).toHaveValue('');
+    await d.activate(d.button('Initial amendment').nth(1));
+    await d.fill(app.locator('#amended-amount-salmon'), '7');
+    await d.saved(unsigned);
+    await expect(app.locator('#amendment-initials-salmon')).toHaveValue('');
+    await d.fill(app.locator('#amended-amount-salmon'), '8');
     await expect(sign()).toBeDisabled();
-    await d.saved({ ...unsigned, amendmentInitials: '' }); // Repair does not re-initial or re-sign.
-    await d.activate(d.button('Initial amendment'));
+    await d.saved(unsigned); // Repair does not re-initial or re-sign.
+    await d.activate(d.button('Initial amendment').nth(0));
     await d.activate(sign());
     await d.capture(testInfo, 'signed-amended-note');
   });
@@ -269,17 +269,17 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
     await d.saved({ ...unsent, ...unsigned, lines: { salmon: { arrived: '7', acceptedAmount: '8' } } });
     await expect(salmon).toContainText('Quantity changed. Re-confirm acceptance.');
     await d.activate(salmon.getByRole('button', { name: 'Accept 7 kg', exact: true }));
-    await d.saved({ amendmentInitials: '', lines: { salmon: { acceptedAmount: '7' } } });
+    await d.saved({ lines: { salmon: { acceptedAmount: '7' } } });
     await d.fill(salmon.locator('#qty-salmon'), '8');
     await d.saved({ lines: { salmon: { arrived: '8', acceptedAmount: '7' } }, ...unsent, ...unsigned });
     await d.activate(salmon.getByRole('button', { name: 'Confirm 8 kg', exact: true }));
-    await d.saved({ lines: { salmon: { acceptedAmount: '8' } }, amendmentInitials: '', ...unsent, ...unsigned });
+    await d.saved({ lines: { salmon: { acceptedAmount: '8' } }, ...unsent, ...unsigned });
     const before = (await d.progress()).tasks[DELIVERY];
     await d.reload();
     expect((await d.progress()).tasks[DELIVERY]).toEqual(before);
-    await d.go('Fish supplier note');
+    await d.go('Delivery note');
     await expect(sign()).toBeDisabled();
-    await expect(app.locator('#amendment-initials')).toHaveValue('');
+    await expect(app.locator('#amendment-initials-salmon')).toHaveValue('');
     await d.go('Report to Terence');
     await expect(app.getByRole('region', { name: 'Message preview' })).toContainText(expectedMessage);
     await expect(app.locator('#sent-heading')).toHaveCount(0);
@@ -293,10 +293,10 @@ test('delivery corrections, explicit reporting and frozen sign-off', async ({ pa
     await d.activate(d.button('Resend report'));
     await d.saved({ radioedMarcus: true });
     expect(JSON.parse((await d.progress()).tasks[DELIVERY].reportSentSnapshot)).toEqual(expectedReport);
-    await d.go('Fish supplier note');
-    await d.activate(d.button('Initial amendment'));
+    await d.go('Delivery note');
+    await d.activate(d.button('Initial amendment').nth(0));
     await d.activate(sign());
-    await d.saved({ signed: true, signature: 'LD', amendmentInitials: 'LD' });
+    await d.saved({ signed: true, signature: 'LD' });
     const signed = (await d.progress()).tasks[DELIVERY];
     await d.reload();
     expect((await d.progress()).tasks[DELIVERY]).toEqual(signed);

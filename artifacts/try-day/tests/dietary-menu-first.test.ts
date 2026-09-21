@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ADDED_GUESTS, DIETARY_LINES, DISHES } from '../src/content/activities';
+import { ADDED_GUESTS, DIETARY_LINES, DISHES, TERENCE_CHART_MARKS } from '../src/content/activities';
 import { DIETARY_HINTS, DIETARY_REDESIGN_LINES } from '../src/content/scenes/dietary-redesign';
 import {
   COURSES,
@@ -9,7 +9,9 @@ import {
   applyChartToggle,
   applyDietaryDecision,
   boardComplete,
+  chartReviewed,
   chartHint,
+  chartRowMatchesTerenceMarks,
   chartRowDiff,
   courseChecked,
   decisionFeedback,
@@ -26,7 +28,7 @@ import {
   rowStatus,
   type DietaryDecision,
 } from '../src/lib/redesign-dietary';
-import { complicationRevealed, evaluateDietary, testProgress, type DietaryState } from '../src/lib/simulation';
+import { complicationRevealed, evaluateDietary, initialTaskStates, testProgress, wrongChartRows, type DietaryState } from '../src/lib/simulation';
 
 const priya = ADDED_GUESTS.find((guest) => guest.id === 'priya')!;
 const rightChart = Object.fromEntries(DISHES.map((dish) => [dish.id, [...dish.allergens]])) as Record<string, string[]>;
@@ -101,8 +103,9 @@ test("Tom's main climbs its own ladder; a conflict flagged where the cards show 
   // The saved assignment must agree with the decision.
   assert.equal(isValidDecision('tom', 'main', swap, { main: 'beef', dessert: null }, rightChart), false);
 
-  const annaFlag = decision({ action: 'swap', proposedDishId: 'wellington', category: 'ingredient-conflict', evidence: ['Beef shin'] });
-  const fb = decisionFeedback('anna', 'main', annaFlag, { main: 'wellington', dessert: null }, rightChart, 1);
+  // Tom has no allergy, so an ingredient conflict claimed on his dessert is a conflict that is not there.
+  const tomFlag = decision({ action: 'swap', proposedDishId: 'pear', category: 'ingredient-conflict', evidence: ['Ground almonds'] });
+  const fb = decisionFeedback('tom', 'dessert', tomFlag, { main: 'wellington', dessert: 'pear' }, rightChart, 1);
   assert.equal(fb.kind, 'no-conflict-there');
   assert.equal(fb.ladder, undefined);
 
@@ -143,6 +146,42 @@ test('row status distinguishes unfinished, reviewed and flagged rows', () => {
   assert.equal(rowStatus(view, 'beef'), 'reviewed');
   assert.equal(rowStatus(view, 'pear'), 'reviewed-question');
   assert.equal(rowStatus(view, 'wellington'), 'flagged');
+});
+
+test('the initial chart carries Terence’s marks and his beef row is missing celery', () => {
+  const state = initialTaskStates()['check-the-dietary-list'];
+  assert.deepEqual(state.chart.tart, TERENCE_CHART_MARKS.tart);
+  assert.deepEqual(state.chart.beef, TERENCE_CHART_MARKS.beef);
+  assert.deepEqual(state.chart.wellington, TERENCE_CHART_MARKS.wellington);
+  assert.equal(state.chart.beef.includes('celery'), false);
+  assert.deepEqual(state.chart.frangipane, []);
+  assert.deepEqual(state.chart.pear, []);
+  assert.equal(chartRowMatchesTerenceMarks('beef', state.chart.beef), true);
+  assert.equal(chartRowMatchesTerenceMarks('beef', [...state.chart.beef, 'celery']), false);
+});
+
+test('confirming Terence’s unchanged rows does not sign off the wrong chart', () => {
+  const state = initialTaskStates()['check-the-dietary-list'];
+  state.redesign!.sheetRead = true;
+  state.redesign!.rowReviewConfirmed = Object.fromEntries(DISHES.map((dish) => [dish.id, true]));
+  state.chartChecked = true;
+  assert.deepEqual(wrongChartRows(state.chart), ['beef', 'frangipane', 'pear']);
+  assert.equal(chartReviewed(state), false);
+  assert.equal(evaluateDietary(state).done, false);
+});
+
+test('correcting beef and filling both desserts exactly makes the reviewed chart clean', () => {
+  const state = initialTaskStates()['check-the-dietary-list'];
+  state.redesign!.sheetRead = true;
+  state.chart.beef = [...state.chart.beef, 'celery'];
+  for (const dishId of ['frangipane', 'pear']) {
+    state.chart[dishId] = [...DISHES.find((dish) => dish.id === dishId)!.allergens];
+  }
+  state.redesign!.rowReviewConfirmed = Object.fromEntries(DISHES.map((dish) => [dish.id, true]));
+  state.chartChecked = true;
+  assert.deepEqual(wrongChartRows(state.chart), []);
+  assert.equal(chartReviewed(state), true);
+  assert.equal(getDietaryRedesignStage(state), 'guests');
 });
 
 test('the board lists every actual change with a pending preparation check for allergy-driven ones only', () => {
@@ -191,7 +230,7 @@ test('the stages run sheet, chart, guests, board, done, and the finished record 
   assert.equal(evaluateDietary(heldBack).done, false);
 
   const noDecision = structuredClone(finished);
-  delete noDecision.redesign!.decisions['anna:dessert'];
+  delete noDecision.redesign!.decisions['tom:dessert'];
   assert.equal(getDietaryRedesignStage(noDecision), 'guests');
 });
 
@@ -200,7 +239,7 @@ test('filling a course in is not checking it: only a check with Terence advances
   const checkedWith = (state: DietaryState, guestId: string, course: 'main' | 'dessert') =>
     courseChecked(state.redesign!, guestId, course, state.guests[guestId], state.chart);
 
-  // The same six valid decisions with no check recorded: a complete form, not a checked course.
+  // The same four valid decisions with no check recorded: a complete form, not a checked course.
   const unchecked: DietaryState = { ...finished, boardPosted: false, redesign: { ...finished.redesign!, courseReviewed: {} } };
   for (const guest of ADDED_GUESTS) {
     for (const course of COURSES) {

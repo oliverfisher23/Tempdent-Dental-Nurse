@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { CHILL_RULES, TASK_ORDER } from '../src/content/activities';
+import { ADDED_GUESTS, CHILL_RULES, TASK_ORDER, TERENCE_CHART_MARKS } from '../src/content/activities';
+import { getDietaryRedesignStage } from '../src/lib/redesign-dietary';
 import { clearAnswersForHeading } from '../src/lib/redesign-close';
 import {
   evaluateTask,
@@ -73,7 +74,13 @@ test('delivery requires accepted measurements, fish explanation and an actual di
     },
     (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.reportSentSnapshot = ''; },
     (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.radioedMarcus = false; },
-    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.noteAmendedTo = '12'; },
+    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.amendments.salmon = { ...state.amendments.salmon, amendedTo: '12' }; },
+    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => { state.amendments.cream = { ...state.amendments.cream, refused: false, amendedTo: '6' }; },
+    (state: ReturnType<typeof testProgress>['tasks']['check-the-delivery-in']) => {
+      state.lines.cream.acceptance = 'accept';
+      state.lines.cream.acceptedAmount = '6';
+      state.lines.cream.status = 'arrived';
+    },
   ]) {
     const fixture = testProgress(null);
     invalidate(fixture.tasks['check-the-delivery-in']);
@@ -91,6 +98,18 @@ test('dietary completion requires deliberately reviewed rows and ingredient evid
   state.redesign!.rowReviewConfirmed.pear = true;
   state.redesign!.decisions['priya:dessert'].evidence = ['Ground almonds'];
   assert.equal(evaluateTask('check-the-dietary-list', fixture.tasks).done, false);
+});
+
+test('the dietary redesign reaches two guests and the finished fixture reaches done', () => {
+  assert.deepEqual(ADDED_GUESTS.map((guest) => guest.id), ['priya', 'tom']);
+  const finished = testProgress(null).tasks['check-the-dietary-list'];
+  assert.equal(getDietaryRedesignStage(finished), 'done');
+
+  const guests = structuredClone(finished);
+  guests.boardPosted = false;
+  delete guests.redesign!.decisions['tom:dessert'];
+  guests.redesign!.courseReviewed!['tom:dessert'] = false;
+  assert.equal(getDietaryRedesignStage(guests), 'guests');
 });
 
 test('a guest decision cannot disagree with the saved assignment or silently clear a service hold', () => {
@@ -171,6 +190,39 @@ test('unfinished draft survives persistence while signed legacy work gains no ne
     assert.equal(loaded.tasks['check-the-delivery-in'].redesign, undefined);
     assert.deepEqual(loaded.tasks['chill-the-event-batch'].trays, [1.5, 0.5, 0]);
     assert.ok(loaded.tasks['chill-the-event-batch'].redesign);
+  } finally {
+    if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow);
+    else Reflect.deleteProperty(globalThis, 'window');
+  }
+});
+
+test('progress saved before Terence pre-filled his rows receives his marks only for untouched rows', () => {
+  const fixture = testProgress('check-the-dietary-list');
+  const dietary = fixture.tasks['check-the-dietary-list'];
+  // Old shape: every chart row started empty. The learner had already marked the tart.
+  dietary.chart = { tart: ['gluten', 'fish', 'milk'], beef: [], wellington: [], frangipane: [], pear: [] };
+  const completedFixture = testProgress('hand-the-kitchen-on');
+  completedFixture.tasks['check-the-dietary-list'].chart = { tart: [], beef: [], wellington: [], frangipane: [], pear: [] };
+  const previousWindow = Object.getOwnPropertyDescriptor(globalThis, 'window');
+  const install = (saved: string) => Object.defineProperty(globalThis, 'window', {
+    configurable: true,
+    value: { localStorage: { getItem: () => saved }, sessionStorage: { getItem: () => saved } },
+  });
+  try {
+    install(JSON.stringify(fixture));
+    const loadedTasks = loadProgress(false).tasks;
+    const loaded = loadedTasks['check-the-dietary-list'];
+    assert.deepEqual(loaded.chart.tart, ['gluten', 'fish', 'milk']);
+    assert.deepEqual(loaded.chart.beef, TERENCE_CHART_MARKS.beef);
+    assert.deepEqual(loaded.chart.wellington, TERENCE_CHART_MARKS.wellington);
+    assert.deepEqual(loaded.chart.frangipane, []);
+    assert.deepEqual(loaded.chart.pear, []);
+    assert.equal(evaluateTask('check-the-dietary-list', loadedTasks).done, false);
+
+    // A completed record stays exactly as it was signed off.
+    install(JSON.stringify(completedFixture));
+    const frozen = loadProgress(false).tasks['check-the-dietary-list'];
+    assert.deepEqual(frozen.chart.beef, []);
   } finally {
     if (previousWindow) Object.defineProperty(globalThis, 'window', previousWindow);
     else Reflect.deleteProperty(globalThis, 'window');

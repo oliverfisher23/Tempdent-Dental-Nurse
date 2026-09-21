@@ -10,3 +10,4 @@
 - [Stage scroll shift](stage-scroll-shift.md) — overflow-hidden stages with a zoomed backdrop are scrollable by focus/scrollIntoView; use overflow-clip and scroll only the nearest scroller.
 - [Orphaned asset check](asset-orphan-check.md) — removed pictures live on in `attached_assets/` originals, `exports/` archives and Library cards; search by dir/stem, not exact names. `redesign` is not "newer".
 - [Instruction layer and overlay stack](instruction-layer.md) — openers and pattern cards may name controls (COPY rule 4 exception); kitchen modals use the overlay stack, not Radix; hotspot reasons wait for a tap.
+- [Saved progress migrations](saved-progress-migrations.md) — removed keys are harmless on reload, new pre-filled defaults are not: seed them explicitly for untouched records; paperwork controls must follow the learner's decisions, not the answer key.

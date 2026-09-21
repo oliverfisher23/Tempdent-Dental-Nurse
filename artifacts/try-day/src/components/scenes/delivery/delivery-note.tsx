@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { ORDER_LINES } from '@/content/activities';
+import { DELIVERY_LINES, ORDER_LINES } from '@/content/activities';
 import { DELIVERY_PAPERWORK } from '@/content/scenes/delivery-paperwork';
-import { canSignDelivery, deliveryReviewIssues } from '@/lib/delivery-workflow';
+import { canSignDelivery, deliveryAmendment, deliveryReviewIssues, lineNeedsAmendment } from '@/lib/delivery-workflow';
 import { useProgress } from '@/lib/progress-store';
 import type { DeliveryState } from '@/lib/simulation';
 
@@ -15,17 +15,25 @@ interface DeliveryNoteProps {
 }
 
 export function DeliveryNote({ state, onUpdateState, onNavigate }: DeliveryNoteProps) {
-  const fishLines = ORDER_LINES.filter((line) => line.trolley === 1);
   const { progress } = useProgress();
   const [reviewed, setReviewed] = useState(false);
   const [signatureStale, setSignatureStale] = useState(false);
   const wasSigned = useRef(state.signed);
   const copy = DELIVERY_PAPERWORK.note;
-  const selectedLine = fishLines.find((line) => line.id === state.noteLineId);
-  const acceptedAmount = selectedLine ? state.lines[selectedLine.id]?.acceptedAmount ?? '' : '';
-  const hasAmendment = Boolean(selectedLine && state.noteAmendedTo.trim());
   const reviewIssues = deliveryReviewIssues(state);
   const isSignable = canSignDelivery(state);
+  // The note offers an amendment wherever the learner's own sheet decision differs from
+  // the supplier's claim, so the paperwork never tells them which lines to change.
+  const amendmentLines = ORDER_LINES.filter((line) => lineNeedsAmendment(state, line.id));
+  const updateAmendment = (lineId: string, updates: Partial<ReturnType<typeof deliveryAmendment>>) => {
+    onUpdateState((previous) => ({
+      ...previous,
+      amendments: {
+        ...(previous.amendments ?? {}),
+        [lineId]: { ...deliveryAmendment(previous, lineId), ...updates },
+      },
+    }));
+  };
 
   useEffect(() => {
     if (wasSigned.current && !state.signed) setSignatureStale(true);
@@ -46,37 +54,26 @@ export function DeliveryNote({ state, onUpdateState, onNavigate }: DeliveryNoteP
         </div>
       </div>
 
-      <div className="mb-6 space-y-2 font-sans">
-        <label htmlFor="affected-fish" className="block text-sm font-bold">{copy.affectedFish}</label>
-        <select
-          id="affected-fish"
-          value={state.noteLineId}
-          onChange={(event) => onUpdateState((prev) => ({ ...prev, noteLineId: event.target.value }))}
-          className="h-11 w-full rounded-md border border-zinc-400 bg-white px-3 text-base"
-        >
-          <option value="">{copy.chooseFish}</option>
-          {fishLines.map((line) => <option key={line.id} value={line.id}>{line.item}</option>)}
-        </select>
-      </div>
-
       <div className="space-y-2">
         <div className="grid grid-cols-[1fr_auto] gap-4 border-b border-black pb-2 text-xs font-bold uppercase tracking-widest">
           <span>{copy.description}</span><span>{copy.quantity}</span>
         </div>
-        {fishLines.map((line) => {
-          const selected = line.id === state.noteLineId;
+        {ORDER_LINES.map((line) => {
+          const amendment = deliveryAmendment(state, line.id);
+          const hasAmendment = Boolean(amendment.amendedTo.trim());
           return (
-            <div key={line.id} className={`grid grid-cols-[1fr_auto] items-center gap-4 border-b border-zinc-200 py-3 ${selected ? 'bg-red-50 px-2' : ''}`}>
+            <div key={line.id} className={`grid grid-cols-[1fr_auto] items-center gap-4 border-b border-zinc-200 py-3 ${hasAmendment ? 'bg-red-50 px-2' : ''}`}>
               <span className="font-bold">{line.item}</span>
               <div className="text-right">
                 <span className="mr-2 text-xs text-zinc-500">{copy.originalClaim}</span>
-                <span className={selected && hasAmendment ? 'text-zinc-500 line-through' : ''}>
+                <span className={hasAmendment ? 'text-zinc-500 line-through' : ''}>
                   {line.onDeliveryNote} {line.unit}
                 </span>
-                {selected && hasAmendment && (
-                  <span className="ml-3 text-lg font-bold text-red-700" style={{ fontFamily: 'cursive' }}>
-                    {state.noteAmendedTo} {line.unit}
-                    {state.amendmentInitials && <span className="ml-2 text-sm">({state.amendmentInitials})</span>}
+                {hasAmendment && (
+                  <span className="ml-3 inline-block text-lg font-bold text-red-700" style={{ fontFamily: 'cursive' }}>
+                    {amendment.amendedTo} {line.unit}
+                    {amendment.refused && <span className="ml-2 text-sm">refused {amendment.temperature ? `${amendment.temperature} °C` : ''}</span>}
+                    {amendment.initials && <span className="ml-2 text-sm">({amendment.initials})</span>}
                   </span>
                 )}
               </div>
@@ -86,59 +83,83 @@ export function DeliveryNote({ state, onUpdateState, onNavigate }: DeliveryNoteP
       </div>
 
       <div className="mt-8 space-y-5 border-t-2 border-black pt-5 font-sans">
-        <div className="space-y-2">
-          <label htmlFor="amended-amount" className="block text-sm font-bold">{copy.amendedAmount}{selectedLine ? ` (${selectedLine.unit})` : ''}</label>
-          <div className="flex flex-col gap-2 sm:flex-row">
+        {amendmentLines.map((line) => {
+          const amendment = deliveryAmendment(state, line.id);
+          const acceptedAmount = state.lines[line.id]?.acceptedAmount ?? '';
+          const hasAmendment = Boolean(amendment.amendedTo.trim());
+          const isRefusal = state.lines[line.id]?.acceptance === 'refuse';
+          return <fieldset key={line.id} className="space-y-4 rounded border border-zinc-300 p-4">
+            <legend className="px-2 font-bold">{line.item}</legend>
+            <div className="space-y-2">
+              <label htmlFor={`amended-amount-${line.id}`} className="block text-sm font-bold">{copy.amendedAmount} ({line.unit})</label>
+              <div className="flex flex-col gap-2 sm:flex-row">
             <Input
-              id="amended-amount"
+              id={`amended-amount-${line.id}`}
               inputMode="decimal"
-              value={state.noteAmendedTo}
-              disabled={!selectedLine}
-              onChange={(event) => onUpdateState((prev) => ({ ...prev, noteAmendedTo: event.target.value }))}
+              value={amendment.amendedTo}
+              onChange={(event) => updateAmendment(line.id, { amendedTo: event.target.value })}
               className="h-11 bg-white"
             />
             <Button
               type="button"
               variant="outline"
-              disabled={!selectedLine || acceptedAmount.trim() === ''}
-              onClick={() => onUpdateState((prev) => {
-                const savedAmount = prev.noteLineId ? prev.lines[prev.noteLineId]?.acceptedAmount ?? '' : '';
-                return { ...prev, noteAmendedTo: savedAmount };
-              })}
+              disabled={acceptedAmount.trim() === ''}
+              onClick={() => updateAmendment(line.id, { amendedTo: acceptedAmount })}
             >
               {copy.useAcceptedAmount}
             </Button>
           </div>
           <p className="text-xs text-zinc-600">
-            {selectedLine && !acceptedAmount.trim() ? copy.acceptedAmountUnavailable : copy.amendedAmountHint}
+            {!acceptedAmount.trim() ? copy.acceptedAmountUnavailable : copy.amendedAmountHint}
           </p>
-           {!selectedLine && <p className="text-xs text-zinc-600">{copy.chooseFishReason}</p>}
         </div>
 
+        {isRefusal && <div className="grid gap-4 sm:grid-cols-2">
+          <label className="flex min-h-11 items-center gap-2 font-bold">
+            <input type="checkbox" checked={amendment.refused} onChange={(event) => updateAmendment(line.id, { refused: event.target.checked })} />
+            {copy.recordRefused}
+          </label>
+          <div>
+            <label htmlFor={`refusal-temperature-${line.id}`} className="block text-sm font-bold">{copy.refusalTemperature}</label>
+            <Input id={`refusal-temperature-${line.id}`} inputMode="decimal" value={amendment.temperature}
+              onChange={(event) => updateAmendment(line.id, { temperature: event.target.value })} className="mt-2 h-11 bg-white" />
+          </div>
+        </div>}
+
         <div className="space-y-2">
-          <label htmlFor="amendment-initials" className="block text-sm font-bold">{copy.amendmentInitials}</label>
+          <label htmlFor={`amendment-initials-${line.id}`} className="block text-sm font-bold">{copy.amendmentInitials}</label>
           <div className="flex flex-col gap-2 sm:flex-row">
             <Input
-              id="amendment-initials"
-              value={state.amendmentInitials}
+              id={`amendment-initials-${line.id}`}
+              value={amendment.initials}
               disabled={!hasAmendment}
               maxLength={3}
               placeholder={copy.typeInitials}
-              onChange={(event) => onUpdateState((prev) => ({ ...prev, amendmentInitials: event.target.value.toUpperCase() }))}
+              onChange={(event) => updateAmendment(line.id, { initials: event.target.value.toUpperCase() })}
               className="h-11 bg-white uppercase"
             />
             <Button
               type="button"
               variant="outline"
               disabled={!hasAmendment || !progress.initials}
-              onClick={() => onUpdateState((prev) => ({ ...prev, amendmentInitials: progress.initials }))}
+              onClick={() => updateAmendment(line.id, { initials: progress.initials })}
             >
               {copy.initialAmendment}
             </Button>
           </div>
           {!hasAmendment && <p className="text-xs text-zinc-600">{copy.initialHint}</p>}
-           {hasAmendment && !progress.initials && <p className="text-xs text-zinc-600">{copy.savedInitialsReason}</p>}
+          {hasAmendment && !progress.initials && <p className="text-xs text-zinc-600">{copy.savedInitialsReason}</p>}
         </div>
+          </fieldset>;
+        })}
+        {amendmentLines.length === 0 && (
+          <p className="text-sm text-zinc-600">{copy.noAmendments}</p>
+        )}
+        {amendmentLines.some((line) => deliveryAmendment(state, line.id).refused) && (
+          <p className="rounded border border-zinc-300 bg-zinc-50 p-3 text-sm">
+            <strong>{DELIVERY_LINES.driverOnRefusal.speaker}: </strong>{DELIVERY_LINES.driverOnRefusal.text}
+          </p>
+        )}
       </div>
 
       <div className="mt-10 border-t border-black pt-6 font-sans">

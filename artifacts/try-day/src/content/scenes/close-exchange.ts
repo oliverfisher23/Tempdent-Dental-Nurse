@@ -214,9 +214,9 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
             reply: 'Table 6 is the vegetarian swap to the Wellington. Which table has the nut allergy?',
           },
           {
-            id: 'table9',
-            label: 'Table 9 — Anna Kowalski',
-            reply: 'Table 9 had nothing stated. Which table has the nut allergy?',
+            id: 'table5',
+            label: 'Table 5, the coeliac guest',
+            reply: 'Table 5 is the coeliac guest already catered for. Which table has the nut allergy?',
           },
         ],
       },

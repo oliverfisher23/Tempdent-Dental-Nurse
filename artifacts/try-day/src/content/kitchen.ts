@@ -21,14 +21,10 @@ import sceneGoodsIn from '@/assets/kitchen/scene-goods-in.jpg';
 import sceneEvents from '@/assets/kitchen/scene-events.jpg';
 import fishBox from '@/assets/kitchen/fish-box.jpg';
 import crateSeaBass from '@/assets/kitchen/crate-sea-bass.jpg';
-import crateSmokedHaddock from '@/assets/kitchen/crate-smoked-haddock.jpg';
 import crateChicken from '@/assets/kitchen/crate-chicken.jpg';
 import crateCream from '@/assets/kitchen/crate-cream.jpg';
-import crateButter from '@/assets/kitchen/crate-butter.jpg';
 import crateSpinach from '@/assets/kitchen/crate-spinach.jpg';
-import crateShallots from '@/assets/kitchen/crate-shallots.jpg';
 import crateLemons from '@/assets/kitchen/crate-lemons.jpg';
-import crateParsley from '@/assets/kitchen/crate-parsley.jpg';
 
 export type PlaceId = 'pass' | 'corridor' | 'goods-in' | 'bench' | 'events';
 
@@ -179,14 +175,10 @@ export function personForSpeaker(speaker: string): Person | undefined {
 export const CRATE_IMAGES: Record<string, string> = {
   salmon: fishBox,
   'sea-bass': crateSeaBass,
-  'smoked-haddock': crateSmokedHaddock,
   chicken: crateChicken,
   cream: crateCream,
-  butter: crateButter,
   spinach: crateSpinach,
-  shallots: crateShallots,
   lemons: crateLemons,
-  parsley: crateParsley,
 };
 
 export const MAP_IMAGE = mapImg;

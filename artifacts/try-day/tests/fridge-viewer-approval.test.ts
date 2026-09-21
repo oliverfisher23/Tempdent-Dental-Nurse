@@ -7,7 +7,7 @@ import { getInspectionSelection } from '../src/components/scenes/handover/inspec
 const states = ['closed', 'open'] as const;
 
 test('the viewer selects each approved appliance clip, WebM, poster and clue list', () => {
-  assert.equal(Object.keys(approvedManifest).length, 7);
+  assert.equal(Object.keys(approvedManifest).length, 4);
 
   for (const [unitId, approvedStates] of Object.entries(approvedManifest)) {
     for (const state of states) {
@@ -53,5 +53,5 @@ test('closed and open viewer selections cannot cross appliance or state boundari
     }
   }
 
-  assert.equal(selectedPaths.size, 42);
+  assert.equal(selectedPaths.size, 24);
 });

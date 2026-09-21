@@ -1,4 +1,5 @@
-import { ELENA_QUESTION } from '@/content/activities';
+import { CHILL_MARKS, CHILL_RULES, ELENA_QUESTION, MARCUS_TRAY_READINGS } from '@/content/activities';
+import { addMinutes } from '@/lib/simulation';
 import { CLOSE_INTERACTION } from '@/content/scenes/close-interaction';
 import { useProgress } from '@/lib/progress-store';
 import { kitchenAudio } from '@/lib/audio';
@@ -86,10 +87,9 @@ export function ChillReview({ onElenaAnswer }: { onElenaAnswer: (id: string) => 
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-zinc-200"><td className="py-2 px-3 font-mono text-xs text-zinc-500">10:45</td><td className="py-2 px-3 font-mono text-sm text-zinc-600">73.8</td></tr>
-                    <tr className="border-b border-zinc-200"><td className="py-2 px-3 font-mono text-xs text-zinc-500">11:15</td><td className="py-2 px-3 font-mono text-sm text-zinc-600">36.1</td></tr>
-                    <tr className="border-b border-zinc-200"><td className="py-2 px-3 font-mono text-xs text-zinc-500">11:45</td><td className="py-2 px-3 font-mono text-sm text-zinc-600">14.6</td></tr>
-                    <tr className="border-b border-zinc-200"><td className="py-2 px-3 font-mono text-xs text-zinc-500">12:15</td><td className="py-2 px-3 font-mono text-sm text-zinc-600">6.4</td></tr>
+                    {CHILL_MARKS.map((mark) => (
+                      <tr key={mark} className="border-b border-zinc-200"><td className="py-2 px-3 font-mono text-xs text-zinc-500">{addMinutes(CHILL_RULES.startClock, mark)}</td><td className="py-2 px-3 font-mono text-sm text-zinc-600">{MARCUS_TRAY_READINGS[mark].toFixed(1)}</td></tr>
+                    ))}
                   </tbody>
                 </table>
               </div>

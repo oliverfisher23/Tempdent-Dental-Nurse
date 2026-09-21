@@ -1,3 +1,10 @@
+/** "30 minutes" or "an hour", for the wait control. */
+export function describeMinutes(minutes: number): string {
+  if (minutes === 60) return 'an hour';
+  if (minutes % 60 === 0) return `${minutes / 60} hours`;
+  return `${minutes} minutes`;
+}
+
 /** Every label the student reads at the prep bench and blast chiller in task 3. */
 export const CHILL_LABELS = {
   // Objects in the room
@@ -90,7 +97,7 @@ export const CHILL_LABELS = {
   saveReadingHint: 'Type the thermometer reading first.',
   holdToRead: 'Hold to take the temperature',
   readAt: (m: number) => `Reading at ${m} minutes`,
-  wait: 'Leave it 30 minutes',
+  wait: (minutes: number) => `Leave it ${describeMinutes(minutes)}`,
   waitHint: (m: number) => `Write the ${m}-minute reading on the chill record first.`,
   waiting: 'Coming back in a bit',
   finished: 'Two hours: the cycle is finished',
@@ -182,7 +189,7 @@ export const CHILL_LABELS = {
     read: (m: number) => `Take the ${m}-minute reading and write it on the chill record`,
     answer: 'Terence is asking what to do',
     measure: 'Measure the depth of the trays with the ruler',
-    wait: 'Nothing to do but wait: leave it 30 minutes',
+    wait: (minutes: number) => `Nothing to do but wait: leave it ${describeMinutes(minutes)}`,
     sign: 'Sign the chill record',
     done: 'All the work is finished',
   },

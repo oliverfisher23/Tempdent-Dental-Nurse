@@ -1,28 +1,4 @@
 {
-  "dairy-closed.mp4": {
-    "sha256": "f0dc908e605ba4cb10f794f67a5826a7b2d70aae23c236a2a059490d974ffe6a",
-    "decodedSha256": "6057417a33b55b04efaab2d5e09015c9fdd3a5363168a05a73465538710097a4"
-  },
-  "dairy-closed.webm": {
-    "sha256": "706a289d403ed92cbebace4744b267f66d2be1e1191a834f6317aa405bc28ca8",
-    "decodedSha256": "45595705c29210e4ecd23955a94aa6514ffe8358678c4764e1a2d766526b8d48"
-  },
-  "dairy-closed.webp": {
-    "sha256": "466163b151e0d9d27515517d924eb6f68189e03137c1276c93e68c22b10e785f",
-    "decodedSha256": "ba43e34713f092ee6e34daf4f94137269b24266a6a8e45aa5506dc3c244b34cb"
-  },
-  "dairy-open.mp4": {
-    "sha256": "b24851ae2dae2d3fff6bcc9429c453f53e2720931bfdd1de86b72f6c948852c6",
-    "decodedSha256": "4785496721eb969d17ea222d1bc66c1b33389685168dcd2487ca53d66706a554"
-  },
-  "dairy-open.webm": {
-    "sha256": "dce52736c4fd1eeb6debde6f3932b00ff293e4b1feaf5ea518298a4044b09f74",
-    "decodedSha256": "14328ca41566bdd7139275b3e86e8e3882e3cfef826ecd5a99ca8e69d89537c4"
-  },
-  "dairy-open.webp": {
-    "sha256": "11f95e2a9627a4fb665d5eefa7fcc1c588864ba125bc8ce7a4125e37aeab4c87",
-    "decodedSha256": "377c8869587fdefff6c9b3f0309b2b4c09fc348163ee1f0bb21eb9c9c82eb1a4"
-  },
   "fish-closed.mp4": {
     "sha256": "0cce36c8f4cdea0c949908a7a7ff5eada5c44b85b8446c2400fff023a00f1334",
     "decodedSha256": "84f89fc8dc94ee1efb83e553bec178e5224470a08d2342ac024cf08934cd7221"
@@ -70,54 +46,6 @@
   "freezer-1-open.webp": {
     "sha256": "1a474893d66bfede3470b16b1ecc7c5f0f3e6175bb96accc072403b35e096bbd",
     "decodedSha256": "c0742db8b03d97d955fcbed474d6aeb4d891f3f975cdd5c848b42b4a12316cf6"
-  },
-  "freezer-2-closed.mp4": {
-    "sha256": "1c84a074b1ee7bffff86d567000d4027c3cb3d77209c5614c3706f6604f399aa",
-    "decodedSha256": "71fe2673cac95cef5ac20170bd24031388a8e0150d567d2ac0831a4c914fea1e"
-  },
-  "freezer-2-closed.webm": {
-    "sha256": "70be18c1d0646f56cf63f0496c2da47f92c3a939e08eb2d20528af9d495483a2",
-    "decodedSha256": "0742a823fca312f9773af5b55a96b31f8079e47b3545be0b1111006779bb38df"
-  },
-  "freezer-2-closed.webp": {
-    "sha256": "62e135aeadd8a77352d52bff49629dbe8751718fb5e82b3412ae346e2792f2a4",
-    "decodedSha256": "2fd1acdb68c2459039255c517135b734795f45dac588ecf80efc67ae7d544426"
-  },
-  "freezer-2-open.mp4": {
-    "sha256": "86800f45d421fbb01f6f3d55bdadf5ac5a7cb89c8674e682593c55f46f3b65a9",
-    "decodedSha256": "893e429c5b280cc7fe8f35fd1834ab73e5fe9fd4a0b3f5247bcd11922279dfba"
-  },
-  "freezer-2-open.webm": {
-    "sha256": "86af473e09c5a30bb5a85f8d3c8656516c003c62842d7722d4004b7e9f896600",
-    "decodedSha256": "157b4f8db6c7fe3da964726679b82ec344ab7161aa62897775f4aa9d4a27517c"
-  },
-  "freezer-2-open.webp": {
-    "sha256": "4437b6b2578b79a13055eb1b2bbae47e63cdafb3f6d23438b7476e5f16d5c4c0",
-    "decodedSha256": "269e8d4d9cac9d3ef45293b689099971a9616fcec242499f37e6ab9a79ad4186"
-  },
-  "larder-1-closed.mp4": {
-    "sha256": "ab2d13a6d324f7083e51050dbb0753cbb36b4e540109038a7ac6a69021b05294",
-    "decodedSha256": "3613539a4443b2b394812ee9f4bb8358f23809d87d8d6c5e84f91a165a3c57e5"
-  },
-  "larder-1-closed.webm": {
-    "sha256": "decd90f80770d0fc1821ed7365eeeee261bff930c0e5dab3a6d3bdee9f41de47",
-    "decodedSha256": "356aee9c054d89a331ef087b10fe5cb4aa1b5a373bdc7e093172fc859e1ee10b"
-  },
-  "larder-1-closed.webp": {
-    "sha256": "23fc28418db868d6355e0c78586f4cdc5431404dabdef1b20b9941a77f3e5a81",
-    "decodedSha256": "cdab3b10480d0875b99343af5513139b48699f5b60b06d3a793caada2d637ed2"
-  },
-  "larder-1-open.mp4": {
-    "sha256": "714da6c53239647b0f760556d04d6822ad9df79eead32ff48f6355c88553292c",
-    "decodedSha256": "eaec31bb269e5e449cef0018d419e34f18da301f90272893f8db413147880153"
-  },
-  "larder-1-open.webm": {
-    "sha256": "2ff4dcf33454d0b056febb10da860cda22fc3e8f47110119632a2a4f5330061c",
-    "decodedSha256": "b350f35ca8930303d7e9eaa9b61f8dc0025ca6fbc83c028fb3518333a054c28a"
-  },
-  "larder-1-open.webp": {
-    "sha256": "d951ca11ea2c64d93e51d1b0088d854fa105a96efa360a6c1a4ec81b7f41bb06",
-    "decodedSha256": "b6d41201bdefc59de2a336b8409637a45e0fc45d76adf0fbc1dce8d32986d1f9"
   },
   "larder-2-closed.mp4": {
     "sha256": "79f8fdc58d631d489c46ff1405cc792d542989cb790ee2302488e8929229acd5",

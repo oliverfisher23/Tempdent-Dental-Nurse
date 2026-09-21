@@ -82,7 +82,7 @@ export const BRIEFING_VIDEOS: Record<BriefingVideoId, BriefingVideo> = {
     duration: 'About 25 seconds',
     filename: '05-terence-dietary-list.mp4',
     transcript: [
-      "Yvie's just popped in with the final guest list for the event. There are three late additions, on tables three, six, and nine. The client wants the table plan signed off this afternoon, so she needs a concrete answer from us.",
+      "Yvie's just popped in with the final guest list for the event. There are two late additions, on tables three and six. The client wants the table plan signed off this afternoon, so she needs a concrete answer from us.",
       "Build the allergen chart first, before anything else. Go through the dishes one at a time, and check the actual recipe cards for what's in them, not just the dish name. The frangipane needs extra care: it has almonds mixed all the way through it, not just on top, so it's easy to miss if you're not paying attention.",
       "If an allergen is mixed into a dish rather than sitting on top as a garnish, don't just remove the garnish and assume that fixes it! Choose a different dish instead. That's the rule.",
       "Once you've decided, pop it on the board. Dish, name, table. Front of house need to know what we know, and the client will ask questions.",

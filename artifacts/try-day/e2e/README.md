@@ -7,7 +7,7 @@ pnpm --filter @workspace/try-day run test:fridge-round
 ```
 
 This starts an isolated Vite server, opens a clean Task 1 session at the
-overnight log, and completes all seven appliances through the real browser
+overnight log, and completes all four appliances through the real browser
 flow. A failure names the appliance and the state being checked.
 
 This command is intentionally separate from the fast approval snapshot

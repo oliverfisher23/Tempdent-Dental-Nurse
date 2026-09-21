@@ -9,15 +9,12 @@ import { FRIDGE_INSPECTIONS } from '../src/content/fridge-photos';
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const mediaDir = path.join(projectRoot, 'src/assets/kitchen/inspections/videos');
 const manifestPath = path.join(projectRoot, 'src/content/fridge-media.json');
-const applianceIds = ['walk-in', 'larder-1', 'larder-2', 'fish', 'dairy', 'freezer-1', 'freezer-2'] as const;
+const applianceIds = ['walk-in', 'larder-2', 'fish', 'freezer-1'] as const;
 const expectedSources = {
   'walk-in': ['VIDEOS/Walk in fridge/7eb44cb6-f7e5-417b-abdb-bd148939a82a.mp4', 'VIDEOS/Walk in fridge/fc1f60bd-e556-431d-ad97-93c790b2f502.mp4'],
-  'larder-1': ['VIDEOS/Larder fridge 1/c5de4342-09c5-4aeb-99ea-104dca112ac7.mp4', 'VIDEOS/Larder fridge 1/35be8c03-7eea-4021-bcf4-caa897fadedc.mp4'],
   'larder-2': ['VIDEOS/Larder fridge 2/ace56ee9-3aa9-43e7-a50f-aeeae8a07d1b.mp4', 'VIDEOS/Larder fridge 2/54d61ed4-9310-4cf8-80b9-249bf44765b1.mp4'],
   fish: ['VIDEOS/Fish fridge/6e3167ae-52d6-4b20-8a5a-378686cb3ec3.mp4', 'VIDEOS/Fish fridge/f5546038-06b0-407e-9154-3bb926b9e2b2.mp4'],
-  dairy: ['VIDEOS/Dairy fridge/711b1ce4-15e8-4798-8a14-c7bdb7d2cc84.mp4', 'VIDEOS/Dairy fridge/0065e34f-179b-49a5-8484-fd952780cc34.mp4'],
   'freezer-1': ['VIDEOS/Freezer 1/b0ba4ff8-8c13-49df-a8be-989690cd8465.mp4', 'VIDEOS/Freezer 1/9785aff9-b9ab-47cb-bce4-7cc577c7bea6.mp4'],
-  'freezer-2': ['VIDEOS/Freezer 2/830503ed-eaee-4e4e-bf6a-578c8ee7ea0c.mp4', 'VIDEOS/Freezer 2/a5dc33f0-52d1-477e-80be-f2bd7ebcb4ba.mp4'],
 } as const;
 
 type MediaManifest = Record<string, Record<'closed' | 'open', {
@@ -31,7 +28,7 @@ async function readManifest(): Promise<MediaManifest> {
   return JSON.parse(await readFile(manifestPath, 'utf8')) as MediaManifest;
 }
 
-test('manifest maps exactly seven appliance IDs and both expected source states', async () => {
+test('manifest maps exactly four appliance IDs and both expected source states', async () => {
   const manifest = await readManifest();
   assert.deepEqual(Object.keys(manifest), [...applianceIds]);
   for (const id of applianceIds) {

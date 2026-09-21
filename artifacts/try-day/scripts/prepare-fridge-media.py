@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce the 14 silent Task 1 MP4s and matching WebP posters."""
+"""Reproduce the eight silent Task 1 MP4s and matching WebP posters."""
 
 from __future__ import annotations
 

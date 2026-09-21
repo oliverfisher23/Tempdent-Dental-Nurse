@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { KitchenFrame } from '@/components/kitchen/kitchen-frame';
-import { DISHES, type Line } from '@/content/activities';
+import { DISHES, TERENCE_CHART_ROWS, type Line } from '@/content/activities';
 import { useProgress } from '@/lib/progress-store';
 import { evaluateDietary, wrongChartRows } from '@/lib/simulation';
 import { PassScene } from '@/components/scenes/dietary/pass';
@@ -97,7 +97,8 @@ export default function DietaryTask() {
         }
         return { ...prev, flaggedDishes: wrong, chartChecked: false, redesign: { ...r, hintLevels, rowReviewConfirmed } };
       });
-      setDialogue(DIETARY_REDESIGN_LINES.terenceChartIncorrect);
+      const includesPrefilledRow = wrong.some((dishId) => (TERENCE_CHART_ROWS as readonly string[]).includes(dishId));
+      setDialogue(includesPrefilledRow ? DIETARY_REDESIGN_LINES.terencePrefilledChartIncorrect : DIETARY_REDESIGN_LINES.terenceChartIncorrect);
       kitchenAudio.play('wrong');
       return;
     }

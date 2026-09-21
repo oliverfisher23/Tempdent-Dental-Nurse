@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { FISH_CHECKS, ORDER_LINES } from '@/content/activities';
+import { DELIVERY_LINES, FISH_CHECKS, ORDER_LINES, REFUSED_LINE_ID } from '@/content/activities';
 import { CRATE_IMAGES } from '@/content/kitchen';
 import { lowerFirst } from '@/lib/utils';
 import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
@@ -322,19 +322,12 @@ export function DeliveryRow({
                <div className="w-full xl:w-[60%] flex flex-col gap-8">
                   
                   {/* Hints */}
-                  {line.id === 'smoked-haddock' && (
+                   {line.id === 'chicken' && (
                      <div className="bg-blue-950/40 border border-blue-500/30 text-blue-200 p-4 rounded-lg text-sm flex items-start gap-3">
                         <AlertCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-                        <p>{ROW_LABELS.haddockHint}</p>
+                         <p>{ROW_LABELS.chickenHint}</p>
                      </div>
                   )}
-                   {line.id === 'shallots' && (
-                     <div className="bg-blue-950/40 border border-blue-500/30 text-blue-200 p-4 rounded-lg text-sm flex items-start gap-3">
-                        <AlertCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
-                        <p>{ROW_LABELS.shallotsHint}</p>
-                     </div>
-                  )}
-
                   {/* Manual Entries */}
                   <div className="space-y-4">
                      <h3 className="font-bold text-white text-sm uppercase tracking-widest text-primary">1. {ROW_LABELS.youChecked}</h3>
@@ -482,8 +475,9 @@ export function DeliveryRow({
                      {attempted && (
                         <div className="mt-4 p-4 rounded-lg animate-in slide-in-from-top-2 duration-200" aria-live="polite">
                            {issues.length === 0 ? (
-                              <div className="flex items-center gap-2 text-emerald-400 font-bold bg-emerald-950/30 border border-emerald-500/30 p-3 rounded">
-                                 <Check className="w-5 h-5" /> {ROW_LABELS.checked}
+                              <div className="space-y-2 text-emerald-400 font-bold bg-emerald-950/30 border border-emerald-500/30 p-3 rounded">
+                                 <p className="flex items-center gap-2"><Check className="w-5 h-5" /> {ROW_LABELS.checked}</p>
+                                 {line.id === REFUSED_LINE_ID && <p className="text-sm text-emerald-100"><strong>{DELIVERY_LINES.marcusOnRefusal.speaker}: </strong>{DELIVERY_LINES.marcusOnRefusal.text}</p>}
                               </div>
                            ) : (
                               <div className="text-red-400 bg-red-950/30 border border-red-500/30 p-4 rounded space-y-2">

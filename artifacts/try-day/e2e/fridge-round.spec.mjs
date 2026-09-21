@@ -1,7 +1,7 @@
 import { test } from '@playwright/test';
 import { verifyFridgeMedia } from './fridge-round-verification.mjs';
 
-test('starts from the overnight log and completes all seven appliances', async ({ page }) => {
+test('starts from the overnight log and completes all four appliances', async ({ page }) => {
   // Each Playwright test gets a fresh browser context, so this is a clean
   // first-visit session with no saved progress.
   await page.goto('/task/take-the-handover?testMode=1');

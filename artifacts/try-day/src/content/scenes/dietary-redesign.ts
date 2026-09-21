@@ -15,7 +15,7 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   yvieSheet: {
     speaker: 'Yvie',
-    text: "That's the sheet. The three additions are on tables three, six and nine; you'll get their details once Terence has been through your chart.",
+    text: "That's the sheet. The two additions are on tables three and six; you'll get their details once Terence has been through your chart.",
   } as Line,
   terenceReviewPrompt: {
     speaker: 'Terence',
@@ -23,11 +23,15 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   terenceChartCorrect: {
     speaker: 'Terence',
-    text: "Chart's clean. Matches the supplied ingredients. Now let's look at the three added guests.",
+    text: "Chart's clean. Matches the supplied ingredients. Now let's look at the two added guests.",
   } as Line,
   terenceChartIncorrect: {
     speaker: 'Terence',
     text: "Not yet. Go back to the recipe cards for the dishes I've marked; something's ticked that shouldn't be, or missed that should be there.",
+  } as Line,
+  terencePrefilledChartIncorrect: {
+    speaker: 'Terence',
+    text: "That one's mine. I left a mark out. Check my row against the card and correct it.",
   } as Line,
   terenceRowsUnreviewed: {
     speaker: 'Terence',

@@ -81,11 +81,11 @@ export async function loadApprovedSnapshot(): Promise<ApprovalSnapshot> {
   assert.equal(sha256(manifestSource), sourceHashes.manifest, 'Manifest fixture no longer matches APPROVAL.md; do not auto-refresh it.');
   assert.equal(sha256(inspectionsSource), sourceHashes.inspections, 'Clue fixture no longer matches APPROVAL.md; do not auto-refresh it.');
   const files: MediaFingerprints = JSON.parse(mediaSource);
-  assert.equal(inventoryHash(files), recordedHash('Combined inventory of the 42 mapped MP4, WebM and WebP files'),
+  assert.equal(inventoryHash(files), recordedHash('Combined inventory of the 24 mapped MP4, WebM and WebP files'),
     'Media fixture no longer matches APPROVAL.md; do not auto-refresh it.');
   const manifest: Manifest = JSON.parse(manifestSource);
   const mapped = Object.values(manifest).flatMap(states => Object.values(states).flatMap(state => mediaFields.map(field => state[field])));
-  assert.equal(mapped.length, 42);
+  assert.equal(mapped.length, 24);
   assert.deepEqual(Object.keys(files).sort(), [...mapped].sort(), 'Fixture must cover exactly the approved media inventory.');
   for (const [name, file] of Object.entries(files)) {
     assert.match(file.decodedSha256, /^[a-f0-9]{64}$/, `Missing diagnostic fingerprint for ${name}`);

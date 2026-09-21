@@ -39,8 +39,8 @@ function oneIssue(
   return matches[0];
 }
 
-test('the approved current set and frozen 42-file inventory pass unchanged', async () => {
-  assert.equal(Object.keys(approved.files).length, 42);
+test('the approved current set and frozen 24-file inventory pass unchanged', async () => {
+  assert.equal(Object.keys(approved.files).length, 24);
   assert.match(approved.sourceHashes.manifest, /^[a-f0-9]{64}$/);
   assert.match(approved.sourceHashes.inspections, /^[a-f0-9]{64}$/);
 
@@ -52,29 +52,29 @@ test('the approved current set and frozen 42-file inventory pass unchanged', asy
 test('a same-filename MP4 substitution identifies the exact state and replacement', async t => {
   const directory = await mkdtemp(path.join(os.tmpdir(), 'fridge-substitution-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const substituted = path.join(directory, 'dairy-open.mp4');
+  const substituted = path.join(directory, 'walk-in-open.mp4');
   await copyFile(path.join(mediaDir, 'fish-open.mp4'), substituted);
 
   const current = redirect(
     await readCurrentContent(FRIDGE_INSPECTIONS),
-    { 'dairy-open.mp4': substituted },
+    { 'walk-in-open.mp4': substituted },
   );
   const issues = await checkFridgeApproval(current, approved);
-  const issue = oneIssue(issues, 'media-review', 'dairy/open/video: dairy-open.mp4');
+  const issue = oneIssue(issues, 'media-review', 'walk-in/open/video: walk-in-open.mp4');
   assert.match(issue.detail, /Bytes match another approved asset: fish-open\.mp4/);
   assert.match(issue.detail, /substituted clip\/poster and its clue pairing/);
 });
 
 test('a changed finding reports appliance, clue ID, and old and new text', async () => {
   const inspections = structuredClone(FRIDGE_INSPECTIONS);
-  const oldFinding = inspections.dairy.clues[0].finding;
-  const newFinding = 'The dairy has been moved and now needs a fresh inspection.';
-  inspections.dairy.clues[0].finding = newFinding;
+  const oldFinding = inspections['walk-in'].clues[0].finding;
+  const newFinding = 'The produce has been moved and now needs a fresh inspection.';
+  inspections['walk-in'].clues[0].finding = newFinding;
 
   const current = await readCurrentContent(inspections);
   current.inspectionsSource = current.inspectionsSource.replace(oldFinding, newFinding);
   const issues = await checkFridgeApproval(current, approved);
-  const issue = oneIssue(issues, 'content-change', 'inspection/dairy/clues/dairy/finding');
+  const issue = oneIssue(issues, 'content-change', 'inspection/walk-in/clues/produce/finding');
   assert.match(issue.detail, new RegExp(oldFinding.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.match(issue.detail, new RegExp(newFinding));
 });
@@ -82,13 +82,13 @@ test('a changed finding reports appliance, clue ID, and old and new text', async
 test('a source mapping change fails even when mapped media bytes are untouched', async () => {
   const current = await readCurrentContent(FRIDGE_INSPECTIONS);
   const manifest = JSON.parse(current.manifestSource) as ApprovalSnapshot['manifest'];
-  const oldSource = manifest.dairy.open.source;
-  const newSource = 'VIDEOS/Dairy fridge/review-required.mp4';
-  manifest.dairy.open.source = newSource;
+  const oldSource = manifest.fish.open.source;
+  const newSource = 'VIDEOS/Fish fridge/review-required.mp4';
+  manifest.fish.open.source = newSource;
   current.manifestSource = JSON.stringify(manifest, null, 2) + '\n';
 
   const issues = await checkFridgeApproval(current, approved);
-  const issue = oneIssue(issues, 'content-change', 'mapping/dairy/open/source');
+  const issue = oneIssue(issues, 'content-change', 'mapping/fish/open/source');
   assert.match(issue.detail, new RegExp(oldSource.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.match(issue.detail, new RegExp(newSource.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')));
   assert.equal(issues.some(candidate => candidate.kind === 'media-review'), false);
@@ -112,9 +112,9 @@ test('lossless and lossy re-encodes remain failures with different review classi
 }, async t => {
   const directory = await mkdtemp(path.join(os.tmpdir(), 'fridge-reencode-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const input = path.join(mediaDir, 'dairy-open.mp4');
-  const lossless = path.join(directory, 'dairy-open-lossless.mp4');
-  const lossy = path.join(directory, 'dairy-open-lossy.mp4');
+  const input = path.join(mediaDir, 'walk-in-open.mp4');
+  const lossless = path.join(directory, 'walk-in-open-lossless.mp4');
+  const lossy = path.join(directory, 'walk-in-open-lossy.mp4');
 
   execFileSync('ffmpeg', [
     '-v', 'error', '-y', '-i', input, '-map', '0:v:0', '-an',
@@ -129,23 +129,23 @@ test('lossless and lossy re-encodes remain failures with different review classi
 
   const base = await readCurrentContent(FRIDGE_INSPECTIONS);
   const losslessIssues = await checkFridgeApproval(
-    redirect(base, { 'dairy-open.mp4': lossless }),
+    redirect(base, { 'walk-in-open.mp4': lossless }),
     approved,
   );
   const technical = oneIssue(
     losslessIssues,
     'technical-media-change',
-    'dairy/open/video: dairy-open.mp4',
+    'walk-in/open/video: walk-in-open.mp4',
   );
   assert.match(technical.detail, /technical-only re-encode\/remux/);
   assert.match(technical.detail, /human confirmation still required/);
   assert.match(formatReviewIssues(losslessIssues), /human review required/);
 
   const lossyIssues = await checkFridgeApproval(
-    redirect(base, { 'dairy-open.mp4': lossy }),
+    redirect(base, { 'walk-in-open.mp4': lossy }),
     approved,
   );
-  const uncertain = oneIssue(lossyIssues, 'media-review', 'dairy/open/video: dairy-open.mp4');
+  const uncertain = oneIssue(lossyIssues, 'media-review', 'walk-in/open/video: walk-in-open.mp4');
   assert.match(uncertain.detail, /may be changed content OR a lossy re-encode/);
   assert.match(uncertain.detail, /compare with the approved clip\/poster before deciding/);
   assert.doesNotMatch(uncertain.detail, /new footage/i);
@@ -154,8 +154,8 @@ test('lossless and lossy re-encodes remain failures with different review classi
 test('changed WebM and poster assets and a missing file are all detected', async t => {
   const directory = await mkdtemp(path.join(os.tmpdir(), 'fridge-derived-'));
   t.after(() => rm(directory, { recursive: true, force: true }));
-  const changedWebm = path.join(directory, 'dairy-open.webm');
-  const changedPoster = path.join(directory, 'dairy-open.webp');
+  const changedWebm = path.join(directory, 'walk-in-open.webm');
+  const changedPoster = path.join(directory, 'walk-in-open.webp');
   const missingMp4 = path.join(directory, 'missing.mp4');
   await Promise.all([
     copyFile(path.join(mediaDir, 'fish-open.webm'), changedWebm),
@@ -163,21 +163,21 @@ test('changed WebM and poster assets and a missing file are all detected', async
   ]);
 
   const current = redirect(await readCurrentContent(FRIDGE_INSPECTIONS), {
-    'dairy-open.webm': changedWebm,
-    'dairy-open.webp': changedPoster,
-    'freezer-2-closed.mp4': missingMp4,
+    'walk-in-open.webm': changedWebm,
+    'walk-in-open.webp': changedPoster,
+    'freezer-1-closed.mp4': missingMp4,
   });
   const issues = await checkFridgeApproval(current, approved);
   assert.match(
-    oneIssue(issues, 'media-review', 'dairy/open/webm: dairy-open.webm').detail,
+    oneIssue(issues, 'media-review', 'walk-in/open/webm: walk-in-open.webm').detail,
     /fish-open\.webm/,
   );
   assert.match(
-    oneIssue(issues, 'media-review', 'dairy/open/poster: dairy-open.webp').detail,
+    oneIssue(issues, 'media-review', 'walk-in/open/poster: walk-in-open.webp').detail,
     /fish-open\.webp/,
   );
   assert.match(
-    oneIssue(issues, 'missing-media', 'freezer-2/closed/video: freezer-2-closed.mp4').detail,
+    oneIssue(issues, 'missing-media', 'freezer-1/closed/video: freezer-1-closed.mp4').detail,
     /Cannot read mapped asset/,
   );
 });

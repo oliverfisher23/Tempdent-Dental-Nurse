@@ -1,5 +1,5 @@
-import { CHILL_RULES, PREP_SHEET, type ChillInterval } from '../activities';
-import { CHILL_LABELS as L } from '../scenes/chill';
+import { CHILL_RULES, PREP_SHEET, nextChillMark, type ChillInterval } from '../activities';
+import { CHILL_LABELS as L, describeMinutes } from '../scenes/chill';
 import type { InteractionPatternId } from '../interaction-patterns';
 import type { StepGuide } from '../step-guide';
 import { readingIsRight, traysHaveSpace, type ChillState } from '@/lib/simulation';
@@ -37,7 +37,7 @@ export function getChillGuide(state: ChillState, started: boolean, waiting: bool
     return guide('chill-measure', 5, 'Compare the tray depths', 'Drag the ruler onto a tray to measure the depth of the beef, or tap the ruler and then tap the tray.', 'chill:chiller', 'Find the ruler', 'drag');
   }
   if (m < 120) {
-    return guide(`chill-wait-${m}`, m >= 90 ? 5 : 4, 'Leave the batch to chill', 'Your reading is saved. Leave it 30 minutes using the control below the thermometer.', 'chill:chiller', 'Return to the chiller', 'tap');
+    return guide(`chill-wait-${m}`, m >= 90 ? 5 : 4, 'Leave the batch to chill', `Your reading is saved. Leave it ${describeMinutes((nextChillMark(m) ?? 120) - m)} using the control below the thermometer.`, 'chill:chiller', 'Return to the chiller', 'tap');
   }
   return guide('chill-sign', 6, L.next.sign, 'All the readings are written down. Add your signature at the bottom of the chill record.', 'chill:chiller', 'Open the chiller', 'tap');
 }

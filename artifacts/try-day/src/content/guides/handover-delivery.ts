@@ -45,7 +45,7 @@ export function getHandoverGuide(state: HandoverState): StepGuide {
     step: 3,
     total: 3,
     title: 'One last look',
-    instruction: "That's all seven. Check the board looks right, then you're done here.",
+    instruction: "That's all four. Check the board looks right, then you're done here.",
     actionLabel: 'Check the board',
     place: 'pass',
     action: 'handover:workspace',
@@ -57,7 +57,7 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
   // Navigation checks whether work has been attempted, not whether each answer
   // is correct. The learner requests corrective feedback in the workspace.
   const suggestedOrder = [...ORDER_LINES].sort((a, b) =>
-    a.id === 'smoked-haddock' ? -1 : b.id === 'smoked-haddock' ? 1 : 0);
+    a.id === 'chicken' ? -1 : b.id === 'chicken' ? 1 : 0);
   const unfinished = suggestedOrder.find((line) => {
     const row = state.lines[line.id];
     return !row.counted || !row.arrived.trim() || !row.comparison || !row.status
@@ -93,8 +93,8 @@ export function getDeliveryGuide(state: DeliveryState): StepGuide {
     title: state.signed && ready ? 'Ready to sign off' : 'Review before signing',
     instruction: state.signed && ready
       ? 'The note is signed. Sign off this task when you are ready to continue.'
-      : 'Resolve any unfinished checks, confirm the amendment and initial it, then sign the note.',
-    actionLabel: ready ? 'Open the fish note' : 'Review my work', place: 'goods-in',
+      : 'Resolve unfinished checks. Complete and initial every amendment. Then sign the note.',
+    actionLabel: ready ? 'Open the delivery note' : 'Review my work', place: 'goods-in',
     action: ready ? 'delivery:note' : 'delivery:review',
     pattern: 'tap',
   };

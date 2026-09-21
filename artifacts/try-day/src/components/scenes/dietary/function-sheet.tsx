@@ -10,7 +10,7 @@ import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
 /**
  * Yvie's function sheet, read at the pass before anything else: the event, the menu and
- * the requirements already catered for. The three additions are listed by table; their
+ * the requirements already catered for. The two additions are listed by table; their
  * requirement lines open only after Terence has been through the chart (D04).
  */
 export function FunctionSheetCloseUp({

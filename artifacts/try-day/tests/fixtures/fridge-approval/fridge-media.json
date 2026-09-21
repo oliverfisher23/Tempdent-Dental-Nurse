@@ -13,20 +13,6 @@
       "source": "VIDEOS/Walk in fridge/fc1f60bd-e556-431d-ad97-93c790b2f502.mp4"
     }
   },
-  "larder-1": {
-    "closed": {
-      "video": "larder-1-closed.mp4",
-      "webm": "larder-1-closed.webm",
-      "poster": "larder-1-closed.webp",
-      "source": "VIDEOS/Larder fridge 1/c5de4342-09c5-4aeb-99ea-104dca112ac7.mp4"
-    },
-    "open": {
-      "video": "larder-1-open.mp4",
-      "webm": "larder-1-open.webm",
-      "poster": "larder-1-open.webp",
-      "source": "VIDEOS/Larder fridge 1/35be8c03-7eea-4021-bcf4-caa897fadedc.mp4"
-    }
-  },
   "larder-2": {
     "closed": {
       "video": "larder-2-closed.mp4",
@@ -55,20 +41,6 @@
       "source": "VIDEOS/Fish fridge/f5546038-06b0-407e-9154-3bb926b9e2b2.mp4"
     }
   },
-  "dairy": {
-    "closed": {
-      "video": "dairy-closed.mp4",
-      "webm": "dairy-closed.webm",
-      "poster": "dairy-closed.webp",
-      "source": "VIDEOS/Dairy fridge/711b1ce4-15e8-4798-8a14-c7bdb7d2cc84.mp4"
-    },
-    "open": {
-      "video": "dairy-open.mp4",
-      "webm": "dairy-open.webm",
-      "poster": "dairy-open.webp",
-      "source": "VIDEOS/Dairy fridge/0065e34f-179b-49a5-8484-fd952780cc34.mp4"
-    }
-  },
   "freezer-1": {
     "closed": {
       "video": "freezer-1-closed.mp4",
@@ -81,20 +53,6 @@
       "webm": "freezer-1-open.webm",
       "poster": "freezer-1-open.webp",
       "source": "VIDEOS/Freezer 1/9785aff9-b9ab-47cb-bce4-7cc577c7bea6.mp4"
-    }
-  },
-  "freezer-2": {
-    "closed": {
-      "video": "freezer-2-closed.mp4",
-      "webm": "freezer-2-closed.webm",
-      "poster": "freezer-2-closed.webp",
-      "source": "VIDEOS/Freezer 2/830503ed-eaee-4e4e-bf6a-578c8ee7ea0c.mp4"
-    },
-    "open": {
-      "video": "freezer-2-open.mp4",
-      "webm": "freezer-2-open.webm",
-      "poster": "freezer-2-open.webp",
-      "source": "VIDEOS/Freezer 2/a5dc33f0-52d1-477e-80be-f2bd7ebcb4ba.mp4"
     }
   }
 }

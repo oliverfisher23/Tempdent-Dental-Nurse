@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { Thermometer, Ruler as RulerIcon, ClipboardList, Play, Clock, Check, X } from 'lucide-react';
-import { PREP_SHEET, CHILLER_SHELVES, CHILL_RULES, YOUR_TRAY_READINGS, PROBE_PLACEMENTS, type ProbePlacementId, type ChillInterval } from '@/content/activities';
+import { PREP_SHEET, CHILLER_SHELVES, CHILL_RULES, YOUR_TRAY_READINGS, PROBE_PLACEMENTS, nextChillMark, type ProbePlacementId, type ChillInterval } from '@/content/activities';
 import { CHILL_LABELS as L } from '@/content/scenes/chill';
 import { CoolingRecordSummary } from './cooling-record-summary';
 import { parseNumber, readingIsRight, traysHaveSpace, type ChillState } from '@/lib/simulation';
@@ -690,7 +690,7 @@ export function ChillerView({
 
               <div>
                 <Button onClick={actions.onWait} disabled={!canWait} variant="outline" className="w-full border-zinc-600 bg-zinc-800 font-bold text-white hover:bg-zinc-700 hover:text-white" data-testid="wait">
-                  <Clock className="mr-1 h-4 w-4" /> {L.wait}
+                  <Clock className="mr-1 h-4 w-4" /> {L.wait((nextChillMark(m) ?? CHILL_RULES.extraInterval) - m)}
                 </Button>
                 <p className="mt-1.5 text-center text-xs text-zinc-400" data-testid="wait-hint">
                   {m >= CHILL_RULES.extraInterval ? L.finished : readingDue ? L.waitHint(m) : mustAnswer ? L.next.answer : ''}

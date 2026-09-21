@@ -8,8 +8,7 @@ import assert from 'node:assert/strict';
  */
 export async function verifyFridgeMedia(page) {
   const units = [
-    ['walk-in', '3.4'], ['larder-1', '2.8'], ['larder-2', '8.6'],
-    ['fish', '1.2'], ['dairy', '4.1'], ['freezer-1', '-20.5'], ['freezer-2', '-19.0'],
+    ['walk-in', '3.4'], ['larder-2', '8.6'], ['fish', '1.2'], ['freezer-1', '-20.5'],
   ];
   const video = page.getByTestId('inspection-video');
   const describeVideo = () => video.evaluate(v => ({

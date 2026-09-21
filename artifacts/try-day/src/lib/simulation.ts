@@ -29,7 +29,10 @@ import {
   PROBE_PLACEMENTS,
   READING_TOLERANCE_C,
   DIAL_READING_TOLERANCE_C,
+  REFUSED_LINE_ID,
   SHORT_LINE_ID,
+  TERENCE_CHART_MARKS,
+  TERENCE_CHART_ROWS,
   TASK_ORDER,
   WASTE_BINS,
   WEIGHT_TOLERANCE_KG,
@@ -40,6 +43,7 @@ import {
   type FishCheckId,
   type LineStatus,
   type NinetyMinuteChoiceId,
+  type OrderLine,
   type ProbePlacementId,
   type TaskId,
 } from '@/content/activities';
@@ -104,6 +108,13 @@ export interface OrderLineState {
   acceptedAmount: string;
 }
 
+export interface DeliveryAmendment {
+  amendedTo: string;
+  initials: string;
+  refused: boolean;
+  temperature: string;
+}
+
 export interface DeliveryState {
   redesign?: DeliveryRedesignState;
   lines: Record<string, OrderLineState>;
@@ -118,6 +129,8 @@ export interface DeliveryState {
   missingAmount: string;
   noteLineId: string;
   amendmentInitials: string;
+  /** Amendments keyed by line. Legacy single-amendment fields remain readable. */
+  amendments: Record<string, DeliveryAmendment>;
   contextRevealed: boolean;
   report: {
     productId: string;
@@ -239,6 +252,7 @@ export function initialTaskStates(): TaskStates {
       missingAmount: '',
       noteLineId: '',
       amendmentInitials: '',
+      amendments: {},
       contextRevealed: false,
       report: { productId: '', service: null, action: null },
       reportAttempted: false,
@@ -258,7 +272,7 @@ export function initialTaskStates(): TaskStates {
     },
     'check-the-dietary-list': {
       redesign: { version: 1, decisions: {}, serviceHoldAcknowledged: false, rowReviewConfirmed: {}, openQuestions: {}, sheetRead: false, hintLevels: {}, board: {}, courseReviewed: {} },
-      chart: Object.fromEntries(DISHES.map((d) => [d.id, []])),
+      chart: Object.fromEntries(DISHES.map((d) => [d.id, [...(TERENCE_CHART_MARKS[d.id as keyof typeof TERENCE_CHART_MARKS] ?? [])]])),
       flaggedDishes: [],
       chartChecked: false,
       guests: Object.fromEntries(ADDED_GUESTS.map((g) => [g.id, { main: null, dessert: null }])),
@@ -307,13 +321,22 @@ export function testProgress(target: TaskId | null | undefined): Progress {
       counted: true, arrived: String(line.arrived), probed: line.chilled,
       temperature: line.chilled ? String(line.actualC) : '', status: line.expectedStatus,
       comparison: line.id === SHORT_LINE_ID ? 'differs-both' : 'matches-both',
-      acceptance: 'accept', acceptedAmount: String(line.arrived),
+      acceptance: expectedAcceptance(line), acceptedAmount: String(expectedAcceptedAmount(line)),
     }])),
     fishChecks: Object.fromEntries(FISH_CHECKS.map((check) => [check.id, true])) as Record<FishCheckId, boolean>,
     fishReason: 'condition-and-temperature',
     radioedMarcus: true, noteAmendedTo: String(shortDeliveryLine.arrived), signature: initials, signed: true,
     missingAmount: String(shortDeliveryLine.ordered - shortDeliveryLine.arrived),
     noteLineId: SHORT_LINE_ID, amendmentInitials: initials,
+    amendments: {
+      [SHORT_LINE_ID]: {
+        amendedTo: String(shortDeliveryLine.arrived), initials, refused: false, temperature: '',
+      },
+      [REFUSED_LINE_ID]: {
+        amendedTo: '0', initials, refused: true,
+        temperature: String(ORDER_LINES.find((line) => line.id === REFUSED_LINE_ID)?.actualC ?? ''),
+      },
+    },
     contextRevealed: true,
     report: { productId: SHORT_LINE_ID, service: 'tomorrow-lunch', action: 'contact-supplier' },
     reportAttempted: true,
@@ -329,7 +352,7 @@ export function testProgress(target: TaskId | null | undefined): Progress {
     redesign: { version: 1, comparisonReviewed: true },
     trays: [4, 4, 4, 1.5], askedForTray: true, shelfByTray: [0, 2, 4, 6],
     probePlacement: 'centre',
-    readings: Object.fromEntries(([0, 30, 60, 90, 120] as ChillInterval[]).map((minute) => [
+    readings: Object.fromEntries(([...CHILL_RULES.intervals, CHILL_RULES.extraInterval] as ChillInterval[]).map((minute) => [
       minute, { value: String(YOUR_TRAY_READINGS[minute]), time: addMinutes(CHILL_RULES.startClock, minute) },
     ])),
     minutesElapsed: 120, ninetyChoice: 'keep-logging', measuredDepths: true, studentSigned: true,
@@ -342,7 +365,7 @@ export function testProgress(target: TaskId | null | undefined): Progress {
       openQuestions: { pear: 'How the pear has been handled and plated in the pastry fridge, before it goes to table 3.' },
       serviceHoldAcknowledged: true,
       hintLevels: {},
-      courseReviewed: { 'priya:main': true, 'priya:dessert': true, 'tom:main': true, 'tom:dessert': true, 'anna:main': true, 'anna:dessert': true },
+      courseReviewed: { 'priya:main': true, 'priya:dessert': true, 'tom:main': true, 'tom:dessert': true },
       board: {
         'priya:dessert': { reason: 'Tree-nut and peanut allergy. The frangipane has ground almonds through it and pistachios on top; the pear card lists milk only.' },
         'tom:main': { reason: 'Vegetarian. The beef card lists beef shin and beef stock; the Wellington is the vegetarian main.' },
@@ -352,13 +375,11 @@ export function testProgress(target: TaskId | null | undefined): Progress {
         'priya:dessert': { action: 'swap', proposedDishId: 'pear', category: 'ingredient-conflict', evidence: ['Ground almonds', 'Pistachios', 'Almonds are mixed through the prepared tart'], reason: 'Almonds run throughout the filling and pistachios are present. Removing visible nuts cannot fix this. Propose pear, which still contains milk, subject to preparation checks.' },
         'tom:main': { action: 'swap', proposedDishId: 'wellington', category: 'vegetarian-conflict', evidence: ['Beef shin'], reason: 'The beef conflicts with the vegetarian request; the Wellington is the listed vegetarian main.' },
         'tom:dessert': { action: 'keep', proposedDishId: 'frangipane', category: 'no-conflict', evidence: ['Ground almonds'], reason: 'No conflict with the stated vegetarian request is identified in these dessert ingredients.' },
-        'anna:main': { action: 'keep', proposedDishId: 'beef', category: 'no-conflict', evidence: ['Beef shin'], reason: 'The guest sheet has no restriction stated; retain the planned main.' },
-        'anna:dessert': { action: 'keep', proposedDishId: 'frangipane', category: 'no-conflict', evidence: ['Ground almonds'], reason: 'There is no stated reason to change the planned dessert.' },
       },
     },
     chart: Object.fromEntries(DISHES.map((dish) => [dish.id, [...dish.allergens]])),
     flaggedDishes: [], chartChecked: true,
-    guests: { priya: { main: 'beef', dessert: 'pear' }, tom: { main: 'wellington', dessert: 'frangipane' }, anna: { main: 'beef', dessert: 'frangipane' } },
+    guests: { priya: { main: 'beef', dessert: 'pear' }, tom: { main: 'wellington', dessert: 'frangipane' } },
     boardNote: [
       'Table 3 · Priya Nair · Dessert: Pistachio and raspberry frangipane tart, crème fraîche → Poached pear, vanilla ice cream · Reason: Tree-nut and peanut allergy. The frangipane has ground almonds through it and pistachios on top; the pear card lists milk only. · Preparation check pending: ask Terence before service',
       'Table 6 · Tom Reid · Main: Braised beef shin, horseradish mash, glazed carrots, red wine jus → Wild mushroom, spinach and ricotta Wellington · Reason: Vegetarian. The beef card lists beef shin and beef stock; the Wellington is the vegetarian main.',
@@ -475,6 +496,15 @@ export function lineStatusIsRight(lineId: string, status: LineStatus | null): bo
   return !!line && status === line.expectedStatus;
 }
 
+/** A refused line goes back on the van; everything else is accepted as counted. */
+export function expectedAcceptance(line: Pick<OrderLine, 'expectedStatus'>): NonNullable<OrderLineState['acceptance']> {
+  return line.expectedStatus === 'refused' ? 'refuse' : 'accept';
+}
+
+export function expectedAcceptedAmount(line: Pick<OrderLine, 'expectedStatus' | 'arrived'>): number {
+  return line.expectedStatus === 'refused' ? 0 : line.arrived;
+}
+
 export function evaluateDelivery(s: DeliveryState): Evaluation {
   const everyMarked = ORDER_LINES.every((l) => {
     const st = s.lines[l.id];
@@ -490,8 +520,8 @@ export function evaluateDelivery(s: DeliveryState): Evaluation {
       && parseNumber(st.arrived) === l.arrived
       && lineStatusIsRight(l.id, st.status)
       && st.comparison === expectedComparison
-      && st.acceptance === 'accept'
-      && parseNumber(st.acceptedAmount) === l.arrived;
+      && st.acceptance === expectedAcceptance(l)
+      && parseNumber(st.acceptedAmount) === expectedAcceptedAmount(l);
   });
   const everyChilledTemp = ORDER_LINES.filter((l) => l.chilled).every((l) => {
     const st = s.lines[l.id];
@@ -527,13 +557,19 @@ export function readingIsRight(interval: ChillInterval, value: string): boolean 
   return within(value, YOUR_TRAY_READINGS[interval], READING_TOLERANCE_C);
 }
 
+/** "0, 60 and 90" from a list of minute marks. */
+function listMinutes(marks: readonly number[]): string {
+  if (marks.length <= 1) return marks.join('');
+  return `${marks.slice(0, -1).join(', ')} and ${marks[marks.length - 1]}`;
+}
+
 export function evaluateChill(s: ChillState): Evaluation {
   const validTrays = s.trays.length > 0 && s.trays.every((kg) => Number.isFinite(kg) && kg > 0);
   const portioned = validTrays && Math.abs(totalPortionedKg(s) - PREP_SHEET.yourShareKg) < 0.01
     && (!s.redesign || s.trays.every((kg) => kg <= PREP_SHEET.kgPerTrayAtDepth));
   const loaded = s.shelfByTray.length === s.trays.length && traysHaveSpace(s.shelfByTray);
   const probeRight = s.probePlacement !== null && PROBE_PLACEMENTS.find((p) => p.id === s.probePlacement)?.correct === true;
-  const fourReadings = CHILL_RULES.intervals.every((i) => {
+  const timedReadings = CHILL_RULES.intervals.every((i) => {
     const r = s.readings[i];
     return r && r.time.trim() !== '' && readingIsRight(i, r.value);
   });
@@ -546,7 +582,7 @@ export function evaluateChill(s: ChillState): Evaluation {
     { id: 'portion', label: 'The batch portioned into trays', met: portioned },
     { id: 'space', label: 'Trays in the chiller with space between them', met: loaded },
     { id: 'probe', label: 'Probe in the thickest part of the fullest tray', met: probeRight },
-    { id: 'readings', label: 'Four readings on the chill record with the time each was taken', met: fourReadings },
+    { id: 'readings', label: `A reading at ${listMinutes(CHILL_RULES.intervals)} minutes on the chill record, each with the time it was taken`, met: timedReadings },
     { id: 'ninety', label: 'The batch kept in the chiller and logged until it is under the line', met: rightChoice && s.measuredDepths && underTheLine },
     { id: 'sign', label: 'Your signature on the chill record', met: s.studentSigned },
   ];
@@ -595,7 +631,7 @@ export function evaluateDietary(s: DietaryState): Evaluation {
     ? dietaryRedesignChecklist(s).map((item) => (item.id === 'guests' ? { ...item, met: item.met && guestsDone } : item))
     : [
         { id: 'chart', label: 'Every dish marked against all fourteen allergens', met: chartRight && ALLERGENS.length === 14 && s.chartChecked },
-        { id: 'guests', label: 'Each of the three added guests has a dish written against their name', met: guestsDone },
+        { id: 'guests', label: 'Each added guest has a dish written against their name', met: guestsDone },
         { id: 'board', label: 'The changes are up on the evening board', met: s.boardPosted && guestsDone && boardNoteIsUseful(s.boardNote) },
       ];
   return { done: checklist.every((c) => c.met), checklist };
@@ -711,6 +747,15 @@ export function loadProgress(testMode = isTestMode()): Progress {
     // newly-required blank decisions.
     if (!completed.includes('check-the-delivery-in') && delivery.signed && deliveryReviewIssues(delivery, false).length > 0) {
       delivery.signed = false;
+    }
+    // Progress saved before Terence pre-filled his rows holds an empty array for each of
+    // them. An untouched empty row takes his marks; a row the learner had already marked
+    // keeps their work, and a completed record stays exactly as it was signed off.
+    const dietary = tasks['check-the-dietary-list'] as DietaryState;
+    if (!completed.includes('check-the-dietary-list')) {
+      for (const row of TERENCE_CHART_ROWS) {
+        if ((dietary.chart[row] ?? []).length === 0) dietary.chart[row] = [...TERENCE_CHART_MARKS[row]];
+      }
     }
     return {
       ...base,

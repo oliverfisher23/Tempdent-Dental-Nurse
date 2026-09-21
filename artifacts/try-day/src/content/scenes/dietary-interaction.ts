@@ -29,6 +29,9 @@ export const DIETARY_UI = {
     ingredients: 'Ingredients',
     notePrefix: 'Card note',
     reviewConfirmation: 'I have checked this row against the card for all fourteen columns, marked what is present and noted anything I still need to check.',
+    terenceReviewConfirmation: 'Checked Terence’s row against the card for all fourteen columns.',
+    filledByTerence: 'Filled by Terence',
+    correctedByYou: 'Corrected by you',
     openQuestionsLabel: 'Check needed (optional)',
     openQuestionsPlaceholder: 'Anything the card does not tell you, for Terence',
     openQuestionHint: 'A question stays a question. It never becomes a mark on the chart.',
@@ -60,9 +63,9 @@ export const DIETARY_UI = {
     progressNoun: 'rows confirmed',
     revisitProgressNoun: 'flagged rows fixed',
     opener: {
-      what: 'Mark the allergens in every dish.',
-      how: 'Tap a dish name to read its recipe card, tap a cell to mark it, then confirm the row. Ask Terence to review when every row is confirmed.',
-      done: 'Every row is confirmed and Terence has reviewed the chart.',
+      what: 'Check Terence’s three rows. Fill the two dessert rows.',
+      how: 'Read each card. Correct any marks, fill both desserts, then confirm every row. Ask Terence to review.',
+      done: 'All five rows are confirmed and Terence has reviewed the chart.',
     },
     revisitOpener: {
       what: 'Revisit each row Terence flagged.',
@@ -73,7 +76,7 @@ export const DIETARY_UI = {
   guests: {
     title: 'Guest decisions',
     hotspotLocked: 'Ask Terence to review the chart first.',
-    subtitle: 'Mains and desserts for the three additions.',
+    subtitle: 'Mains and desserts for the two additions.',
     decisionsMade: 'Both courses checked',
     needsReview: 'To check',
     tablePrefix: 'Table',
