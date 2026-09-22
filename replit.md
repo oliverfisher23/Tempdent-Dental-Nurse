@@ -29,7 +29,9 @@ A blank Springpod try-day client scaffold for TempDent. All employer content is 
   - `src/kit/` — reusable pieces with no knowledge of a try day: shadcn `ui/`, `lib/audio.ts` (one AudioContext, ambience bed per place as a `ToneSpec`, generated sounds; the mute key, opening tone and recorded loop URL all come from the client's `configure()` call), `lib/utils.ts`, hooks, and the instrument components (dial and analogue thermometers, kitchen scale, paper surfaces, check feedback).
   - `src/client/` — the replaceable employer client. The generated version contains one DRAFT task, one place, one mentor, placeholder pictures and placeholder briefing transcripts.
   - `src/client/content/mechanic.json` — the client day document and signed-off task copy once approved.
-  - `src/client/lib/simulation.ts` — task state and done-when evaluation.
+  - `src/client/content/tasks/` — one file per task holding its dialogue, scenes and decisions (choice, checklist or sequence), each decision carrying the done-when clause it evidences and the mentor feedback. `index.ts` aggregates them and judges answers. Content is built to the Tempdent storyboard and stays draft until SME sign-off.
+  - `src/client/components/task-page.tsx` + `decision-group.tsx` — render any task from its content; the six page files are one-line wrappers.
+  - `src/client/lib/simulation.ts` — generic task state (answers keyed by decision id) and done-when evaluation derived from the content. Set answers start as `[]`, not `null`, or the shell's saved-progress merge drops them. Sequence options must not be listed in their correct order (tested).
   - `src/client/theme.css` — employer theme tokens.
 
 ## Client scaffold

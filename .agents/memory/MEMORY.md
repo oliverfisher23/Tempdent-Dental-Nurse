@@ -11,3 +11,4 @@
 - [Embedded frame constraints](embedded-frame-audit.md) — sandboxed 480px-high frame: cap bottom bars by % of stage, paper min-height `min(px, svh)`, no fullscreen-only controls.
 - [Shell / kit / client split](shell-client-split.md) — client -> shell -> kit only; shell reads clients via useClient(); tri-state designer fixture; asset loader for node tests; CSS import order.
 - [Client brand assets](client-brand-assets.md) — shell shows the logo on dark bars only (use the reverse mark), sizes it by height; brand primaries usually fail text contrast; tests/ are outside typecheck.
+- [Storyboard-driven task content](storyboard-decisions.md) — every clause needs a real decision (no asserted steps), wrong feedback coaches rather than lists, shuffle sequence options, set answers default to [].

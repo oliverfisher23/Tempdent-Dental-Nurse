@@ -1,0 +1,161 @@
+import type { TaskContent } from './types';
+
+// Storyboard Task 2. Clinical detail is draft, pending SME validation.
+export const WELCOME_TASK: TaskContent = {
+  id: 'welcome',
+  dialogue: {
+    speaker: 'Priya',
+    text: "You bring them through. Say her name, say yours, and bring her dad with her. I'll be right behind you.",
+  },
+  signOff: {
+    speaker: 'Dr Reid',
+    text: 'Thanks, antibiotics noted. Amira, shall we agree a signal? Hand up, I stop. Every time.',
+  },
+  scenes: [
+    {
+      place: 'reception',
+      eyebrow: 'Waiting room',
+      title: 'Collect Amira and her dad',
+      intro: 'Amira (10) is sitting pressed against her dad, quiet, feet not touching the floor. Karim says quietly that she "didn\'t sleep much". Her notes flag: nervous, first filling, dad attending, mild asthma with a blue inhaler.',
+      decisions: [
+        {
+          id: 'greet',
+          kind: 'choice',
+          prompt: 'How do you greet them?',
+          context: 'The waiting room is half full. Collect patients by name, and never announce their treatment across the room.',
+          options: [
+            { id: 'named', label: '"Amira? Hi, I\'m one of the dental nurses. I\'ll be in the room with you and Dr Reid the whole time. Do you want to bring your dad through with you?"' },
+            { id: 'dad_first', label: '"Morning, Mr Hassan. And you must be Amira. I\'m one of the dental nurses. Come through together, you can stay with her the whole time."' },
+            { id: 'across_room', label: '"Amira Hassan for the filling?"' },
+            { id: 'no_pain', label: '"Amira? Don\'t worry, it won\'t hurt a bit! Come on through."' },
+          ],
+          correct: ['named', 'dad_first'],
+          clause: 'Greeting names Amira, introduces you, includes dad and makes no pain promise',
+          feedback: {
+            speaker: 'Priya',
+            right: "Her name, your name, dad included, and nothing promised you can't keep. Good.",
+            wrong: "Two things. First, her treatment is nobody else's business: say her name, not what she's here for. Second, never promise it won't hurt. If it does, even a little, she'll stop believing anything you say, and Dr Reid needs her to trust the hand signal.",
+          },
+        },
+      ],
+    },
+    {
+      place: 'surgery2',
+      eyebrow: 'Surgery 2',
+      title: 'Settle Amira in',
+      intro: "Dr Reid is reading Amira's notes. The chair is ready with a bib and two colours of safety glasses.",
+      decisions: [
+        {
+          id: 'settle',
+          kind: 'sequence',
+          prompt: 'Settle Amira in the chair. Tap the steps in a sensible order.',
+          options: [
+            { id: 'bib', label: 'Put the bib on' },
+            { id: 'chair', label: 'Tell her the chair is going to move back slowly before it does' },
+            { id: 'coat', label: 'Show Amira and her dad where to put coats and bags' },
+            { id: 'glasses', label: 'Offer the safety glasses and let her choose the colour' },
+            { id: 'sit', label: 'Invite Amira to sit, with dad on the stool where she can see him' },
+          ],
+          correct: ['coat', 'sit', 'chair', 'bib', 'glasses'],
+          clause: 'Amira settled: seated with dad in view, bib on, glasses chosen and on',
+          feedback: {
+            speaker: 'Priya',
+            right: 'Nothing happened to her without a word first, and she got a choice at the end. That is how you settle a nervous ten-year-old.',
+            wrong: 'Think about it from the chair. Nothing should happen to her without a word first, nothing should move with her hands full, and the choice you give her works best once she is settled. Go again.',
+          },
+          revealsComplication: true,
+        },
+        {
+          id: 'pause',
+          kind: 'choice',
+          prompt: "The light comes on over the chair. Amira's eyes fill and she grips the armrests. Dad looks at you. What do you do?",
+          after: 'settle',
+          options: [
+            { id: 'push_on', label: 'Keep going with the bib so it is over quicker' },
+            { id: 'dad', label: 'Ask dad to reassure her while you carry on' },
+            { id: 'pause', label: 'Stop, crouch to her eye level and let her pick the glasses. Tell Dr Reid quietly that Amira needs a minute' },
+          ],
+          correct: 'pause',
+          clause: "Paused when Amira's eyes filled, and gave her something to control",
+          feedback: {
+            speaker: 'Priya',
+            right: "That was the moment to stop, and you took it. Watching the patient is the job, even before the treatment starts.",
+            wrong: "Let's give Amira a second. Amira, which glasses? Go on, you pick. You'd have got there, but the moment her eyes filled was the moment to stop. Watching the patient is the job, even before the treatment starts.",
+          },
+        },
+        {
+          id: 'notes',
+          kind: 'checklist',
+          prompt: 'Dr Reid asks the medical history questions. Karim mentions three things. Which go in the notes?',
+          context: 'Karim: "She finished a course of antibiotics last week." "Her blue inhaler is in my bag." "She didn\'t sleep much."',
+          options: [
+            { id: 'antibiotics', label: 'Antibiotics finished last week' },
+            { id: 'inhaler', label: 'Reliever inhaler with dad, in his bag' },
+            { id: 'sleep', label: 'Did not sleep much last night' },
+          ],
+          correct: ['antibiotics', 'inhaler'],
+          clause: 'The two relevant items from dad recorded in the notes',
+          feedback: {
+            speaker: 'Priya',
+            right: "Dr Reid asks, you write. The inhaler, make sure it's to hand. 'Didn't sleep much' isn't a medical entry, but it does tell you to slow down and keep your voice soft.",
+            wrong: "Dr Reid asks, you write. That's how it works with two of us. Anything about her health or her medicines goes in the notes. How she slept isn't a medical entry, but it does tell you to slow down and keep your voice soft.",
+          },
+        },
+        {
+          id: 'antibiotics',
+          kind: 'choice',
+          prompt: 'What do you do about the antibiotics?',
+          after: 'notes',
+          options: [
+            { id: 'later', label: 'Write it down and decide later whether it matters' },
+            { id: 'tell', label: 'Write it down and say it aloud to Dr Reid now' },
+            { id: 'leave', label: 'Leave it. Dr Reid is asking the questions' },
+          ],
+          correct: 'tell',
+          clause: 'Antibiotics flagged to Dr Reid, not judged by you',
+          feedback: {
+            speaker: 'Priya',
+            right: 'Dr Reid decides what is clinically relevant. Your job is to make sure she heard it.',
+            wrong: "Whether it matters isn't yours to decide, and it isn't yours to sit on either. The antibiotics go in the notes and Dr Reid needs to hear it, now, before anything starts.",
+          },
+        },
+        {
+          id: 'hurt',
+          kind: 'choice',
+          prompt: 'Amira asks you quietly: "Is it going to hurt?"',
+          options: [
+            { id: 'honest', label: '"Dr Reid will make the tooth go to sleep first, so it\'ll feel strange and a bit pushy rather than sore. If anything feels wrong, you put your hand up like this and Dr Reid will stop and check with you."' },
+            { id: 'together', label: '"That\'s a really good question. Let\'s ask Dr Reid together, and she\'ll show you how you can tell us to stop."' },
+            { id: 'promise', label: '"It won\'t hurt at all, promise."' },
+            { id: 'compare', label: '"Loads of kids younger than you don\'t make a fuss."' },
+          ],
+          correct: ['honest', 'together'],
+          clause: "Amira's question answered honestly, with the stop signal and no pain promise",
+          feedback: {
+            speaker: 'Priya',
+            right: 'Honest, calm, and she has a way to be in control. That is a promise you can keep.',
+            wrong: "Honest, calm, and give her a way to be in control. That's the shape of a good answer. Never promise no pain, and never compare her to other children. If you're not sure what Dr Reid has planned, the best answer is 'let's ask her together'.",
+          },
+        },
+        {
+          id: 'white',
+          kind: 'choice',
+          prompt: 'Karim asks: "Can she have the white filling rather than the silver one?"',
+          options: [
+            { id: 'yes', label: '"Yes, that should be fine for a back tooth."' },
+            { id: 'price', label: '"I think it depends on the price."' },
+            { id: 'refer', label: '"That\'s one for Dr Reid. She\'ll go through the options with you before anything starts."' },
+            { id: 'cold', label: '"You\'ll have to ask the dentist."' },
+          ],
+          correct: 'refer',
+          clause: "Dad's treatment question passed to Dr Reid warmly",
+          feedback: {
+            speaker: 'Priya',
+            right: 'Treatment options are Dr Reid\'s call, and you told him who will answer it and when.',
+            wrong: "Treatment options are Dr Reid's call, every time. But you don't have to sound like you're closing a door, and you never guess. Tell him who'll answer it and when.",
+          },
+        },
+      ],
+    },
+  ],
+};

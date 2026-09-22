@@ -8,7 +8,7 @@ import { clientProblems } from '@shell/lib/client';
 register('./support/asset-loader.mjs', import.meta.url);
 
 test('the generated client uses its own storage key', () => {
-  assert.equal(STORAGE_KEY, "springpod:tempdent-try-day:v1");
+  assert.equal(STORAGE_KEY, "springpod:tempdent-try-day:v2");
   assert.equal(day.spec.STORAGE_KEY, STORAGE_KEY);
 });
 
@@ -40,7 +40,7 @@ test('evaluator correctly processes test fixtures', () => {
   const finished = day.testProgress(null);
   const evaluation = day.model.evaluateTask('setup', finished.tasks);
   assert.equal(evaluation.done, true);
-  assert.equal(evaluation.checklist.length, 2);
+  assert.equal(evaluation.checklist.length, 9);
   assert.equal(evaluation.checklist[0].met, true);
   assert.equal(evaluation.checklist[1].met, true);
 });

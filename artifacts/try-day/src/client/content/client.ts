@@ -74,13 +74,13 @@ export const WORKPLACE: Workplace = {
       start: 'surgery2',
       places: ['surgery2', 'reception'],
       light: 'morning',
-      whatIsHere: { surgery2: 'Explain aftercare and reset surgery', reception: 'Handover notes' },
+      whatIsHere: { surgery2: 'Notes, aftercare, then the reset', reception: 'Recall note for Sam' },
     },
     change: {
       start: 'decon',
-      places: ['decon', 'reception', 'stock', 'surgery2'],
+      places: ['decon', 'surgery2', 'stock'],
       light: 'midday',
-      whatIsHere: { decon: 'Process instruments', reception: 'Manage changes', stock: 'Check delivery', surgery2: 'Update Dr Reid' },
+      whatIsHere: { decon: 'Inspection lamp and autoclave', surgery2: 'Set up for Mr Nowak', stock: 'The delivery' },
     },
     close: {
       start: 'reception',

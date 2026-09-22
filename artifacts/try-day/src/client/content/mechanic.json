@@ -4,7 +4,7 @@
   "mechanicId": "try-day-app",
   "config": {
     "mechanic": "try-day-app",
-    "version": 1,
+    "version": 2,
     "id": "tempdent-try-day",
     "employer": "Tempdent",
     "locale": "en-GB",
@@ -38,97 +38,148 @@
         "time": "08:15",
         "place": "Surgery 2",
         "title": "Set up the surgery for the morning",
-        "situation": "The practice has just opened. Surgeries are cold and quiet. Today's check sheets are blank.",
-        "job": "Set up the surgery safely by completing the morning checks and preparing the tray for the first patient.",
+        "situation": "The practice has just opened. Surgery 2 is cold and quiet, the check sheets are blank, and the first patient, Amira, is due at 09:00 for a composite filling.",
+        "job": "Get yourself ready, flush the water lines for the right time, check the emergency kit and set up the tray for the 09:00 filling, checking every pouch.",
         "materials": [
           {
-            "name": "Morning check sheet",
-            "description": "The daily safety checks for the surgery."
+            "name": "Surgery check sheet",
+            "description": "The daily start-of-day checks: water lines, suction, autoclave, surfaces, stock. Signed with date, time and initials."
+          },
+          {
+            "name": "Medical emergency equipment check sheet",
+            "description": "The emergency drugs box and oxygen: present, in date, sealed. Anything out of date is flagged and reported."
+          },
+          {
+            "name": "Tray set-up guide: composite filling",
+            "description": "The instruments and materials for the 09:00, with a pouch check on every item."
           }
         ],
-        "interaction": "You are supervised by Priya, who guides you through the morning checks.",
-        "doneWhen": "You complete all items on the morning check sheet.",
-        "whatHappensNext": "You prepare to welcome the first patient."
+        "interaction": "Priya shows you each routine once and then watches you do it.",
+        "doneWhen": "The preparation steps are in order, the check sheet shows a 2-minute flush, the expired glucagon is reported, and the tray matches the guide with the broken-seal pouch set aside.",
+        "whatHappensNext": "You prepare to welcome the first patient.",
+        "complication": "Opening the emergency drugs box: one of the drugs, the glucagon, is past its expiry date."
       },
       {
         "id": "welcome",
         "time": "08:55",
         "place": "Waiting room",
         "title": "Welcome Amira and her dad",
-        "situation": "Amira (10) and her dad are waiting. It's her first filling.",
-        "job": "Escort them to Surgery 2, answer their questions, and help Amira feel at ease.",
-        "materials": [],
-        "interaction": "You communicate directly with Amira and her dad.",
-        "doneWhen": "You answer their questions appropriately and guide them into the surgery.",
-        "whatHappensNext": "Dr Reid begins the procedure."
+        "situation": "Amira (10) is in the waiting room with her dad, Karim. Her notes flag: nervous, first filling, dad attending, mild asthma with a blue inhaler. Karim says she didn't sleep much.",
+        "job": "Collect them by name, settle Amira in the chair, record what dad tells you, and answer their questions within your role.",
+        "materials": [
+          {
+            "name": "Amira's notes",
+            "description": "Nervous, first filling, dad attending, mild asthma with a blue inhaler."
+          },
+          {
+            "name": "Settling-in routine",
+            "description": "Coats, seat, warn before the chair moves, bib, glasses. Amira chooses the colour."
+          }
+        ],
+        "interaction": "You speak to Amira and Karim directly. Priya is behind you and Dr Reid is in the surgery.",
+        "doneWhen": "The greeting names Amira and includes dad with no pain promise, Amira is settled with dad in view, the antibiotics and inhaler are recorded and flagged to Dr Reid, and both questions are answered within an apprentice's role.",
+        "whatHappensNext": "Dr Reid begins the procedure.",
+        "complication": "As the light comes on over the chair, Amira's eyes fill and she grips the armrests. Dad looks at you."
       },
       {
         "id": "filling",
         "time": "09:05",
         "place": "Surgery 2",
         "title": "Support the filling",
-        "situation": "Dr Reid is preparing to start Amira's filling.",
-        "job": "Support the clinician chairside, anticipate needs, and watch the patient.",
+        "situation": "Dr Reid has explained the filling and agreed the hand-up signal with Amira. Dad is on the stool by the door. The tray you set up is beside you.",
+        "job": "Work the suction, have the next item ready before Dr Reid asks, pass instruments safely and watch Amira's face more than you watch the tooth.",
         "materials": [
           {
-            "name": "Tray set-up",
-            "description": "Instruments and materials ready for the filling."
+            "name": "Procedure strip",
+            "description": "Numb, keep dry, remove decay, etch, bond, composite in layers with the band on first, cure, check the bite and polish."
+          },
+          {
+            "name": "Tray",
+            "description": "The instruments and materials you set up this morning, including the curing light and its barrier sleeve."
           }
         ],
-        "interaction": "You assist Dr Reid and keep a close eye on Amira.",
-        "doneWhen": "You hand over the correct items and pause when Amira signals.",
-        "whatHappensNext": "The filling is completed successfully."
+        "interaction": "You assist Dr Reid chairside. Priya watches from the door.",
+        "doneWhen": "The needle is left to Dr Reid, the suction is placed well, all four next-item prompts are answered, instruments pass below the chin, the hand signal is reported instantly and handled, and the curing light goes out sleeved with the shield.",
+        "whatHappensNext": "The filling is completed successfully.",
+        "complication": "Water collects at the back of Amira's mouth while the handpiece runs, and her hand lifts from the armrest."
       },
       {
         "id": "reset",
         "time": "09:35",
         "place": "Surgery 2",
-        "title": "The job isn't finished — notes, aftercare and reset",
-        "situation": "The filling is done, but the notes need recording and the room needs resetting.",
-        "job": "Record the notes, explain aftercare to Amira's dad, and reset the surgery.",
+        "title": "The job isn't finished: notes, aftercare and reset",
+        "situation": "The filling is done. Amira is still numb, Dr Reid needs the notes finishing with batch numbers, dad needs the aftercare, and the 09:40 check-up has arrived.",
+        "job": "Look after Amira as the treatment ends, record the notes and batch numbers, give dad the approved aftercare, hand Sam the recall note, then reset Surgery 2 in order.",
         "materials": [
           {
-            "name": "Decontamination guide",
-            "description": "Steps to safely wipe down and reset the surgery."
+            "name": "Patient notes and packaging",
+            "description": "Fields for treatment, anaesthetic and material batch numbers, aftercare and recall. Batch is the lot number, not the product code or expiry."
+          },
+          {
+            "name": "Aftercare card: fillings (children)",
+            "description": "The three approved points to give a parent."
+          },
+          {
+            "name": "Reset-between-patients routine",
+            "description": "Ten steps from PPE on to the new tray and check sheet, with a 20 to 30 second flush."
           }
         ],
-        "interaction": "You speak to Amira's dad and then follow the reset sequence with Priya.",
-        "doneWhen": "Aftercare is explained, notes are recorded, and the room is fully reset in the right order.",
-        "whatHappensNext": "You move to the decontamination room."
+        "interaction": "You speak to Amira and Karim, hand over to Sam at reception, and reset the room while Priya watches the door.",
+        "doneWhen": "Amira's end-of-treatment care is in order, the notes carry the batch numbers and a six-month recall, the three approved aftercare points are given, the recall note is with reception, and Surgery 2 is reset in order with no step skipped.",
+        "whatHappensNext": "You move to the decontamination room.",
+        "complication": "A message from Sam: \"09:40 has been waiting 10 mins. How long?\" The clock is slipping."
       },
       {
         "id": "change",
         "time": "10:20",
         "place": "Decontamination room",
         "title": "The morning changes",
-        "situation": "Mid-morning, a cancellation, an emergency patient, and a stock delivery all happen at once.",
-        "job": "Prioritise tasks sensibly, update the team, and keep things moving safely.",
+        "situation": "You are at the inspection lamp with Amira's instruments. Priya has been called next door. Then Joanne arrives: the 10:20 has cancelled, Mr Nowak is coming at 10:40 in severe pain, and a delivery is blocking the corridor.",
+        "job": "Finish the decontamination step you are on safely, then decide what to do first, what can wait and who needs to know, and get Surgery 2 ready for 10:40.",
         "materials": [
           {
-            "name": "Day list",
-            "description": "The updated schedule."
+            "name": "Decontamination cycle card",
+            "description": "Scrub below 45°C, rinse, inspect, autoclave spaced with indicators, cool covered, pouch dry within an hour, label with expiry and initials, store. Log every cycle."
+          },
+          {
+            "name": "Examination tray guide",
+            "description": "Mirror, probe, tweezers, cotton rolls, ejector and aspirator tips, 3-in-1 tip, bib, glasses. Dr Reid asked for the emergency drugs box within reach."
+          },
+          {
+            "name": "Updated day list and delivery note",
+            "description": "10:20 struck through. 10:40 Mr N, emergency, pain, exam, Dr Reid. A delivery including local anaesthetic and disinfectant concentrate."
           }
         ],
-        "interaction": "You communicate with the practice manager and receptionist to manage the flow.",
-        "doneWhen": "You decide the correct priority order for handling the urgent changes.",
-        "whatHappensNext": "The morning continues smoothly."
+        "interaction": "Joanne, the practice manager, asks what you are doing first. Priya is next door and answers by message.",
+        "doneWhen": "The inspected instruments are sorted, the autoclave is started and logged, the four jobs are ranked with one request for help, Priya has a short message with no clinical guess, Surgery 2 is ready with the exam tray and drugs box, the delivery is out of the corridor with the special-storage items flagged, and the load is pouched within the hour.",
+        "whatHappensNext": "The morning continues smoothly.",
+        "complication": "Joanne: \"Three things. 10:20's cancelled. Mr Nowak's coming at 10:40 in a lot of pain. And there's a delivery in the corridor that Sam's about to fall over.\""
       },
       {
         "id": "close",
         "time": "16:30",
         "place": "Waiting room",
-        "title": "Graham's first visit in ten years — and closing the day",
-        "situation": "Graham (54) hasn't seen a dentist in over ten years and is extremely anxious.",
-        "job": "Take the lead in welcoming him calmly, record the charting notes, and then close down the surgery for the day.",
+        "title": "Graham's first visit in ten years, and closing the day",
+        "situation": "Graham Ellis (54) is a new patient: extremely anxious, no dentist in over ten years, asked for a nurse to collect him and wants to talk first. Priya says this one is yours.",
+        "job": "Bring Graham in so he stays in control, support him through the examination without judging him, record what Dr Reid dictates, then close the surgery and write your handover.",
         "materials": [
           {
-            "name": "Charting record",
-            "description": "Dental charting you must log as Dr Reid speaks."
+            "name": "Graham's patient card",
+            "description": "New patient exam. Nurse to collect, wants to talk first, bad experience as a teenager. High blood pressure, medicated; no allergies."
+          },
+          {
+            "name": "The examination in plain words",
+            "description": "A small mirror and a thin instrument, counting and noting. Any X-rays only with his agreement."
+          },
+          {
+            "name": "End-of-session close-down card and handover template",
+            "description": "Disinfectant through the aspirator at the end of the session. Handover: what is ready, what is outstanding, what to watch."
           }
         ],
-        "interaction": "You welcome Graham with empathy, record notes for Dr Reid, and reflect on the day.",
-        "doneWhen": "You reassure Graham, log the charting accurately, and complete the end-of-day reflection.",
-        "whatHappensNext": "The shift ends."
+        "interaction": "You lead with Graham. Dr Reid examines and dictates; Priya is in the room but lets you run it.",
+        "doneWhen": "Graham is approached beside him with a line that gives him control, offered control and information, answered without judgement, given his minute, his distress is reported to Dr Reid, the factual note and booking slip are done, and the close-down and handover are complete.",
+        "whatHappensNext": "The shift ends.",
+        "complication": "As Dr Reid reaches for the mirror, Graham sits up: \"Sorry. I need a minute outside.\" He stands."
       }
     ],
     "gate": {
