@@ -1,3 +1,70 @@
+# try-day-app
+
+> **Day document for the built experience:** the JSON below is the day document the
+> art'otel sous chef TRY day app runs on (`artifacts/try-day/src/content/mechanic.json`,
+> as built on 22 September 2026). The task ids are the five the app reports in its
+> completion message; titles, times and places are the ones on its job cards. Task
+> wording is the client-signed copy, reproduced verbatim. It is authored en-GB content
+> for this experience; it does not claim employer intelligence approval. Open points for
+> the content owner are listed under "Provenance and open points".
+>
+> Keep the complete structure, keys, literals and array invariants. On import, the server binds `config.id` and `config.gate.id` to the cast id.
+
+## This is the day document
+
+TRY is one activity: a full working day in the role, done by hand as exactly 5 tasks.
+Write `frame` (who the learner is today, where, the shift, two or three named people, the morning brief, the close of day, the tone)
+and `tasks` (5 tasks in time order — each with a kebab-case `id`, a 24-hour `time`, a `place`, a short `title`, the `situation`, the hands-on `job`, the `materials` the learner handles, the `interaction`, what `doneWhen` looks like, `whatHappensNext`, and an optional `complication`).
+
+- The day runs 30–40 minutes for learners aged 14–18 who have never been in this workplace; plain en-GB words, no jargon without a gloss.
+- Every task is something the learner does, with materials they use; `doneWhen` is observable, never a mark.
+- No scores, points, grades, verdicts, right answers or "well done" anywhere in the document.
+- Media for materials are attached in Studio after import, never referenced here.
+- The app reports `{"completedTasks":[...]}` with every task `id` exactly once when the day is done; that is all it records.
+
+## Authoring focus
+
+Write one believable shift: a morning brief, five hands-on tasks in time order with the materials the learner actually handles, two or three named colleagues, and a close of day. Each task says what done looks like and where the day goes next; none of them says how well it went. Use only supported role, workplace and process information.
+
+Preserve the current full schema and runtime behaviour. Guidance cannot
+change interaction timing, gates or evidence formats through copy alone.
+
+### Review consideration — not an approved runtime change
+
+The day app is the single TRY position (Ollie, 15 September 2026). It completes when every authored task is finished and records nothing else; it must not be extended with native evidence, scores or verdicts. Media for materials are attached in Studio and travel in the pack's approved assets, never embedded in the document.
+
+The full AI pack includes guidance for the optional activity-scoped visual
+brief, Studio/app responsibilities and human approval. A saved brief is a
+distinct build input, never gameplay, employer intelligence or approval.
+Missing detailed behaviour cards must be obtained rather than invented.
+
+## Provenance and open points
+
+- Source: `src/content/mechanic.json` in the app, byte for byte; the app renders `morningBrief`
+  (the briefing page), `closeOfDay` (the end-of-day page), `shift`, and each task's `situation`,
+  `job`, `complication`, `doneWhen`, `interaction` and `whatHappensNext` (the job card).
+  `frame.people` is not shown to learners.
+- Completion: the app posts `gate:complete` with `completedTasks` listing these five ids once, in
+  this order, when the fifth task is signed off (see `EMBEDDING.md`). It records nothing else.
+- One correction made while completing this document: `frame.people` carried Terence twice (a
+  leftover from an earlier rename). The second Terence entry was removed; the first, the mentor
+  entry, is unchanged.
+- Open points, left as signed for the content owner to decide:
+  1. Task 4 `situation` and `doneWhen` say three late additions on tables 3, 6 and 9. The built
+     exercise has two: table 3 (a severe tree-nut and peanut allergy) and table 6 (vegetarian).
+     The job card therefore promises one more guest than the function sheet shows.
+  2. Task 4 `job` says "choose safe dishes". The built exercise, by the agreed dietary decision
+     register, records an ingredient-based proposal and a preparation check that stays pending
+     for Terence; it never confirms a dish as safe to serve.
+  3. Task 5 `doneWhen` says the waste rows are "weighed correctly"; the pack asks for `doneWhen`
+     to be observable, never a mark. "Carry the weight from the scales" would say the same thing.
+  4. `closeOfDay` tells the learner what they did well ("checked the fridge properly"). The pack
+     asks the close not to say how well it went; the current line was reviewed on 22 September
+     2026, so any change is the owner's call.
+- Media for the materials (fridge photographs and door clips, paperwork images) are attached in
+  Studio, not referenced here.
+
+```json
 {
   "format": "springpod-mechanic",
   "version": 1,
@@ -149,3 +216,4 @@
     }
   }
 }
+```

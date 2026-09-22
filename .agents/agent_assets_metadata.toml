@@ -120,3 +120,17 @@ mtime_ms = 1789737490333
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/be156e8e-6caa-401b-8a23-8f369500ef1d/e10a3375-8af6-450f-ba0f-5fffb6527c18"
 storage_version_token = "1789737547426014"
 content_type = "text/html"
+
+[[outputs]]
+id = "TryuXfN13AyYX1YbgAS68"
+uri = "file://artifacts/try-day/docs/try-day-app.md"
+type = "text"
+title = "try-day-app day document (art'otel sous chef)"
+description = "The completed Springpod day document for the built experience: verbatim mechanic.json, provenance, and four open points for the content owner."
+logical_id = "caa8afc6-9a06-4992-8220-a1212ac861e5"
+content_hash = "sha256:ae24c9a665fcfffb16bf8986a21802f90b0414b645dd2844795d599974e4a60e"
+size = 16311
+mtime_ms = 1790072524063
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:437ad7d5-35a2-45a8-9b37-33a046ba1caa/caa8afc6-9a06-4992-8220-a1212ac861e5/e7850c88-7b6c-485b-8668-38e0d07efbf9"
+storage_version_token = "1790072562245750"
+content_type = "text/markdown"
