@@ -1,4 +1,5 @@
 import type { TaskContent } from './types';
+import packagesPicture from '@client/assets/closeups/packages.jpg';
 
 // Storyboard Task 4. Clinical detail is draft, pending SME validation.
 export const RESET_TASK: TaskContent = {
@@ -14,6 +15,7 @@ export const RESET_TASK: TaskContent = {
   scenes: [
     {
       place: 'surgery2',
+      people: ['dentist'],
       eyebrow: 'Surgery 2',
       title: 'Notes, aftercare and reset',
       intro: 'Amira is still in the chair with a numb cheek. Dr Reid is talking to her dad and needs the notes finishing with the batch numbers. Sam has messaged: the 09:40 check-up has arrived.',
@@ -36,6 +38,11 @@ export const RESET_TASK: TaskContent = {
             right: 'Rinse, mirror, glasses, bib, then up slowly. And you praised the thing she actually did well, not "see, that wasn\'t so bad".',
             wrong: "She's had a mouthful of water and filling dust, and she's been lying flat for half an hour. Deal with the mouth before anything comes off, and sitting up is the slow bit at the end. Go again.",
           },
+          present: {
+            kind: 'order',
+            title: 'As the treatment ends',
+            open: 'Look after Amira',
+          },
         },
         {
           id: 'batch',
@@ -57,6 +64,39 @@ export const RESET_TASK: TaskContent = {
             speaker: 'Priya',
             right: 'Three lot numbers, one per package. If any of those is ever recalled, that is the number the manufacturer asks for.',
             wrong: "Batch or lot, that's the one that tells us which production run this came from. If there's ever a recall, that's the number the manufacturer asks for. Expiry goes in its own field; the product code isn't ours to record.",
+          },
+          present: {
+            kind: 'labels',
+            title: 'Record the batches',
+            open: 'Read the labels',
+            picture: packagesPicture,
+            packages: [
+              {
+                id: 'la',
+                name: 'Local anaesthetic cartridge',
+                fields: [
+                  { optionId: 'la_ref', field: 'REF', value: '22-0913' },
+                  { optionId: 'la_lot', field: 'LOT', value: '4471B' },
+                  { optionId: 'la_exp', field: 'EXP', value: '03/2027' },
+                ],
+              },
+              {
+                id: 'comp',
+                name: 'Composite syringe',
+                fields: [
+                  { optionId: 'comp_ref', field: 'REF', value: 'CP-A2' },
+                  { optionId: 'comp_lot', field: 'LOT', value: 'C0882' },
+                ],
+              },
+              {
+                id: 'bond',
+                name: 'Bonding agent',
+                fields: [
+                  { optionId: 'bond_lot', field: 'LOT', value: 'B5510' },
+                  { optionId: 'bond_exp', field: 'EXP', value: '11/2026' },
+                ],
+              },
+            ],
           },
         },
         {
@@ -81,6 +121,13 @@ export const RESET_TASK: TaskContent = {
             right: "That's the record. What Dr Reid said, in her words, and the recall she decided.",
             wrong: 'The notes are what Dr Reid dictated, nothing added and nothing left out. The recall interval is her decision; you record it, you don\'t change it or add your own view.',
           },
+          present: {
+            kind: 'paper',
+            paper: 'notepaper',
+            title: 'Clinical notes',
+            open: 'Write the notes',
+            heading: 'Amira - 09:00',
+          },
         },
         {
           id: 'aftercare',
@@ -102,6 +149,7 @@ export const RESET_TASK: TaskContent = {
             right: "Those three, in plain words. If dad asks anything that isn't on the card, 'ask Dr Reid' is the right answer.",
             wrong: "Two of those aren't true and one's a booking Dr Reid hasn't asked for. Aftercare is only ever what the dentist has said and what's on the card. If dad asks something not on it, 'ask Dr Reid' is the right answer.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'sharps',
@@ -120,6 +168,7 @@ export const RESET_TASK: TaskContent = {
             right: "Needle and matrix band went straight from Dr Reid's hand into the sharps box. That's hers, every time.",
             wrong: "Needle and matrix band went straight from Dr Reid's hand into the sharps box, that's hers, every time. You never handle a used needle, and you never go looking for one.",
           },
+          present: { kind: 'speech' },
           revealsComplication: true,
         },
         {
@@ -139,6 +188,7 @@ export const RESET_TASK: TaskContent = {
             right: "Good. She's got a patient asking her, and now she can answer him.",
             wrong: "Tell Sam how long, honestly. She's got a patient asking her. And nobody in this practice will ever ask you to skip an infection control step to save time. If they did, you'd say no and tell me.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'reset',
@@ -165,11 +215,18 @@ export const RESET_TASK: TaskContent = {
             right: 'Dirty out first, box wiped with clean gloves before it leaves, surfaces, lines, aspirator, then the tray and the sheet. The 09:40 waited thirty seconds longer and got a safe room.',
             wrong: "Gloves off before you touch the outside of that box, otherwise the box is as dirty as what's in it. Dirty things leave first, then you clean, then you flush, and the tray and the sheet come last. Go again.",
           },
+          present: {
+            kind: 'order',
+            title: 'Reset Surgery 2',
+            open: 'Reset the room',
+            slotsLabel: 'Your order',
+          },
         },
       ],
     },
     {
       place: 'reception',
+      people: ['receptionist'],
       eyebrow: 'Reception',
       title: 'Hand over to Sam',
       intro: 'You walk Amira and her dad out. Sam needs the recall note for the front desk.',
@@ -191,6 +248,7 @@ export const RESET_TASK: TaskContent = {
             right: "Six months, as Dr Reid said, and the note tells whoever sees her next what actually worked.",
             wrong: "The interval is Dr Reid's: six months. And the note is for the next nurse who meets her. 'Nervous, went well with the hand signal' tells them what to do. Anything else is either wrong or unkind.",
           },
+          present: { kind: 'speech' },
         },
       ],
     },

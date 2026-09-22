@@ -1,4 +1,6 @@
 import type { TaskContent } from './types';
+import curingLightImage from '@client/assets/items/curing-light.png';
+import glassesImage from '@client/assets/items/glasses.png';
 
 // Storyboard Task 3. Clinical detail is draft, pending SME validation.
 export const FILLING_TASK: TaskContent = {
@@ -14,6 +16,7 @@ export const FILLING_TASK: TaskContent = {
   scenes: [
     {
       place: 'surgery2',
+      people: ['dentist'],
       eyebrow: 'Surgery 2',
       title: 'Support the filling',
       intro: 'Dr Reid has explained the filling and agreed the hand-up signal. Dad is on the stool by the door where Amira can see him. The tray you set up is beside you. The strip on the wall reads: numb the tooth, keep it dry, remove the decay, etch, bond, place the composite in layers with the band on first, set it with the blue light, check the bite and polish.',
@@ -34,6 +37,7 @@ export const FILLING_TASK: TaskContent = {
             right: "Proactive is having the next thing ready, not doing her job. That needle is hers from the tray to the sharps box.",
             wrong: "Being ahead of Dr Reid never means touching the needle. That's hers from the tray to the sharps box. Proactive is having the next thing ready, not doing her job.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'suction',
@@ -51,6 +55,14 @@ export const FILLING_TASK: TaskContent = {
             speaker: 'Priya',
             right: 'Two jobs with that tip, both done: the water is going, and Dr Reid can see.',
             wrong: "You've two jobs with that tip: clear the water so Amira isn't swallowing it, and keep the cheek and tongue out of the way. Both happen near the tooth, and never between Dr Reid's mirror and what she's looking at.",
+          },
+          present: {
+            kind: 'hotspots',
+            spots: {
+              front: { x: 27.0, y: 58.0, hint: 'In front' },
+              mirror: { x: 78.0, y: 58.0, hint: 'Over the tray' },
+              near: { x: 40.0, y: 59.5, hint: 'Beside the head' },
+            },
           },
         },
         {
@@ -73,6 +85,11 @@ export const FILLING_TASK: TaskContent = {
             right: 'Etch, bond, composite, then the paper to check the bite. You were ahead of her.',
             wrong: "Bond before composite, the filling's got nothing to hold on to otherwise. Look at the strip on the wall: what's just finished, then what's next? It's there so you don't have to remember it yet. Go again.",
           },
+          present: {
+            kind: 'order',
+            title: 'Next item ready',
+            open: 'Line up the next items',
+          },
         },
         {
           id: 'transfer',
@@ -90,6 +107,7 @@ export const FILLING_TASK: TaskContent = {
             right: 'Below the chin, handle first, and she never had to look away from the tooth.',
             wrong: "Nothing passes over the patient's face. She'll flinch, and if it slipped it would land on her. Below the chin, handle towards Dr Reid's hand, and she never has to look away from the tooth.",
           },
+          present: { kind: 'speech' },
           revealsComplication: true,
         },
         {
@@ -110,6 +128,7 @@ export const FILLING_TASK: TaskContent = {
             right: "Stopping. Amira, what is it? Okay. Suction to the back for me. Amira, well done for telling us.",
             wrong: "I need you to be my eyes on Amira. If her hand goes up, you tell me before I've seen it. The signal only works if it's honoured instantly. If a child learns it doesn't work, we lose her for every appointment after this.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'restart',
@@ -128,6 +147,7 @@ export const FILLING_TASK: TaskContent = {
             right: 'Ready when you are, Amira. Not before.',
             wrong: "Clear the water, one line to Amira, and then it's my call when we go again, after I've checked with her. You don't decide whether we continue.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'light',
@@ -145,6 +165,16 @@ export const FILLING_TASK: TaskContent = {
             speaker: 'Priya',
             right: 'Sleeved, and the shield up. Nobody looks straight at that blue light.',
             wrong: "Sleeve every time, it's been in someone else's mouth otherwise. And the shield's for your eyes and Amira's dad's as much as anyone's. Nobody looks straight at that blue light.",
+          },
+          present: {
+            kind: 'tray',
+            title: 'For the light',
+            open: 'Pick up for the light',
+            shelf: 'On the side',
+            images: {
+              sleeved: curingLightImage,
+              shield: glassesImage,
+            },
           },
         },
       ],

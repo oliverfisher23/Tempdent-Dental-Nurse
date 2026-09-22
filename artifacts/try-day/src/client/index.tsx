@@ -24,8 +24,8 @@ import CloseTaskPage from '@client/pages/close-task';
 // The shell places the logo on its dark bars, so this is the reverse (white)
 // wordmark, derived from the supplied master's alpha channel.
 import logo from '@client/assets/tempdent-logo-reverse.png';
-import hero from '@client/assets/hero.svg';
-import mentor from '@client/assets/mentor.svg';
+import receptionPhoto from '@client/assets/places/reception.jpg';
+import priyaPortrait from '@client/assets/people/priya.jpg';
 
 kitchenAudio.configure({
   muteKey: "springpod:tempdent-try-day:sound-muted",
@@ -42,13 +42,13 @@ export const tryClient: TryClient<TaskStates> = {
   mentor: {
     name: 'Priya Nair',
     personId: MENTOR_ID,
-    photo: mentor,
+    photo: priyaPortrait,
     photoAlt: 'Priya Nair portrait',
   },
   workplace: WORKPLACE,
   welcome: {
     copy: WELCOME_COPY,
-    hero: { wide: hero, phone: hero },
+    hero: { wide: receptionPhoto, phone: receptionPhoto },
   },
   copy: {
     accessibility: ACCESSIBILITY_COPY,

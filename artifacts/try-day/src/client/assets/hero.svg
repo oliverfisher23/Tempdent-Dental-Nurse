@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
-  <title id="title">Dental Nurse Try Day</title>
-  <desc id="desc">DRAFT hero picture</desc>
-  <rect width="1600" height="1000" fill="#e8e5df"/>
-  <path d="M0 720 L576 380 L992 620 L1600 240 V1000 H0Z" fill="#d3cec4"/>
-  <rect x="128" y="100" width="1344" height="800" rx="12" fill="none" stroke="#242424" stroke-width="3" stroke-dasharray="12 10"/>
-  <text x="50%" y="47%" text-anchor="middle" font-family="Arial, sans-serif" font-size="67" font-weight="700" fill="#242424">Dental Nurse Try Day</text>
-  <text x="50%" y="57%" text-anchor="middle" font-family="Arial, sans-serif" font-size="33" fill="#242424">DRAFT hero picture</text>
-</svg>

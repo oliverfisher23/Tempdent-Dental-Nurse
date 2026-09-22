@@ -1,4 +1,15 @@
 import type { TaskContent } from './types';
+import emergencyKitPicture from '@client/assets/closeups/emergency-kit.jpg';
+import trayCardPicture from '@client/assets/closeups/tray-card.jpg';
+import aspiratorImage from '@client/assets/items/aspirator.png';
+import bibImage from '@client/assets/items/bib.png';
+import bondImage from '@client/assets/items/bond.png';
+import compositeImage from '@client/assets/items/composite.png';
+import curingLightImage from '@client/assets/items/curing-light.png';
+import matrixImage from '@client/assets/items/matrix.png';
+import mirrorImage from '@client/assets/items/mirror.png';
+import plasticImage from '@client/assets/items/plastic.png';
+import syringeImage from '@client/assets/items/syringe.png';
 
 // Storyboard Task 1. Clinical detail is draft, pending SME validation.
 export const SETUP_TASK: TaskContent = {
@@ -17,6 +28,7 @@ export const SETUP_TASK: TaskContent = {
       eyebrow: 'Surgery 2',
       title: 'Morning set-up',
       intro: 'The practice has just opened. Surgery 2 is cold and quiet, and both of today\'s check sheets are blank. Work through the set-up with Priya.',
+      people: ['mentor'],
       decisions: [
         {
           id: 'prep',
@@ -36,6 +48,11 @@ export const SETUP_TASK: TaskContent = {
             speaker: 'Priya',
             right: 'Clean hands first, then the PPE over them, gloves last. Nothing touches them on the way on.',
             wrong: 'Think about what touches what. Anything you put on after your hands are clean has to go on without touching them, and gloves are the last thing on, not a substitute for washing. Go again.',
+          },
+          present: {
+            kind: 'order',
+            title: 'Get ready',
+            open: 'Get ready',
           },
         },
         {
@@ -59,6 +76,18 @@ export const SETUP_TASK: TaskContent = {
             right: "That's it. Chair from the top down, spittoon last, then the hard surfaces. Leave each wipe its contact time before you move on.",
             wrong: "Nearly, but the spittoon's the dirtiest bit of the chair, so it comes last. Top to bottom, cleaner to dirtier, and the surfaces come after the chair. Go again.",
           },
+          present: {
+            kind: 'hotspots',
+            spots: {
+              headrest: { x: 28.0, y: 61.0, hint: 'Chair top' },
+              light: { x: 53.0, y: 25.0, hint: 'Lamp head' },
+              delivery: { x: 80.0, y: 53.0, hint: 'Unit tray' },
+              aspirator: { x: 68.0, y: 61.0, hint: 'Hose holders' },
+              spittoon: { x: 44.0, y: 60.0, hint: 'Rinse bowl' },
+              surfaces: { x: 24.0, y: 48.0, hint: 'Left worktop' },
+              handles: { x: 11.0, y: 58.0, hint: 'Cupboard handles' },
+            },
+          },
         },
         {
           id: 'flush',
@@ -77,6 +106,7 @@ export const SETUP_TASK: TaskContent = {
             right: "Two full minutes first thing. That water has sat in the lines all night.",
             wrong: "Twenty to thirty seconds is between patients. First thing, that water has sat in the lines all night, so it's two full minutes to clear it and stop biofilm building up. Five would just waste the morning.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'signoff',
@@ -95,6 +125,7 @@ export const SETUP_TASK: TaskContent = {
             right: 'Your initials mean you did the check. If anyone asks in six months, that sheet is the answer.',
             wrong: "A tick on its own tells nobody who did the check. The sheet is only complete when the person who did each line has initialled it, with the date and time. Not me, you did the checks.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'kit',
@@ -115,6 +146,19 @@ export const SETUP_TASK: TaskContent = {
             right: 'Oxygen, AED and two of the three drugs are fine. So what about the third?',
             wrong: 'Have another look at the dates on the drugs box for me. All of them. Only tick a line you have actually checked and found ready.',
           },
+          present: {
+            kind: 'kit',
+            title: 'Emergency kit check',
+            open: 'Open the kit',
+            picture: emergencyKitPicture,
+            items: {
+              oxygen: { detail: 'Cylinder full, mask and tubing sealed', status: 'ok' },
+              aed: { detail: 'Pads in date to 08/2027, battery light green', status: 'ok' },
+              adrenaline: { detail: 'Expiry 03/2027', status: 'ok' },
+              aspirin: { detail: 'Expiry 11/2027', status: 'ok' },
+              glucagon: { detail: 'Expiry 06/2026, three months ago', status: 'expired' },
+            },
+          },
           revealsComplication: true,
         },
         {
@@ -134,6 +178,7 @@ export const SETUP_TASK: TaskContent = {
             right: "That's exactly why we check every morning. Nobody's touched that box for weeks, which is the point. Write it on the sheet, and I'll ring the order through. Dr Reid needs to know before nine.",
             wrong: "Checking is only half of it. The other half is what you do with what you find. Tell me now, write it on the sheet, and I'll sort a replacement. It's not yours to swap: emergency drugs are checked in and recorded, not taken off a shelf.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'fresh',
@@ -153,6 +198,7 @@ export const SETUP_TASK: TaskContent = {
             right: 'Dirty job done, dirty PPE off, clean hands, clean PPE, then the sterile stuff. That rhythm runs the whole day.',
             wrong: "Those gloves have just cleaned a surgery. Ask yourself what is about to touch sterile pouches, and whether it should be the same pair. Hands are washed between, not just re-covered.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'tray',
@@ -178,6 +224,24 @@ export const SETUP_TASK: TaskContent = {
             right: "Tray matches the card. The matrix band is the thin metal strip that wraps round the tooth so the filling sets to the right shape. You'll see Dr Reid use it.",
             wrong: 'Check the tray against the card, item by item. Every line on it has a one-line reason for being there, and anything not on it stays in the cupboard, however important it looks. Forceps are for taking a tooth out. Not today.',
           },
+          present: {
+            kind: 'tray',
+            title: 'Tray for the 09:00 composite',
+            open: 'Set up the tray',
+            shelf: 'Instrument cupboard',
+            picture: trayCardPicture,
+            images: {
+              exam: mirrorImage,
+              aspirator: aspiratorImage,
+              anaesthetic: syringeImage,
+              bond: bondImage,
+              composite: compositeImage,
+              matrix: matrixImage,
+              light: curingLightImage,
+              finish: plasticImage,
+              bib: bibImage,
+            },
+          },
         },
         {
           id: 'pouch',
@@ -196,6 +260,7 @@ export const SETUP_TASK: TaskContent = {
             right: 'Good. It goes back through decontamination, and we know it happened.',
             wrong: "If the seal's broken we can't call it sterile, however clean it looks. Put it to one side so it goes back through decontamination, and take another.",
           },
+          present: { kind: 'speech' },
         },
       ],
     },

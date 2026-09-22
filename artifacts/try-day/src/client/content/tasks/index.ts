@@ -7,6 +7,8 @@ import { CHANGE_TASK } from './change';
 import { CLOSE_TASK } from './close';
 
 export type { Decision, DecisionAnswer, DecisionAnswers, DecisionKind, DecisionOption, TaskContent, TaskScene } from './types';
+export type { Presentation, PresentationKind, PresentationOf, PaperKind, Spot, LabelField, LabelPackage } from './presentation';
+export { CLOSE_UP_KINDS } from './presentation';
 
 /** Every task's content, keyed by the task id used in mechanic.json. */
 export const TASKS: Record<string, TaskContent> = {

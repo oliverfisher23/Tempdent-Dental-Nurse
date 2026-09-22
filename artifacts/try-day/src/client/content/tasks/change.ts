@@ -1,4 +1,16 @@
 import type { TaskContent } from './types';
+import trayCardPicture from '@client/assets/closeups/tray-card.jpg';
+import aspiratorImage from '@client/assets/items/aspirator.png';
+import bibImage from '@client/assets/items/bib.png';
+import excavatorImage from '@client/assets/items/excavator.png';
+import mirrorImage from '@client/assets/items/mirror.png';
+import plasticImage from '@client/assets/items/plastic.png';
+import probeImage from '@client/assets/items/probe.png';
+import rollsImage from '@client/assets/items/rolls.png';
+import syringeImage from '@client/assets/items/syringe.png';
+import threeInOneImage from '@client/assets/items/three-in-one.png';
+import tweezersBentImage from '@client/assets/items/tweezers-bent.png';
+import tweezersImage from '@client/assets/items/tweezers.png';
 
 // Storyboard Task 5. Clinical detail is draft, pending SME validation.
 export const CHANGE_TASK: TaskContent = {
@@ -14,6 +26,7 @@ export const CHANGE_TASK: TaskContent = {
   scenes: [
     {
       place: 'decon',
+      people: ['manager'],
       eyebrow: 'Decontamination room',
       title: 'The morning changes',
       intro: "Amira's instruments have been scrubbed and rinsed, and you are at the inspection lamp. Priya has been called next door to Surgery 1; she stays in touch by message and will check your load before it is stored. The cycle card on the wall: PPE and heavy-duty gloves, scrub under the waterline below 45°C, rinse, inspect, autoclave spaced on trays with indicators, cool covered, pouch dry within an hour, label with expiry and initials, store.",
@@ -38,6 +51,19 @@ export const CHANGE_TASK: TaskContent = {
             right: 'Four forward. Only clean and undamaged goes in the autoclave.',
             wrong: "Sterilising doesn't clean, and it doesn't mend. Look at each one again and ask whether steam can reach every surface, and whether it will do its job on a patient.",
           },
+          present: {
+            kind: 'bench',
+            title: 'Under the lamp',
+            open: 'Inspect the instruments',
+            items: {
+              mirror: { image: mirrorImage, finding: 'Clean, bright, no residue' },
+              probe_debris: { image: probeImage, finding: 'Debris packed in the hinge' },
+              tweezers_ok: { image: tweezersImage, finding: 'Clean, tips meet, no marks' },
+              excavator: { image: excavatorImage, finding: 'Clean; edge intact' },
+              tweezers_bent: { image: tweezersBentImage, finding: 'One tip bent; tips do not meet' },
+              plastic: { image: plasticImage, finding: 'Clean, no residue' },
+            },
+          },
         },
         {
           id: 'others',
@@ -57,6 +83,7 @@ export const CHANGE_TASK: TaskContent = {
             right: "Right. If there's debris on it, steam can't reach what's underneath, so it isn't sterile whatever the indicator says. And a bent tip doesn't get better in the autoclave.",
             wrong: "Separate the two problems. One of them can be fixed by doing a step again; the other can't be fixed here at all. Sort them by that.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'autoclave',
@@ -75,6 +102,7 @@ export const CHANGE_TASK: TaskContent = {
             right: 'Spaced so the steam reaches everything, indicator in, and the log started while you remember. Twenty minutes on the clock.',
             wrong: "Space between the trays or the steam can't reach every surface, and the log is written when you start, not when you remember. The log is the proof the cycle happened.",
           },
+          present: { kind: 'speech' },
           revealsComplication: true,
         },
         {
@@ -96,6 +124,12 @@ export const CHANGE_TASK: TaskContent = {
             right: "Patient in pain, surgery ready, safety. And you told me first. The box can wait; blocking the corridor can't.",
             wrong: "Patient in pain, surgery ready, safety, that's the order. But before you set anything up for an emergency, thirty seconds to tell me and ask what Dr Reid wants saves you ten minutes doing the wrong thing. The box can wait. Blocking the corridor can't. Go again.",
           },
+          present: {
+            kind: 'order',
+            title: 'Your morning',
+            open: 'Put the jobs in order',
+            slotsLabel: 'Do first to last',
+          },
         },
         {
           id: 'help',
@@ -114,6 +148,7 @@ export const CHANGE_TASK: TaskContent = {
             right: 'Anyone can move a box. Only the nurse sets up the surgery. Good call.',
             wrong: "Ask for help with the job anyone can do, not the one that's yours. The surgery set-up is the nurse's; the box isn't. And doing all four yourself is how the corridor stays blocked.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'message',
@@ -132,6 +167,7 @@ export const CHANGE_TASK: TaskContent = {
             right: "Perfect is short: what changed, what you're doing, one question. Nothing else she wants. Go.",
             wrong: "Don't guess what Dr Reid wants for him. She asked for an exam tray and the drugs box. That's what he gets; she decides the rest when she's looked. And I need to know: what changed, what you're doing first, one question.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'load',
@@ -150,11 +186,20 @@ export const CHANGE_TASK: TaskContent = {
             right: "Cool, dry, within the hour, labelled and logged. That's a load I can put in the cabinet.",
             wrong: "Cool first, and check they're dry before you pouch. But within the hour: if the day runs away with you, that load is the thing you come back for. Past the hour it goes back through, an hour's work. Put it on your list before you leave the room.",
           },
+          present: {
+            kind: 'hotspots',
+            spots: {
+              hot: { x: 59.0, y: 34.0, hint: 'Pouch it hot' },
+              later: { x: 86.0, y: 72.0, hint: 'Leave it out' },
+              cool: { x: 66.0, y: 60.0, hint: 'Cooling rack' },
+            },
+          },
         },
       ],
     },
     {
       place: 'surgery2',
+      people: [],
       eyebrow: 'Surgery 2',
       title: 'Ready for Mr Nowak',
       intro: 'Dr Reid asked for an examination tray and the emergency drugs box within reach. The exam tray guide is on the worktop.',
@@ -181,11 +226,27 @@ export const CHANGE_TASK: TaskContent = {
             right: "That's what Dr Reid asked for, and nothing she didn't. She decides the rest when she's looked.",
             wrong: "Don't guess what Dr Reid wants for him. She asked for an exam tray and the drugs box. That's what he gets; she decides the rest when she's looked. Check the tray against the guide.",
           },
+          present: {
+            kind: 'tray',
+            title: 'Exam tray for 10:40',
+            open: 'Set up the tray',
+            picture: trayCardPicture,
+            shelf: 'Cupboard',
+            images: {
+              exam: mirrorImage,
+              rolls: rollsImage,
+              aspirator: aspiratorImage,
+              threeinone: threeInOneImage,
+              bib: bibImage,
+              la: syringeImage,
+            },
+          },
         },
       ],
     },
     {
       place: 'stock',
+      people: ['manager'],
       eyebrow: 'Stock room',
       title: 'The delivery',
       intro: 'The delivery note lists gloves, wipes, cotton rolls, a box of local anaesthetic cartridges and a bottle of disinfectant concentrate.',
@@ -207,6 +268,7 @@ export const CHANGE_TASK: TaskContent = {
             right: "Corridor clear, nothing put away unsupervised. We'll check it in together after Mr Nowak.",
             wrong: "Anaesthetic gets checked against the order, quantity, batch, expiry, and goes where this practice keeps it, recorded in. That's a job we do together until you've been shown. Same with the concentrate, that's a chemicals cupboard item, not a shelf. And the corridor stays clear.",
           },
+          present: { kind: 'speech' },
         },
       ],
     },

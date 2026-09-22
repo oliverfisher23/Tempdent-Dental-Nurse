@@ -1,10 +1,12 @@
 import assert from 'node:assert/strict';
 import { register } from 'node:module';
 import { test } from 'node:test';
-import { TASKS, correctAnswer, decisionsOf, isCorrect } from '@client/content/tasks';
-import { day, evaluateTask, complicationRevealed, initialTaskStates } from '@client/lib/simulation';
-
 register('./support/asset-loader.mjs', import.meta.url);
+
+// Content imports its pictures, so it is loaded after the asset hook is registered.
+const { TASKS, correctAnswer, decisionsOf, isCorrect } = await import('@client/content/tasks');
+const { day, evaluateTask, complicationRevealed, initialTaskStates } = await import('@client/lib/simulation');
+const { currentDecision } = await import('@client/scenes/current');
 
 const TASK_IDS = day.spec.TASK_ORDER;
 
@@ -24,6 +26,11 @@ test('every task in mechanic.json has content, and every scene is on the task ro
       assert.ok(task.scenes.some((scene) => scene.place === place), `${id}: route place "${place}" has no scene`);
     }
   }
+  const gate = TASKS.setup.scenes[0].decisions[0];
+  const gated = { ...TASKS.setup.scenes[0].decisions[1], after: gate.id };
+  const scene = { ...TASKS.setup.scenes[0], decisions: [gated] };
+  const task = { ...TASKS.setup, scenes: [TASKS.setup.scenes[0], scene] };
+  assert.equal(currentDecision(task, { [gated.id]: 'stale-wrong' }, scene), null);
 });
 
 test('decisions are well formed: unique ids, answers among the options, gates that exist', () => {

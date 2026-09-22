@@ -17,6 +17,7 @@ export const WELCOME_TASK: TaskContent = {
       eyebrow: 'Waiting room',
       title: 'Collect Amira and her dad',
       intro: 'Amira (10) is sitting pressed against her dad, quiet, feet not touching the floor. Karim says quietly that she "didn\'t sleep much". Her notes flag: nervous, first filling, dad attending, mild asthma with a blue inhaler.',
+      people: ['receptionist'],
       decisions: [
         {
           id: 'greet',
@@ -36,6 +37,7 @@ export const WELCOME_TASK: TaskContent = {
             right: "Her name, your name, dad included, and nothing promised you can't keep. Good.",
             wrong: "Two things. First, her treatment is nobody else's business: say her name, not what she's here for. Second, never promise it won't hurt. If it does, even a little, she'll stop believing anything you say, and Dr Reid needs her to trust the hand signal.",
           },
+          present: { kind: 'speech' },
         },
       ],
     },
@@ -44,6 +46,7 @@ export const WELCOME_TASK: TaskContent = {
       eyebrow: 'Surgery 2',
       title: 'Settle Amira in',
       intro: "Dr Reid is reading Amira's notes. The chair is ready with a bib and two colours of safety glasses.",
+      people: ['dentist'],
       decisions: [
         {
           id: 'settle',
@@ -62,6 +65,16 @@ export const WELCOME_TASK: TaskContent = {
             speaker: 'Priya',
             right: 'Nothing happened to her without a word first, and she got a choice at the end. That is how you settle a nervous ten-year-old.',
             wrong: 'Think about it from the chair. Nothing should happen to her without a word first, nothing should move with her hands full, and the choice you give her works best once she is settled. Go again.',
+          },
+          present: {
+            kind: 'hotspots',
+            spots: {
+              coat: { x: 7.0, y: 48.0, hint: 'Coat hook' },
+              sit: { x: 55.0, y: 73.0, hint: 'Chair seat' },
+              chair: { x: 40.0, y: 70.0, hint: 'Chair back' },
+              bib: { x: 79.0, y: 54.0, hint: 'Unit tray' },
+              glasses: { x: 25.0, y: 49.0, hint: 'Left worktop' },
+            },
           },
           revealsComplication: true,
         },
@@ -82,6 +95,7 @@ export const WELCOME_TASK: TaskContent = {
             right: "That was the moment to stop, and you took it. Watching the patient is the job, even before the treatment starts.",
             wrong: "Let's give Amira a second. Amira, which glasses? Go on, you pick. You'd have got there, but the moment her eyes filled was the moment to stop. Watching the patient is the job, even before the treatment starts.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'notes',
@@ -99,6 +113,13 @@ export const WELCOME_TASK: TaskContent = {
             speaker: 'Priya',
             right: "Dr Reid asks, you write. The inhaler, make sure it's to hand. 'Didn't sleep much' isn't a medical entry, but it does tell you to slow down and keep your voice soft.",
             wrong: "Dr Reid asks, you write. That's how it works with two of us. Anything about her health or her medicines goes in the notes. How she slept isn't a medical entry, but it does tell you to slow down and keep your voice soft.",
+          },
+          present: {
+            kind: 'paper',
+            paper: 'notepaper',
+            title: 'Medical history',
+            open: 'Write the notes',
+            heading: 'Amira - medical history',
           },
         },
         {
@@ -118,6 +139,7 @@ export const WELCOME_TASK: TaskContent = {
             right: 'Dr Reid decides what is clinically relevant. Your job is to make sure she heard it.',
             wrong: "Whether it matters isn't yours to decide, and it isn't yours to sit on either. The antibiotics go in the notes and Dr Reid needs to hear it, now, before anything starts.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'hurt',
@@ -136,6 +158,7 @@ export const WELCOME_TASK: TaskContent = {
             right: 'Honest, calm, and she has a way to be in control. That is a promise you can keep.',
             wrong: "Honest, calm, and give her a way to be in control. That's the shape of a good answer. Never promise no pain, and never compare her to other children. If you're not sure what Dr Reid has planned, the best answer is 'let's ask her together'.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'white',
@@ -154,6 +177,7 @@ export const WELCOME_TASK: TaskContent = {
             right: 'Treatment options are Dr Reid\'s call, and you told him who will answer it and when.',
             wrong: "Treatment options are Dr Reid's call, every time. But you don't have to sound like you're closing a door, and you never guess. Tell him who'll answer it and when.",
           },
+          present: { kind: 'speech' },
         },
       ],
     },

@@ -14,6 +14,7 @@ export const CLOSE_TASK: TaskContent = {
   scenes: [
     {
       place: 'reception',
+      people: ['receptionist'],
       eyebrow: 'Waiting room',
       title: 'Collect Graham',
       intro: 'Graham Ellis (54) is a new patient. His notes: extremely anxious, no dentist in over ten years, bad experience as a teenager, asked for a nurse to come and get him, wants to talk first. Sam says he has been here 15 minutes and stepped outside once.',
@@ -35,11 +36,13 @@ export const CLOSE_TASK: TaskContent = {
             right: 'Low voice, his name, and the one thing he needed to hear: that he is in control of what happens.',
             wrong: "He asked to be collected because being called is part of what frightens him. Go to him. Low voice, his name, and the one thing he needs to hear: that he's in control of what happens. And never mention the gap. He knows exactly how long it's been.",
           },
+          present: { kind: 'speech' },
         },
       ],
     },
     {
       place: 'surgery2',
+      people: ['dentist'],
       eyebrow: 'Surgery 2',
       title: "Graham's examination, then close down",
       intro: 'Graham is in the surgery, sitting forward in the chair. Dr Reid waits for you to settle him. The plain-words examination card is on the worktop.',
@@ -64,6 +67,7 @@ export const CLOSE_TASK: TaskContent = {
             right: 'Control and information. That is what calms people.',
             wrong: "Never mention the time away, he's counting it already. You can't promise there's nothing to worry about, and you certainly can't guess what he'll need. You don't know, and he knows you don't. Offer him control and information. That's what calms people.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'howbad',
@@ -83,6 +87,7 @@ export const CLOSE_TASK: TaskContent = {
             right: 'You acknowledged the courage and handed the assessment to the dentist. Exactly that.',
             wrong: "Two traps. You don't know how his teeth are, so don't reassure him about them; that's Dr Reid's to say. And never, ever comment on the gap. Acknowledge the courage and hand the assessment to the dentist.",
           },
+          present: { kind: 'speech' },
           revealsComplication: true,
         },
         {
@@ -102,6 +107,7 @@ export const CLOSE_TASK: TaskContent = {
             right: 'He said a minute; you gave him the minute. And "thank you for coming back", not "are you okay now?".',
             wrong: "Let him go. He said a minute, give him the minute. The door's open, and when he comes back you'll say thank you, not 'are you okay now?'.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'distress',
@@ -121,6 +127,7 @@ export const CLOSE_TASK: TaskContent = {
             right: 'You said it, she paused, he breathed. Same rule as Amira this morning, different patient.',
             wrong: "'Just relax' has never relaxed anyone. You're the one watching him. Say it to Dr Reid, she pauses, he breathes. Same rule as Amira this morning, different patient.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'note',
@@ -139,6 +146,7 @@ export const CLOSE_TASK: TaskContent = {
             right: 'The next nurse who meets Graham will read that and know exactly what helps him.',
             wrong: "The next nurse who meets Graham will read this. Tell them what helps him: collected, talk first, chair up, signal agreed, two pauses, coped. Not what you think of his teeth. That's not yours to write, and he'd be mortified to read it.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'slip',
@@ -157,6 +165,7 @@ export const CLOSE_TASK: TaskContent = {
             right: 'Same nurse, same way, next time. Sam can book that.',
             wrong: "The slip is Dr Reid's words for Sam: forty minutes, what it's for, and that he's collected. 'Difficult' is a label, not an instruction. And the recall is set next time, not by you.",
           },
+          present: { kind: 'speech' },
         },
         {
           id: 'closedown',
@@ -179,6 +188,17 @@ export const CLOSE_TASK: TaskContent = {
             right: 'Water between patients, disinfectant at the end of the session. The aspirator lines have had a full day through them.',
             wrong: "Water between patients, disinfectant at the end of the session; the aspirator lines have had a full day through them. Dirty out first, then clean, then flush, then the sheets, and the lights go off last. Go again.",
           },
+          present: {
+            kind: 'hotspots',
+            spots: {
+              instruments: { x: 80.0, y: 55.0, hint: 'Clear the tray' },
+              wipe: { x: 32.0, y: 52.0, hint: 'Wipe the surfaces' },
+              flush: { x: 79.0, y: 71.0, hint: 'Flush the lines' },
+              sheets: { x: 17.0, y: 55.0, hint: 'Bins and sheets' },
+              off: { x: 55.0, y: 18.0, hint: 'Log off, light off' },
+              flush_water: { x: 67.0, y: 62.0, hint: 'Rinse aspirator' },
+            },
+          },
         },
         {
           id: 'handover',
@@ -200,6 +220,13 @@ export const CLOSE_TASK: TaskContent = {
             speaker: 'Priya',
             right: "What's ready, what's outstanding, what to watch. Whoever opens up tomorrow can act on every line of that.",
             wrong: "A handover is for the person who wasn't here. If they can't act on it, it isn't one. What's ready, what's outstanding, what to watch, and the glucagon from this morning is exactly the kind of thing that gets lost if it isn't written down.",
+          },
+          present: {
+            kind: 'paper',
+            paper: 'notepaper',
+            title: 'Handover',
+            open: 'Write the handover',
+            heading: 'For the next nurse',
           },
         },
       ],

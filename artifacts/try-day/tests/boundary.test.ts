@@ -99,7 +99,7 @@ test('nothing in src/kit imports from src/shell or src/client', async () => {
   assert.deepEqual(found, [], `The kit is reusable on its own and must not depend on the shell or a client:\n${found.join('\n')}`);
 });
 
-test('the shell and kit carry no kitchen names or kitchen assets', async () => {
+test('the shell, kit and index carry no previous-client names or assets', async () => {
   // Names, ids and asset paths that belong to this client's day. Any of them in
   // the shell or the kit is client knowledge that should be reaching them
   // through the TryClient contract instead, and would be wrong for the next
@@ -129,6 +129,10 @@ test('the shell and kit carry no kitchen names or kitchen assets', async () => {
         if (mark.test(source)) found.push(`${path.relative(projectRoot, file)} mentions ${mark.source}`);
       }
     }
+  }
+  const indexSource = await readFile(path.join(projectRoot, 'index.html'), 'utf8');
+  for (const mark of kitchenMarks) {
+    if (mark.test(indexSource)) found.push(`index.html mentions ${mark.source}`);
   }
   assert.deepEqual(found, [], found.join('\n'));
 });

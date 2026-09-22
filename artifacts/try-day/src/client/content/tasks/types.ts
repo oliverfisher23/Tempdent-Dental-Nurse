@@ -1,11 +1,13 @@
 import type { Line } from '@shell/lib/client';
+import type { Presentation } from './presentation';
+
+export * from './presentation';
 
 /**
  * A task is a set of scenes (one per room the learner works in), each carrying
  * the decisions the storyboard asks for. Every decision maps to one clause of
  * the task's done-when, so the HUD checklist, the evaluator and the page all
- * read from this single description. All clinical detail here is draft copy
- * pending SME validation.
+ * read from this single description. Content follows the signed-off storyboard.
  */
 
 export type DecisionKind =
@@ -44,6 +46,8 @@ export interface Decision {
   after?: string;
   /** Answering this decision reveals the task's complication in the frame. */
   revealsComplication?: boolean;
+  /** Where and how the decision is worked on the stage; see presentation.ts for the default per kind. */
+  present?: Presentation;
 }
 
 export interface TaskScene {
@@ -52,6 +56,8 @@ export interface TaskScene {
   eyebrow: string;
   title: string;
   intro: string;
+  /** Person ids (from the client's people) who are in the room for this scene. */
+  people?: string[];
   decisions: Decision[];
 }
 

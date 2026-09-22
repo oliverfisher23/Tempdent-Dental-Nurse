@@ -1,0 +1,147 @@
+{
+  "closeups/emergency-kit.jpg": {
+    "sha256": "c6a098cdaa12cceb3abdb7b5776b3f790a9d53168daf9c24e8d998c082b755f3",
+    "bytes": 85324,
+    "status": "placeholder"
+  },
+  "closeups/packages.jpg": {
+    "sha256": "01d3108f61b7f7f85fc6ff986d98d4796960c1093e4aa51ca5121f7ef2d0de79",
+    "bytes": 46986,
+    "status": "placeholder"
+  },
+  "closeups/tray-card.jpg": {
+    "sha256": "ec2815b801270f02bae0be08b933438aa3a03484ff66fd5d897d7c64058932d6",
+    "bytes": 115886,
+    "status": "placeholder"
+  },
+  "items/aspirator.png": {
+    "sha256": "ec8d94df0240c1270755c8fcf2cd906ce948857107e4057950c4183df754a6f0",
+    "bytes": 49952,
+    "status": "placeholder"
+  },
+  "items/bib.png": {
+    "sha256": "9d85c47165b44f162a5f6b4d2930d96466157d035bd2e4f042de297fa154d6ad",
+    "bytes": 67730,
+    "status": "placeholder"
+  },
+  "items/bond.png": {
+    "sha256": "48cc395eebc1f67533637e083f619245e2d5f5dc4ae3fb42eeccd2c347590089",
+    "bytes": 60578,
+    "status": "placeholder"
+  },
+  "items/composite.png": {
+    "sha256": "2b311a9df53195ba232de3675f05f4679f314be62bbefed1ebe34d7bd1cb1806",
+    "bytes": 135613,
+    "status": "placeholder"
+  },
+  "items/curing-light.png": {
+    "sha256": "4df7ac3fe0917c1abef44454be8d422dfe7b599de08c953c11311f092b8990e4",
+    "bytes": 28523,
+    "status": "placeholder"
+  },
+  "items/excavator.png": {
+    "sha256": "edc90b4e9449a27a03d3eea2c75f5af347bc999c1aa537c767a80ea539a245fc",
+    "bytes": 15895,
+    "status": "placeholder"
+  },
+  "items/glasses.png": {
+    "sha256": "d27088c143ef54994bbf9253466e832b25d7894c6aceca5f2b2b62ef02d1fc6c",
+    "bytes": 51429,
+    "status": "placeholder"
+  },
+  "items/matrix.png": {
+    "sha256": "9ac5f9f722c12d6ea081c6181b099d705e9d3f501263e750462f5ad459056d04",
+    "bytes": 41836,
+    "status": "placeholder"
+  },
+  "items/mirror.png": {
+    "sha256": "443eb36858151464b18a55ec5c296e0cea7cd3d9945255adde22d886e1ce4344",
+    "bytes": 19178,
+    "status": "placeholder"
+  },
+  "items/plastic.png": {
+    "sha256": "a9f519b48136b700af8446fc393b0dd6b2ee1a88184e81d00db658c6d4cec128",
+    "bytes": 16376,
+    "status": "placeholder"
+  },
+  "items/probe.png": {
+    "sha256": "09c6c750d3e7adaa8a57bbe2379bbb1c73f63a5d2adc61314b39ea398dfad526",
+    "bytes": 15403,
+    "status": "placeholder"
+  },
+  "items/rolls.png": {
+    "sha256": "814c0283e359f4145462c1e9d118888e6041b8a74ace76fa4537b954209c922b",
+    "bytes": 89067,
+    "status": "placeholder"
+  },
+  "items/syringe.png": {
+    "sha256": "8796f318826b3e7cd62d09f5c5ad18844e0e7e44e88c4f5af553de69a7bfbe6f",
+    "bytes": 29915,
+    "status": "placeholder"
+  },
+  "items/three-in-one.png": {
+    "sha256": "474f1549f0e173ffafa176026412c054ccbdbf6952f9bd3314ff7c55831e08d9",
+    "bytes": 38923,
+    "status": "placeholder"
+  },
+  "items/tweezers-bent.png": {
+    "sha256": "160b21cd81960ef5346c95c4ddfe64a01f892974a54f3d349606ab021f1649a7",
+    "bytes": 20139,
+    "status": "placeholder"
+  },
+  "items/tweezers.png": {
+    "sha256": "177e334910c27018eaa50569f440664fe391bd11a4793def8b34036cf27bea61",
+    "bytes": 29329,
+    "status": "placeholder"
+  },
+  "map.svg": {
+    "sha256": "2d2213729541341656d62336a60fc97fa61816ca9df1dda829e814ae09ff9cc7",
+    "bytes": 758,
+    "status": "placeholder"
+  },
+  "people/joanne.jpg": {
+    "sha256": "a564f1ab2439bca14e85a967e3926816e5f398959269146d248b459bd3b05169",
+    "bytes": 18678,
+    "status": "placeholder"
+  },
+  "people/priya.jpg": {
+    "sha256": "d76a82692422c0ffb36f9f5a9e7f0bc07dba91525b9dd8f06b70158feb6608cb",
+    "bytes": 14375,
+    "status": "placeholder"
+  },
+  "people/reid.jpg": {
+    "sha256": "d2e9169c07b4a978ef634e1a92d0904aa9a3a92ea4df8dee4525e3a400afdb59",
+    "bytes": 16303,
+    "status": "placeholder"
+  },
+  "people/sam.jpg": {
+    "sha256": "35236db020ff2d26b0f0f0c3a472f2683ba12b87d7a34c05aa6769b8b04754bc",
+    "bytes": 15417,
+    "status": "placeholder"
+  },
+  "places/decon.jpg": {
+    "sha256": "b9bde0b8e91fdc3f4efcc83d896dc0eb53bfdc749d43cec401c57a28c0d5df93",
+    "bytes": 90129,
+    "status": "placeholder"
+  },
+  "places/reception.jpg": {
+    "sha256": "5f62287ee9a9ef023299f601a4dafd73ac0f2c8c5d2307717134eaf3736d63be",
+    "bytes": 85702,
+    "status": "placeholder"
+  },
+  "places/stock.jpg": {
+    "sha256": "2c4771f1d26365ace0db463689cc09c477759f8ccf381fcd77dd97b2712d21a8",
+    "bytes": 73989,
+    "status": "placeholder"
+  },
+  "places/surgery2.jpg": {
+    "sha256": "ca3c02c1417e192583d553675b8e5a9a9b3c75ce41658737fb4d6ca613cd7542",
+    "bytes": 66366,
+    "status": "placeholder"
+  },
+  "tempdent-logo-reverse.png": {
+    "sha256": "1ebe57ce8b6d9350e12cb25c1397449b0aa0927e2775710bdca9f70c88bd23a2",
+    "bytes": 22816,
+    "status": "approved"
+  }
+}

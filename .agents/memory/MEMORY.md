@@ -12,3 +12,5 @@
 - [Shell / kit / client split](shell-client-split.md) — client -> shell -> kit only; shell reads clients via useClient(); tri-state designer fixture; asset loader for node tests; CSS import order.
 - [Client brand assets](client-brand-assets.md) — shell shows the logo on dark bars only (use the reverse mark), sizes it by height; brand primaries usually fail text contrast; tests/ are outside typecheck.
 - [Storyboard-driven task content](storyboard-decisions.md) — every clause needs a real decision (no asserted steps), wrong feedback coaches rather than lists, shuffle sequence options, set answers default to [].
+- [Stage photo box and hotspots](stage-photo-box.md) — pins are % of the 1.6 photo inside a pannable box; hints are the pin labels (<= 20 chars); tray = tap-lift then tap the drop zone; guide walks and opens.
+- [Media approval manifest](media-approval.md) — fingerprints of every client picture; UPDATE_MEDIA_FINGERPRINTS=1 to accept; asset-importing content needs a dynamic import after the loader hook in node tests.
