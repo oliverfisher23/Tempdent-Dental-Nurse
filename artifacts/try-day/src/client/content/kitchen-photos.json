@@ -1,0 +1,82 @@
+{
+  "archive": "attached_assets/Images_1789804137457.zip",
+  "outputDir": "src/client/assets/kitchen/photos",
+  "exports": {
+    "terence-square": {
+      "file": "terence-square.webp",
+      "source": "Images/portrait.JPG",
+      "shows": "Terence, head and shoulders, facing the camera in the restaurant",
+      "crop": "1150x1150+698+807",
+      "size": "512x512",
+      "quality": 82,
+      "use": "Dialogue avatar for both Terence person entries"
+    },
+    "terence-briefing": {
+      "file": "terence-briefing.webp",
+      "source": "Images/portrait.JPG",
+      "shows": "Terence, head and shoulders with headroom, framed for a circle",
+      "crop": "1300x1300+623+680",
+      "size": "256x256",
+      "quality": 90,
+      "sharpen": true,
+      "use": "Briefing screen mentor circle at 1x (7 to 8 rem wide)"
+    },
+    "terence-briefing-2x": {
+      "file": "terence-briefing-2x.webp",
+      "source": "Images/portrait.JPG",
+      "shows": "The same circle framing for high-density screens",
+      "crop": "1300x1300+623+680",
+      "size": "512x512",
+      "quality": 90,
+      "sharpen": true,
+      "use": "Briefing screen mentor circle at 2x and 3x"
+    },
+    "kitchen-line": {
+      "file": "kitchen-line.webp",
+      "source": "Images/MP_02868.JPG",
+      "shows": "Wide view down the kitchen line, Terence cooking at the far range",
+      "crop": null,
+      "size": "1920x1080",
+      "quality": 80,
+      "use": "Welcome hero at the md breakpoint and above"
+    },
+    "kitchen-line-phone": {
+      "file": "kitchen-line-phone.webp",
+      "source": "Images/MP_02868.JPG",
+      "shows": "The same kitchen line cropped 3:4 around Terence at the range",
+      "crop": "1788x2384+1862+0",
+      "size": "1080x1440",
+      "quality": 80,
+      "use": "Welcome hero below the md breakpoint"
+    },
+    "pass": {
+      "file": "pass.webp",
+      "source": "Images/MP_03055.JPG",
+      "shows": "Terence plating at the pass under the heat lamps",
+      "crop": null,
+      "size": "1920x1080",
+      "quality": 80,
+      "use": "PLACES.pass.backdrop"
+    },
+    "fridges": {
+      "file": "fridges.webp",
+      "source": "Images/MP_03045.JPG",
+      "shows": "Terence opening a fridge drawer of raw meat trays",
+      "crop": null,
+      "size": "1920x1080",
+      "quality": 80,
+      "redact": ["200x110+1025+585", "170x90+975+1125"],
+      "redactReason": "The two fridge display readouts are blurred so the photo cannot be read as temperature evidence behind the Task 1 paperwork",
+      "use": "PLACES.corridor.backdrop, faded behind the Task 1 overnight log and board pages"
+    },
+    "bench": {
+      "file": "bench.webp",
+      "source": "Images/MP_02917.JPG",
+      "shows": "Terence cooking at the induction hob, close angle",
+      "crop": null,
+      "size": "1920x1080",
+      "quality": 80,
+      "use": "PLACES.bench.backdrop"
+    }
+  }
+}

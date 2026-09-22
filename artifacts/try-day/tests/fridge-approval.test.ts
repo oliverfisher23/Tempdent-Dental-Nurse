@@ -4,7 +4,7 @@ import { copyFile, mkdtemp, rm } from 'node:fs/promises';
 import os from 'node:os';
 import path from 'node:path';
 import test, { before } from 'node:test';
-import { FRIDGE_INSPECTIONS } from '../src/content/fridge-photos';
+import { FRIDGE_INSPECTIONS } from '@client/content/fridge-photos';
 import {
   checkFridgeApproval,
   formatReviewIssues,
@@ -190,7 +190,7 @@ test('formatting-only source edits are classified separately from content change
   const issue = oneIssue(
     issues,
     'source-only-change',
-    'src/content/fridge-photos.ts',
+    'src/client/content/fridge-photos.ts',
   );
   assert.match(issue.detail, /exported content is unchanged/);
   assert.equal(issues.some(candidate => candidate.kind === 'content-change'), false);

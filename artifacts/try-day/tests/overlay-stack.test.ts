@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { isTopOverlay, popOverlay, pushOverlay } from '../src/components/kitchen/overlay-stack';
+import { isTopOverlay, popOverlay, pushOverlay } from '@shell/frame/overlay-stack';
 
 // Plain objects stand in for the overlay roots; the stack only compares identity.
 const root = () => ({} as unknown as HTMLElement);

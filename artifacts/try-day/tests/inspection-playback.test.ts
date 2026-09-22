@@ -7,7 +7,7 @@ import {
   shouldCompleteInspectionOnce,
   shouldPlayInspection,
   startInspectionPlayback,
-} from '../src/lib/inspection-playback';
+} from '@client/lib/inspection-playback';
 
 test('selects one supported encoding, preferring original H.264 without fetching both', () => {
   const media = { src: 'unit-open.mp4', webmSrc: 'unit-open.webm' };

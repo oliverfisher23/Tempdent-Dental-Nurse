@@ -7,11 +7,11 @@ import { fileURLToPath } from 'node:url';
 import { FRIDGE_INSPECTIONS as approvedInspections } from '../fixtures/fridge-approval/fridge-photos';
 
 export const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
-export const mediaDir = path.join(projectRoot, 'src/assets/kitchen/inspections/videos');
+export const mediaDir = path.join(projectRoot, 'src/client/assets/kitchen/inspections/videos');
 const fixtureDir = path.join(projectRoot, 'tests/fixtures/fridge-approval');
-const manifestFile = 'src/content/fridge-media.json';
-const inspectionsFile = 'src/content/fridge-photos.ts';
-const approvalFile = 'src/assets/kitchen/inspections/APPROVAL.md';
+const manifestFile = 'src/client/content/fridge-media.json';
+const inspectionsFile = 'src/client/content/fridge-photos.ts';
+const approvalFile = 'src/client/assets/kitchen/inspections/APPROVAL.md';
 const mediaFields = ['video', 'webm', 'poster'] as const;
 
 export type Manifest = Record<string, Record<string, {

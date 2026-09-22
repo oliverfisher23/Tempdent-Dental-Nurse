@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { FRIDGE_UNITS } from '../src/content/activities';
-import { rowReadingIsRight } from '../src/lib/simulation';
-import { dialAngle, dialReading, dialZones } from '../src/components/scenes/handover/dial-scale';
+import { FRIDGE_UNITS } from '@client/content/activities';
+import { rowReadingIsRight } from '@client/lib/simulation';
+import { dialAngle, dialReading, dialZones } from '@kit/dial-scale';
 
 test('a careful dial reading of every fridge is accepted, a full degree out is not', () => {
   for (const unit of FRIDGE_UNITS) {

@@ -1,7 +1,8 @@
 import { createRoot } from 'react-dom/client';
 
-import App from './App';
-import { ErrorBoundary } from '@/components/error-boundary';
+import App from '@shell/app/App';
+import { ErrorBoundary } from '@shell/app/error-boundary';
+import { kitchenClient } from '@client/index';
 
 import './index.css';
 
@@ -12,6 +13,6 @@ createRoot(document.getElementById('root')!, {
   },
 }).render(
   <ErrorBoundary>
-    <App />
+    <App client={kitchenClient} />
   </ErrorBoundary>,
 );

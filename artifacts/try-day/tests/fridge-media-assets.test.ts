@@ -4,11 +4,11 @@ import { access, readFile } from 'node:fs/promises';
 import path from 'node:path';
 import test from 'node:test';
 import { fileURLToPath } from 'node:url';
-import { FRIDGE_INSPECTIONS } from '../src/content/fridge-photos';
+import { FRIDGE_INSPECTIONS } from '@client/content/fridge-photos';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const mediaDir = path.join(projectRoot, 'src/assets/kitchen/inspections/videos');
-const manifestPath = path.join(projectRoot, 'src/content/fridge-media.json');
+const mediaDir = path.join(projectRoot, 'src/client/assets/kitchen/inspections/videos');
+const manifestPath = path.join(projectRoot, 'src/client/content/fridge-media.json');
 const applianceIds = ['walk-in', 'larder-2', 'fish', 'freezer-1'] as const;
 const expectedSources = {
   'walk-in': ['VIDEOS/Walk in fridge/7eb44cb6-f7e5-417b-abdb-bd148939a82a.mp4', 'VIDEOS/Walk in fridge/fc1f60bd-e556-431d-ad97-93c790b2f502.mp4'],

@@ -1,7 +1,7 @@
 import { expect, test, type Locator } from '@playwright/test';
 import { DELIVERY, DeliveryHarness } from '../e2e/delivery-harness';
 import { deliveries, expectedMessage, expectedReport, fishFindings } from '../e2e/delivery-data';
-import { lowerFirst } from '../src/lib/utils';
+import { lowerFirst } from '@kit/lib/utils';
 
 /** The text a sighted learner sees: everything except screen-reader-only spans. */
 const visibleText = (scope: Locator) => scope.evaluate((node) => {

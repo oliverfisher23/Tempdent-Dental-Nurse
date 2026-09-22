@@ -8,7 +8,7 @@ The images should feel cultured, confident and contemporary while remaining clea
 
 ## Delivery status (19 September 2026)
 
-Five photographs from the art’otel Hoxton kitchen were received on 19 September 2026 and are in the app. Each is exported as WebP into `src/assets/kitchen/photos/`; the crops are recorded in `src/content/kitchen-photos.json` and `scripts/prepare-kitchen-photos.mjs` regenerates the exports from the archive in `attached_assets/`. The uncropped originals stay out of `src/`.
+Five photographs from the art’otel Hoxton kitchen were received on 19 September 2026 and are in the app. Each is exported as WebP into `src/client/assets/kitchen/photos/`; the crops are recorded in `src/content/kitchen-photos.json` and `scripts/prepare-kitchen-photos.mjs` regenerates the exports from the archive in `attached_assets/`. The uncropped originals stay out of `src/`.
 
 | Received photograph | What it shows | Where it is used |
 |---|---|---|
@@ -22,8 +22,8 @@ The generated pictures these replaced (the pass, corridor and bench scenes and t
 
 Still outstanding:
 
-- **Goods-in area** (essential): the back door still uses the illustrated backdrop `src/assets/kitchen/scene-goods-in.jpg`.
-- **Events kitchen** (essential): still uses the illustrated backdrop `src/assets/kitchen/scene-events.jpg`.
+- **Goods-in area** (essential): the back door still uses the illustrated backdrop `src/client/assets/kitchen/scene-goods-in.jpg`.
+- **Events kitchen** (essential): still uses the illustrated backdrop `src/client/assets/kitchen/scene-events.jpg`.
 - The rest of Terence’s working set, Yvie, the supporting characters, the event-space coverage, the delivery ingredients, the contextual details and the briefing films. Yvie, the night porter, the driver and the evening team currently appear with a generic icon in dialogue.
 
 The fridge and freezer inspections (section 4) were supplied separately as short video clips rather than photographs; see the note in that section.
@@ -135,7 +135,7 @@ These photographs serve as interactive evidence. Each unit therefore needs its o
 Status: this set was supplied as 14 short video clips (a door-opening and an
 interior clip for each of the seven units) rather than as photographs, and was
 approved for learner use as simulation illustrations on 18 September 2026. The
-clips and the approval record live in `src/assets/kitchen/inspections/`. Still
+clips and the approval record live in `src/client/assets/kitchen/inspections/`. Still
 photographs are not needed for this section unless the clips are replaced.
 
 1. Closed fridge door
@@ -189,10 +189,10 @@ These images appear as smaller evidence cards in the goods-in activity.
 The full ingredient set can be completed in one controlled tabletop session.
 
 Status: outstanding. The goods-in activity shows the illustrated crate pictures
-`src/assets/kitchen/crate-*.jpg` in each item's row. A set of sourced stock
+`src/client/assets/kitchen/crate-*.jpg` in each item's row. A set of sourced stock
 photographs that had been held for a superseded version of the goods-in scene
 was removed from the repository on 19 September 2026, both the exported copies
-under `src/assets/` and the downloaded originals under `attached_assets/`: that
+under `src/client/assets/` and the downloaded originals under `attached_assets/`: that
 version never reached the app, and one of its images (the smoked haddock, taken
 from a supplier website) had no confirmed reuse permission. Nothing is held in
 reserve, so these ten photographs still need to be taken.
@@ -227,7 +227,7 @@ These photographs can support future screens, responsive crops, promotional mate
 Status: outstanding. The night porter, the driver and the evening team speak
 with a generic person icon in the dialogue bar; the earlier generated portraits
 have been removed and the app switches to a photograph as soon as one is set
-on the person entry in `src/content/kitchen.ts`.
+on the person entry in `src/client/content/kitchen.ts`.
 
 ### Night porter
 

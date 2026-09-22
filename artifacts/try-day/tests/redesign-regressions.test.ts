@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ADDED_GUESTS, CHILL_RULES, TASK_ORDER, TERENCE_CHART_MARKS } from '../src/content/activities';
-import { getDietaryRedesignStage } from '../src/lib/redesign-dietary';
-import { clearAnswersForHeading } from '../src/lib/redesign-close';
+import { ADDED_GUESTS, CHILL_RULES, TASK_ORDER, TERENCE_CHART_MARKS } from '@client/content/activities';
+import { getDietaryRedesignStage } from '@client/lib/redesign-dietary';
+import { clearAnswersForHeading } from '@client/lib/redesign-close';
 import {
   evaluateTask,
   initialProgress,
@@ -10,7 +10,7 @@ import {
   loadProgress,
   testProgress,
   traysHaveSpace,
-} from '../src/lib/simulation';
+} from '@client/lib/simulation';
 
 test('designer jumps seed only earlier tasks, never later learner answers', () => {
   for (const target of TASK_ORDER) {

@@ -12,7 +12,7 @@ For each part, it covers:
 - what must be finished before the experience moves on.
 
 The exact wording of the signed-off job descriptions and completion criteria
-remains in `src/content/mechanic.json`. This document explains that content in a
+remains in `src/client/content/mechanic.json`. This document explains that content in a
 shorter, operational form.
 
 ---
@@ -621,14 +621,14 @@ The close connects those practical actions to the art'otel voice:
 
 # Primary source files
 
-- `src/content/mechanic.json` — approved task situations, jobs, complications
+- `src/client/content/mechanic.json` — approved task situations, jobs, complications
   and completion conditions.
-- `src/content/welcome.ts` — opening screen and briefing copy.
-- `src/content/activities.ts` — kitchen data, readings, dialogue and correct
+- `src/client/content/welcome.ts` — opening screen and briefing copy.
+- `src/client/content/activities.ts` — kitchen data, readings, dialogue and correct
   outcomes.
-- `src/content/guides/handover-delivery.ts` — step-by-step guidance for Tasks 1
+- `src/client/content/guides/handover-delivery.ts` — step-by-step guidance for Tasks 1
   and 2.
-- `src/content/guides/chill.ts` — step-by-step guidance for Task 3.
-- `src/content/guides/dietary-close.ts` — step-by-step guidance for Tasks 4 and
+- `src/client/content/guides/chill.ts` — step-by-step guidance for Task 3.
+- `src/client/content/guides/dietary-close.ts` — step-by-step guidance for Tasks 4 and
   5.
-- `src/content/scenes/` — labels and activity-specific on-screen instructions.
+- `src/client/content/scenes/` — labels and activity-specific on-screen instructions.

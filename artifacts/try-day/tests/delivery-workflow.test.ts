@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { ORDER_LINES, REFUSED_LINE_ID, SHORT_LINE_ID } from '../src/content/activities';
+import { ORDER_LINES, REFUSED_LINE_ID, SHORT_LINE_ID } from '@client/content/activities';
 import {
   canSignDelivery,
   deliveryDisclosureReady,
@@ -10,7 +10,7 @@ import {
   deliveryReviewIssues,
   lineNeedsAmendment,
   reconcileDeliveryUpdate,
-} from '../src/lib/delivery-workflow';
+} from '@client/lib/delivery-workflow';
 import {
   STORAGE_KEY,
   complicationRevealed,
@@ -20,7 +20,7 @@ import {
   type DeliveryState,
   expectedAcceptance,
   expectedAcceptedAmount,
-} from '../src/lib/simulation';
+} from '@client/lib/simulation';
 
 function completeDelivery(): DeliveryState {
   const state = initialProgress().tasks['check-the-delivery-in'];

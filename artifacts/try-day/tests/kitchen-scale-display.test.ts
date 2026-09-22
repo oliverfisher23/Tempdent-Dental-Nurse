@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { describeScale, litSegments, scaleCells, scaleReading, settlingSequence } from '../src/components/kitchen/kitchen-scale-display';
+import { describeScale, litSegments, scaleCells, scaleReading, settlingSequence } from '@kit/kitchen-scale-display';
 
 test('the display blanks leading zeros and keeps two decimals, like a real bench scale', () => {
   assert.deepEqual(scaleCells(0), [' ', '0', '0', '0']);

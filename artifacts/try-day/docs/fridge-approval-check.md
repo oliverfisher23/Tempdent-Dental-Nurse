@@ -3,7 +3,7 @@
 ## Purpose and baseline
 
 The current content-owner decision is recorded in
-`src/assets/kitchen/inspections/APPROVAL.md`. It covers 14 supplied clips and
+`src/client/assets/kitchen/inspections/APPROVAL.md`. It covers 14 supplied clips and
 seven appliance/clue pairings as **simulation illustrations**, with the
 limitations stated there. This check detects drift from that decision; it does
 not review the truth of findings or establish ownership, rights, site

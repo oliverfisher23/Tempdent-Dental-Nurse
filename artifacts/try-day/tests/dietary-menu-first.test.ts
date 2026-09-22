@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { ADDED_GUESTS, DIETARY_LINES, DISHES, TERENCE_CHART_MARKS } from '../src/content/activities';
-import { DIETARY_HINTS, DIETARY_REDESIGN_LINES } from '../src/content/scenes/dietary-redesign';
+import { ADDED_GUESTS, DIETARY_LINES, DISHES, TERENCE_CHART_MARKS } from '@client/content/activities';
+import { DIETARY_HINTS, DIETARY_REDESIGN_LINES } from '@client/content/scenes/dietary-redesign';
 import {
   COURSES,
   FRANGIPANE_NOTE_EVIDENCE,
@@ -27,8 +27,8 @@ import {
   rowEvidenceId,
   rowStatus,
   type DietaryDecision,
-} from '../src/lib/redesign-dietary';
-import { complicationRevealed, evaluateDietary, initialTaskStates, testProgress, wrongChartRows, type DietaryState } from '../src/lib/simulation';
+} from '@client/lib/redesign-dietary';
+import { complicationRevealed, evaluateDietary, initialTaskStates, testProgress, wrongChartRows, type DietaryState } from '@client/lib/simulation';
 
 const priya = ADDED_GUESTS.find((guest) => guest.id === 'priya')!;
 const rightChart = Object.fromEntries(DISHES.map((dish) => [dish.id, [...dish.allergens]])) as Record<string, string[]>;

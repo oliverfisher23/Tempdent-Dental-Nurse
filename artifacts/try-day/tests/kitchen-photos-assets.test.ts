@@ -12,7 +12,7 @@ import { fileURLToPath } from 'node:url';
  */
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const manifestPath = path.join(projectRoot, 'src/content/kitchen-photos.json');
+const manifestPath = path.join(projectRoot, 'src/client/content/kitchen-photos.json');
 const MAX_WIDTH = 1920;
 const MAX_TOTAL_BYTES = 1024 * 1024;
 
@@ -103,11 +103,11 @@ test('every export is used by the app and the legacy PEOPLE ids keep the same po
   const files = await sourceFiles(path.join(projectRoot, 'src'));
   const sources = new Map(await Promise.all(files.map(async file => [file, await readFile(file, 'utf8')] as const)));
   for (const [key, spec] of Object.entries(manifest.exports)) {
-    const used = [...sources.entries()].filter(([, text]) => text.includes(`${manifest.outputDir.replace(/^src\//, '@/')}/${spec.file}`));
+    const used = [...sources.entries()].filter(([, text]) => text.includes(`${manifest.outputDir.replace(/^src\/client\//, '@client/')}/${spec.file}`));
     assert.ok(used.length > 0, `${key} (${spec.file}) is not imported anywhere under src/`);
   }
 
-  const kitchen = sources.get(path.join(projectRoot, 'src/content/kitchen.ts'))!;
+  const kitchen = sources.get(path.join(projectRoot, 'src/client/content/kitchen.ts'))!;
   const people = kitchen.match(/^\s*\{ id: '([a-z-]+)',.*portrait: ([^ ,}]+) \},?$/gm)!;
   const portraits = Object.fromEntries(people.map(line => {
     const [, id, portrait] = /id: '([a-z-]+)'.*portrait: ([^ ,}]+)/.exec(line)!;

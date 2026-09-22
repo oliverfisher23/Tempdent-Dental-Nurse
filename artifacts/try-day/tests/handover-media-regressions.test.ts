@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { FRIDGE_UNITS, OVERNIGHT_LOG } from '../src/content/activities';
-import { handoverRoundSaved, handoverRowComplete, nextHandoverUnit } from '../src/lib/handover-round';
-import { evaluateTask, initialTaskStates, testProgress } from '../src/lib/simulation';
+import { FRIDGE_UNITS, OVERNIGHT_LOG } from '@client/content/activities';
+import { handoverRoundSaved, handoverRowComplete, nextHandoverUnit } from '@client/lib/handover-round';
+import { evaluateTask, initialTaskStates, testProgress } from '@client/lib/simulation';
 
 test('the fridge round still needs deliberate saved records, not probes or media completion', () => {
   const tasks = initialTaskStates();

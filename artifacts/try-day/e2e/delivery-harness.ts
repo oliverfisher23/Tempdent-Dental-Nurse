@@ -1,5 +1,5 @@
 import { expect, type Frame, type Locator, type Page, type TestInfo } from '@playwright/test';
-import type { Progress } from '../src/lib/simulation';
+import type { Progress } from '@client/lib/simulation';
 
 export const DELIVERY = 'check-the-delivery-in';
 const LEARNER_KEY = 'springpod:mar-try-day:v1';

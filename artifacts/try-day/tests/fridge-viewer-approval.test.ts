@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import approvedManifest from './fixtures/fridge-approval/fridge-media.json';
 import { FRIDGE_INSPECTIONS as approvedInspections } from './fixtures/fridge-approval/fridge-photos';
-import { getInspectionSelection } from '../src/components/scenes/handover/inspection-selection';
+import { getInspectionSelection } from '@client/scenes/handover/inspection-selection';
 
 const states = ['closed', 'open'] as const;
 

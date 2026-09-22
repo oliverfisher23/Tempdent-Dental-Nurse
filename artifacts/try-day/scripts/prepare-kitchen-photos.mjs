@@ -2,11 +2,11 @@
 /**
  * Reproduce the web-ready WebP exports of the client's kitchen photographs.
  *
- * Reads `src/content/kitchen-photos.json` (source file in the zip, crop, size,
+ * Reads `src/client/content/kitchen-photos.json` (source file in the zip, crop, size,
  * quality and any redactions per export), unpacks only the named photographs
  * from the archive (the `__MACOSX` resource forks are never touched), then for
  * each export: auto-orients, strips all metadata, blurs any redacted regions,
- * crops, resizes and writes WebP into `src/assets/kitchen/photos/`.
+ * crops, resizes and writes WebP into `src/client/assets/kitchen/photos/`.
  *
  * Crop and redaction geometries are ImageMagick `WxH+X+Y` rectangles measured
  * on the auto-oriented source (4240x2384 for the landscape frames, 2384x4240
@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const workspaceRoot = path.resolve(projectRoot, '../..');
-const manifestPath = path.join(projectRoot, 'src/content/kitchen-photos.json');
+const manifestPath = path.join(projectRoot, 'src/client/content/kitchen-photos.json');
 const MAX_WIDTH = 1920;
 
 function run(command, args) {

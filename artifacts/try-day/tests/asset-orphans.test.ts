@@ -5,7 +5,7 @@ import test from 'node:test';
 import { fileURLToPath } from 'node:url';
 
 /**
- * Every picture and clip under `src/assets/` must be named by something under
+ * Every picture and clip under `src/client/assets/` must be named by something under
  * `src/`: an import in a `.ts`/`.tsx` module, or a filename in one of the JSON
  * manifests that `import.meta.glob` resolves (the fridge clips). Sixteen
  * generated pictures (about 2 MB) once sat unused for two days after the client
@@ -14,14 +14,14 @@ import { fileURLToPath } from 'node:url';
  * one in the same change.
  *
  * Being named is a weaker claim than being shipped: `content/delivery-photos.ts`
- * imports `src/assets/delivery-photos/` and is itself not reachable from the
+ * imports `src/client/assets/delivery-photos/` and is itself not reachable from the
  * app. Reachability is a separate check; this one only catches files nothing
  * mentions at all.
  */
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const srcDir = path.join(projectRoot, 'src');
-const assetsDir = path.join(srcDir, 'assets');
+const assetsDir = path.join(srcDir, 'client', 'assets');
 
 /** Notes and licence records that live beside the media are not media. */
 function isDocumentation(file: string): boolean {
@@ -54,15 +54,15 @@ function describeOrphans(orphans: string[]): string {
   const files = orphans.map(file => path.relative(projectRoot, file));
   const one = files.length === 1;
   return [
-    `${one ? 'This file is' : 'These files are'} under src/assets/ but no .ts, .tsx or .json file under src/ (outside src/assets/) names ${one ? 'it' : 'them'}:`,
+    `${one ? 'This file is' : 'These files are'} under src/client/assets/ but no .ts, .tsx or .json file under src/ (outside src/client/assets/) names ${one ? 'it' : 'them'}:`,
     ...files.map(file => `  - ${file}`),
     `Delete ${one ? 'it' : 'each one'}, or import it (or list it in the manifest that import.meta.glob resolves) so the app uses it.`,
   ].join('\n');
 }
 
-test('every file under src/assets/ is named by a module or manifest under src/', async () => {
+test('every file under src/client/assets/ is named by a module or manifest under src/', async () => {
   const assets = (await walk(assetsDir)).filter(file => !isDocumentation(file));
-  assert.ok(assets.length > 0, 'src/assets/ has pictures or clips to check');
+  assert.ok(assets.length > 0, 'src/client/assets/ has pictures or clips to check');
 
   const referenceFiles = (await walk(srcDir)).filter(isReferenceSource);
   const referenceTexts = await Promise.all(referenceFiles.map(file => readFile(file, 'utf8')));
@@ -73,16 +73,16 @@ test('every file under src/assets/ is named by a module or manifest under src/',
 
 test('the check names a file nothing mentions and accepts imports and manifest filenames', () => {
   const assets = [
-    'src/assets/kitchen/backdrop-old.jpg',
-    'src/assets/kitchen/backdrop.jpg',
-    'src/assets/kitchen/inspections/videos/walk-in-open.mp4',
+    'src/client/assets/kitchen/backdrop-old.jpg',
+    'src/client/assets/kitchen/backdrop.jpg',
+    'src/client/assets/kitchen/inspections/videos/walk-in-open.mp4',
   ];
   const references = [
-    "import backdrop from '@/assets/kitchen/backdrop.jpg';",
+    "import backdrop from '@client/assets/kitchen/backdrop.jpg';",
     '{ "walk-in": { "open": { "video": "walk-in-open.mp4" } } }',
   ];
-  assert.deepEqual(findOrphans(assets, references), ['src/assets/kitchen/backdrop-old.jpg']);
+  assert.deepEqual(findOrphans(assets, references), ['src/client/assets/kitchen/backdrop-old.jpg']);
   const message = describeOrphans([path.join(projectRoot, assets[0])]);
-  assert.match(message, /src\/assets\/kitchen\/backdrop-old\.jpg/);
+  assert.match(message, /src\/client\/assets\/kitchen\/backdrop-old\.jpg/);
   assert.match(message, /Delete it, or import it/);
 });
