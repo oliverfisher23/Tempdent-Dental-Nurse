@@ -4,8 +4,10 @@ import { VIEWPORT_COPY } from '@/content/experience-viewport';
 
 /** Kept available during the simulation, including after Escape exits fullscreen. */
 export function ExperienceSizeControl() {
-  const { fullscreen, expanding, notice, expand, collapse } = useExperienceViewport();
+  const { fullscreenAvailable, fullscreen, expanding, notice, expand, collapse } = useExperienceViewport();
   const label = fullscreen ? VIEWPORT_COPY.collapse : VIEWPORT_COPY.expand;
+  // Inside a frame that cannot go fullscreen the button could only show an apology; the host's own expand control does the job.
+  if (!fullscreenAvailable) return null;
   return (
     <div className="relative shrink-0">
       <button

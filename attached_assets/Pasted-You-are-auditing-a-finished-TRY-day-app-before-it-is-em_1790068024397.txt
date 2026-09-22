@@ -1,0 +1,203 @@
+You are auditing a finished "TRY day app" before it is embedded inside a
+Springpod learning Experience. The Experience runs in Springpod Studio (for
+designers, in preview) and in the Springpod learner hub (for students). Both
+put the app inside a sandboxed, cross-origin <iframe>, load it with no
+parameters, never send it any message, and wait for ONE message back: the
+app's completion. Everything else the app does is its own affair.
+
+Audit the app against the checklist below. Read the code and exercise the
+deployed address; do not rely on descriptions. For every item report PASS,
+FAIL or UNKNOWN with evidence (file and line, header dump, screenshot or a
+short repro). Do not change the completion envelope, the task ids, or the
+published URL unless the report says exactly why. Fixes that are small and
+safe may be made and listed; anything larger goes in the report as a proposal
+with an estimate. Finish with the report format at the end.
+
+## Host facts (what the embedding page does)
+
+- Frame: <iframe src="<your URL>" sandbox="allow-scripts allow-same-origin allow-forms">.
+  Nothing else is granted: no popups, no modals (alert, confirm, prompt are
+  blocked), no top navigation, no downloads, no allow= permissions policy
+  (so no fullscreen API, camera, microphone, geolocation, autoplay with sound).
+- Size: width of the activity column; height 75% of the viewport with a
+  480px minimum, or the whole device frame when the learner chooses full
+  screen. Studio's hub preview also renders a mobile device frame (about
+  360 to 400px wide). The host does NOT resize to the app's content.
+- Launch: the stored address exactly, no query string, no fragment, no
+  launch parameters. The host never posts a message into the frame.
+- Address rules: HTTPS only; no credentials in the URL; no query string or
+  fragment; not on the Studio origin. A URL of the form
+  /<64 hex chars>/index.html is treated as a verified release, not a link.
+- Framing check the designer can run: the address must serve text/html,
+  must not send X-Frame-Options: DENY or SAMEORIGIN, and any
+  Content-Security-Policy frame-ancestors must allow the Springpod origins
+  (or be absent, *, or https:).
+- Completion message (the only inbound message acted on). Either shape:
+  1. { "source": "springpod", "format": "springpod-mechanic", "event": "gate:complete", ... }
+  2. { "type": "springpod:activity-complete", ... }
+  Optional completedAt (ISO string) is recorded as the app's own timestamp.
+  Any other event, including task:complete, is ignored.
+- The message is accepted only when event.origin equals the approved origin
+  exactly AND event.source is the frame's own top-level window. A message
+  from a nested iframe, a worker, an opened window, or after a redirect to
+  another host (for example www.) is silently dropped.
+- The message must be plain JSON data: objects, arrays, strings, finite
+  numbers, booleans, null. No undefined values, Dates, Maps, class instances
+  or functions. Limits: 64 KiB serialised, depth 24, 5,000 nodes, strings up
+  to 64 KiB, 256 keys per object, key names up to 256 characters. Anything
+  outside these limits is dropped without a reply.
+- After the host records a completion it ignores further messages for that
+  launch. If recording fails, the learner is shown a Studio-side retry with
+  the retained message, and a further completion message from the app is
+  accepted too. There is no acknowledgement back to the app.
+- Preview and learner delivery look identical from inside the frame. In
+  preview the completion is kept in memory only.
+- Completion is recorded per learner against the exact approved address
+  (linked-app:<url>). A changed address is a different app: earlier
+  completions do not carry over.
+
+## A. Reachability and framing
+
+1. curl -sI <url> from a clean network: 200 (no auth wall, no cookie gate),
+   content-type: text/html, no x-frame-options, and either no
+   frame-ancestors or one that lists the Springpod Studio and learner hub
+   origins. Paste the headers.
+2. No redirect from the linked address to another origin or path (trailing
+   slash, www., locale, /app). The origin the page ends up on must be the
+   origin the address was saved with.
+3. The address is the app's page, not an embed helper, and works with no
+   query string and no fragment. Search the code for reads of
+   location.search, location.hash, URLSearchParams and document.referrer:
+   none may be required for the app to run.
+4. Stable, public, long-lived address: the deployment keeps the same URL
+   across redeploys and is not behind a preview or development domain. Note
+   cold-start time on first load after idle; over about 3 seconds to first
+   paint needs a plan (static hosting or always-on).
+5. Every asset the page loads (fonts, images, audio, video, API calls) is
+   HTTPS on origins that also allow cross-site loading. No mixed content.
+
+## B. Behaviour inside the sandbox
+
+1. Grep for window.open, target="_blank", alert(, confirm(, prompt(,
+   print(, requestFullscreen, top.location, parent.location, download=,
+   navigator.share, getUserMedia, geolocation, clipboard. Each hit must
+   either be removed or degrade cleanly with an in-page alternative. Links
+   out of the day (if any) cannot open in the frame's sandbox.
+2. Media: no autoplay with sound; every video or audio starts from a user
+   action, has controls, and has captions or a transcript.
+3. Layout: the app scrolls inside the frame. Exercise at 360x640, 768x480
+   (a 480px-high frame) and 1280x800. No content is cut off, no horizontal
+   scroll, no element relies on the viewport being the whole window
+   (100vh-based layouts inside an iframe are the usual failure).
+4. Keyboard: the whole day can be completed with keyboard alone; focus is
+   never trapped; nothing depends on the Escape key reaching the host.
+5. Inbound messages: if the app has a message listener, it must ignore or
+   origin-check everything it receives. The host never posts in, so a
+   listener that acts on arbitrary parent messages is a defect.
+6. No third-party login, no third-party cookies, no consent banner that
+   blocks the day. Note that inside a cross-site frame browser storage is
+   partitioned: what the learner saves in the frame is not visible when the
+   same address is opened directly, and vice versa. Confirm the app does not
+   assume otherwise.
+
+## C. The completion signal
+
+1. Find the code that posts completion. Confirm the envelope is one of the
+   two accepted shapes, posted with window.parent.postMessage(...) from the
+   app's top-level window (not from a nested frame or worker). Posting to
+   "*" is acceptable; the payload must therefore carry nothing personal.
+2. Completion fires only when all five tasks are done, in whatever order the
+   day allows, and never on a partial day, a skipped task, or a refresh
+   mid-day. task:complete may be posted for progress but nothing depends on
+   the host reading it.
+3. Recommended: also post the completion envelope on load when the saved
+   state already shows the day complete (idempotent re-post). The host
+   accepts once per launch and ignores repeats, so this only helps a learner
+   whose first message was lost.
+4. The payload lists every authored task id exactly once
+   (payload.completedTasks), the ids match the day document Studio holds for
+   this Experience, and completedAt is an ISO-8601 string.
+5. The message passes the plain-JSON rules and size limits in the host
+   facts. Dump one real message from the browser console and include it.
+6. There is no acknowledgement channel: the app must not wait for a reply,
+   show a spinner pending one, or treat silence as failure.
+
+## D. Progress and resume
+
+1. Progress is saved in the app's own origin storage after every task (and
+   ideally every meaningful step within a task). Refresh mid-task in the
+   frame and confirm the learner returns to the right place with the morning
+   brief not repeated.
+2. First run on a clean profile is clean: no errors, no leftover state.
+3. Shared devices: no learner identity is passed to a linked app, so a
+   second learner on the same browser profile inherits the first learner's
+   day. Confirm there is a visible "start the day again" control reachable
+   from the brief and from the end of the day, and that it clears everything.
+4. Storage failure (private mode, quota, cleared storage) degrades to a
+   working day that simply does not resume; it must not block the app.
+
+## E. Content contract for a TRY day
+
+1. Structure: morning brief first, then five tasks in the authored order,
+   then close of day. Task ids, titles, times and places match the day
+   document that was imported into Studio for this Experience.
+2. No scores, marks, grades, percentages, pass or fail, right or wrong
+   answers, verdicts, rankings or leaderboards anywhere in copy, UI or data.
+   TRY is practice, not assessment. Grep for score, mark, correct, wrong,
+   pass, fail, grade, points, %.
+3. Only authored materials appear: nothing invented about the employer, the
+   role, pay, people or policies beyond the day document. Flag any generated
+   filler.
+4. Copy is en-GB, addressed to "you", plain, and free of placeholders
+   ([ ], TODO, lorem, TBC).
+5. Accessibility: WCAG 2.2 AA colour contrast, visible focus, labels on every
+   control, images with alt text, reduced-motion respected.
+6. Privacy: the app collects no personal data, has no free-text field that is
+   sent to a server, and loads no analytics or tag manager that sets
+   cross-site cookies. List every network request the app makes.
+
+## F. Engagement tracking: report the position honestly
+
+State exactly what is and is not observable, then recommend.
+
+What the Springpod side sees for a linked app:
+- Completion of the whole day, per learner, once, with the app's completedAt
+  and completedTasks list.
+- Activity-level events (opened, time spent, completed) as the learner hub's
+  own reporter emits them around the frame under the platform's activity
+  contract; the app plays no part in those.
+- Nothing per task. The hub cannot see which task a learner is on, how long
+  each task took, or where learners abandon the day.
+
+What the app itself can measure:
+1. Document every analytics call the app already makes (endpoint, fields,
+   when). If none, say so.
+2. If per-task engagement is wanted, propose app-side, anonymous, aggregate
+   telemetry: task reached, task completed, time per task, abandonment point,
+   device class. No learner identity is available to a linked app and none
+   may be invented (no fingerprinting, no persistent cross-site identifier).
+   Describe where the data would be stored and how Springpod staff would
+   read it.
+
+What would move per-task progress to the Springpod side: the verified
+release route. Studio's TRY starter pack ships an SDK (src/try-sdk.js) that
+performs a springpod-try:* handshake (init from the host with activityId,
+releaseId, sourceHash, nonce, mode and saved state; ready, save, submit,
+resize, error from the app; ack back), so progress is saved per learner
+through Springpod's persistence and the final { "completedTasks": [...] }
+submission is validated against the authored day. It requires building on
+that SDK and publishing an immutable content-addressed release
+(/<sha256>/index.html with springpod-try.json beside it). Estimate the work
+to move this app onto that route and state what would be lost (the app can
+no longer be redeployed in place; each change is a new release the designer
+re-approves).
+
+## Report format
+
+1. Summary: embeddable as a linked app today? Yes, No, or Yes with fixes.
+2. Table of every checklist item: PASS / FAIL / UNKNOWN, evidence, fix.
+3. Fixes made during the audit (file, change, why it is safe).
+4. Proposals with estimates (anything not made).
+5. Engagement position: what is measured now, what the app-side proposal
+   would add, what the release route would add, and your recommendation.
+6. One real completion message and the curl -sI header dump, verbatim.

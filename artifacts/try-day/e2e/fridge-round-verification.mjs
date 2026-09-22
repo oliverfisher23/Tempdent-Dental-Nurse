@@ -51,7 +51,8 @@ export async function verifyFridgeMedia(page) {
   // motion paused from the previous appliance, and with an opening clip that cannot load.
   const modes = ['motion', 'paused', 'motion', 'clip-blocked'];
   const blockedClipRequests = [];
-  const blockedClip = /freezer-1-closed\.(mp4|webm)(\?|$)/;
+  // Matches the dev URL and the hashed production asset (`freezer-1-closed-BfPzDUg3.mp4`).
+  const blockedClip = /freezer-1-closed(-[\w-]+)?\.(mp4|webm)(\?|$)/;
   await page.route(blockedClip, route => {
     blockedClipRequests.push(route.request().url());
     return route.abort('failed');

@@ -836,16 +836,36 @@ function mergeTaskState<T extends object>(base: T, stored: Record<string, unknow
   return out as T;
 }
 
+let storageWarned = false;
+
+/**
+ * Storage can be unavailable (private browsing, a full quota, a policy that blocks it, or a
+ * frame without storage access). The day still works; it just will not resume after a reload.
+ */
+function withStorage(action: () => void): void {
+  try {
+    action();
+  } catch (error) {
+    if (storageWarned) return;
+    storageWarned = true;
+    console.warn('Progress could not be saved in this browser; the day will not resume after a reload.', error);
+  }
+}
+
 export function saveProgress(p: Progress): void {
   if (typeof window === 'undefined') return;
-  if (isTestMode()) window.sessionStorage.setItem(TEST_STORAGE_KEY, JSON.stringify(p));
-  else window.localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  withStorage(() => {
+    if (isTestMode()) window.sessionStorage.setItem(TEST_STORAGE_KEY, JSON.stringify(p));
+    else window.localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  });
 }
 
 export function clearProgress(): void {
   if (typeof window === 'undefined') return;
-  if (isTestMode()) window.sessionStorage.removeItem(TEST_STORAGE_KEY);
-  else window.localStorage.removeItem(STORAGE_KEY);
+  withStorage(() => {
+    if (isTestMode()) window.sessionStorage.removeItem(TEST_STORAGE_KEY);
+    else window.localStorage.removeItem(STORAGE_KEY);
+  });
 }
 
 // ---------------------------------------------------------------------------
@@ -859,11 +879,17 @@ export interface GateEvent {
   id: string;
   event: 'task:complete' | 'gate:complete';
   taskId?: TaskId;
+  /** On `gate:complete`: every authored task id, once, in the day's order. */
+  completedTasks?: readonly TaskId[];
   completedAt: string;
 }
 
-/** Posts progress to the parent window. Harmless when the app is opened on its own. */
-export function notifyHost(event: Omit<GateEvent, 'source' | 'format' | 'mechanic' | 'id'>): void {
+/**
+ * Posts progress to the parent window. Harmless when the app is opened on its own. The host
+ * records a `gate:complete` once per launch and never replies, so nothing here waits on one.
+ * The payload names the day and its tasks only; the learner's name never leaves the browser.
+ */
+export function notifyHost(event: Omit<GateEvent, 'source' | 'format' | 'mechanic' | 'id' | 'completedTasks'>): void {
   if (typeof window === 'undefined' || window.parent === window || isTestMode()) return;
   const message: GateEvent = {
     source: 'springpod',
@@ -871,6 +897,7 @@ export function notifyHost(event: Omit<GateEvent, 'source' | 'format' | 'mechani
     mechanic: mechanic.config.mechanic,
     id: mechanic.config.id,
     ...event,
+    ...(event.event === 'gate:complete' ? { completedTasks: TASK_ORDER } : {}),
   };
   window.parent.postMessage(message, '*');
 }

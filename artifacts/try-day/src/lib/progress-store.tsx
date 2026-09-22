@@ -85,6 +85,15 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     saveProgress(progress);
   }, [progress]);
 
+  // A day that was already finished when the page loaded tells the host again. The host keeps
+  // one completion per launch and ignores repeats, so this only helps a learner whose first
+  // message was lost (a closed tab, a dropped connection).
+  useEffect(() => {
+    if (!isDayComplete(progress) || !progress.completedAt) return;
+    notifyHost({ event: 'gate:complete', completedAt: progress.completedAt });
+    // Once, on load: the first-time completion is posted from completeTask.
+  }, []);
+
   const evaluations = useMemo(() => {
     const out = {} as Record<TaskId, Evaluation>;
     for (const id of TASK_ORDER) out[id] = evaluateTask(id, progress.tasks);

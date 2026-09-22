@@ -38,6 +38,16 @@ const PLACE_TONE: Record<PlaceId, { cutoff: number; gain: number }> = {
   events: { cutoff: 900, gain: 0.35 },
 };
 
+/** The saved mute choice; storage can be blocked (a strict private mode, a locked-down embed), and sound must not take the page down with it. */
+function readMutePreference(): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return window.localStorage.getItem(MUTE_KEY) === '1';
+  } catch {
+    return false;
+  }
+}
+
 class KitchenAudio {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
@@ -53,7 +63,7 @@ class KitchenAudio {
   private eventTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
-    this.muted = typeof window !== 'undefined' && window.localStorage.getItem(MUTE_KEY) === '1';
+    this.muted = readMutePreference();
     if (typeof document !== 'undefined') {
       document.addEventListener('visibilitychange', () => {
         if (!this.ctx) return;
@@ -104,7 +114,11 @@ class KitchenAudio {
 
   setMuted(muted: boolean) {
     this.muted = muted;
-    window.localStorage.setItem(MUTE_KEY, muted ? '1' : '0');
+    try {
+      window.localStorage.setItem(MUTE_KEY, muted ? '1' : '0');
+    } catch {
+      // Storage blocked: the choice still holds for this visit.
+    }
     if (this.ctx && this.master) {
       const t = this.ctx.currentTime;
       this.master.gain.cancelScheduledValues(t);

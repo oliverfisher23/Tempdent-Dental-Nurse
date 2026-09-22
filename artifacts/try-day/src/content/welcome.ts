@@ -4,7 +4,10 @@ export const WELCOME_COPY = {
   shortBrief: "Join Terence at art'otel Hoxton to prepare the kitchen for tonight’s product launch for one hundred guests. Check the food, make decisions, and get the evening team ready.",
   launchButton: "Expand experience",
   inlineButton: "Continue in this window",
+  /** The only button where fullscreen is not on offer (an LMS frame). */
+  startButton: "Open the briefing",
   launchHint: "Open the briefing, then start your shift. Fullscreen is optional.",
+  launchHintFramed: "Open the briefing, then start your shift.",
   returnButton: "Back to welcome",
   close: "Close",
   briefingTitle: "Before your shift",

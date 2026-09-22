@@ -3,6 +3,11 @@ import { VIEWPORT_COPY } from '@/content/experience-viewport';
 
 interface ExperienceViewport {
   expanded: boolean;
+  /**
+   * False where the Fullscreen API is not available: a sandboxed frame without allow=fullscreen
+   * (the Springpod hub and Studio), or an older browser. Controls that only expand should hide.
+   */
+  fullscreenAvailable: boolean;
   fullscreen: boolean;
   expanding: boolean;
   notice: string | null;
@@ -12,6 +17,9 @@ interface ExperienceViewport {
 }
 
 const ViewportContext = createContext<ExperienceViewport | null>(null);
+
+const FULLSCREEN_AVAILABLE =
+  typeof document !== 'undefined' && document.fullscreenEnabled === true && typeof document.documentElement.requestFullscreen === 'function';
 
 /** Fullscreen is requested only by a learner gesture, never by route changes. */
 export function ExperienceViewportProvider({ children }: { children: ReactNode }) {
@@ -67,8 +75,10 @@ export function ExperienceViewportProvider({ children }: { children: ReactNode }
     setNotice(null);
   }, []);
 
-  const value = useMemo(() => ({ expanded, fullscreen, expanding, notice, expand, collapse, openInline }),
-    [expanded, fullscreen, expanding, notice, expand, collapse, openInline]);
+  const value = useMemo(
+    () => ({ expanded, fullscreenAvailable: FULLSCREEN_AVAILABLE, fullscreen, expanding, notice, expand, collapse, openInline }),
+    [expanded, fullscreen, expanding, notice, expand, collapse, openInline],
+  );
   return <ViewportContext.Provider value={value}>{children}</ViewportContext.Provider>;
 }
 

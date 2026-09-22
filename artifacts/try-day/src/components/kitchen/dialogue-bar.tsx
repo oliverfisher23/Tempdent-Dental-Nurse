@@ -220,13 +220,15 @@ export function DialogueBar({
   return (
     <>
       {announcement}
-      <div className="absolute inset-x-0 bottom-0 z-30 flex items-end pointer-events-none">
+      {/* The bar never takes more than 60% of the stage: in a short LMS frame (480px high) a question
+          with three answers and Terence's reply would otherwise cover every control behind it. */}
+      <div className="absolute inset-x-0 bottom-0 z-30 flex max-h-[60%] flex-col justify-end pointer-events-none">
         <motion.div
           ref={barRef}
           initial={reduceMotion ? false : { opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35, ease: [0.2, 0.8, 0.2, 1] }}
-          className="pointer-events-auto w-full border-t-4 border-primary bg-white/95 text-foreground shadow-[0_-12px_40px_rgba(0,0,0,0.35)] backdrop-blur"
+          className="pointer-events-auto flex min-h-0 w-full flex-col border-t-4 border-primary bg-white/95 text-foreground shadow-[0_-12px_40px_rgba(0,0,0,0.35)] backdrop-blur"
           data-testid="dialogue-bar"
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
@@ -235,7 +237,7 @@ export function DialogueBar({
             }
           }}
         >
-          <div className="mx-auto flex max-w-6xl items-start gap-3 px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
+          <div className="mx-auto flex min-h-0 w-full max-w-6xl items-start gap-3 overflow-y-auto px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
                 <button

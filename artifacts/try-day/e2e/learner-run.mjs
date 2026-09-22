@@ -243,10 +243,18 @@ try {
     await page.goto(`${BASE}/`, { waitUntil: 'domcontentloaded' });
     await page.getByTestId('welcome-launch').waitFor();
     await snap('welcome');
-    await page.getByTestId('expand-experience').click();
     const briefing = page.getByTestId('welcome-briefing');
-    if (!(await briefing.isVisible({ timeout: 6000 }).catch(() => false))) {
-      finding('info', 'Expand experience did not reach the briefing in headless Chromium (fullscreen refused); used Continue in this window instead.');
+    // Where the Fullscreen API exists the welcome leads with Expand experience; a frame without it
+    // (the Springpod sandbox, or a browser reporting fullscreenEnabled false) shows the inline button only.
+    if (await page.getByTestId('expand-experience').count()) {
+      await page.getByTestId('expand-experience').click();
+      if (!(await briefing.isVisible({ timeout: 6000 }).catch(() => false))) {
+        finding('info', 'Expand experience did not reach the briefing in headless Chromium (fullscreen refused); used Continue in this window instead.');
+        await page.getByTestId('continue-inline').click();
+        await briefing.waitFor();
+      }
+    } else {
+      finding('info', 'No Fullscreen API here: the welcome offered Open the briefing only.');
       await page.getByTestId('continue-inline').click();
       await briefing.waitFor();
     }

@@ -1,6 +1,10 @@
 import { ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
+// A sheet keeps a page's worth of height on a desktop, but never more than the frame can show:
+// in a 480px-high LMS frame a fixed 400px left the bottom of the chill record (the signature) unreachable.
+const PAPER_MIN_HEIGHT = 'min-h-[min(400px,55svh)]';
+
 export function Clipboard({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div className={cn("relative w-full flex flex-col min-h-0", className)}>
@@ -11,7 +15,7 @@ export function Clipboard({ children, className }: { children: ReactNode; classN
       {/* Board */}
       <div className="bg-[#594236] rounded-md shadow-2xl p-3 pt-6 w-full flex-1 flex flex-col min-h-0">
         {/* Paper stack */}
-        <div className="bg-white rounded shadow-sm overflow-y-auto flex-1 relative min-h-[400px]">
+        <div className={cn("bg-white rounded shadow-sm overflow-y-auto flex-1 relative", PAPER_MIN_HEIGHT)}>
           {children}
         </div>
       </div>
@@ -24,7 +28,7 @@ export function Whiteboard({ children, className }: { children: ReactNode; class
     <div className={cn("relative w-full flex flex-col min-h-0", className)}>
       {/* Frame */}
       <div className="bg-zinc-200 p-2 rounded-md shadow-2xl border-b-4 border-zinc-300 flex-1 flex flex-col min-h-0">
-        <div className="bg-white rounded-sm border border-zinc-300 shadow-inner overflow-y-auto relative flex-1 min-h-[400px]">
+        <div className={cn("bg-white rounded-sm border border-zinc-300 shadow-inner overflow-y-auto relative flex-1", PAPER_MIN_HEIGHT)}>
           {children}
         </div>
       </div>
