@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200" role="img" aria-labelledby="title desc">
+  <title id="title">Workplace map</title>
+  <desc id="desc">DRAFT map picture</desc>
+  <rect width="1200" height="1200" fill="#f3efe7"/>
+  <path d="M0 864 L432 456 L744 744 L1200 288 V1200 H0Z" fill="#d3cec4"/>
+  <rect x="96" y="120" width="1008" height="960" rx="12" fill="none" stroke="#242424" stroke-width="3" stroke-dasharray="12 10"/>
+  <text x="50%" y="47%" text-anchor="middle" font-family="Arial, sans-serif" font-size="50" font-weight="700" fill="#242424">Workplace map</text>
+  <text x="50%" y="57%" text-anchor="middle" font-family="Arial, sans-serif" font-size="25" fill="#242424">DRAFT map picture</text>
+</svg>

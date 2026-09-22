@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="640" viewBox="0 0 640 640" role="img" aria-labelledby="title desc">
+  <title id="title">Mentor</title>
+  <desc id="desc">DRAFT mentor picture</desc>
+  <rect width="640" height="640" fill="#ddd8ce"/>
+  <path d="M0 461 L230 243 L397 397 L640 154 V640 H0Z" fill="#d3cec4"/>
+  <rect x="51" y="64" width="538" height="512" rx="12" fill="none" stroke="#242424" stroke-width="3" stroke-dasharray="12 10"/>
+  <text x="50%" y="47%" text-anchor="middle" font-family="Arial, sans-serif" font-size="27" font-weight="700" fill="#242424">Mentor</text>
+  <text x="50%" y="57%" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" fill="#242424">DRAFT mentor picture</text>
+</svg>

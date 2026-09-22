@@ -5,146 +5,50 @@
   "config": {
     "mechanic": "try-day-app",
     "version": 1,
-    "id": "mar-try-day",
-    "employer": "art'otel",
+    "id": "tempdent-try-day",
+    "employer": "TempDent",
     "locale": "en-GB",
     "frame": {
-      "role": "Trainee sous chef, art'otel Hoxton",
-      "workplace": "art'otel Hoxton: The main kitchen, events kitchen, and walk-in fridges off the back corridor",
+      "role": "DRAFT learner role",
+      "workplace": "DRAFT workplace at TempDent",
       "shift": {
-        "start": "06:45",
-        "end": "15:00",
-        "rhythm": "Breakfast is already running when you arrive, so the first hour is checks and paperwork around a busy kitchen. The room turns towards tonight's product launch for one hundred guests. Early afternoon is the quiet stretch for cleaning down, weighing, counting, and writing things up, and the evening brigade comes on at three."
+        "start": "09:00",
+        "end": "17:00",
+        "rhythm": "DRAFT: Describe how the working day changes from start to finish."
       },
       "people": [
         {
-          "name": "Terence",
-          "role": "Executive sous chef, art'otel Hoxton",
-          "note": "Your mentor for the day. He runs the kitchen day to day, asks how you think, and steps in when a decision could make someone poorly."
-        },
-        {
-          "name": "Yvie",
-          "role": "Events",
-          "note": "Looks after events and brings the client's request list in and out throughout the day."
+          "name": "DRAFT mentor",
+          "role": "DRAFT mentor role",
+          "note": "DRAFT: Explain how this person supports the learner."
         }
       ],
-      "morningBrief": "Hello, my name's Terence, and I'm the executive sous chef here at art'otel Hoxton, so I run the kitchen day to day. We've got a product launch event tonight for one hundred guests, while maintaining proper hotel service. Yvie looks after events and will be in and out with the client's request list. You have five jobs displayed in order: Take the handover, check the delivery, chill the beef batch, complete the dietary list, and hand the kitchen over. Do not guess: Take readings, make notes with the time and your initials, and ask if you are unsure.",
-      "closeOfDay": "That's you finished with your tasks. You checked the fridge properly, did not sign off on salmon that had not arrived, kept the beef in the chiller until it was ready, checked allergens before serving a nut-allergic guest, and left the evening team a handover they can use to serve our guests. Anyone can learn to cook; what matters is checking properly, explaining decisions, and leaving records people can trust.",
-      "tone": "Calm, practical, and warm: The register of a good chef showing someone the ropes on a normal working day."
+      "morningBrief": "DRAFT: Add the approved opening briefing for this try day.",
+      "closeOfDay": "DRAFT: Add the approved close-of-day message.",
+      "tone": "DRAFT: Describe the employer voice and register."
     },
     "tasks": [
       {
-        "id": "take-the-handover",
-        "time": "06:45",
-        "place": "Main kitchen, by the walk-in fridges",
-        "title": "Take the handover and walk the fridges",
-        "situation": "The overnight log says larder fridge 2 was found open at four this morning, for an unknown length of time. Some of tonight's prep may have been affected.",
-        "job": "Read all the notes, then open every fridge, look inside, and read its thermometer once the needle settles. Write what you actually see with the time and your initials.",
+        "id": "draft-task",
+        "time": "09:00",
+        "place": "DRAFT workplace",
+        "title": "DRAFT task",
+        "situation": "DRAFT: Explain what is happening when this task begins.",
+        "job": "DRAFT: State what the learner needs to do.",
         "materials": [
           {
-            "name": "Overnight log",
-            "description": "Four timed entries between 22:00 and 06:30: The deep clean, a delivery left in the corridor, a fridge door found ajar at 04:10, and the breakfast set-up."
-          },
-          {
-            "name": "Temperature board and fridge thermometers",
-            "description": "A paper chart on the wall with a row for every fridge and freezer, a column for the reading, and a space for the time and your initials; and the dial thermometer hanging in each fridge, which you wipe and read once the needle has settled."
+            "name": "DRAFT material",
+            "description": "DRAFT: Describe the information or equipment the learner uses."
           }
         ],
-        "interaction": "In person with the night porter, who is keen to get off, and with Terence, who walks the fridges beside you and points out larder fridge 2.",
-        "doneWhen": "Every fridge row carries a reading, a time, and your initials, and larder fridge 2 has a note next to it.",
-        "whatHappensNext": "The produce and fish delivery arrives at the back door at 08:30."
-      },
-      {
-        "id": "check-the-delivery-in",
-        "time": "08:30",
-        "place": "The goods-in door, the back entrance where deliveries come in",
-        "title": "Check the new delivery",
-        "situation": "Most of the delivery is for tonight's product launch. The driver is in a hurry, but you sign for what is on the trolley, not what is on the note.",
-        "job": "Count and weigh what arrived, probe chilled boxes, inspect the fish's eyes and gills, smell it, and press it. Flag anything short or not right before signing.",
-        "materials": [
-          {
-            "name": "Order sheet",
-            "description": "What was ordered for today, line by line, with a column for what actually arrived and a column for the temperature of anything that should have come in cold."
-          },
-          {
-            "name": "Delivery note",
-            "description": "The supplier's own list of what they say they have sent, which does not always match the order sheet, and which you sign for what you accept rather than for what it claims."
-          }
-        ],
-        "interaction": "In person with the driver, who is in a hurry, and on the kitchen radio to Terence when support is needed.",
-        "doneWhen": "Every line on the order sheet is marked as arrived, short, or refused; every chilled line is marked with a temperature, and you've signed for what you accepted.",
-        "whatHappensNext": "The short line goes on a list for Terence to take up with the supplier, and everything else is put away in the order it will be used.",
-        "complication": "Four kilos of salmon is missing. Radio Terence before signing; tonight's launch does not use it, but tomorrow's lunch does."
-      },
-      {
-        "id": "chill-the-event-batch",
-        "time": "10:45",
-        "place": "Main kitchen, at the bench and the blast chiller",
-        "title": "Chill the batch for tonight",
-        "situation": "The main course for tonight's one hundred guests is beef shin: Twenty-seven kilos. It must be cooled quickly, held cold, and recorded.",
-        "job": "Split the beef with Terence, spreading it no more than fifty millimetres deep. Space trays in the chiller, probe the thickest part of the fullest tray without touching metal, and record a reading at each time on the chill record.",
-        "materials": [
-          {
-            "name": "Prep sheet",
-            "description": "This morning's cooking: The weight of the batch, how many trays it goes into, and how deep each tray is filled."
-          },
-          {
-            "name": "Chill record and probe",
-            "description": "A form with four boxes for the readings and the time each was taken, the two lines the kitchen works to, 8°C, which is the temperature chilled food has to be held at, and a higher line above which a batch does not go to service at all, and a space at the bottom for two signatures; and the probe, which goes into the food rather than against the metal of the tray."
-          }
-        ],
-        "interaction": "Terence, who pans the second half of the batch at the bench next to you and reads his own tray while you read yours.",
-        "doneWhen": "The chill readings are recorded with their times, trays are spaced in the chiller, and the beef is under 8°C before it goes in the walk-in.",
-        "whatHappensNext": "Once the batch is down it goes into the walk-in, ready for the evening team to bring back up to temperature before service.",
-        "complication": "At ninety minutes your tray is still above 8°C while Terence's shallower tray is below it. Keep the batch in the chiller, continue logging, and measure the depths."
-      },
-      {
-        "id": "check-the-dietary-list",
-        "time": "12:30",
-        "place": "Main kitchen, at the pass, then the events kitchen",
-        "title": "Check tonight's dietary list",
-        "situation": "Yvie brings the final guest list for tonight's one-hundred-guest product launch. Three late additions are on tables 3, 6, and 9, including a nut allergy.",
-        "job": "Build the allergen chart from the recipe cards first. Check every dish and all fourteen allergens, then choose safe dishes for the three additions and put dish, name, and table on the events board.",
-        "materials": [
-          {
-            "name": "Function sheet",
-            "description": "Tonight's product launch: One hundred guests, the timings, the table plan, and the list of guests who have told the hotel there is something they cannot eat."
-          },
-          {
-            "name": "Allergen chart and the evening board",
-            "description": "A grid with tonight's dishes down the side and, across the top, the fourteen things that have to be declared by law because people can be allergic to them; and the whiteboard the evening team read when they come on at three."
-          }
-        ],
-        "interaction": "In person with Yvie, who needs an answer before she prints the table plan, and with Terence, who reads the chart through with you before it goes up on the board.",
-        "doneWhen": "Every dish on the allergen chart is marked against all fourteen allergens, each of the three added guests has a dish written against their name, and the changes are up on the evening board.",
-        "whatHappensNext": "Yvie prints the table plan with the dietary notes on it, and the evening team pick the changes up when they come on at three.",
-        "complication": "The frangipane contains almonds mixed through it, not just on top. It cannot be adapted; choose another dessert and write it on the board."
-      },
-      {
-        "id": "hand-the-kitchen-on",
-        "time": "14:30",
-        "place": "Main kitchen, at the pass",
-        "title": "Weigh the waste and hand the kitchen on",
-        "situation": "The evening team are about to take over and serve one hundred guests. Waste needs weighing, the handover needs completing, and Terence will review the chill record with you.",
-        "job": "Weigh all three tubs. Put the rice and melon from larder 2 under spoilage, complete and walk through the handover covering salmon, larder 2, and table 3, then talk Terence through the beef chill record and sign it together.",
-        "materials": [
-          {
-            "name": "Waste sheet",
-            "description": "A form with three rows: Trimmings from preparing food, food that went off before it was used, and food that came back from plates. Each row takes a weight in kilos."
-          },
-          {
-            "name": "Handover sheet",
-            "description": "What is prepared, what is short, what is in the walk-in for tonight, and a line for the one thing you would keep an eye on."
-          }
-        ],
-        "interaction": "In person with Terence, who reads the chill record and asks what you would do with the trays next time, and with the evening team, who take the handover sheet from you and ask their own questions.",
-        "doneWhen": "All three waste rows are weighed correctly, the handover is filled in and delivered, and the chill record has both signatures.",
-        "whatHappensNext": "The day closes."
+        "interaction": "DRAFT: Describe who the learner works with.",
+        "doneWhen": "The learner marks the placeholder task as complete.",
+        "whatHappensNext": "The placeholder day closes."
       }
     ],
     "gate": {
       "type": "complete",
-      "id": "mar-try-day",
+      "id": "tempdent-try-day",
       "label": "Finish every task in the day to complete this section"
     }
   }

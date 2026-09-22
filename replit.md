@@ -1,78 +1,48 @@
-# Marriott Sous Chef Try Day
+# Dental Nurse Try Day
 
-An interactive day-in-the-life web simulation for students: one shift (06:45–15:00) as a trainee sous chef in the main kitchen of the Courtyard by Marriott Sandy Park, Exeter, built to the Springpod `try-day-app` mechanic (id `mar-try-day`).
+A blank Springpod try-day client scaffold for TempDent. All employer content is marked DRAFT and must be replaced and approved before delivery.
 
-This is an LMS-embedded learner experience, not a public marketing site. Keep the landing page focused on a visual welcome, a short briefing and the learner's expand/start flow. See `artifacts/try-day/EMBEDDING.md` for iframe permissions and integration boundaries.
+## Run & operate
 
-## Run & Operate
+- `pnpm --filter @workspace/try-day run dev` — run the web app.
+- `pnpm --filter @workspace/try-day run typecheck` — typecheck the web app.
+- `cd artifacts/try-day && node --import tsx --test tests/*.test.ts` — run the retained unit tests.
+- `pnpm --filter @workspace/try-day run new-client -- --id <client-id> --name "<Employer>" --title "<Try day title>" --confirm` — cut another blank client from this template.
+- No database or environment variables are required.
 
-- `pnpm --filter @workspace/try-day run dev` — run the try-day web app (workflow `artifacts/try-day: web`, binds `PORT`)
-- `pnpm --filter @workspace/try-day run typecheck` — typecheck the web app only
-- `pnpm --filter @workspace/try-day run test:delivery:browser` — delivery-only desktop/phone regression against the running web workflow; isolated designer session and iframe host checks. See `artifacts/try-day/docs/delivery-browser-regression.md`.
-- `pnpm --filter @workspace/try-day run test:fridge-round` — the complete Task 1 fridge round in a real browser, from the overnight log through all four appliances on the learner’s round; starts its own Vite server on port 4174. Separate from the fast `tests/*.test.ts` regression. See `artifacts/try-day/e2e/README.md`.
-- `pnpm --filter @workspace/try-day run test:learner-run` — the whole experience as a learner (welcome to return visit) against the running web workflow; `VIEWPORT=phone` for 390x844 touch, `INPUT=keyboard` for focus + Enter/Space only, `AXE=1` for an axe-core scan at every screenshot (results under `axe` in the QA log); tries wrong answers first at a few points and reloads mid-task. Exits non-zero on page/console errors or a major finding; `qa-log.json` under `artifacts/try-day/test-results/`. See `artifacts/try-day/e2e/README.md`.
-- Before a merge, run the registered validation checks `typecheck`, `unit-tests`, `fridge-round` and `learner-run` (the last needs the web workflow up).
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-server run dev` — the scaffold API server (not used by the try-day app in v1)
-- No database and no env vars are needed for the try-day app. `DATABASE_URL` is only needed if the scaffold API server is run.
+## Template version
+
+- Shell version: `1.0.0` from `artifacts/try-day/src/shell/VERSION`.
+- Client id: `tempdent-try-day`.
+- Saved progress key: `springpod:tempdent-try-day:v1`.
+- Sound preference key: `springpod:tempdent-try-day:sound-muted`.
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
-- Web: Vite + React + Tailwind + shadcn/ui, wouter routing, framer-motion
-- Scaffold API (unused by v1): Express 5, PostgreSQL + Drizzle, Zod, Orval codegen
+- pnpm workspaces, TypeScript, Vite, React, Tailwind and shadcn/ui.
+- Frontend-only; learner progress stays in localStorage.
 
 ## Where things live
 
-- `artifacts/try-day/src/` is split into three halves with one dependency direction, `client -> shell -> kit`, enforced by `tests/boundary.test.ts` (nothing in `shell/` or `kit/` imports from `client/`; nothing in `kit/` imports from `shell/`; no kitchen names in `shell/`). Path aliases: `@shell/*`, `@kit/*`, `@client/*`. `src/main.tsx` is the composition root: it mounts `<App client={kitchenClient} />`, and `src/index.css` imports `client/theme.css` then `shell/styles/base.css`.
+- `artifacts/try-day/src/` follows one dependency direction: `client -> shell -> kit`.
   - `src/shell/` — the generic try-day runner: welcome and briefing, the frame around every task (`shell/frame/`: `KitchenFrame`, `KitchenProvider`/`useKitchen`, map, step guide, notepad, dialogue, close-ups; API in its `README.md`), the close, the designer test panel, `lib/day.ts` (the `DayDocument`/`DaySpec` shape, generic `Progress`, `createDayRuntime`, localStorage persistence, host `postMessage`), `lib/client.ts` (the `TryClient` contract and `assertValidClient`, run once by `TryClientProvider` so a client missing a page, route, film or mentor fails on load with every gap listed) and `lib/progress-store.tsx` (`ProgressProvider`, `useProgress<TS>()`). Shell components read client data only through `useClient()` at render time, never by import. The `kitchen-*` file names and the `kitchenAudio` identifier are legacy; renaming them is a template follow-up.
   - `src/kit/` — reusable pieces with no knowledge of a try day: shadcn `ui/`, `lib/audio.ts` (one AudioContext, ambience bed per place as a `ToneSpec`, generated sounds; the mute key, opening tone and recorded loop URL all come from the client's `configure()` call), `lib/utils.ts`, hooks, and the instrument components (dial and analogue thermometers, kitchen scale, paper surfaces, check feedback).
-  - `src/client/` — the art'otel Hoxton day. `index.tsx` builds the `TryClient` object (brand, mentor, workplace, welcome and frame copy, briefing films, task pages, close) and configures sound: mute key `springpod:mar-try-day:sound-muted`, the pass ambience and `public/audio/kitchen-ambience.mp3`. `tests/day-runtime.test.ts` checks the runtime the shell is handed (storage key, the three designer fixtures, contract validation) and registers `tests/support/asset-loader.mjs` so content modules that import pictures load under node. `content/mechanic.json` is the client-approved spec, copied verbatim; all narrative copy (morning brief, task situation/job/materials/done-when/complications, close of day) comes from here and must not be paraphrased. `content/activities.ts` holds the interactive data (fridge units and true readings, overnight log, order lines and what really arrived, prep sheet and chiller readings, the 14 UK allergens, dishes/recipe cards, function sheet and added guests, waste bins, handover prompts, Elena's question, dialogue lines). `lib/simulation.ts` is the kitchen's `ProgressModel` (per-task state shapes, initial state, `evaluate*` done-when checks, one checklist item per clause of the spec's `doneWhen`, saved-progress migrations) and exports `day = createDayRuntime(mechanic, model)`; `lib/progress.ts` is `useProgress()` narrowed to the kitchen's task states. `content/kitchen.ts` is the kitchen as a place: `PLACES` (pass, corridor, goods-in, bench, events) with map coordinates, backdrops and ambience tones, `TASK_ROUTES`, `PEOPLE` with portraits, `CRATE_IMAGES`, gathered as `WORKPLACE`. Task 1 is a focused workspace (no room navigation; its route sets `restoresWorkspace: false`), so the fridges photograph is shown faded behind its overnight log and board pages via `scenes/handover/fridge-backdrop.tsx`. `scenes/<task>/` holds the per-task scenes (one component per place) and `content/scenes/<task>.ts` their scene-only dialogue and labels; `pages/` the task pages and close; `theme.css` the brand (fonts, HSL palette tokens, radius) plus the log book paper styles.
-  - `src/client/assets/` — `artotel-logo.png`, `kitchen/` (AI-generated isometric map, the illustrated goods-in and events backdrops that are still waiting for photographs, fish box and crate pictures), `kitchen/photos/` (client photographs of Terence: welcome hero, briefing circle at 1x and 2x, dialogue avatar, pass, fridges and bench backdrops), `kitchen/inspections/videos/` (the supplied fridge clips with their `README.md` and `APPROVAL.md` beside them), `public/audio/kitchen-ambience.mp3`. Every picture and clip under `src/client/assets/` is imported by live code (only the two inspection notes beside the clips are not); the generated scene pictures and portraits that the photographs replaced, the interior pictures only the retired handover scenes used, and the stock ingredient photos held for a superseded goods-in prototype (one had unconfirmed reuse permission), were deleted on 2026-09-19, so a file that nothing imports should go rather than stay "for reference"; `tests/asset-orphans.test.ts` enforces this by failing the suite and naming any file under `src/client/assets/` (other than `.md` notes and `sources.json`) whose filename no `.ts`/`.tsx`/`.json` under `src/` outside the assets folder mentions. Task 2 has exactly one goods-in scene, `scenes/delivery/goods-in.tsx` with `DeliveryRow`; the earlier `GoodsInSceneRedesign` prototype and its `lib/redesign-delivery.ts` checklist are gone (the `DeliveryRedesignState` field stays in `simulation.ts` because saved progress may still carry it). `PHOTOGRAPHY-SHOT-LIST.md` records which shots have arrived and which are outstanding.
-- `artifacts/try-day/scripts/prepare-kitchen-photos.mjs` regenerates `kitchen/photos/` from `attached_assets/Images_*.zip` using the crops in `src/client/content/kitchen-photos.json` (auto-orient, strip metadata, WebP, fridge readouts blurred); `tests/kitchen-photos-assets.test.ts` checks the exports against the manifest. The 4240 px originals stay in `attached_assets/`, never under `src/`.
-- `BUILD_BRIEF.md` — framing, brand rules and per-task interaction design used for the first build.
-- `artifacts/try-day/docs/` — learning-design review and approval records (e.g. `closing-handover-approval.md`, `dietary-learning-redesign.md`). Keep review documents here, not under `.local/` (gitignored, not preserved between task environments). An approval record is content sign-off only; implementation needs its own assignment.
-- `attached_assets/` — original spec, brand tokens markdown and the People Brand style guide PDF, the client photo and video archives, and the platform's `generated_images/` output folder. Downloaded stock pictures do not belong here: the ingredient originals kept for the superseded goods-in prototype were deleted with it on 2026-09-19.
-- `artifacts/try-day/exports/artotel-try-day-current-images.zip` — the client-facing "current images" export (README, manifest and every image the production build ships, at project-relative paths). It is built by hand from `public/favicon.*` plus every image under `src/client/assets/`, so regenerate it and refresh its Library card whenever a shipped picture is added or removed.
+  - `src/client/` — the replaceable employer client. The generated version contains one DRAFT task, one place, one mentor, placeholder pictures and placeholder briefing transcripts.
+  - `src/client/content/mechanic.json` — the client day document and signed-off task copy once approved.
+  - `src/client/lib/simulation.ts` — task state and done-when evaluation.
+  - `src/client/theme.css` — employer theme tokens.
 
-## Architecture decisions
+## Client scaffold
 
-- Frontend-only v1. Progress is saved to localStorage under `springpod:mar-try-day:v1` so a student can leave and come back; "start again" clears it.
-- Content and rules are separated from UI: `client/content/` holds data, `client/lib/simulation.ts` decides what counts as done, pages only render. Change a reading, a quantity or a done-when rule in those files, not in components.
-- Done-when checks validate against the simulated truth (probe readings within 0.3 °C, weights within 0.15 kg, counted quantities and line statuses against what actually arrived, allergen rows against the recipe cards, the evening-board note naming the guest and the dish) so the forms cannot be filled with anything at all.
-- A completed task is frozen: revisiting it (browser Back, typed URL) shows it read-only with a link to the current task, so finished paperwork cannot be undone after `task:complete` has been posted.
-- Immersive presentation (v2): each task is a set of scenes the student stands in (backdrop = atmosphere, interactive objects rendered as real buttons in front), moved between via the kitchen map. Readings, counts and weights are captured at the object into the student's notebook (`progress.notepad`, `jot`) and written up onto the paperwork with "Use my note" chips; the kitchen clock (`progress.clock`) advances with walks, probing and waiting. Generated pictures are never click targets and nothing is pixel-aligned to them.
-- Tasks open directly in the room. The persistent step guide opens the next workspace and handles room changes; the map and job card are optional tools, never automatic interruptions. `KitchenProvider` still animates walks through `mapPhase` (`closed | open | walking | entering`); reduced-motion students move directly.
-- Navigation guides live in `client/content/guides/` and only open workspaces via `useKitchenAction`; they must never perform practical work or bypass the completion checks. The step guide remains above close-ups, and its completion button signs off through the same validated store action as the job card.
-- One instruction layer per screen: the step guide bar is the only place that states the current step and names its control (outcome-based labels such as "Mark the allergen chart", never "Open the chart"; "Choose"/"Press"/"Open" rather than "Tap"). A workspace opener is a single line (what to do, progress rail, "How do I do this?" and the briefing video); its How and Done-when text lives behind that one button, and workspaces carry no duplicate "next" buttons. Every check button in Tasks 2 and 4 is labelled "Check my work" (`content/check.ts`) and answers through `CheckFeedback`; Task 5's live validation uses the same green/red marks. Locked hotspots keep their reason on screen once pressed; close-ups are non-modal dialogs named by their visible heading whose Tab cycle includes the header tools and guide (`useFocusTrap(..., 'hud')`).
-- Characters drawn in a scene register with `usePresent(personId, bubbleFromPercent)` so the speech bubble drops its own portrait and sits beside them instead of showing the same face twice.
-- All words the app says follow `artifacts/try-day/COPY.md` (verb-first labels, one kitchen word at a time with a gloss on first use, "notebook" not "notepad", sentence case, no trailing dots). Spec copy is exempt and stays verbatim.
-- The task shell shows the spec's `doneWhen` and `complication` text verbatim; the per-clause ticks under it are progress indicators derived in `simulation.ts`, and `complicationRevealed()` decides when the complication box appears.
-- Gate type is `complete`: finishing all five tasks completes the section. On each task completion and on day completion the app posts `{ source: "springpod", format, mechanic: "try-day-app", id: "mar-try-day", event: "task:complete" | "gate:complete", ... }` to `window.parent`. The host contract is assumed (the Springpod App Registry was unreachable when built); confirm before integration.
-- Role label follows the spec ("Trainee sous chef, main kitchen"). The user's first message said "Executive Sous Chef"; swap in one place if they want that.
+- Replace every DRAFT string and placeholder asset before delivery.
+- Keep one checklist item per clause in each task's `doneWhen`.
+- Add task pages, workplace routes, device advice and briefing entries together; the client contract rejects missing entries at startup.
+- Briefing entries intentionally have transcripts but no `src` until approved films are supplied.
+- No recorded ambience loop is configured.
+- Completed tasks remain frozen and task completion is posted to the embedding host.
 
-## Product
+## Boundaries
 
-- Intro: morning brief, the people, the workplace and shift rhythm, student name entry (initials reused on every form), continue/start again.
-- Five tasks in order, each locked until the previous is done: take the handover and walk the fridges; check the delivery in; chill the batch for tonight; check tonight's dietary list; weigh the waste and hand the kitchen on. Each is played inside the kitchen: the student stands in a scene (the pass, the fridge corridor, goods-in, the prep bench, the events kitchen), opens the map to walk between places, clicks the things around them (clipboards, fridge doors, crates, the probe, the scales) to open close-ups, jots readings and counts into a pocket notepad, and writes the paperwork up from it. Marcus and the others speak in a bubble; the job card (spec copy, done-when ticks, complication) slides in from the right; the kitchen clock moves with walks, probing and waiting. Ambient kitchen sound and quiet interaction sounds, with a mute control.
-- Task 2 has six delivery lines. Salmon is accepted short at 8 kg and reported to Terence. Cream reads 7.8 °C against a 5 °C limit and is refused at 0 accepted. Both lines need separate initialled amendments on the single delivery note before its one signature.
-- Tasks 3 and 4 have fixed dead ends worth knowing: the blast-chiller cycle only starts once the trays are spaced and the probe is placed, and each reading must be written on the chill record before the next wait (0, 60, 90 and 120 minutes); the function sheet travels with the student (pocket copy in the events kitchen).
-- Task 4 is menu-first (spec: `artifacts/try-day/docs/dietary-learning-redesign.md`, decisions D01–D12): function sheet at the pass (added-guest details locked) → allergen chart with Terence's tart, beef and Wellington rows pre-filled, plus two empty dessert rows, five review confirmations and Terence's review (source → component → mapping → explicit hint ladder, unlimited retries) → guest decisions for Priya and Tom, mains and desserts only (flag / evidence / keep-swap-ask / reason; each course must actually be checked with Terence, recorded in `redesign.courseReviewed`, and any edit clears that check) → evening board with a separate preparation status that is never green. Terence's beef row deliberately starts without celery. Changing a chart row or a decision reopens the board. Tom's starter stays an open item for Terence; nothing in the task is ever "cleared to serve". Later tasks read `guests.priya.dessert === 'pear'`, `boardNote` (plain text) and `dietaryHandoverRecord()`; keep those stable. Legacy signed-off records without `redesign` are shown frozen and never rewritten.
-- Close of day: spec copy, recap drawn from the student's own entries, "Be curious. Be purposeful. Be you.", completed-section state.
-
-## User preferences
-
-- Locale en-GB (spelling, 24-hour times, °C, kilos). Spec copy verbatim. Calm, practical, warm register; no gamification, no scores, no emojis.
-
-## Gotchas
-
-- Brand rules from the People Brand guide: cream page, Bonvoy Black text, coral used sparingly; the logo lock-up goes on cream/white only, never recoloured or below 18 px high; only the approved "Be ___." lines (curious / purposeful / you).
-- Ridley Grotesk is Marriott's licensed typeface and is not available here; the app uses a system sans stack.
-- The intro photo's rights are unconfirmed by the client (see TODO in the intro page).
-- Close-ups are portaled to `document.body` and offset below the 56 px header (`top-14 bottom-0`); overlays (close-up, map, notepad, job card) share the `useFocusTrap` hook in `shell/frame/`. Hide any new HUD control when the task is `finished`; the store already ignores writes to completed tasks.
-- End-to-end scripts live outside the repo in `/tmp/e2e/task{1..5}-kitchen.mjs` (playwright-core against the dev server) and select controls by accessible name, so label changes need matching test edits. Because of the opening map shot, a script must wait for the "Close the job card" button (up to ~4 s) before interacting, or click the map to skip the shot.
-
-## Pointers
-
-- See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details
+- Do not import `src/client/` from `src/shell/` or `src/kit/`.
+- Do not put employer names, task ids, assets or copy into the shell or kit.
+- Keep locale-specific copy and employer facts in the client.
