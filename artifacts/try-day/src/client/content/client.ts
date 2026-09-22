@@ -151,7 +151,8 @@ export const WORKPLACE: Workplace = {
 
 export const WELCOME_COPY: WelcomeCopy = {
   title: "Dental Nurse Try Day",
-  subtitle: "Tempdent",
+  // Shown beside the wordmark, so it carries the descriptor rather than repeating the name.
+  subtitle: "Recruitment & Training",
   shortBrief: "REVIEW PROTOTYPE: Not clinically approved. All clinical details are pending SME validation and are simulated only, not real-world instructions. Tempdent is a specialist dental recruitment agency and training provider. Step into a realistic, supportive apprentice dental-nurse shift.",
   launchButton: 'Open the try day',
   inlineButton: 'Continue here',
@@ -266,4 +267,18 @@ export const TASK_BRIEFING_VIDEO: Record<string, string> = {
   reset: 'reset',
   change: 'change',
   close: 'close',
+};
+
+/** Shown on every clinical card until Tempdent's subject-matter expert signs the content off. */
+export const DRAFT_NOTICE = 'Review prototype: draft content, pending clinical (SME) validation. Simulated only.';
+
+/** The close-of-day page. The mentor's own words come from the day document (FRAME.closeOfDay). */
+export const CLOSE_COPY = {
+  eyebrow: 'Shift Complete',
+  title: (firstName: string) => `Great work today, ${firstName || 'Apprentice'}.`,
+  // Storyboard: a short message from the Tutor Assessor about protected learning time and the one-to-one (TBC).
+  tutorHeading: 'Message from Nadia Brooks, Tutor Assessor',
+  tutorMessage:
+    "Don't forget to log your protected apprenticeship time for today's shift on Bud. See you at our one-to-one next week!",
+  restart: 'Start a new shift',
 };

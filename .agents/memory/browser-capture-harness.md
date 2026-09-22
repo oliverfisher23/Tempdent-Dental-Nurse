@@ -25,6 +25,10 @@ description: Lessons from driving the try-day app headlessly (CDP/Playwright) fo
   style tag first: `pointer-events: none` swallows even forced clicks.
 - playwright-core is not a workspace dependency; install it in a scratch dir and pass a Page into the
   `e2e/*-verification.mjs` modules, which is why they take a Page rather than launching a browser.
+  A leftover `playwright@<ver>` in the root `.pnpm` store can be imported by its full store path from a
+  /tmp script, but any `pnpm install` may prune it (the lockfile no longer lists it).
+- Deep links like `/task/setup?testMode=1` bounce to the welcome without a session. The shortest
+  click-through is `continue-inline` -> `#name` -> `start-simulation`, which lands on the first task.
 - A Playwright package can be present while its managed browser cache is empty. Use the Replit system
   Chromium executable at `/repl/tools/bin/chromium` via `executablePath` for scratch-copy checks instead of
   downloading another browser. **Why:** isolated `/tmp` proofs should not mutate dependencies or rely on a

@@ -1,54 +1,63 @@
+/*
+ * Tempdent theme tokens, taken from the Tempdent Brand Guidelines (V1, February 2024).
+ *
+ * Palette (HSL triplets; hex from the guidelines):
+ *   Aqua       #009FE3  198 100% 45%   signature colour, decoration and focus only (2.97:1 on white)
+ *   Pale Aqua  #8BCED3  184  45% 69%   tinted for muted and accent surfaces
+ *   Dark Aqua  #1E2B51  225  46% 22%   text, dark bars and the launch backdrop
+ *   Dark Grey  #3F4041  210   2% 25%   guideline body-copy grey (kept for reference; see foreground)
+ *   Light Grey #D2D2D3  240   1% 83%   borders and inputs
+ *
+ * Contrast decisions (WCAG 2.2 AA):
+ * - Flat Aqua fails 4.5:1 for text and 3:1 for controls on white, so the primary
+ *   (buttons, links, eyebrow labels) is the deep blue sampled from the wordmark's
+ *   own gradient, #0061A3, which gives 6.9:1 with white text.
+ * - Focus rings use Aqua deepened to 42% lightness (#0096D6): 3.3:1 on white and
+ *   4.2:1 on the Dark Aqua bars, where flat Aqua would sit just under 3:1.
+ * - Foreground is Dark Aqua rather than Dark Grey: the shell shows small text at
+ *   70% opacity (tool labels, notebook entries), which Dark Grey drops to 4.4:1
+ *   on white and Dark Aqua keeps at 5.3:1.
+ * - Destructive stays a neutral red: the brand's Dark Orange (#E9592E) reaches
+ *   only 3.5:1 with white text.
+ *
+ * Typography: Comfortaa (the brand's single typeface; Bold headlines, Regular
+ * body) is self-hosted from @fontsource-variable/comfortaa. The shell's heading
+ * slot is --app-font-serif, so it points at Comfortaa as well.
+ *
+ * No .dark scheme: nothing in the app sets the class, and the shell paints its
+ * header, launch logo box and task HUD with bg-foreground under hard-coded white
+ * text and the white logo, so an inverted foreground would make them vanish.
+ * If a host ever adds .dark, the light contract keeps applying.
+ */
+@import '@fontsource-variable/comfortaa';
+
 :root {
-  --background: 40 20% 98%;
-  --foreground: 220 10% 16%;
-  --border: 35 12% 82%;
-  --input: 35 12% 82%;
-  --ring: 208 54% 34%;
+  --background: 200 33% 98%;
+  --foreground: 225 46% 22%;
+  --border: 240 1% 83%;
+  --input: 240 1% 83%;
+  --ring: 198 100% 42%;
   --card: 0 0% 100%;
-  --card-foreground: 220 10% 16%;
-  --card-border: 35 12% 82%;
+  --card-foreground: 225 46% 22%;
+  --card-border: 240 1% 83%;
   --popover: 0 0% 100%;
-  --popover-foreground: 220 10% 16%;
-  --popover-border: 35 12% 82%;
-  --primary: 208 54% 34%;
+  --popover-foreground: 225 46% 22%;
+  --popover-border: 240 1% 83%;
+  --primary: 205 100% 32%;
   --primary-foreground: 0 0% 100%;
-  --secondary: 220 12% 20%;
+  --secondary: 225 46% 22%;
   --secondary-foreground: 0 0% 100%;
-  --muted: 36 18% 93%;
-  --muted-foreground: 220 7% 42%;
-  --accent: 36 18% 93%;
-  --accent-foreground: 220 10% 16%;
+  --muted: 184 35% 94%;
+  --muted-foreground: 220 10% 40%;
+  --accent: 184 45% 90%;
+  --accent-foreground: 225 46% 22%;
   --destructive: 0 68% 42%;
   --destructive-foreground: 0 0% 100%;
-  --sidebar: 40 20% 97%;
-  --sidebar-foreground: 220 10% 16%;
-  --sidebar-border: 35 12% 82%;
-  --app-font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --app-font-serif: ui-serif, Georgia, Cambria, "Times New Roman", serif;
+  --sidebar: 200 33% 97%;
+  --sidebar-foreground: 225 46% 22%;
+  --sidebar-border: 240 1% 83%;
+  --app-font-sans: "Comfortaa Variable", Comfortaa, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --app-font-serif: "Comfortaa Variable", Comfortaa, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --app-font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  --radius: 0.375rem;
-}
-
-.dark {
-  --background: 220 12% 12%;
-  --foreground: 40 20% 96%;
-  --border: 220 8% 28%;
-  --input: 220 8% 28%;
-  --ring: 203 55% 62%;
-  --card: 220 11% 16%;
-  --card-foreground: 40 20% 96%;
-  --card-border: 220 8% 28%;
-  --popover: 220 11% 16%;
-  --popover-foreground: 40 20% 96%;
-  --popover-border: 220 8% 28%;
-  --primary: 203 55% 62%;
-  --primary-foreground: 220 12% 12%;
-  --secondary: 40 20% 94%;
-  --secondary-foreground: 220 12% 12%;
-  --muted: 220 9% 22%;
-  --muted-foreground: 220 8% 70%;
-  --accent: 220 9% 22%;
-  --accent-foreground: 40 20% 96%;
-  --destructive: 0 58% 50%;
-  --destructive-foreground: 0 0% 100%;
+  --radius: 0.5rem;
 }

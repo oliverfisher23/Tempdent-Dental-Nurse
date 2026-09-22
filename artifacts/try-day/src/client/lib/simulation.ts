@@ -187,18 +187,15 @@ export function testProgress(
   };
 }
 
+// No reviveSaved: the shell already rebuilds each record over its defaults and drops
+// unknown task ids, and it trusts the saved `completed` list as a record of finished
+// work. If a task's evidence fields ever change shape, bump `config.version` in
+// mechanic.json so the storage key changes, rather than re-judging old saves here.
 export const model: ProgressModel<TaskStates> = {
   initialTaskStates,
   evaluateTask,
   complicationRevealed: () => false,
   testProgress: (target, initial) => testProgress(target, initial),
-  reviveSaved: (tasks) => {
-    // Gracefully handle draft-task -> actual tasks transition during dev
-    if ('draft-task' in tasks) {
-      delete (tasks as any)['draft-task'];
-    }
-    return tasks;
-  }
 };
 
 export const day: DayRuntime<TaskStates> = createDayRuntime(mechanic as any, model);

@@ -21,7 +21,9 @@ import ResetTaskPage from '@client/pages/reset';
 import ChangeTaskPage from '@client/pages/change';
 import CloseTaskPage from '@client/pages/close-task';
 
-import logo from '@client/assets/logo.svg';
+// The shell places the logo on its dark bars, so this is the reverse (white)
+// wordmark, derived from the supplied master's alpha channel.
+import logo from '@client/assets/tempdent-logo-reverse.png';
 import hero from '@client/assets/hero.svg';
 import mentor from '@client/assets/mentor.svg';
 

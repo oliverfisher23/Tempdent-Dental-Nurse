@@ -10,3 +10,4 @@
 - [Short-viewport variant](short-viewport-variant.md) — `short:` = min-width 40rem and max-height 44rem; trim the instruction layer, never hide information; one-row opener failed.
 - [Embedded frame constraints](embedded-frame-audit.md) — sandboxed 480px-high frame: cap bottom bars by % of stage, paper min-height `min(px, svh)`, no fullscreen-only controls.
 - [Shell / kit / client split](shell-client-split.md) — client -> shell -> kit only; shell reads clients via useClient(); tri-state designer fixture; asset loader for node tests; CSS import order.
+- [Client brand assets](client-brand-assets.md) — shell shows the logo on dark bars only (use the reverse mark), sizes it by height; brand primaries usually fail text contrast; tests/ are outside typecheck.

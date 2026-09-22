@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict';
-import { test } from 'vitest';
+import { register } from 'node:module';
+import { test } from 'node:test';
 import { day, STORAGE_KEY } from '@client/lib/simulation';
 import { clientProblems } from '@shell/lib/client';
+
+// The content module imports its pictures; the loader hands them back as paths.
+register('./support/asset-loader.mjs', import.meta.url);
 
 test('the generated client uses its own storage key', () => {
   assert.equal(STORAGE_KEY, "springpod:tempdent-try-day:v1");
