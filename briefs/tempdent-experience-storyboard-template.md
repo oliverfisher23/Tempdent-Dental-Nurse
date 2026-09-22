@@ -1,17 +1,17 @@
-# TempDent Dental Nurse Try Day — Experience Storyboard
+# Client Try Day — Experience Storyboard Template
 
 Complete this document with the people who understand the role and workplace. Short bullet points are fine. Write **TBC** where something is not yet agreed, and mark anything that must not be shown to learners as **CONFIDENTIAL**.
 
-Please do not include real patient information, real candidate information, passwords, private contact details, or any identifiable clinical records.
+Please do not include real customer, service-user, candidate, or employee information; passwords; private contact details; or identifiable records.
 
 ---
 
 ## 1. Project ownership and approval
 
 - **Person completing this storyboard:**
-- **Job title / relationship to TempDent:**
+- **Job title / relationship to the employer:**
 - **Date completed:**
-- **Clinical or subject-matter reviewer:**
+- **Subject-matter reviewer:**
 - **Brand/copy reviewer:**
 - **Final approver:**
 - **Target approval date:**
@@ -22,7 +22,7 @@ Please do not include real patient information, real candidate information, pass
   _What should a learner understand or feel after completing the experience?_
 
 - **Target learner:**  
-  _Age/education stage, prior knowledge, and whether they are actively considering dental nursing._
+  _Age/education stage, prior knowledge, and whether they are actively considering this role or industry._
 
 - **Three things learners should understand by the end:**
   1.
@@ -40,15 +40,17 @@ Please do not include real patient information, real candidate information, pass
 - **Desired total experience length:**  
   _Recommended: 20–35 minutes._
 
-## 3. TempDent and the opportunity
+## 3. Employer and opportunity
 
-- **Approved short description of TempDent:**
-- **What TempDent does:**
-- **What makes TempDent distinctive:**
+- **Employer/client name:**
+- **Approved short description of the employer:**
+- **What the employer does:**
+- **What makes the employer distinctive:**
 - **Where this fictional/representative shift takes place:**
 - **Is the workplace real, representative, or fictionalised?**
 - **Approved job title shown to learners:**
-- **Approved description of a dental nurse’s role:**
+- **Approved role title:**
+- **Approved description of the role:**
 - **Why a young person might find this role rewarding:**
 - **Realistic challenges of the role:**
 - **Training or progression routes that may be mentioned:**
@@ -56,7 +58,7 @@ Please do not include real patient information, real candidate information, pass
 
 ## 4. Tone and learner experience
 
-- **Three words for the TempDent voice:**  
+- **Three words for the employer’s voice:**  
   _Example format only: calm, encouraging, precise._
 
 - **The mentor should sound like:**
@@ -248,7 +250,7 @@ Write one checkable clause per row. The learner will not be able to sign off unt
 
 ## 8. Welcome and briefing screen
 
-- **Approved try-day title:** Dental Nurse Try Day
+- **Approved try-day title:**
 - **Approved one-paragraph welcome:**
 - **What should learners expect to do?**
 - **What should learners know before starting?**
@@ -282,11 +284,11 @@ Write one checkable clause per row. The learner will not be able to sign off unt
 
 ## 11. Asset checklist
 
-Do not upload anything containing identifiable patient or candidate data.
+Do not upload anything containing identifiable customer, service-user, candidate, or employee data.
 
 | Asset | Needed | Available | Filename/link | Owner | Approved for learner use? |
 |---|---|---|---|---|---|
-| TempDent logo | Yes |  |  |  |  |
+| Employer logo | Yes |  |  |  |  |
 | Wide welcome image | Yes |  |  |  |  |
 | Phone welcome image | Yes |  |  |  |  |
 | Mentor portrait | Yes |  |  |  |  |
@@ -299,13 +301,13 @@ Do not upload anything containing identifiable patient or candidate data.
 | Approved transcripts |  |  |  |  |  |
 | Brand guidelines |  |  |  |  |  |
 
-## 12. Privacy, safeguarding, and clinical accuracy
+## 12. Privacy, safeguarding, and subject accuracy
 
-- [ ] No identifiable patient information is included.
+- [ ] No identifiable customer, service-user, candidate, or employee information is included.
 - [ ] No identifiable candidate or employee information is included without permission.
 - [ ] Any example records are fictional and clearly approved.
 - [ ] The experience does not ask learners to perform unsafe real-world activity.
-- [ ] Clinical and regulatory statements have a named reviewer.
+- [ ] Technical, professional, and regulatory statements have a named reviewer.
 - [ ] Photography permissions are recorded.
 - [ ] Accessibility needs have been considered.
 - [ ] The final experience will be reviewed on desktop, phone, keyboard, and screen reader.
@@ -325,10 +327,10 @@ Do not upload anything containing identifiable patient or candidate data.
 If time is limited, complete these sections first:
 
 1. What the try day should achieve
-2. TempDent and the opportunity
+2. Employer and opportunity
 3. The learner’s shift
 4. People in the experience
 5. Workplace map and locations
 6. One complete task storyboard for every task
 7. Welcome and close-of-day copy
-8. Privacy, safeguarding, and clinical accuracy
+8. Privacy, safeguarding, and subject accuracy
