@@ -233,7 +233,7 @@ export function InspectionView({
         />
 
         <nav
-          className="sticky top-0 z-20 shrink-0 border-b border-zinc-800 bg-zinc-950/95 px-3 py-2 text-white backdrop-blur beside:relative beside:z-10 beside:mb-4 beside:border-0 beside:bg-transparent beside:p-0 beside:backdrop-blur-none beside:[grid-area:2/2]"
+          className="sticky top-0 z-20 shrink-0 border-b border-zinc-800 bg-zinc-950/95 px-3 py-2 text-white backdrop-blur beside:relative beside:z-10 beside:mb-4 beside:border-0 beside:bg-transparent beside:p-0 beside:backdrop-blur-none beside:[grid-area:2/2] short:mb-2 short:flex short:flex-wrap short:items-center short:gap-x-3 short:gap-y-1"
           aria-label={FRIDGE_INTERACTION_COPY.roundOrientation}
         >
           <div className="flex items-center gap-2 overflow-x-auto beside:flex-wrap beside:overflow-visible" role="list">
@@ -274,7 +274,7 @@ export function InspectionView({
             })}
           </div>
           {FRIDGE_UNITS.some((fridge) => fridge.id !== unitId && !handoverRowComplete(fridge.id, state.rows[fridge.id])) && (
-            <p className="mt-1 text-xs text-zinc-400">{HANDOVER_LABELS.finishCurrentReason}</p>
+            <p className="mt-1 text-xs text-zinc-400 short:mt-0">{HANDOVER_LABELS.finishCurrentReason}</p>
           )}
         </nav>
 
@@ -326,18 +326,19 @@ export function InspectionView({
         under the picture; beside, a content-sized card that scrolls inside itself when the entry is long.
       */}
       <div className="relative z-10 flex min-h-0 flex-1 flex-col border-t border-zinc-700 bg-zinc-900 text-white beside:min-h-0 beside:max-h-full beside:flex-none beside:self-start beside:overflow-y-auto beside:rounded-2xl beside:border beside:border-white/15 beside:bg-zinc-950/95 beside:shadow-[0_28px_70px_rgba(0,0,0,0.6)] beside:[grid-area:3/2] beside:[scroll-padding-block:1rem_6rem]">
-        <div className="@container flex w-full max-w-3xl flex-col gap-4 p-4 sm:p-5">
-          <div className="flex flex-wrap items-start justify-between gap-2">
-            <div>
-              <h2 className="text-2xl font-bold leading-tight">{unit.name}</h2>
-              <div className="mt-1 text-xs uppercase tracking-wider text-zinc-300">{unit.where} • {unit.limitLabel}</div>
+        <div className="@container flex w-full max-w-3xl flex-col gap-4 p-4 sm:p-5 short:gap-3 short:py-3">
+          {/* In a short window the name, place and limit share one line; the count is already in the opener above. */}
+          <div className="flex flex-wrap items-start justify-between gap-2 short:items-baseline">
+            <div className="short:flex short:flex-wrap short:items-baseline short:gap-x-3">
+              <h2 className="text-2xl font-bold leading-tight short:text-xl">{unit.name}</h2>
+              <div className="mt-1 text-xs uppercase tracking-wider text-zinc-300 short:mt-0">{unit.where} • {unit.limitLabel}</div>
             </div>
-            <div className="rounded-full border border-white/15 bg-black/60 px-3 py-1.5 text-xs font-bold uppercase tracking-wider">
+            <div className="rounded-full border border-white/15 bg-black/60 px-3 py-1.5 text-xs font-bold uppercase tracking-wider short:hidden">
               {HANDOVER_LABELS.progress(savedCount, totalCount)}
             </div>
           </div>
 
-          <div className="flex min-h-11 flex-wrap items-center gap-3">
+          <div className="flex min-h-11 flex-wrap items-center gap-3 short:min-h-0">
             {doorPhase === 'closed' && (
               <div className="flex w-full flex-col gap-3">
                 <button ref={openBtnRef} type="button" data-testid="open-fridge" onClick={handleOpen} disabled={frozen}
@@ -378,14 +379,14 @@ export function InspectionView({
               <p className="text-sm leading-relaxed text-zinc-300">{FRIDGE_INTERACTION_COPY.checkHint}</p>
             </aside>
           ) : (
-          <form onSubmit={handleFormSubmit} aria-busy={closing} className="flex w-full flex-col gap-5 border-t border-zinc-800 pt-5">
+          <form onSubmit={handleFormSubmit} aria-busy={closing} className="flex w-full flex-col gap-5 border-t border-zinc-800 pt-5 short:gap-3 short:pt-3">
             
-            {/* From 32rem of clipboard the dial sits beside the entry fields; narrower, they stack. */}
-            <div className="grid gap-5 @lg:grid-cols-[232px_minmax(0,1fr)] @lg:items-start">
+            {/* From 32rem of clipboard the dial sits beside the entry fields; narrower, they stack. A short window gets a smaller dial. */}
+            <div className="grid gap-5 @lg:grid-cols-[232px_minmax(0,1fr)] @lg:items-start short:gap-3 @lg:short:grid-cols-[192px_minmax(0,1fr)]">
             {/* The fridge's own dial thermometer: misted until the reading is taken, then read by eye. */}
-            <div className="flex shrink-0 flex-col items-center gap-3 rounded-xl border border-zinc-700 bg-black p-4 shadow-inner">
+            <div className="flex shrink-0 flex-col items-center gap-3 rounded-xl border border-zinc-700 bg-black p-4 shadow-inner short:gap-2 short:p-3">
                <div
-                 className="relative w-full max-w-[224px]"
+                 className="relative w-full max-w-[224px] short:max-w-[176px]"
                  {...(row.probed ? { 'data-testid': 'probe-display' } : {})}
                >
                  <DialThermometer valueC={dialValue} limitC={unit.limitC} phase={dialPhase} focusRef={dialRef} />

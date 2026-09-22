@@ -46,7 +46,7 @@ export interface LogEntry {
 export const OVERNIGHT_LOG: LogEntry[] = [
   {
     time: '22:10',
-    text: 'Deep clean done. Floors, pass and hot section all sorted. Extraction filters are back in.',
+    text: 'Deep clean done. Floors, pass, and hot section all sorted. Extraction filters are back in.',
   },
   {
     time: '01:35',
@@ -59,7 +59,7 @@ export const OVERNIGHT_LOG: LogEntry[] = [
   },
   {
     time: '06:30',
-    text: 'Breakfast is ready. Hot plate is on, juices are out and the bakery delivery is checked.',
+    text: 'Breakfast is ready. Hot plate is on, juices are out, and the bakery delivery is checked.',
   },
 ];
 
@@ -102,7 +102,7 @@ export const HANDOVER_LINES = {
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',
-    text: "Have a look at the night notes first. Then take the walk-in, larder two, the fish fridge and freezer one; I'll do the rest. Give the thermometer in each one a second to settle and write down what you actually see. Add the time and your initials as you go.",
+    text: "Have a look at the night notes first. Then take the walk-in, larder two, the fish fridge, and freezer one; I'll do the rest. Give the thermometer in each one a second to settle and write down what you actually see. Add the time and your initials as you go.",
   } satisfies Line,
   marcusAtFlaggedUnit: {
     speaker: 'Terence',
@@ -308,7 +308,7 @@ export type NinetyMinuteChoiceId = (typeof NINETY_MINUTE_CHOICES)[number]['id'];
 export const CHILL_LINES = {
   marcusOpening: {
     speaker: 'Terence',
-    text: "You have half of the twenty-seven-kilo batch. Keep the beef no deeper than fifty millimetres. If the trays on the bench will not hold your share at that depth, ask for a clean spare. Then we will work through a recorded cooling comparison.",
+    text: "You have half of the twenty-seven-kilo batch. Portion the beef no deeper than fifty millimetres per tray. If you don't have enough trays, ask for a clean spare. Then we'll work through a recorded cooling comparison.",
   } satisfies Line,
   marcusOnTrayShortage: {
     speaker: 'Terence',
@@ -402,7 +402,7 @@ export const DISHES: Dish[] = [
     course: 'Main',
     short: 'beef',
     name: 'Braised beef shin, horseradish mash, glazed carrots, red wine jus',
-    ingredients: ['Beef shin', 'Onion, carrot and celery', 'Red wine (contains sulphites)', 'Beef stock', 'Potatoes', 'Butter and milk', 'Horseradish', 'Carrots', 'Thyme'],
+    ingredients: ['Beef shin', 'Onion, carrot, and celery', 'Red wine (contains sulphites)', 'Beef stock', 'Potatoes', 'Butter and milk', 'Horseradish', 'Carrots', 'Thyme'],
     allergens: ['celery', 'sulphites', 'milk'],
     alreadyMade: true,
   },
@@ -410,7 +410,7 @@ export const DISHES: Dish[] = [
     id: 'wellington',
     course: 'Vegetarian main',
     short: 'Wellington',
-    name: 'Wild mushroom, spinach and ricotta Wellington',
+    name: 'Wild mushroom, spinach, and ricotta Wellington',
     ingredients: ['Puff pastry (wheat flour, butter)', 'Wild mushrooms', 'Spinach', 'Ricotta', 'Egg wash', 'Shallots', 'Thyme'],
     allergens: ['gluten', 'milk', 'eggs'],
     alreadyMade: true,
@@ -496,7 +496,7 @@ export const DIETARY_LINES = {
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',
-    text: "Recipe cards are on the pass. I've done the tart, the beef and the Wellington; check my rows against the cards, then do the two desserts, all fourteen columns, before you promise Yvie anything. Then we go through it together.",
+    text: "Recipe cards are on the pass. I've done the tart, the beef, and the Wellington; check my rows against the cards, then do the two desserts, all fourteen columns, before you promise Yvie anything. Then we go through it together.",
   } satisfies Line,
   marcusOnChartErrors: {
     speaker: 'Terence',
@@ -571,7 +571,7 @@ export const HANDOVER_FIELDS: HandoverField[] = [
     id: 'prepared',
     label: 'What is prepared',
     prompts: [
-      'What does your signed chill record show: how many trays, and the last reading and time?',
+      'What does your signed chill record show: How many trays, and the last reading and time?',
       'Which dishes have you actually seen a record or a recipe-card note for, and which have you not?',
     ],
   },
@@ -579,7 +579,7 @@ export const HANDOVER_FIELDS: HandoverField[] = [
     id: 'short',
     label: 'What is short',
     prompts: [
-      'What was ordered, what came in and how much is missing?',
+      'What was ordered, what came in, and how much is missing?',
       'Which meal needs it, who is chasing it, and is a replacement confirmed or only asked for?',
     ],
   },

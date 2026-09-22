@@ -12,7 +12,7 @@ import { kitchenAudio } from '@/lib/audio';
 import { scrollWithinScroller } from '@/lib/scroll';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { cn } from '@/lib/utils';
+import { cn, upperFirst } from '@/lib/utils';
 import { useDraggable, useDropZone, HoldToRead } from '../../kitchen/interact';
 import { TRAY_DEPTH_MM, type ChillActions } from './types';
 import { AnalogueThermometer } from '../../kitchen/analogue-thermometer';
@@ -619,7 +619,7 @@ export function ChillerView({
               {waiting ? progress.clock : displayReading !== null ? displayReading.toFixed(1) : '--.-'}
             </div>
             <div className="flex justify-between border-t border-zinc-800 pt-2 text-xs font-bold uppercase tracking-widest text-zinc-400">
-              <span className="truncate">{started ? L.readAt(m) : placementLabel ? `${L.probe.replace('The temperature ', '')}: ${placementLabel.toLowerCase()}` : L.probeOut}</span>
+              <span className="truncate">{started ? L.readAt(m) : placementLabel ? `${L.probe.replace('The temperature ', '')}: ${upperFirst(placementLabel.toLowerCase())}` : L.probeOut}</span>
               <span className="shrink-0 pl-2">{started ? L.elapsed(m) : L.doorOpen}</span>
             </div>
           </div>

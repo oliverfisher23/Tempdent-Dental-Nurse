@@ -14,7 +14,7 @@ export function getChillGuide(state: ChillState, started: boolean, waiting: bool
     return guide('chill-load', 2, 'Load the chiller', 'Drag each tray from the trolley onto a shelf, or choose a tray and then choose a shelf. Leave an empty shelf between trays.', 'chill:chiller', 'Load the chiller', 'drag');
   }
   if (state.probePlacement !== 'centre') {
-    return guide('chill-probe', 3, 'Place the temperature probe', 'Drag the probe onto the fullest tray, or use its Place probe in tray button, then choose where the tip goes.', 'chill:chiller', 'Place the probe', 'drag');
+    return guide('chill-probe', 3, 'Place the temperature probe', 'Drag the probe onto the fullest tray, or use its ‘Place probe in tray’ button, then choose where the tip goes.', 'chill:chiller', 'Place the probe', 'drag');
   }
   if (!started) {
     return guide('chill-start', 3, 'Start the chiller', 'The trays and probe are ready. Start the cycle at the control panel.', 'chill:chiller', 'Start the chiller', 'tap');

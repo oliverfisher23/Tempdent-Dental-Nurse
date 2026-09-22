@@ -36,12 +36,12 @@ export function StepGuideBar({
       data-testid="step-guide"
       data-done={done || undefined}
       className={cn(
-        'border-b shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 gap-3 sm:gap-4 shrink-0',
+        'border-b shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between px-3 sm:px-4 py-2.5 sm:py-3 gap-3 sm:gap-4 shrink-0 short:py-1.5',
         done ? 'bg-emerald-50 border-emerald-200' : 'bg-white border-border',
       )}
       aria-label="Step guide"
     >
-      <div className="flex-1 min-w-0 flex flex-col justify-center min-h-[44px]" aria-live="polite" aria-atomic="true">
+      <div className="flex-1 min-w-0 flex flex-col justify-center min-h-[44px] short:min-h-9" aria-live="polite" aria-atomic="true">
         <AnimatePresence mode="wait">
           <motion.div
             key={done ? 'done' : guide.id}
@@ -49,9 +49,10 @@ export function StepGuideBar({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: reducedMotion ? 0 : 0.15, ease: 'easeInOut' }}
-            className="flex flex-col gap-0.5"
+            // In a short window the title and instruction share a line where the width allows, wrapping otherwise.
+            className="flex flex-col gap-0.5 short:flex-row short:flex-wrap short:items-baseline short:gap-x-2 short:gap-y-0"
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 short:items-baseline">
               {done ? (
                 <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-700" aria-hidden="true" />
               ) : (

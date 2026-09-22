@@ -195,7 +195,7 @@ test('the board lists every actual change with a pending preparation check for a
   const note = renderBoardNote(state);
   assert.match(note, /Table 3 · Priya Nair · Dessert: .*frangipane.* → Poached pear/);
   assert.match(note, /Table 6 · Tom Reid · Main: .*beef.* → .*Wellington/);
-  assert.match(note, /Preparation check pending: ask Terence before service/);
+  assert.match(note, /Preparation check pending: Ask Terence before service/);
   assert.match(note, /Open for Terence: Tom Reid's starter/);
   assert.doesNotMatch(note.toLowerCase(), /\bsafe to serve\b|\bcleared\b|\bapproved\b(?! here)/);
 

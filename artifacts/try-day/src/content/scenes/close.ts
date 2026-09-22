@@ -34,14 +34,14 @@ export const CLOSE_SCENE = {
         id: 'trimmings',
         label: 'Trimmings from preparing food',
         feedback:
-          'The heaviest tub, but peelings, fish frames and sinew include material nobody could have used. Looking at how things are prepared, and separating what is unavoidable from what might not be, is the useful check. Heaviest does not mean most avoidable.',
+          'The heaviest tub, but peelings, fish frames, and sinew include material nobody could have used. Looking at how things are prepared, and separating what is unavoidable from what might not be, is the useful check. Heaviest does not mean most avoidable.',
       },
     ],
   },
 
   /** Follow-ups the learner groups before service or later, with an owner (approved decision P3). */
   priorities: [
-    { id: 'larder2', label: 'Re-check larder fridge 2', status: 'Requested, not done: nobody has re-checked it since your morning reading' },
+    { id: 'larder2', label: 'Re-check larder fridge 2', status: 'Requested, not done: Nobody has re-checked it since your morning reading' },
     { id: 'salmon', label: 'Chase the missing salmon with the supplier', status: 'Requested, not confirmed: Terence said he would ring before ten' },
     { id: 'table3', label: 'Pear for table 3, held for Terence’s checks', status: 'On the board; preparation and service checks still pending' },
   ],

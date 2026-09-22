@@ -225,4 +225,6 @@ export async function verifyFridgeMedia(page) {
     const lastUnit = units[units.length - 1][0];
     throw new Error(`Fridge round failed after appliance "${lastUnit}" while waiting for the completed temperature log book: ${detail}`, { cause: error });
   }
+  // The clip requests this check blocked on purpose, so a caller auditing failed requests can set them aside.
+  return { blockedClipUrls: blockedClipRequests };
 }

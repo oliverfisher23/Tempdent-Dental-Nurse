@@ -17,3 +17,8 @@ export function popOverlay(root: HTMLElement) {
 export function isTopOverlay(root: HTMLElement | null) {
   return root !== null && stack[stack.length - 1] === root;
 }
+
+/** Whether anything is open above the room, so room-level keyboard shortcuts can stand aside. */
+export function anyOverlayOpen() {
+  return stack.length > 0;
+}

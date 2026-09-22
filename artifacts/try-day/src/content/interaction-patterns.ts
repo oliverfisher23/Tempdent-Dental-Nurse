@@ -24,9 +24,9 @@ export const INTERACTION_PATTERNS: Record<InteractionPatternId, InteractionPatte
   tap: {
     id: 'tap',
     title: 'Choose one',
-    summary: 'Cards, rows, trays and tubs are things you can pick. Choose one and it highlights.',
+    summary: 'Cards, rows, trays, and tubs are things you can pick. Choose one to highlight it.',
     steps: [
-      'Choose a card, row or object by pressing it. It highlights so you know it is chosen.',
+      'Choose a card, row, or object by pressing it. It highlights so you know it is chosen.',
       'The controls for whatever you picked sit right beside it.',
       'Choose something else to change your mind. Nothing is final until you save or sign.',
     ],
@@ -36,7 +36,7 @@ export const INTERACTION_PATTERNS: Record<InteractionPatternId, InteractionPatte
   drag: {
     id: 'drag',
     title: 'Drag, or use the buttons',
-    summary: 'Press on a tray, probe or ruler and drag it where it goes. The places it can go light up.',
+    summary: 'Press on a tray, probe, or ruler and drag to where it belongs. The places it can go will light up.',
     steps: [
       'Press on the item and drag it. The places it can go light up while you carry it.',
       'Prefer not to drag? Choose the item, then choose the place you want it.',
@@ -48,13 +48,13 @@ export const INTERACTION_PATTERNS: Record<InteractionPatternId, InteractionPatte
   hold: {
     id: 'hold',
     title: 'Hold to read an instrument',
-    summary: 'Press and hold a thermometer or probe for a couple of seconds until it settles, then read it yourself.',
+    summary: 'Press and hold a thermometer or probe for a couple of seconds until it settles, then take the reading.',
     steps: [
       'Press and hold. The ring fills while the reading settles, which takes about three seconds.',
       'Let go once it has settled, then read the number off the instrument and type it in.',
       'The app never writes the number for you. That is the job.',
     ],
-    keyboard: 'Hold Space until the reading settles, or use the "Start without holding" button, which starts with one press and stops with another.',
+    keyboard: 'Hold Space until the reading settles, or use the ‘Start without holding’ button, which starts with one press and stops with another.',
     onBriefing: true,
   },
   list: {
@@ -73,7 +73,7 @@ export const INTERACTION_PATTERNS: Record<InteractionPatternId, InteractionPatte
     title: 'Look around the room',
     summary: 'The labelled spots in the room are the things you can use.',
     steps: [
-      'Labelled spots are the things you can open, pick up or read. The pulsing one is where the step guide is pointing.',
+      'Labelled spots are the things you can open, pick up, or read. The pulsing one is where the step guide is pointing.',
       'A greyed spot opens later, and its label says what unlocks it.',
       'Use the step guide button at the top if you would rather be taken straight there.',
     ],
@@ -85,7 +85,7 @@ export const BRIEFING_PATTERNS = (Object.values(INTERACTION_PATTERNS) as Interac
 
 export const PATTERN_COPY = {
   briefingTitle: 'How this works',
-  briefingIntro: 'Three things to know before you start. You can see them again at any point from "How do I do this?" beside the step guide.',
+  briefingIntro: 'Three things to know before you start. You can read them again at any point by clicking ‘How do I do this?’ beside the step guide.',
   howLink: 'How do I do this?',
   cardEyebrow: 'How this works',
   thisStep: 'This step',

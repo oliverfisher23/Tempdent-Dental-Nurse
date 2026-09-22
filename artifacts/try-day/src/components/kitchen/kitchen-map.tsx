@@ -154,7 +154,7 @@ export function KitchenMap({ taskId }: { taskId: TaskId }) {
                       ? `${p.name} (you are here)`
                       : inRoute
                         ? `Go to ${p.name.toLowerCase()}`
-                        : `${p.name}: nothing to do here yet`
+                        : `${p.name}: Nothing to do here yet`
                   }
                 >
                   {isHere ? (

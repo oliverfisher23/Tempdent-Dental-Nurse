@@ -1,5 +1,5 @@
 export const SCENE_LABELS = {
-  goToBackDoor: "Check the delivery at the back door",
+  goToBackDoor: "Head to the back door",
   backDoorHint: "Where the delivery van is waiting",
   takeDeliveryNote: "Take the delivery note",
   readDeliveryNote: "Read the delivery note",
@@ -9,9 +9,9 @@ export const SCENE_LABELS = {
   deliveryCheckSheet: "Delivery check sheet",
   supplierLine: "Supplier: Devon Fresh / Exmouth Fish",
   trolleys: {
-    1: "Trolley 1: fish",
-    2: "Trolley 2: chilled",
-    3: "Trolley 3: fruit and veg"
+    1: "Trolley 1: Fish",
+    2: "Trolley 2: Chilled",
+    3: "Trolley 3: Fruit and veg"
   },
   backToTrolley: "Back to the trolley",
   count: "Count them",
@@ -34,7 +34,7 @@ export const SCENE_LABELS = {
     sheet: "Fill in the order sheet",
     radio: "Prepare your report for Terence",
     sign: "Review the amendment and sign for what you accept",
-    done: "All done: open your job card"
+    done: "All done: Open your job card"
   },
   openNextBox: "Open the next box",
   checkEntries: "Check your entries",
@@ -62,7 +62,7 @@ export const SCENE_LABELS = {
       },
       report: {
         what: "Tell Terence what needs following up.",
-        how: "Choose the affected item, service and action, then press Send report.",
+        how: "Choose the affected item, service, and action, then press ‘Send report’.",
         done: "Terence has received a correct report.",
       },
       note: {
@@ -77,7 +77,7 @@ export const SCENE_LABELS = {
       },
     },
     title: "Working order sheet",
-    introduction: "Open each item, check it and write your results here. Your entries stay on this sheet.",
+    introduction: "Open each item, check it, and write your results here. Your entries stay on this sheet.",
     allItems: "All six items",
     sheet: "Order sheet",
     comparison: "Compare amounts",
@@ -91,8 +91,8 @@ export const SCENE_LABELS = {
     ready: "Ready to review",
     readyHelp: "Ready to review means you have made your entries, not that they have been checked.",
     reviewHelp: "Check any unfinished work or contradictions before you sign. Open a message to return to its source.",
-    reviewClear: "Your checks, report and amendments are ready. Open the delivery note to sign.",
-    signed: "The note is signed. Use “On to the next job” above to sign off this task.",
+    reviewClear: "Your checks, report, and amendments are ready. Open the delivery note to sign.",
+    signed: "The note is signed. Use ‘On to the next job’ above to sign off this task.",
     reviewAgain: "Review again",
     openNote: "Open the delivery note",
     briefingMentor: "Terence",
@@ -125,7 +125,7 @@ export const SCENE_LABELS = {
     useAccepted: "Use my accepted amount",
     useAcceptedReason: "Choose a fish and save its accepted amount first.",
     check: "Check comparison",
-    incomplete: "Finish the physical checks and your quantity, temperature, comparison, status and acceptance decisions. Enter your missing amount and proposed note amendment, then check again.",
+    incomplete: "Finish the physical checks and your quantity, temperature, comparison, status, and acceptance decisions. Enter your missing amount and proposed note amendment, then check again.",
     serviceContext: "What has come up",
     editHint: "The entries are still yours to correct. No amount has been changed for you.",
     hintTitle: "Help with the comparison",

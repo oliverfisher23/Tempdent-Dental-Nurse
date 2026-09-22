@@ -4,7 +4,7 @@ export const CLOSE_INTERACTION = {
     instructions: 'Look in each tub, put it on the scales, then write the reading on its row of the waste sheet. Your notebook is there if you want it.',
     opener: {
       what: 'Weigh each tub of waste and write it on the waste sheet.',
-      how: 'Choose a tub, press "Put it on the scales", read the display, then type the weight on that tub’s row.',
+      how: 'Choose a tub, press ‘Put it on the scales’, read the display, then type the weight on that tub’s row.',
       done: 'All three rows are weighed and written.',
       noun: 'tubs weighed',
     },
@@ -40,7 +40,7 @@ export const CLOSE_INTERACTION = {
   },
   evidence: {
     title: 'What you are working from',
-    help: 'What you signed, what you were told and what you are asking for. Use it to write the four headings in your own words; nothing here can be changed now.',
+    help: 'What you signed, what you were told, and what you are asking for. Use it to write the four headings in your own words; nothing here can be changed now.',
     signed: 'From your signed records',
     signedHelp: 'What you wrote and signed today.',
     team: 'From the team',
@@ -53,10 +53,10 @@ export const CLOSE_INTERACTION = {
   handover: {
     title: 'Kitchen handover',
     shift: 'SHIFT: 15:00 - CLOSE',
-    instructions: 'Write each heading in your own words. Keep what you saw, what you were told and what you are asking for clearly apart.',
+    instructions: 'Write each heading in your own words. Keep what you saw, what you were told, and what you are asking for clearly apart.',
     opener: {
       what: 'Write the handover in your own words.',
-      how: 'Fill each of the four headings, group every follow-up by when and who, then press "Hand it over".',
+      how: 'Fill each of the four headings, group every follow-up by when and who, then press ‘Hand it over’.',
       done: 'The evening team have read it back and you have confirmed.',
       noun: 'headings written',
     },
@@ -75,7 +75,7 @@ export const CLOSE_INTERACTION = {
     walkThrough: 'Hand it over',
     priorityFeedback: {
       larder2: {
-        'before-service': 'This protects tonight’s service: your reading still needs a re-check.',
+        'before-service': 'This protects tonight’s service: Your reading still needs a re-check.',
         later: 'The evening team will question this. Your reading still needs a re-check before service.',
       },
       salmon: {
@@ -93,7 +93,7 @@ export const CLOSE_INTERACTION = {
     instructions: 'Answer Terence from the recorded comparison. His signature confirms this record review, not service clearance.',
     opener: {
       what: 'Answer Terence’s question about cooling the beef and ask him to sign.',
-      how: 'Choose an answer, read Terence’s response, then press "Ask Terence to sign".',
+      how: 'Choose an answer, read Terence’s response, then press ‘Ask Terence to sign’.',
       done: 'The cooling question is answered correctly and Terence has signed.',
     },
     checkedBy: 'Checked by',

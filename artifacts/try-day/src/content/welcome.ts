@@ -1,6 +1,6 @@
 export const WELCOME_COPY = {
   title: "A day as an executive sous chef.",
-  subtitle: "Interactive Try Day",
+  subtitle: "‘Try’ Activity",
   shortBrief: "Join Terence at art'otel Hoxton to prepare the kitchen for tonight’s product launch for one hundred guests. Check the food, make decisions, and get the evening team ready.",
   launchButton: "Expand experience",
   inlineButton: "Continue in this window",
@@ -10,10 +10,10 @@ export const WELCOME_COPY = {
   briefingTitle: "Before your shift",
   briefing: "You’re the trainee sous chef. Work with Terence to prepare art'otel Hoxton for a product launch with one hundred guests.",
   instructions: [
-    "Inspect food, take measurements and complete the kitchen records.",
-    "Follow the step guide through five tasks. Check your work before signing it off.",
+    "Inspect food, take measurements, and complete the kitchen records.",
+    "Follow the step-by-step guide through five tasks. Check your work before signing it off.",
   ],
-  controls: "Use a mouse, touchpad or keyboard. Sound is optional.",
+  controls: "Use a mouse, touchpad, or keyboard. Sound is optional.",
   fullBrief: "Read Terence’s full briefing",
   shift: "Simulated shift",
   nameLabel: "What should we call you?",

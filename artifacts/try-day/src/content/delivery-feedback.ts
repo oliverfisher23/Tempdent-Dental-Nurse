@@ -5,7 +5,7 @@ export const DELIVERY_FEEDBACK = {
   temperatureInspection: 'Take the temperature of this item.',
   temperatureEntry: 'Write the temperature shown after it settles.',
   comparison: 'Compare your quantity with both amounts on the paperwork.',
-  status: 'Choose whether this item is all here, short or refused.',
+  status: 'Choose whether this item is all here, short, or refused.',
   acceptance: 'Decide whether to accept the goods you checked.',
   acceptedAmount: 'Confirm the amount you are accepting.',
   salmonClaimedAsObserved: "That matches the supplier's note. Compare it with your scales.",

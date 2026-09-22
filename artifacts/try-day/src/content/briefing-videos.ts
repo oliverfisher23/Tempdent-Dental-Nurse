@@ -58,7 +58,7 @@ export const BRIEFING_VIDEOS: Record<BriefingVideoId, BriefingVideo> = {
     duration: 'About 25 seconds',
     filename: '03-terence-delivery.mp4',
     transcript: [
-      "Delivery's in! Most of what's on there is for the launch, so it really matters. The driver will have a tight schedule – they always do – but I need you to take your time here.",
+      "Delivery's in! Most of what's on there is for the launch, so it really matters. The driver will have a tight schedule (they always do), but I need you to take your time here.",
       "We sign for what's on the trolley, not what's on the note. So count it, weigh it, and flag anything that hasn’t turned up.",
       "Have a good look at the fish too. The eyes, the gills… Give it all a smell, and press it. If anything's not right, it goes back, and that's fine, that's our job.",
       "If we’ve got too little of something, give me a shout on the radio before you sign for it. We need to know now, not at six o'clock. Then start storing the fish and meat first; the fruit can wait a minute.",
@@ -83,7 +83,7 @@ export const BRIEFING_VIDEOS: Record<BriefingVideoId, BriefingVideo> = {
     filename: '05-terence-dietary-list.mp4',
     transcript: [
       "Yvie's just popped in with the final guest list for the event. There are two late additions, on tables three and six. The client wants the table plan signed off this afternoon, so she needs a concrete answer from us.",
-      "Build the allergen chart first, before anything else. Go through the dishes one at a time, and check the actual recipe cards for what's in them, not just the dish name. The frangipane needs extra care: it has almonds mixed all the way through it, not just on top, so it's easy to miss if you're not paying attention.",
+      "Build the allergen chart first, before anything else. Go through the dishes one at a time, and check the actual recipe cards for what's in them, not just the dish name. The frangipane needs extra care: It has almonds mixed all the way through it, not just on top, so it's easy to miss if you're not paying attention.",
       "If an allergen is mixed into a dish rather than sitting on top as a garnish, don't just remove the garnish and assume that fixes it! Choose a different dish instead. That's the rule.",
       "Once you've decided, pop it on the board. Dish, name, table. Front of house need to know what we know, and the client will ask questions.",
     ],
@@ -95,8 +95,8 @@ export const BRIEFING_VIDEOS: Record<BriefingVideoId, BriefingVideo> = {
     filename: '06-terence-waste-handover.mp4',
     transcript: [
       "This is the last part, so you're nearly done. The evening team are about to take over and start serving, so everything needs to be ready for them. There are three things to do…",
-      "Waste: weigh all three tubs and write the weights on the correct row. The rice and melon from larder two should go under spoilage, not general waste.",
-      "Handover sheet: fill in what's ready for tonight, what's running low, what's in the walk-in fridge, and anything they need to keep an eye on, including the salmon, the fridge itself, and table three. When the evening team arrive, walk them through the sheet. That's all the handover needs to cover.",
+      "Waste: Weigh all three tubs and write the weights on the correct row. The rice and melon from larder two should go under spoilage, not general waste.",
+      "Handover sheet: Fill in what's ready for tonight, what's running low, what's in the walk-in fridge, and anything they need to keep an eye on, including the salmon, the fridge itself, and table three. When the evening team arrive, walk them through the sheet. That's all the handover needs to cover.",
       "After that, bring me the chill record so we can talk about the beef tray. Just talk me through what happened. I'm not looking for excuses, I want to know what you'd do differently next time.",
       "Once we've both signed it, the handover is complete. Time for the close.",
     ],

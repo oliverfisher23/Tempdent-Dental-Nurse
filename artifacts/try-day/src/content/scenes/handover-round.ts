@@ -2,17 +2,17 @@ export const HANDOVER_LABELS = {
   opener: {
     log: {
       what: "Read the night team's notes.",
-      how: "Scroll through the log, then press “Let's check the fridges” at the bottom.",
+      how: "Scroll through the log, then press ‘Let's check the fridges’ at the bottom.",
       done: "The fridge round has started.",
     },
     inspection: {
       what: "Check this fridge and write down what you find.",
-      how: "Open the fridge, tick the evidence you see, press “Take the temperature”, read the dial, type the reading, then save.",
+      how: "Open the fridge, tick the evidence you see, press ‘Take the temperature’, read the dial, type the reading, then save.",
       done: "The row is saved and you move to the next fridge.",
     },
     board: {
       what: "Check the board reads right.",
-      how: "Read each row. Press Recheck on a fridge to look at it again.",
+      how: "Read each row. Press ‘Recheck’ on a fridge to look at it again.",
       done: "Every row is saved and nothing needs a second look.",
     },
   },

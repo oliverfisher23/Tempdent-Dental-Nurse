@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Maximize2 } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useExperienceViewport } from "@/lib/experience-viewport";
-import { MECHANIC } from "@/lib/simulation";
 import { motion, useReducedMotion } from "framer-motion";
 import { WELCOME_COPY } from "@/content/welcome";
 import logoImg from "@/assets/artotel-logo.png";
@@ -43,14 +42,6 @@ export function LaunchView() {
         </header>
 
         <div className="mt-auto pb-6 pt-12 md:max-w-[65%]">
-          <motion.p 
-            initial={reduceMotion ? false : { opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-white font-bold tracking-widest uppercase text-xs mb-4"
-          >
-            {MECHANIC.config.employer}
-          </motion.p>
           <motion.h1 
             initial={reduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}

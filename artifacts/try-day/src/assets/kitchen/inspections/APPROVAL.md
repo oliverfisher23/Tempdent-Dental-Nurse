@@ -84,7 +84,7 @@ Changed media or findings are not automatically covered by this sign-off.
 | Item | SHA-256 |
 | --- | --- |
 | `src/content/fridge-media.json` | `a4702f89858c156f75766114c3fd456edf6b8ba3384a08669afce1c4ec89ff72` |
-| `src/content/fridge-photos.ts` | `9551895cb9976fbfa403be078c36c5cb1cae39c0d23837cedcbb1500d86ec6ae` |
+| `src/content/fridge-photos.ts` | `142c2cd19faaa58342d41e594a61a457433e196c47ad16c16796d1b305d97ae4` |
 | Combined inventory of the 24 mapped MP4, WebM and WebP files | `243e3896d768c7590cd44b4860bf8dc1d08d8f3ced3da5e80618e82b20b4b412` |
 
 For the combined inventory, enumerate each manifest state's `video`, `webm`
@@ -106,3 +106,5 @@ approved snapshot (previous inventory fingerprint
 Only this record and its README link were added to the media documentation.
 The source mapping, clips, findings, readings, completion rules, and approved
 safety guidance were left unchanged. Nothing was published.
+
+Copy note, 2026-09-22: Punctuation-only house-style changes (Oxford commas) were applied to the findings text under the client's style guide; the substance of every finding is unchanged. Changed strings: “Prepared vegetables, covered stocks and fresh produce.” to “Prepared vegetables, covered stocks, and fresh produce.”; “Larder fridge with covered rice, cut melon and other prepared food in separate containers.” to “Larder fridge with covered rice, cut melon, and other prepared food in separate containers.”; “Cooked rice, cut melon and prepared food.” to “Cooked rice, cut melon, and prepared food.”; and “The fish is covered, separated and sitting over ice. It feels properly cold.” to “The fish is covered, separated, and sitting over ice. It feels properly cold.”

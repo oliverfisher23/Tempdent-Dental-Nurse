@@ -23,7 +23,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { cn, upperFirst } from '@/lib/utils';
 import { AlertTriangle, ArrowLeft, ArrowRight, CheckCircle2 } from 'lucide-react';
 import { WorkspaceOpener } from '../../kitchen/workspace-opener';
 
@@ -213,7 +213,7 @@ export function GuestsWorkspace({
                         ? 'Function sheet'
                         : option.group === 'chart'
                           ? 'Your chart'
-                          : `Recipe card: ${(option.dishIds ?? [option.dishId]).map((id) => dishById(id)?.short).filter(Boolean).join(' and ')}`}
+                          : `Recipe card: ${upperFirst((option.dishIds ?? [option.dishId]).map((id) => dishById(id)?.short).filter(Boolean).join(' and '))}`}
                     </span>
                     {option.label}
                   </span>

@@ -66,10 +66,11 @@ export function WorkspaceOpener({ taskId, what, how, done, progress, pattern = '
         className,
       )}
     >
-      <div className="flex flex-col gap-2 px-4 py-2.5 @2xl/opener:flex-row @2xl/opener:items-center @2xl/opener:gap-6 sm:px-5">
+      {/* In a short window the card tightens so the work below it stays in view: the eyebrow is read out only, the sentence drops a step. */}
+      <div className="flex flex-col gap-2 px-4 py-2.5 @2xl/opener:flex-row @2xl/opener:items-center @2xl/opener:gap-6 sm:px-5 short:gap-0.5 short:py-1.5">
         <div className="min-w-0 flex-1">
-          <p className={cn('text-xs font-bold uppercase tracking-[0.18em]', dark ? 'text-red-400' : 'text-primary')}>{OPENER_COPY.what}</p>
-          <p id={headingId} className="mt-0.5 font-serif text-lg font-medium leading-snug tracking-tight @xl/opener:text-xl">
+          <p className={cn('text-xs font-bold uppercase tracking-[0.18em] short:sr-only', dark ? 'text-red-400' : 'text-primary')}>{OPENER_COPY.what}</p>
+          <p id={headingId} className="mt-0.5 font-serif text-lg font-medium leading-snug tracking-tight @xl/opener:text-xl short:mt-0 short:text-base @xl/opener:short:text-lg">
             {what}
           </p>
         </div>
@@ -96,7 +97,7 @@ function ProgressRail({ progress, dark }: { progress: OpenerProgress; dark: bool
   const filled = complete ? 'bg-emerald-500' : 'bg-primary';
 
   return (
-    <div className="flex w-full shrink-0 flex-col gap-1.5 @md/opener:w-44 @xl/opener:w-52">
+    <div className="flex w-full shrink-0 flex-col gap-1.5 @md/opener:w-44 @xl/opener:w-52 short:gap-1">
       <div className="flex h-1.5 w-full gap-0.5" aria-hidden="true">
         {total <= MAX_NOTCHES ? (
           Array.from({ length: total }, (_, index) => (

@@ -8,6 +8,7 @@ All commands run from the workspace root.
 pnpm --filter @workspace/try-day run test:learner-run
 pnpm --filter @workspace/try-day run test:learner-run -- --from=task3   # resume a stage
 VIEWPORT=phone pnpm --filter @workspace/try-day run test:learner-run   # 390x844, touch
+VIEWPORT=1280x620 pnpm --filter @workspace/try-day run test:learner-run # any WxH, e.g. a laptop with browser chrome
 INPUT=keyboard pnpm --filter @workspace/try-day run test:learner-run   # every control by focus + Enter/Space
 AXE=1 pnpm --filter @workspace/try-day run test:learner-run            # axe-core scan at every screenshot
 ```
@@ -17,11 +18,12 @@ Tasks 1 to 5, close of day, then a return visit. It uses only controls a learner
 can see (no designer harness, no seeded fixtures) and reloads the page mid-task
 to check saved progress. It targets the running web workflow (`BASE` defaults to
 `http://localhost:80`). Output goes to `test-results/learner-run/` (or
-`learner-run-phone/`): a screenshot per stage, a saved browser state per stage
+`learner-run-phone/`, `learner-run-1280x620/`): a screenshot per stage, a saved browser state per stage
 for `--from=<stage>`, and `qa-log.json` with console errors, page errors, failed
 requests, timings and any findings. The command exits non-zero when a stage
 fails, on any page or console error, on any failed request other than a media
-fetch the app itself aborted, or on a "major" finding; "minor" and "info"
+fetch the app itself aborted or the one opening clip the fridge round blocks on
+purpose (to exercise the clip-unavailable path), or on a "major" finding; "minor" and "info"
 findings are QA observations only. The phone run uses touch input for the
 hold-to-read gestures. The keyboard run operates every control by focusing it
 and pressing Enter or Space (Space held for the hold-to-read); a control that

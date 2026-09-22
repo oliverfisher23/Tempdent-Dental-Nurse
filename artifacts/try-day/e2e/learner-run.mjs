@@ -5,6 +5,7 @@
 //   BASE=http://127.0.0.1:4174 pnpm --filter @workspace/try-day run test:learner-run
 //   pnpm --filter @workspace/try-day run test:learner-run -- --from=task3   # resume from a saved stage state
 //   VIEWPORT=phone pnpm --filter @workspace/try-day run test:learner-run   # 390x844, touch input for the hold gestures
+//   VIEWPORT=1280x620 pnpm --filter @workspace/try-day run test:learner-run # any WxH, e.g. a short laptop window; output dir gets the size as a suffix
 //   INPUT=keyboard pnpm --filter @workspace/try-day run test:learner-run   # every control operated by focus + Enter/Space
 //
 // Wrong answers are tried first at a few points (a wrong acceptance, an early
@@ -28,8 +29,10 @@ import { deliveries, fishFindings } from './delivery-data.ts';
 const BASE = (process.env.BASE ?? 'http://localhost:80').replace(/\/$/, '');
 const FROM = (process.argv.find((a) => a.startsWith('--from=')) ?? '--from=welcome').slice(7);
 const PHONE = process.env.VIEWPORT === 'phone';
+const SIZE = /^(\d+)x(\d+)$/.exec(process.env.VIEWPORT ?? '');
+const DESKTOP = SIZE ? { width: Number(SIZE[1]), height: Number(SIZE[2]) } : { width: 1366, height: 768 };
 const KEYBOARD = process.env.INPUT === 'keyboard';
-const OUT = path.resolve(import.meta.dirname, `../test-results/learner-run${PHONE ? '-phone' : ''}${KEYBOARD ? '-keyboard' : ''}`);
+const OUT = path.resolve(import.meta.dirname, `../test-results/learner-run${PHONE ? '-phone' : SIZE ? `-${SIZE[1]}x${SIZE[2]}` : ''}${KEYBOARD ? '-keyboard' : ''}`);
 const STAGES = ['welcome', 'task1', 'task2', 'task3', 'task4', 'task5', 'close'];
 const NAME = 'QA Learner';
 mkdirSync(OUT, { recursive: true });
@@ -48,7 +51,7 @@ if (startIndex < 0) throw new Error(`unknown stage ${FROM}`);
 const storageState = startIndex > 0 ? path.join(OUT, `state-${STAGES[startIndex - 1]}.json`) : undefined;
 const context = await browser.newContext({
   storageState,
-  ...(PHONE ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } : { viewport: { width: 1366, height: 768 } }),
+  ...(PHONE ? { viewport: { width: 390, height: 844 }, isMobile: true, hasTouch: true } : { viewport: DESKTOP }),
 });
 const page = await context.newPage();
 page.setDefaultTimeout(15_000);
@@ -60,6 +63,8 @@ page.on('console', (m) => {
 page.on('pageerror', (e) => log.pageErrors.push(e.message));
 page.on('response', (r) => { if (r.status() >= 400) log.failedRequests.push(`${r.status()} ${r.url()}`); });
 page.on('requestfailed', (r) => { if (!/favicon/.test(r.url())) log.failedRequests.push(`FAILED ${r.failure()?.errorText} ${r.url()}`); });
+// Requests the fridge round blocks on purpose (one opening clip, to exercise the fallback): their failures are expected.
+const deliberatelyBlockedUrls = [];
 
 if (KEYBOARD) {
   // Every click or check becomes focus + key press. A control that cannot take focus,
@@ -277,7 +282,8 @@ try {
     const overnightLog = page.getByTestId('handover-log');
     await overnightLog.waitFor();
     await page.getByTestId('start-fridge-round').click();
-    await verifyFridgeMedia(page);
+    const { blockedClipUrls } = await verifyFridgeMedia(page);
+    deliberatelyBlockedUrls.push(...blockedClipUrls);
     await snap('task1-board');
     // Reload on the board: the completed round must survive and the task must still be ready.
     await page.reload({ waitUntil: 'domcontentloaded' });
@@ -419,7 +425,25 @@ try {
       await page.getByRole('button', { name: 'Save reading' }).click();
       await page.getByText(`${minute}-minute reading saved`, { exact: false }).waitFor();
       if (minute === '90') {
-        await page.getByRole('button', { name: 'Leave it in the chiller and take the temperature again at 120 minutes' }).click();
+        // Terence's question opens itself over the chill record. The learner can put it away with Escape
+        // from anywhere in the room, read the record, and bring it back from the chip.
+        const answer = page.getByRole('button', { name: 'Leave it in the chiller and take the temperature again at 120 minutes' });
+        await answer.waitFor();
+        await page.locator('#chill-note').focus().catch(() => {});
+        await page.keyboard.press('Escape');
+        const chip = page.getByTestId('dialogue-speaker');
+        if (await chip.waitFor({ timeout: 2000 }).then(() => true).catch(() => false)) {
+          if ((await chip.getAttribute('data-waiting')) !== 'true') finding('minor', 'Task 3: the put-away question chip does not say Terence is waiting for an answer.');
+          await chip.focus();
+          await page.keyboard.press('Enter');
+          await answer.waitFor();
+          const focused = await page.evaluate(() => document.activeElement?.closest('[data-testid="dialogue-bar"]') !== null);
+          if (!focused) finding('minor', 'Task 3: reopening the put-away question from the keyboard leaves focus outside the question bar.');
+          finding('info', 'Task 3: the ninety-minute question can be put away with Escape and brought back from the chip.');
+        } else {
+          finding('major', 'Task 3: Escape from the room does not put the ninety-minute question away.');
+        }
+        await answer.click();
         await page.getByRole('button', { name: 'Measure tray 1' }).click();
         await snap('task3-ninety');
       }
@@ -494,12 +518,13 @@ try {
       else finding('info', 'Task 4 early review: not accepted with no row reviewed.');
     }
     const cell = (name) => page.getByRole('checkbox', { name, exact: true });
+    // Dish names as the row headers show them: sentence case as a title, lower case inside a sentence.
     const chartPlan = [
-      ['haddock tart', []],
-      ['beef', ['Celery in the beef']],
+      ['Haddock tart', []],
+      ['Beef', ['Celery in the beef']],
       ['Wellington', []],
-      ['frangipane', ['Cereals containing gluten in the frangipane', 'Eggs in the frangipane', 'Milk in the frangipane', 'Nuts (tree nuts) in the frangipane']],
-      ['pear', ['Milk in the pear']],
+      ['Frangipane', ['Cereals containing gluten in the frangipane', 'Eggs in the frangipane', 'Milk in the frangipane', 'Nuts (tree nuts) in the frangipane']],
+      ['Pear', ['Milk in the pear']],
     ];
     for (const [index, [dish, marks]] of chartPlan.entries()) {
       if (index === 2) {
@@ -666,14 +691,19 @@ try {
 } catch (error) {
   failure = error;
 } finally {
+  const deliberate = (entry) => deliberatelyBlockedUrls.some((url) => entry.includes(url));
   const expectedAbort = (entry) => /^FAILED net::ERR_ABORTED .*\.mp4$/.test(entry);
-  const unexpectedRequests = log.failedRequests.filter((entry) => !expectedAbort(entry));
+  const expectedFailure = (entry) => expectedAbort(entry) || (/^FAILED net::ERR_FAILED /.test(entry) && deliberate(entry));
+  const unexpectedRequests = log.failedRequests.filter((entry) => !expectedFailure(entry));
+  const unexpectedConsoleErrors = log.consoleErrors.filter((entry) => !(/ERR_FAILED/.test(entry) && deliberate(entry)));
   const majors = log.findings.filter((f) => f.severity === 'major');
   const verdict = {
-    passed: !failure && !log.pageErrors.length && !log.consoleErrors.length && !unexpectedRequests.length && !majors.length,
+    passed: !failure && !log.pageErrors.length && !unexpectedConsoleErrors.length && !unexpectedRequests.length && !majors.length,
     failedStage: failure ? failure.message.split('\n')[0] : null,
     unexpectedRequests,
-    abortedMediaFetches: log.failedRequests.length - unexpectedRequests.length,
+    unexpectedConsoleErrors,
+    abortedMediaFetches: log.failedRequests.filter(expectedAbort).length,
+    deliberatelyBlockedClipFailures: log.failedRequests.filter((entry) => expectedFailure(entry) && !expectedAbort(entry)).length,
   };
   console.log('\n== QA log ==');
   console.log(JSON.stringify({ verdict, ...log }, null, 2));

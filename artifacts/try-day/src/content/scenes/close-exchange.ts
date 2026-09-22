@@ -50,13 +50,13 @@ const lastBeef = (e: CloseEvidence) => (e.beef.last ? `${e.beef.last.value}°C a
  * scene the learner has already been through.
  */
 export const TEAM_EVIDENCE: Text[] = [
-  "Terence, on the radio at the delivery: tonight doesn't need the salmon, tomorrow's lunch does. He said he'd ring the supplier before ten. No replacement is confirmed on anything you have seen.",
-  'Night porter’s log, 04:10: larder fridge 2 found slightly open and shut again, no idea how long it was like that. Terence, this morning: move anything high-risk into larder 1 and keep the door shut while it cools.',
+  "Terence, on the radio at the delivery: Tonight doesn't need the salmon, tomorrow's lunch does. He said he'd ring the supplier before ten. No replacement is confirmed on anything you have seen.",
+  'Night porter’s log, 04:10: Larder fridge 2 found slightly open and shut again, no idea how long it was like that. Terence, this morning: Move anything high-risk into larder 1 and keep the door shut while it cools.',
   (e) => `Yvie: table ${e.table3.table}, ${e.table3.name}, ${e.table3.requirement.toLowerCase()} Pear flagged on the table plan; the floor team will check the name against the table.`,
-  'Events board: the proposed menu is a held instruction, not permission to serve. All proposals stay on hold for Terence’s supplier, preparation and service checks.',
+  'Events board: The proposed menu is a held instruction, not permission to serve. All proposals stay on hold for Terence’s supplier, preparation, and service checks.',
   (e) => `Recipe cards: frangipane: ${e.frangipaneNote || 'not recorded'}. Poached pear: ${e.pearNote || 'not recorded'}.`,
   (e) => `Function sheet: 100 covers in the Exe Suite; starter 19:15, main 19:50, dessert ${e.dessertTime || 'not recorded'}.`,
-  'Chill job card: once the batch is down it goes into the walk-in for the evening team to bring back up before service.',
+  'Chill job card: Once the batch is down it goes into the walk-in for the evening team to bring back up before service.',
 ];
 
 export const EVENING_EXCHANGE: ExchangeTopic[] = [
@@ -100,7 +100,7 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           {
             id: 'tonight',
             label: "Tonight's event",
-            reply: "Terence said it on the radio: tonight doesn't need it, tomorrow's lunch does. Which meal is it?",
+            reply: "Terence said it on the radio: Tonight doesn't need it, tomorrow's lunch does. Which meal is it?",
           },
           {
             id: 'unsure',
@@ -315,7 +315,7 @@ export const EVENING_EXCHANGE: ExchangeTopic[] = [
           {
             id: 'unsure',
             label: "I don't know what's ready",
-            reply: "You've got your chill record, the recipe cards and this morning's board. Use what they say and be clear about the gaps.",
+            reply: "You've got your chill record, the recipe cards, and this morning's board. Use what they say and be clear about the gaps.",
           },
         ],
       },
@@ -338,7 +338,7 @@ export const EXCHANGE_COPY = {
   help: 'Answer from the records you signed. If a check or a delivery has not happened, say so.',
   opener: {
     what: 'Answer the evening team’s questions and confirm their read-back.',
-    how: 'Choose an answer for each question, then press "Yes, that’s right" when their read-back is correct.',
+    how: 'Choose an answer for each question, then press ‘Yes, that’s right’ when their read-back is correct.',
     done: 'Every question is answered and the read-back is confirmed.',
     noun: 'questions answered',
   },

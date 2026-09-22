@@ -44,7 +44,7 @@ export const PLACES: Record<PlaceId, Place> = {
   pass: {
     id: 'pass',
     name: 'The pass',
-    description: 'The counter where finished plates are handed to the waiters. The clipboards, the whiteboard, the radio and the clock all live here, so everyone passes through.',
+    description: 'The counter where finished plates are handed to the waiters. The clipboards, the whiteboard, the radio, and the clock all live here, so everyone passes through.',
     map: { x: 45, y: 67 },
     backdrop: scenePass,
   },
@@ -60,7 +60,7 @@ export const PLACES: Record<PlaceId, Place> = {
   'goods-in': {
     id: 'goods-in',
     name: 'The back door',
-    description: 'Goods-in: the door where deliveries arrive. There is a bench for checking things off and a set of scales.',
+    description: 'Goods-in: The door where deliveries arrive. There is a bench for checking things off and a set of scales.',
     map: { x: 23, y: 20 },
     backdrop: sceneGoodsIn,
   },
@@ -105,7 +105,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     light: 'dawn',
     whatIsHere: {
       pass: 'The night porter is waiting with the overnight log.',
-      corridor: 'The fridges to check, the thermometer in each one and the temperature board.',
+      corridor: 'The fridges to check, the thermometer in each one, and the temperature board.',
     },
   },
   'check-the-delivery-in': {
@@ -122,7 +122,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     places: ['bench'],
     light: 'morning',
     whatIsHere: {
-      bench: 'The beef, the trays, the probe, the blast chiller and the chill record.',
+      bench: 'The beef, the trays, the probe, the blast chiller, and the chill record.',
     },
   },
   'check-the-dietary-list': {
@@ -131,7 +131,7 @@ export const TASK_ROUTES: Record<TaskId, TaskRoute> = {
     light: 'midday',
     whatIsHere: {
       pass: 'Yvie is waiting with the function sheet.',
-      events: 'The recipe cards, the allergen chart and the evening board.',
+      events: 'The recipe cards, the allergen chart, and the evening board.',
     },
   },
   'hand-the-kitchen-on': {

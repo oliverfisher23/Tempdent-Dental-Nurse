@@ -29,7 +29,7 @@ export const DELIVERY_PAPERWORK = {
     saveAcceptedReason: 'Save an accepted amount for this fish first.',
     amendmentReason: 'Choose the fish and confirm the amended amount first.',
     savedInitialsReason: 'Add your initials to your profile first.',
-    signReason: 'Confirm the amendment, initial it and resolve every review issue first.',
+    signReason: 'Confirm the amendment, initial it, and resolve every review issue first.',
   },
   report: {
     product: 'Affected product',

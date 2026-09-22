@@ -6,6 +6,8 @@
 @custom-variant dark (&:is(.dark *));
 /* Wide and tall enough to put a portrait picture beside its panel; short landscape windows stack instead. */
 @custom-variant beside (@media (min-width: 40rem) and (min-height: 32rem));
+/* A short landscape window (a laptop with the browser chrome showing): headers tighten so the work fits without scrolling. */
+@custom-variant short (@media (min-width: 40rem) and (max-height: 44rem));
 
 @theme inline {
   --color-background: hsl(var(--background));

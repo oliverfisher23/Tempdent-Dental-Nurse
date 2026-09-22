@@ -48,7 +48,7 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   terenceIncomplete: {
     speaker: 'Terence',
-    text: "Give me the whole thing: what the chart says, the evidence you used, your decision and a line on why.",
+    text: "Give me the whole thing: What the chart says, the evidence you used, your decision, and a line on why.",
   } as Line,
   terenceNoConflictThere: {
     speaker: 'Terence',
@@ -107,7 +107,7 @@ export const DIETARY_HINTS: Record<string, Line[]> = {
   'tom:main:alternative': [
     { speaker: 'Terence', text: "You've spotted the conflict. Now look at the function sheet: which main is already going to the vegetarians on tables two and seven?" },
     { speaker: 'Terence', text: 'There is one vegetarian main on the menu. Check its card for meat before you propose it.' },
-    { speaker: 'Terence', text: "The Wellington is mushroom, spinach and ricotta. That's the vegetarian main on tonight's menu." },
+    { speaker: 'Terence', text: "The Wellington is mushroom, spinach, and ricotta. That's the vegetarian main on tonight's menu." },
     DIETARY_LINES.marcusOnMeatForVegetarian,
   ],
   'priya:dessert:alternative': [
@@ -134,10 +134,10 @@ export const CHART_HINTS = {
 };
 
 export const DECISION_CATEGORIES: { id: 'ingredient-conflict' | 'vegetarian-conflict' | 'no-conflict' | 'information-missing'; label: string; hint: string }[] = [
-  { id: 'ingredient-conflict', label: 'Conflict: an ingredient this guest must avoid', hint: 'Your chart row shows a category this guest cannot have.' },
-  { id: 'vegetarian-conflict', label: 'Conflict: not vegetarian', hint: 'The recipe card lists meat or fish.' },
+  { id: 'ingredient-conflict', label: 'Conflict: An ingredient this guest must avoid', hint: 'Your chart row shows a category this guest cannot have.' },
+  { id: 'vegetarian-conflict', label: 'Conflict: Not vegetarian', hint: 'The recipe card lists meat or fish.' },
   { id: 'no-conflict', label: 'No conflict identified in this course', hint: 'You have checked the row and the card against the request.' },
-  { id: 'information-missing', label: 'Cannot tell: information missing', hint: 'Something you need is not on the sheet or the card. Ask.' },
+  { id: 'information-missing', label: 'Cannot tell: Information missing', hint: 'Something you need is not on the sheet or the card. Ask.' },
 ];
 
 export const DECISION_ACTIONS: { id: 'keep' | 'swap' | 'ask'; label: string; hint: string }[] = [
@@ -152,19 +152,19 @@ export const DECISION_ACTIONS: { id: 'keep' | 'swap' | 'ask'; label: string; hin
  */
 export const ALLERGEN_REFERENCE: { id: AllergenId; terms: string[]; plain: string }[] = [
   { id: 'celery', terms: ['celery', 'celeriac'], plain: 'Celery and celeriac, including the celery in a stock or braise base.' },
-  { id: 'gluten', terms: ['wheat', 'flour', 'pastry', 'bread', 'barley', 'rye'], plain: 'Wheat, barley, rye and oats, and anything made from them: flour, pastry, bread, crumb.' },
-  { id: 'crustaceans', terms: ['prawn', 'crab', 'lobster', 'langoustine', 'shrimp'], plain: 'Prawns, crab, lobster, langoustine and shrimp.' },
+  { id: 'gluten', terms: ['wheat', 'flour', 'pastry', 'bread', 'barley', 'rye'], plain: 'Wheat, barley, rye, and oats, and anything made from them: Flour, pastry, bread, crumb.' },
+  { id: 'crustaceans', terms: ['prawn', 'crab', 'lobster', 'langoustine', 'shrimp'], plain: 'Prawns, crab, lobster, langoustine, and shrimp.' },
   { id: 'eggs', terms: ['egg'], plain: 'Whole eggs, egg wash, and anything bound or glazed with egg.' },
   { id: 'fish', terms: ['haddock', 'fish', 'salmon', 'cod', 'anchov'], plain: 'All fish, smoked or fresh, and fish sauces or stocks.' },
   { id: 'lupin', terms: ['lupin'], plain: 'Lupin flour and seeds, sometimes used in bakery goods.' },
-  { id: 'milk', terms: ['milk', 'butter', 'cream', 'ricotta', 'cheese', 'crème fraîche', 'ice cream', 'yoghurt'], plain: 'Milk, butter, cream, crème fraîche, ice cream and all cheeses, including ricotta.' },
-  { id: 'molluscs', terms: ['mussel', 'clam', 'oyster', 'squid', 'scallop'], plain: 'Mussels, clams, oysters, scallops and squid.' },
-  { id: 'mustard', terms: ['mustard'], plain: 'Mustard seeds, powder, paste and leaves.' },
+  { id: 'milk', terms: ['milk', 'butter', 'cream', 'ricotta', 'cheese', 'crème fraîche', 'ice cream', 'yoghurt'], plain: 'Milk, butter, cream, crème fraîche, ice cream, and all cheeses, including ricotta.' },
+  { id: 'molluscs', terms: ['mussel', 'clam', 'oyster', 'squid', 'scallop'], plain: 'Mussels, clams, oysters, scallops, and squid.' },
+  { id: 'mustard', terms: ['mustard'], plain: 'Mustard seeds, powder, paste, and leaves.' },
   { id: 'nuts', terms: ['almond', 'pistachio', 'hazelnut', 'walnut', 'cashew', 'pecan'], plain: 'Tree nuts: almonds, pistachios, hazelnuts, walnuts, cashews, pecans. A separate category from peanuts.' },
   { id: 'peanuts', terms: ['peanut', 'groundnut'], plain: 'Peanuts and groundnut oil. A separate category from tree nuts; one allergy does not imply the other.' },
-  { id: 'sesame', terms: ['sesame', 'tahini'], plain: 'Sesame seeds, sesame oil and tahini.' },
-  { id: 'soya', terms: ['soy', 'tofu', 'edamame'], plain: 'Soya beans, soy sauce, tofu and edamame.' },
-  { id: 'sulphites', terms: ['sulphite', 'wine', 'vinegar'], plain: 'Sulphur dioxide and sulphites, above ten parts per million: wine, some vinegars and dried fruit.' },
+  { id: 'sesame', terms: ['sesame', 'tahini'], plain: 'Sesame seeds, sesame oil, and tahini.' },
+  { id: 'soya', terms: ['soy', 'tofu', 'edamame'], plain: 'Soya beans, soy sauce, tofu, and edamame.' },
+  { id: 'sulphites', terms: ['sulphite', 'wine', 'vinegar'], plain: 'Sulphur dioxide and sulphites, above ten parts per million: Wine, some vinegars, and dried fruit.' },
 ];
 
 export const PREPARATION_CHECKS = {

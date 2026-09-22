@@ -15,7 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
-import { cn } from '@/lib/utils';
+import { cn, upperFirst } from '@/lib/utils';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { AlertTriangle, ArrowLeft, ArrowRight, BookOpen, Check, CheckCircle2, HelpCircle, MessageSquare, Minus } from 'lucide-react';
 import { WorkspaceOpener } from '../../kitchen/workspace-opener';
@@ -134,7 +134,7 @@ export function ChartWorkspace({
               <div className="text-xs uppercase tracking-widest text-red-300 font-bold">Terence</div>
               <p>{pointer}</p>
               <div className="flex items-center gap-3 mt-2">
-                <Button size="sm" variant="outline" className="h-7 text-xs bg-transparent border-red-800 text-red-100 hover:bg-red-900/40" onClick={() => onRequestHint(dish.id)} aria-label={`${copy.hintButton}: ${dish.short}`}>
+                <Button size="sm" variant="outline" className="h-7 text-xs bg-transparent border-red-800 text-red-100 hover:bg-red-900/40" onClick={() => onRequestHint(dish.id)} aria-label={`${copy.hintButton}: ${upperFirst(dish.short)}`}>
                   {copy.hintButton}
                 </Button>
                 <span className="text-xs text-red-300">{copy.hintCount(tier)}</span>
@@ -182,7 +182,7 @@ export function ChartWorkspace({
           <Checkbox
             checked={!!redesign.rowReviewConfirmed?.[dish.id]}
             onCheckedChange={(checked) => setConfirmed(dish.id, checked === true)}
-            aria-label={`Row reviewed: ${dish.short}`}
+            aria-label={`Row reviewed: ${upperFirst(dish.short)}`}
             className="mt-0.5 bg-black border-gray-500"
           />
           <span className="text-sm text-gray-200 leading-snug">
@@ -203,7 +203,7 @@ export function ChartWorkspace({
   };
 
   return (
-    <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 gap-4 overflow-y-auto" data-testid="chart-workspace">
+    <div className="flex flex-col h-full bg-black text-white p-4 md:p-6 gap-4 overflow-y-auto short:gap-3 short:py-3" data-testid="chart-workspace">
       <WorkspaceOpener
         taskId="check-the-dietary-list"
         what={revisiting ? copy.revisitOpener.what : copy.opener.what}
@@ -217,10 +217,11 @@ export function ChartWorkspace({
         pattern="tap"
         tone="dark"
       />
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4">
+      {/* In a short window the heading tightens so the chart itself starts higher up. */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end border-b border-gray-800 pb-4 gap-4 short:pb-2 short:gap-2">
         <div>
-          <h2 data-dialog-title className="text-2xl md:text-3xl font-serif font-bold text-red-500">{copy.title}</h2>
-          <p className="text-gray-400 mt-1 text-sm md:text-base max-w-2xl">{copy.description}</p>
+          <h2 data-dialog-title className="text-2xl md:text-3xl font-serif font-bold text-red-500 short:text-2xl">{copy.title}</h2>
+          <p className="text-gray-400 mt-1 text-sm md:text-base max-w-2xl short:max-w-none short:text-sm">{copy.description}</p>
           {chartChecked ? (
             <CheckFeedback kind="ok" title={copy.matchesSupplied} tone="dark" className="mt-3 w-fit py-2" testId="rows-remaining" />
           ) : (
@@ -276,11 +277,11 @@ export function ChartWorkspace({
                           type="button"
                           onClick={() => setActiveDishId(dish.id)}
                           aria-pressed={selected}
-                          aria-label={`${copy.selectedRow}: ${dish.short}`}
+                          aria-label={`${copy.selectedRow}: ${upperFirst(dish.short)}`}
                           className={cn('w-full text-left p-2 border-l-4 cursor-pointer hover:bg-gray-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-red-400', selected ? 'border-red-500' : 'border-transparent')}
                         >
                           <span className="block text-xs uppercase tracking-wider text-gray-400">{dish.course}</span>
-                          <span className="block font-semibold text-sm">{dish.short}</span>
+                          <span className="block font-semibold text-sm">{upperFirst(dish.short)}</span>
                           <span className="mt-1 inline-flex items-center gap-1 text-xs font-semibold text-red-300">
                             <BookOpen className="h-3 w-3" aria-hidden="true" /> {copy.opensRecipeCard}
                           </span>
@@ -331,7 +332,7 @@ export function ChartWorkspace({
                     onClick={() => setActiveDishId(dish.id)}
                     className={cn('shrink-0 rounded border px-2 py-1.5 text-left', selected ? 'border-red-500 bg-red-950/30' : 'border-gray-800 bg-gray-900')}
                   >
-                    <span className="block text-xs font-semibold">{dish.short}</span>
+                    <span className="block text-xs font-semibold">{upperFirst(dish.short)}</span>
                      {terenceAttribution(dish.id)}
                     <StatusChip status={status} className="mt-1" />
                   </button>
@@ -375,7 +376,7 @@ export function ChartWorkspace({
 
         {/* Desktop: the selected row's recipe card sits beside the matrix. */}
         {!isMobile && (
-          <aside className="hidden md:block w-full md:w-96 shrink-0" aria-label={`${copy.recipeEvidence}: ${activeDish.short}`}>
+          <aside className="hidden md:block w-full md:w-96 shrink-0" aria-label={`${copy.recipeEvidence}: ${upperFirst(activeDish.short)}`}>
             {renderRecipeCard(activeDish)}
           </aside>
         )}

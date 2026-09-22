@@ -39,6 +39,25 @@ the way you read signs in a building you have just walked into.
    needs a useful handover.
 9. **The student is "you".** Never "the trainee", "the user", "the learner".
 
+## House style (punctuation)
+
+Agreed with the client's reviewer on 22 September 2026. These apply to every string, including the
+client-signed spec text in `content/mechanic.json`, where they are the only edits allowed.
+
+- **Oxford comma.** "Reading, time, and initials", not "reading, time and initials". Lists of two
+  ("time and initials") take no comma.
+- **Capital after a colon** when a full phrase or sentence follows: "Function sheet says: Nut allergy",
+  "Do not guess: Take readings". A colon before a bare number, time or unit name stays as it is
+  ("Fridge 2: 7 °C").
+- **Single curly quotes ‘ ’ for the name of a control** you are telling the student to press or choose:
+  press ‘Put it on the scales’, choose ‘All here’. No double quotes around control names.
+- **No em dashes or spaced en dashes** in anything the app says. Use a comma, a colon, brackets or a
+  full stop instead. An unspaced en dash is only for ranges (16–18, 22:00–06:30).
+- **"Simulation" takes a capital** wherever the word itself appears on screen ("Start the Simulation").
+  It still does not belong in dialogue, feedback or labels (rule 4).
+- **Item names** (dishes, ingredients, fridges) are sentence case when they stand alone as a title or
+  label ("Beef shin", "Walk-in fridge") and lower case mid-sentence ("the beef shin in the walk-in fridge").
+
 ## Words we use, and the words we don't
 
 | Say | Not |

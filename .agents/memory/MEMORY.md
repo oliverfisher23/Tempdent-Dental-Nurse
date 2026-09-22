@@ -13,3 +13,4 @@
 - [Saved progress migrations](saved-progress-migrations.md) — removed keys are harmless on reload, new pre-filled defaults are not: seed them explicitly for untouched records; paperwork controls must follow the learner's decisions, not the answer key.
 - [Position restore after reload](position-restore.md) — no room reset on mount, keep the saved workspace until the scene reports it open, never re-send actions that do learner work (Task 1).
 - [Fridge door playback](fridge-door-playback.md) — one media mount per appliance, opening clip preloaded behind a frame-0 still, early handover; never load() a buffered clip.
+- [Short-viewport variant](short-viewport-variant.md) — `short:` = min-width 40rem and max-height 44rem; trim the instruction layer, never hide information; one-row opener failed.

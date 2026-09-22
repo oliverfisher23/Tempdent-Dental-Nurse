@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Minus, UserRound } from 'lucide-react';
 import { Line } from '@/content/activities';
 import { personForSpeaker } from '@/content/kitchen';
 import { useKitchen } from './kitchen-context';
+import { anyOverlayOpen } from './overlay-stack';
 import { kitchenAudio } from '@/lib/audio';
 import { cn } from '@/lib/utils';
 
@@ -11,6 +12,12 @@ import { cn } from '@/lib/utils';
 const LONG_LINE = 220;
 /** The chip sits this far above the bottom edge of the stage; rooms keep their objects above it. */
 const CHIP_OFFSET_PX = 16;
+
+export const DIALOGUE_COPY = {
+  hide: 'Hide this',
+  hideQuestion: 'Put the question away for now',
+  waiting: 'Waiting for your answer',
+};
 
 /**
  * The colleague's face. Until portraits are supplied this is a plain person icon;
@@ -38,7 +45,9 @@ function SpeakerAvatar({ portrait, size }: { portrait: string | null | undefined
  * Everything anyone says lives here, along the bottom of the stage. It starts as a
  * small chip with the colleague's icon and name; the words only open when the
  * student clicks that name. The one exception is a question with answer buttons,
- * which has to be visible to be answered. Nothing in a room is ever placed underneath it.
+ * which opens itself because it has to be seen to be answered; the student can still
+ * tuck it away to look at the room, and the chip then says the colleague is waiting.
+ * Nothing in a room is ever placed underneath it.
  */
 export function DialogueBar({
   line,
@@ -52,17 +61,21 @@ export function DialogueBar({
   const [open, setOpen] = useState(false);
   const [unread, setUnread] = useState(true);
   const [unfolded, setUnfolded] = useState(false);
+  // A question the student has put away for the moment; it comes back from the chip.
+  const [tucked, setTucked] = useState(false);
   const barRef = useRef<HTMLDivElement>(null);
   const chipRef = useRef<HTMLButtonElement>(null);
   const nameRef = useRef<HTMLButtonElement>(null);
   const focusAfterToggle = useRef<'bar' | 'chip' | null>(null);
+  // Whether the chip holds keyboard focus; a question that opens itself must not drop that focus.
+  const chipFocused = useRef(false);
   const reduceMotion = useReducedMotion();
   const { working } = useKitchen();
 
   const person = personForSpeaker(line.speaker);
   const long = working || line.text.length > LONG_LINE;
   const asking = !!choices;
-  const showBar = open || asking;
+  const showBar = open || (asking && !tucked);
 
   // Report the height so the room can keep its objects and the character above it.
   useLayoutEffect(() => {
@@ -85,6 +98,11 @@ export function DialogueBar({
     setUnread(true);
   }, [line]);
 
+  // A fresh question opens itself, whatever was tucked away before it.
+  useEffect(() => {
+    setTucked(false);
+  }, [asking, line]);
+
   // Once the words are on screen they are no longer "new"; ambient sound steps back while they show.
   useEffect(() => {
     if (!showBar) return undefined;
@@ -93,24 +111,43 @@ export function DialogueBar({
     return () => kitchenAudio.duck(false);
   }, [showBar, line]);
 
-  // Opening and closing swap the chip for the bar, so hand focus across deliberately.
+  // Opening and closing swap the chip for the bar, so hand focus across deliberately. A question
+  // that opens itself while the chip is focused hands focus to the bar as well.
   useEffect(() => {
-    if (focusAfterToggle.current === 'bar') nameRef.current?.focus();
-    if (focusAfterToggle.current === 'chip') chipRef.current?.focus();
+    const target = focusAfterToggle.current ?? (showBar && chipFocused.current ? 'bar' : null);
+    if (target === 'bar') nameRef.current?.focus();
+    if (target === 'chip') chipRef.current?.focus();
     focusAfterToggle.current = null;
+    if (showBar) chipFocused.current = false;
   }, [showBar]);
 
   const openBar = () => {
     kitchenAudio.play('tap');
     focusAfterToggle.current = 'bar';
-    setOpen(true);
+    // Bringing a tucked question back does not pin the bar open once it has been answered.
+    if (asking) setTucked(false);
+    else setOpen(true);
   };
-  const closeBar = () => {
-    if (asking) return;
+  const closeBar = (moveFocus = true) => {
     kitchenAudio.play('tap');
-    focusAfterToggle.current = 'chip';
+    focusAfterToggle.current = moveFocus ? 'chip' : null;
     setOpen(false);
+    if (asking) setTucked(true);
   };
+
+  // Escape puts an open question away from anywhere in the room, so a student who never moved
+  // focus into the bar can still clear it. Anything open above the room answers Escape itself,
+  // and a control that has already used the key (a cancelled drag, say) keeps it.
+  useEffect(() => {
+    if (!asking || tucked) return undefined;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || e.defaultPrevented || anyOverlayOpen()) return;
+      if (barRef.current?.contains(e.target as Node)) return;
+      closeBar(false);
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [asking, tucked]);
 
   // Screen readers hear each new line as it arrives, whether or not the words are open on screen.
   const announcement = (
@@ -137,24 +174,37 @@ export function DialogueBar({
           )}
           style={{ bottom: CHIP_OFFSET_PX }}
           onClick={openBar}
+          onFocus={() => { chipFocused.current = true; }}
+          onBlur={() => { chipFocused.current = false; }}
           aria-expanded={false}
-          aria-label={unread ? `${line.speaker} has something to say. Show it` : `Show what ${line.speaker} said`}
+          aria-label={
+            asking
+              ? `${line.speaker} is waiting for your answer. Show the question`
+              : unread
+                ? `${line.speaker} has something to say. Show it`
+                : `Show what ${line.speaker} said`
+          }
           data-testid="dialogue-speaker"
+          data-waiting={asking || undefined}
         >
           <span className="relative">
             <SpeakerAvatar portrait={person?.portrait} size="sm" />
-            {unread && (
+            {(unread || asking) && (
               <motion.span
                 key={line.text}
                 aria-hidden
                 initial={reduceMotion ? false : { scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 22 }}
-                className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-primary ring-2 ring-white"
+                className={cn('absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full bg-primary ring-2 ring-white', asking && 'motion-safe:animate-pulse')}
               />
             )}
           </span>
-          <span className="text-sm font-bold">{line.speaker}</span>
+          <span className="flex flex-col items-start leading-tight">
+            <span className="text-sm font-bold">{line.speaker}</span>
+            {/* A tucked-away question is still waiting: the chip says so until it is answered. */}
+            {asking && <span className="text-xs font-medium text-primary">{DIALOGUE_COPY.waiting}</span>}
+          </span>
         </motion.button>
       </>
     );
@@ -179,7 +229,7 @@ export function DialogueBar({
           className="pointer-events-auto w-full border-t-4 border-primary bg-white/95 text-foreground shadow-[0_-12px_40px_rgba(0,0,0,0.35)] backdrop-blur"
           data-testid="dialogue-bar"
           onKeyDown={(e) => {
-            if (e.key === 'Escape' && !asking) {
+            if (e.key === 'Escape') {
               e.stopPropagation();
               closeBar();
             }
@@ -188,21 +238,16 @@ export function DialogueBar({
           <div className="mx-auto flex max-w-6xl items-start gap-3 px-4 py-3 sm:gap-6 sm:px-8 sm:py-4">
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                {asking ? (
-                  // While a question is waiting for an answer the name is a label, not a toggle.
-                  <div className="flex items-center gap-2.5 pr-2">{namePlate}</div>
-                ) : (
-                  <button
-                    ref={nameRef}
-                    type="button"
-                    onClick={closeBar}
-                    aria-expanded
-                    aria-label={`Hide what ${line.speaker} said`}
-                    className="flex items-center gap-2.5 rounded-full pr-2 outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  >
-                    {namePlate}
-                  </button>
-                )}
+                <button
+                  ref={nameRef}
+                  type="button"
+                  onClick={() => closeBar()}
+                  aria-expanded
+                  aria-label={asking ? DIALOGUE_COPY.hideQuestion : `Hide what ${line.speaker} said`}
+                  className="flex items-center gap-2.5 rounded-full pr-2 outline-none focus-visible:ring-2 focus-visible:ring-primary"
+                >
+                  {namePlate}
+                </button>
                 {person && person.role !== person.speaker && (
                   <span className="hidden truncate text-xs text-muted-foreground sm:inline">{person.role}</span>
                 )}
@@ -252,16 +297,15 @@ export function DialogueBar({
                 )}
               </AnimatePresence>
             </div>
-            {!asking && (
-              <button
-                type="button"
-                onClick={closeBar}
-                className="shrink-0 rounded-full border border-zinc-300 bg-zinc-100 p-1.5 text-zinc-600 shadow-sm outline-none transition-colors hover:bg-zinc-200 focus-visible:ring-2 focus-visible:ring-primary"
-                aria-label="Hide this"
-              >
-                <Minus className="h-4 w-4" />
-              </button>
-            )}
+            <button
+              type="button"
+              onClick={() => closeBar()}
+              className="shrink-0 rounded-full border border-zinc-300 bg-zinc-100 p-1.5 text-zinc-600 shadow-sm outline-none transition-colors hover:bg-zinc-200 focus-visible:ring-2 focus-visible:ring-primary"
+              aria-label={asking ? DIALOGUE_COPY.hideQuestion : DIALOGUE_COPY.hide}
+              title={asking ? DIALOGUE_COPY.hideQuestion : undefined}
+            >
+              <Minus className="h-4 w-4" />
+            </button>
           </div>
         </motion.div>
       </div>
