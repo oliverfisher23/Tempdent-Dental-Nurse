@@ -36,7 +36,9 @@ the way you read signs in a building you have just walked into.
 8. **People speak like people.** Dialogue is in the character's voice, contractions and all, British English,
    kitchen register. No speeches; nobody explains the simulation. Terence tells you what to do and why
    in one breath. Yvie is clear about the event and guest list. The driver wants to leave. The evening team
-   needs a useful handover.
+   needs a useful handover. Two sets of Terence's lines hold their exact meaning through any voice pass: the
+   recorded chill comparison ("recorded comparison", "example readings", never his own tray as a rule) and
+   the Task 4 preparation check ("pending", never cleared or safe to serve). Smooth around them.
 9. **The student is "you".** Never "the trainee", "the user", "the learner".
 
 ## House style (punctuation)

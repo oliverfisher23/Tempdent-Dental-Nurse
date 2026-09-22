@@ -19,11 +19,11 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   terenceReviewPrompt: {
     speaker: 'Terence',
-    text: 'Review every row against the recipe cards before you promise Yvie anything.',
+    text: 'Go through every row against the recipe cards before you promise Yvie anything.',
   } as Line,
   terenceChartCorrect: {
     speaker: 'Terence',
-    text: "Chart's clean. Matches the supplied ingredients. Now let's look at the two added guests.",
+    text: "Chart's clean, it matches the cards. Now let's look at the two late additions.",
   } as Line,
   terenceChartIncorrect: {
     speaker: 'Terence',
@@ -31,7 +31,7 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   terencePrefilledChartIncorrect: {
     speaker: 'Terence',
-    text: "That one's mine. I left a mark out. Check my row against the card and correct it.",
+    text: "That one's mine, I left a mark out. Check my row against the card and put it right.",
   } as Line,
   terenceRowsUnreviewed: {
     speaker: 'Terence',
@@ -40,7 +40,7 @@ export const DIETARY_REDESIGN_LINES = {
   /** D07: the one approved response to asking about Priya's dessert. No assurance is given. */
   terencePriyaAsk: {
     speaker: 'Terence',
-    text: "Good. Ask, don't assume. The recipe card tells you what's in the pear, not how it's been handled. I'll check that myself before anything goes to table three. Put the change on the board and mark the check as pending.",
+    text: "Good. Ask, don't assume. The recipe card tells you what's in the pear, not how it's been handled, and I'll check that myself before anything goes to table three. Put the change on the board and mark my check as pending.",
   } as Line,
   terenceAskElsewhere: {
     speaker: 'Terence',
@@ -48,7 +48,7 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   terenceIncomplete: {
     speaker: 'Terence',
-    text: "Give me the whole thing: What the chart says, the evidence you used, your decision, and a line on why.",
+    text: "Give me the whole thing: What the chart says, what you checked, what you've decided, and a line on why.",
   } as Line,
   terenceNoConflictThere: {
     speaker: 'Terence',
@@ -60,11 +60,11 @@ export const DIETARY_REDESIGN_LINES = {
   } as Line,
   terencePearSafeWait: {
     speaker: 'Terence',
-    text: "The recipe isn't a preparation check. Ask me before approving service.",
+    text: "The recipe card isn't a preparation check. Ask me before you approve anything for service.",
   } as Line,
   terenceDecisionStands: {
     speaker: 'Terence',
-    text: 'That reasoning stands up. It goes on the board as a proposal; nothing is cleared until I have checked the preparation.',
+    text: "That reasoning stands up. It goes on the board as a proposal; nothing's cleared until I've checked the preparation.",
   } as Line,
   terenceKeepStands: {
     speaker: 'Terence',

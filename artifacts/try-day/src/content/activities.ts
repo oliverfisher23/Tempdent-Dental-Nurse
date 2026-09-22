@@ -110,15 +110,15 @@ export const HANDOVER_LINES = {
   } satisfies Line,
   marcusOnWarmReading: {
     speaker: 'Terence',
-    text: "Look where that needle is sitting. That's too warm. Check what's in there. We need to move anything high-risk into larder one and keep this door shut while it cools.",
+    text: "Look where that needle's sitting. That's too warm. Have a look at what's in there: anything high-risk goes into larder one, and this door stays shut while it cools.",
   } satisfies Line,
   marcusOnWrongReading: {
     speaker: 'Terence',
-    text: "Take another look at the dial. Just write the number the needle points to.",
+    text: "Have another look at the dial and just write the number the needle's pointing at.",
   } satisfies Line,
   marcusDone: {
     speaker: 'Terence',
-    text: "Nice one. I read that board at the end of the day. The delivery's not here until half eight, so grab a coffee.",
+    text: "Nice one. I'll read that board properly at the end of the day. Delivery's not here till half eight, so grab a coffee.",
   } satisfies Line,
 };
 
@@ -179,7 +179,7 @@ export const DELIVERY_LINES = {
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',
-    text: "He can wait ten minutes. Count it, probe the cold boxes, look at the fish. You sign for what you took in, not for what his bit of paper says.",
+    text: "He can wait ten minutes. Count it, probe the cold boxes and have a proper look at the fish. You're signing for what came in, not for what his bit of paper says.",
   } satisfies Line,
   driverOnShort: {
     speaker: 'Driver',
@@ -187,11 +187,11 @@ export const DELIVERY_LINES = {
   } satisfies Line,
   marcusOnRadio: {
     speaker: 'Terence',
-    text: "Four short on the salmon? Right. Tonight doesn't need it; tomorrow's lunch does. Mark it short, cross the twelve out on his note, write eight and sign next to it. Put it on my list and I'll ring them before ten.",
+    text: "Four short on the salmon? Right. Tonight doesn't need it, tomorrow's lunch does. Mark it short, cross the twelve out on his note, write eight next to it and sign it. Stick it on my list and I'll ring them before ten.",
   } satisfies Line,
   marcusOnRefusal: {
     speaker: 'Terence',
-    text: "Good. Send the cream back. Write refused on the driver's note with 7.8 °C, then initial it.",
+    text: "Good, that cream goes back. Write 'refused' and 7.8 °C on the driver's note and initial it.",
   } satisfies Line,
   driverOnRefusal: {
     speaker: 'Driver',
@@ -199,7 +199,7 @@ export const DELIVERY_LINES = {
   } satisfies Line,
   marcusOnWrongStatus: {
     speaker: 'Terence',
-    text: "Look at the count again before you mark that line. Arrived means the full order came in; short means some of it did; refused means it's going back on the van.",
+    text: "Look at the count again before you mark that line. 'All here' means the full order came in, 'short' means only some of it did, and 'refused' means it's going back on the van.",
   } satisfies Line,
   marcusOnUnamendedNote: {
     speaker: 'Terence',
@@ -207,7 +207,7 @@ export const DELIVERY_LINES = {
   } satisfies Line,
   marcusDone: {
     speaker: 'Terence',
-    text: "That's done properly. Store fish and meat first; fruit can wait a minute.",
+    text: "That's done properly. Fish and meat away first; the fruit can wait a minute.",
   } satisfies Line,
 };
 
@@ -308,11 +308,11 @@ export type NinetyMinuteChoiceId = (typeof NINETY_MINUTE_CHOICES)[number]['id'];
 export const CHILL_LINES = {
   marcusOpening: {
     speaker: 'Terence',
-    text: "You have half of the twenty-seven-kilo batch. Portion the beef no deeper than fifty millimetres per tray. If you don't have enough trays, ask for a clean spare. Then we'll work through a recorded cooling comparison.",
+    text: "You've got half of the twenty-seven-kilo batch. Portion it out no deeper than fifty millimetres a tray; if you run out of trays, ask me for a clean spare. Then we'll work through a recorded cooling comparison together.",
   } satisfies Line,
   marcusOnTrayShortage: {
     speaker: 'Terence',
-    text: "Here is a clean spare tray. Divide your share without going over fifty millimetres in any tray. You can return beef to the pan and redistribute it before loading.",
+    text: "Here's a clean spare. Spread your share out so no tray goes over fifty millimetres; you can put beef back in the pan and share it out again before anything's loaded.",
   } satisfies Line,
   marcusOnProbe: {
     speaker: 'Terence',
@@ -324,23 +324,23 @@ export const CHILL_LINES = {
   } satisfies Line,
   marcusAtNinety: {
     speaker: 'Terence',
-    text: "In this recorded comparison, the shallower tray is at six point four. The deeper tray is still over eight. Use the example readings and the kitchen's limits to decide what happens next.",
+    text: "Here's the recorded comparison at ninety minutes: the shallower tray's at six point four and the deeper one's still over eight. Use those example readings and our limits to decide what happens next.",
   } satisfies Line,
   marcusOnRightChoice: {
     speaker: 'Terence',
-    text: "The deeper example batch stays in the chiller while we keep recording. Now compare the example depths with the depth of the trays you prepared.",
+    text: "Right call. The deeper example batch stays in the chiller and we keep recording. Now compare those example depths with the trays you portioned.",
   } satisfies Line,
   marcusOnWalkIn: {
     speaker: 'Terence',
-    text: "No. I'm taking that one back. The walk-in holds cold food cold; it doesn't make warm food cold, and everything else in there warms up around it. It stays in the chiller.",
+    text: "No, I'm taking that one back. The walk-in keeps cold food cold; it doesn't make warm food cold, and everything else in there warms up round it. It stays in the chiller.",
   } satisfies Line,
   marcusOnBin: {
     speaker: 'Terence',
-    text: "It's eleven, not twenty-one. It's behind, not spoiled. We keep it in and keep logging. Binning one hundred mains because we panicked would be the real mistake.",
+    text: "It's eleven, not twenty-one. It's behind, not spoiled, so it stays in and we keep logging. Binning a hundred mains because we panicked would be the real mistake.",
   } satisfies Line,
   marcusOnRuler: {
     speaker: 'Terence',
-    text: "The example trays were fifty-six and forty-eight millimetres deep. Those are the recorded case depths, not a measurement of your arrangement. Compare their cooling records and use the prep sheet's depth limit for your next batch.",
+    text: "The example trays were fifty-six and forty-eight millimetres deep. Those are the recorded depths from the comparison, not a measurement of your trays. Compare how the two cooled, and stick to the prep sheet's depth limit for your next batch.",
   } satisfies Line,
   marcusDone: {
     speaker: 'Terence',
@@ -496,7 +496,7 @@ export const DIETARY_LINES = {
   } satisfies Line,
   marcusOpening: {
     speaker: 'Terence',
-    text: "Recipe cards are on the pass. I've done the tart, the beef, and the Wellington; check my rows against the cards, then do the two desserts, all fourteen columns, before you promise Yvie anything. Then we go through it together.",
+    text: "Recipe cards are on the pass. I've done the tart, the beef, and the Wellington; check my rows against the cards, then do the two desserts yourself, all fourteen columns, before you promise Yvie anything. Then we'll go through it together.",
   } satisfies Line,
   marcusOnChartErrors: {
     speaker: 'Terence',
@@ -609,7 +609,7 @@ export const ELENA_QUESTION = {
       id: 'shallower',
       label: 'Have enough clean trays ready to keep every tray within the depth on the prep sheet',
       correct: true,
-      response: "Use the fifty-millimetre limit on the prep sheet and arrange enough clean trays before portioning. The comparison shows why we pay attention to depth; it does not predict the readings of every arrangement.",
+      response: "Use the fifty-millimetre limit on the prep sheet and get enough clean trays out before you start portioning. The comparison shows why depth matters; it doesn't predict the readings for every arrangement.",
     },
     {
       id: 'colder',
@@ -621,7 +621,7 @@ export const ELENA_QUESTION = {
       id: 'walk-in',
       label: 'Take the trays out at ninety minutes and let the walk-in finish them off',
       correct: false,
-      response: "No. The walk-in holds cold food cold; it does not chill warm food, and it would have warmed up everything else in there. I was right to keep it in. Think about what you would change before the chiller, not after.",
+      response: "No. The walk-in keeps cold food cold; it doesn't chill warm food, and it would've warmed up everything else in there. Keeping it in was right. Think about what you'd change before the chiller, not after.",
     },
   ],
 } as const;
@@ -631,7 +631,7 @@ export type ElenaOptionId = (typeof ELENA_QUESTION.options)[number]['id'];
 export const CLOSE_LINES = {
   elenaOpening: {
     speaker: 'Terence',
-    text: "Before you go. Bring the chill record and the temperature board; I want five minutes with you at the pass.",
+    text: "Before you go, bring the chill record and the temperature board over. I want five minutes with you at the pass.",
   } satisfies Line,
   eveningTeam: {
     speaker: 'Evening team',
