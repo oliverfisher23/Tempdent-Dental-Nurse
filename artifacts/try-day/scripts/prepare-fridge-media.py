@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reproduce the eight silent Task 1 MP4s and matching WebP posters."""
+"""Reproduce the eight silent Task 1 MP4s, their WebM alternatives and matching WebP posters."""
 
 from __future__ import annotations
 
@@ -15,6 +15,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_ARCHIVE = PROJECT_ROOT.parents[1] / "attached_assets" / "VIDEOS_1789733068766.zip"
 MANIFEST = PROJECT_ROOT / "src" / "content" / "fridge-media.json"
 OUTPUT_DIR = PROJECT_ROOT / "src" / "assets" / "kitchen" / "inspections" / "videos"
+# The closed-door still is the clip's first frame: the picture shown before "Open the fridge"
+# must be the frame the opening clip starts from, so pressing the button only presses play.
+# The interior still is a settled frame from the middle of the loop.
+POSTER_SECONDS = {"closed": "0", "open": "2.5"}
 
 
 def run(*args: str) -> None:
@@ -31,7 +35,7 @@ def main() -> None:
     with zipfile.ZipFile(args.archive) as uploaded, tempfile.TemporaryDirectory() as temp:
         temp_dir = Path(temp)
         for states in mappings.values():
-            for media in states.values():
+            for state, media in states.items():
                 source = temp_dir / media["video"]
                 source.write_bytes(uploaded.read(media["source"]))
                 video = OUTPUT_DIR / media["video"]
@@ -51,7 +55,7 @@ def main() -> None:
                 )
                 run(
                     "ffmpeg", "-hide_banner", "-loglevel", "error", "-y",
-                    "-ss", "2.5", "-i", str(source), "-frames:v", "1",
+                    "-ss", POSTER_SECONDS[state], "-i", str(source), "-frames:v", "1",
                     "-c:v", "libwebp", "-quality", "88",
                     "-compression_level", "6", str(poster),
                 )

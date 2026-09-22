@@ -47,35 +47,113 @@ export async function verifyFridgeMedia(page) {
     assert.ok(frame && Math.abs(frame.width / frame.height - 9 / 16) < 0.001);
   };
 
+  // Each appliance exercises one way the door can open: with the opening clip playing, with
+  // motion paused from the previous appliance, and with an opening clip that cannot load.
+  const modes = ['motion', 'paused', 'motion', 'clip-blocked'];
+  const blockedClipRequests = [];
+  const blockedClip = /freezer-1-closed\.(mp4|webm)(\?|$)/;
+  await page.route(blockedClip, route => {
+    blockedClipRequests.push(route.request().url());
+    return route.abort('failed');
+  });
+
   for (const [index, [unit, reading]] of units.entries()) {
+    const mode = modes[index];
     let state = 'waiting for the closed appliance';
     try {
     await page.waitForSelector(`[data-testid="fridge-inspection"][data-unit-id="${unit}"]`);
     await page.waitForSelector('[data-testid="fridge-inspection"][data-door-phase="closed"]');
     assert.ok((await page.getByTestId('inspection-poster').getAttribute('src')).includes(`${unit}-closed`));
-    assert.equal(await video.count(), 0, 'a closed door is a still, not an opening clip on repeat');
-    state = 'opening the appliance';
-    await page.getByTestId('open-fridge').click();
-    if (index !== 1) {
-      // The opening clip must genuinely play once; a still-image fallback that
-      // skips straight to the open loop is a playback failure, not a pass.
+    if (mode === 'paused') {
+      assert.equal(await video.count(), 0, 'a paused learner is not sent a clip behind the still');
+    } else if (mode === 'clip-blocked') {
+      await page.waitForFunction(unit => {
+        const v = document.querySelector('[data-testid="inspection-video"]');
+        return v?.getAttribute('src')?.includes(`${unit}-closed`) && v.paused && v.currentTime === 0 && !v.loop;
+      }, unit, { timeout: 15_000 });
+    } else {
+      // A closed door is a still: the opening clip is buffered behind it, parked on its
+      // first frame (the same shut door as the still), never playing or repeating.
       try {
         await page.waitForFunction(unit => {
           const v = document.querySelector('[data-testid="inspection-video"]');
-          return v?.currentSrc.includes(`${unit}-closed`) && !v.loop && !v.paused && v.currentTime > 0;
+          return v?.currentSrc.includes(`${unit}-closed`) && v.paused && v.currentTime === 0 && !v.loop && v.readyState >= 3;
         }, unit, { timeout: 15_000 });
+      } catch (error) {
+        throw new Error(`opening clip was not buffered behind the closed door; browser state: ${JSON.stringify(await describeVideo())}`, { cause: error });
+      }
+    }
+    state = 'opening the appliance';
+    // Captured at the exact moment the door counts as open, so the handover can be checked
+    // without depending on how quickly this harness polls afterwards.
+    await page.evaluate(() => {
+      const root = document.querySelector('[data-testid="fridge-inspection"]');
+      window.__doorOpened = null;
+      const observer = new MutationObserver(() => {
+        if (root.getAttribute('data-door-phase') !== 'open') return;
+        observer.disconnect();
+        const clip = document.querySelector('[data-testid="inspection-video-previous"]');
+        window.__doorOpened = clip
+          ? { clip: true, currentTime: clip.currentTime, duration: clip.duration, ended: clip.ended, paused: clip.paused }
+          : { clip: false };
+      });
+      observer.observe(root, { attributes: true, attributeFilter: ['data-door-phase'] });
+    });
+    await page.getByTestId('open-fridge').click();
+    let openingClip = null;
+    if (mode === 'motion') {
+      // The opening clip must genuinely play once; a still-image fallback that
+      // skips straight to the open loop is a playback failure, not a pass.
+      let start;
+      try {
+        start = await page.waitForFunction(unit => {
+          const v = document.querySelector('[data-testid="inspection-video"]');
+          if (!(v?.currentSrc.includes(`${unit}-closed`) && !v.loop && !v.paused && v.currentTime > 0)) return null;
+          const poster = document.querySelector('[data-testid="inspection-poster"]');
+          return { opacity: getComputedStyle(v).opacity, poster: poster?.getAttribute('src') ?? '' };
+        }, unit, { timeout: 15_000 }).then(handle => handle.jsonValue());
       } catch (error) {
         const phase = await page.getByTestId('fridge-inspection').getAttribute('data-door-phase').catch(() => null);
         throw new Error(`opening clip never played (door phase "${phase}"); browser state: ${JSON.stringify(await describeVideo())}`, { cause: error });
       }
+      // Pressing Open only presses play: the clip is already fully shown on its shut-door
+      // frame, so there is no fade from a still and no other picture underneath it.
+      assert.equal(start.opacity, '1', 'the opening clip must be visible from its first frame, not faded in');
+      assert.ok(start.poster.includes(`${unit}-closed`), 'the shut-door still stays underneath while the door opens');
+      openingClip = await video.elementHandle();
     }
-    await page.waitForSelector('[data-testid="fridge-inspection"][data-door-phase="open"]');
-    if (index === 1) {
+    await page.waitForSelector('[data-testid="fridge-inspection"][data-door-phase="open"]', { timeout: 20_000 });
+    const opened = await page.evaluate(() => window.__doorOpened);
+    if (mode === 'motion') {
+      // The loop takes over shortly before the opening clip ends, while the clip is still
+      // playing underneath: an opening that waited for `ended`, or skipped ahead, is a seam.
+      assert.ok(opened?.clip, 'the opening clip must still be on screen when the door counts as open');
+      assert.equal(opened.ended, false, 'the door must count as open before the opening clip ends');
+      assert.equal(opened.paused, false, 'the opening clip keeps playing under the loop');
+      assert.ok(opened.duration - opened.currentTime <= 0.7 && opened.currentTime > 1,
+        `handover happened at ${opened.currentTime}s of ${opened.duration}s, not just before the end`);
+    } else if (mode === 'clip-blocked') {
+      // A clip that cannot load must not strand the door: it opens on the still instead.
+      assert.ok(blockedClipRequests.length >= 1, 'the opening clip request was not intercepted');
+      assert.ok(blockedClipRequests.length <= 3, `the failed opening clip was re-requested ${blockedClipRequests.length} times`);
+      assert.equal(opened?.clip ? opened.currentTime : 0, 0, 'a clip that failed to load must not have played');
+      await page.unroute(blockedClip);
+    } else {
       assert.equal(await video.getAttribute('src'), null, 'pause choice survives opening the next appliance');
       await page.getByRole('button', { name: 'Resume motion', exact: true }).click();
     }
     state = 'checking open media and clues';
     await assertMedia(unit, 'open');
+    if (mode === 'clip-blocked') {
+      await page.waitForFunction(() => !document.querySelector('[data-testid="inspection-video-previous"]'), null, { timeout: 15_000 });
+    }
+    if (openingClip) {
+      // The finished opening clip hands over under the loop and is then released, leaving
+      // one playing element; it must never linger with a source.
+      await page.waitForFunction(() => !document.querySelector('[data-testid="inspection-video-previous"]'), null, { timeout: 15_000 });
+      assert.equal(await openingClip.evaluate(v => !v.isConnected && v.paused && !v.hasAttribute('src')), true, 'the opening clip is released after the handover');
+      await openingClip.dispose();
+    }
     const clues = page.locator('[data-testid="fridge-inspection"] button[aria-pressed]');
     assert.equal(await clues.count(), 2);
     for (const clue of await clues.all()) {

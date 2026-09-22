@@ -189,7 +189,9 @@ export function InspectionView({
   const selection = getInspectionSelection(unitId, mediaState);
   const photo = selection.inspection;
   const activeClue = photo.clues.find(clue => clue.id === activeClueId);
-  const media = selection.media;
+  // Both states' media go to the picture together: it buffers the next clip behind the current one.
+  const closedMedia = getInspectionSelection(unitId, 'closed').media;
+  const openMedia = getInspectionSelection(unitId, 'open').media;
   // With the door open the needle drifts a little warm; taking the reading lets it settle on the truth.
   const dialPhase = row.probed ? 'settled' : probePending ? 'settling' : 'misted';
   const dialValue = dialPhase === 'misted' ? unit.actualC + 1.6 : unit.actualC;
@@ -213,7 +215,8 @@ export function InspectionView({
         style={{ '--frame-w': frameWidth ? `${frameWidth}px` : undefined } as CSSProperties}
       >
         <div className="pointer-events-none absolute inset-0 hidden overflow-hidden beside:block" aria-hidden="true">
-          <img src={media.poster} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover blur-3xl" />
+          <img src={closedMedia.poster} alt="" className="absolute inset-0 h-full w-full scale-110 object-cover blur-3xl" />
+          <img src={openMedia.poster} alt="" className={cn('absolute inset-0 h-full w-full scale-110 object-cover blur-3xl transition-opacity duration-300', doorOpen ? 'opacity-100' : 'opacity-0')} />
           <div className="absolute inset-0 bg-black/55" />
           <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(0,0,0,0.55)_100%)]" />
         </div>
@@ -278,15 +281,16 @@ export function InspectionView({
       {/* The portrait footage takes the full stage height, giving way in width only when the clipboard needs its minimum. */}
       <div className="relative z-10 w-full shrink-0 bg-black beside:h-full beside:bg-transparent beside:[grid-area:1/1/span_3/2]">
         <InspectionMedia
-           key={`${unitId}-${doorPhase}`}
-          media={media}
-           description={doorOpen ? photo.alt : `${unit.name}, closed door.`}
+          key={unitId}
+          closed={closedMedia}
+          open={openMedia}
+          doorPhase={doorPhase}
+          description={doorOpen ? photo.alt : `${unit.name}, closed door.`}
           motionEnabled={motionEnabled}
           setMotionEnabled={setMotionEnabled}
           active={!closing && !frozen}
-           playback={doorPhase === 'closed' ? 'still' : doorPhase === 'opening' ? 'once' : 'loop'}
-           onComplete={finishOpening}
-           onStatus={setMediaStatus}
+          onComplete={finishOpening}
+          onStatus={setMediaStatus}
         >
           {mediaState === 'open' && (
             <div className="absolute inset-0" role="group" aria-label={HANDOVER_LABELS.inspectPrompt}>
@@ -356,7 +360,7 @@ export function InspectionView({
             {doorOpen && (
               <div className="flex flex-col gap-1">
                 <p className="text-sm text-zinc-300">{HANDOVER_LABELS.inspectHint}</p>
-                <p className="text-xs text-zinc-400" role="status" data-testid="inspection-status">{mediaStatus}</p>
+                <p className="min-h-4 text-xs text-zinc-400" role="status" data-testid="inspection-status">{mediaStatus}</p>
               </div>
             )}
           </div>

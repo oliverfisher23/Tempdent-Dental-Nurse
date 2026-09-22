@@ -85,7 +85,7 @@ Changed media or findings are not automatically covered by this sign-off.
 | --- | --- |
 | `src/content/fridge-media.json` | `a4702f89858c156f75766114c3fd456edf6b8ba3384a08669afce1c4ec89ff72` |
 | `src/content/fridge-photos.ts` | `9551895cb9976fbfa403be078c36c5cb1cae39c0d23837cedcbb1500d86ec6ae` |
-| Combined inventory of the 24 mapped MP4, WebM and WebP files | `c874874979c8e801ccd67d6697f8f9f10d64fa8ae04936fafb685c6cd483b658` |
+| Combined inventory of the 24 mapped MP4, WebM and WebP files | `243e3896d768c7590cd44b4860bf8dc1d08d8f3ced3da5e80618e82b20b4b412` |
 
 For the combined inventory, enumerate each manifest state's `video`, `webm`
 and `poster` filename, hash that file in `videos/`, and sort by filename.
@@ -93,6 +93,15 @@ Construct one UTF-8 line per file as `<lowercase SHA-256><two spaces><filename>`
 with an LF after every line, including the last. Hash the concatenated lines.
 The WebM encodings and WebP posters are existing derived presentations of the
 eight retained supplied clips, not 16 additional source clips.
+
+Presentation note, 2026-09-22: the four `closed` WebP stills were re-extracted
+from the first frame (0 s) of the same approved `closed` clips, so the picture
+shown before "Open the fridge" is the shut door the clip starts from rather
+than the half-open door at 2.5 s. The inventory fingerprint above was updated
+for those four files only; the eight clips, the eight WebM encodings, the four
+interior stills, the source mapping and the findings are unchanged from the
+approved snapshot (previous inventory fingerprint
+`c874874979c8e801ccd67d6697f8f9f10d64fa8ae04936fafb685c6cd483b658`).
 
 Only this record and its README link were added to the media documentation.
 The source mapping, clips, findings, readings, completion rules, and approved

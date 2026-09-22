@@ -1,7 +1,9 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  inspectionClipNeedsLoad,
   inspectionVideoSource,
+  openingHandoffReached,
   shouldCompleteInspectionOnce,
   shouldPlayInspection,
   startInspectionPlayback,
@@ -52,6 +54,39 @@ test('loads first, waits for canplay, and then starts one playback attempt', () 
   player.fire('canplay');
   assert.deepEqual(calls, ['load', 'play']);
   stop();
+});
+
+test('a clip preloaded behind the still keeps its buffer and plays at once', () => {
+  const calls: string[] = [];
+  const buffered = {
+    ...fakePlayer(() => {
+      calls.push('play');
+      return Promise.resolve();
+    }, () => calls.push('load')),
+    readyState: 4,
+    networkState: 1,
+  };
+  const stop = startInspectionPlayback(buffered, { onFailure: () => {} });
+  assert.deepEqual(calls, ['play'], 'load() would discard the buffered opening clip');
+  stop();
+
+  // Still fetching: no data yet, but a reload would restart the download from nothing.
+  assert.equal(inspectionClipNeedsLoad({ readyState: 0, networkState: 2 }), false);
+  // Untouched or errored elements need the load that begins (or retries) the fetch.
+  assert.equal(inspectionClipNeedsLoad({ readyState: 0, networkState: 0 }), true);
+  assert.equal(inspectionClipNeedsLoad({ readyState: 0, networkState: 3 }), true);
+  assert.equal(inspectionClipNeedsLoad({ readyState: 0 }), true);
+  assert.equal(inspectionClipNeedsLoad({ readyState: 1, networkState: 1 }), false);
+});
+
+test('the interior loop takes over just before the opening clip ends, never on unknown length', () => {
+  assert.equal(openingHandoffReached(4.7, 5.04), true);
+  assert.equal(openingHandoffReached(5.04, 5.04), true);
+  assert.equal(openingHandoffReached(4.5, 5.04), false);
+  assert.equal(openingHandoffReached(0, 5.04), false);
+  assert.equal(openingHandoffReached(1, Number.NaN), false);
+  assert.equal(openingHandoffReached(1, Number.POSITIVE_INFINITY), false);
+  assert.equal(openingHandoffReached(0, 0), false);
 });
 
 test('an inactive or still policy never requests playback', () => {

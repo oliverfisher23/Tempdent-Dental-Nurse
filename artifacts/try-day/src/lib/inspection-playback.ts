@@ -35,6 +35,29 @@ export function inspectionVideoSource(
 
 export type InspectionPlaybackFailure = 'load' | 'play' | 'stalled' | 'timeout';
 
+/** How far before the end of the opening clip the interior loop starts under a short crossfade. */
+export const OPENING_HANDOFF_LEAD_S = 0.4;
+
+/**
+ * The last part of every opening clip already shows the open interior, so the loop can take
+ * over slightly early: its first frame blends with the clip's final frames instead of following
+ * a hard stop. Unknown durations (metadata not yet parsed) never hand off.
+ */
+export function openingHandoffReached(currentTime: number, duration: number, lead = OPENING_HANDOFF_LEAD_S): boolean {
+  return Number.isFinite(duration) && duration > 0 && currentTime >= duration - lead;
+}
+
+const NETWORK_LOADING = 2;
+
+/**
+ * A clip that is already fetching or has buffered data must not be reloaded: `load()` throws
+ * away everything fetched so far, which is exactly what preloading the clip behind the still
+ * was for. Only an untouched or errored element needs a fresh load.
+ */
+export function inspectionClipNeedsLoad(player: Pick<HTMLVideoElement, 'readyState'> & { networkState?: number }): boolean {
+  return player.readyState === 0 && player.networkState !== NETWORK_LOADING;
+}
+
 interface InspectionPlaybackCallbacks {
   onFailure: (reason: InspectionPlaybackFailure) => void;
   onFrame?: () => void;
@@ -48,10 +71,11 @@ interface InspectionPlaybackOptions {
 type InspectionPlayer = Pick<
   HTMLVideoElement,
   'play' | 'pause' | 'load' | 'readyState' | 'addEventListener' | 'removeEventListener'
->;
+> & { networkState?: number };
 
 /**
- * Loads the already-committed source, waits until it can play, then starts it.
+ * Loads the already-committed source if nothing has been fetched yet, waits until it can
+ * play, then starts it. A clip preloaded behind a still keeps its buffer and starts at once.
  * Every asynchronous path is cancellation-aware so an old unit cannot alter a
  * newer unit's fallback state.
  */
@@ -77,6 +101,7 @@ export function startInspectionPlayback(
   const removeListeners = () => {
     media.removeEventListener('canplay', onCanPlay);
     media.removeEventListener('loadeddata', onFrame);
+    media.removeEventListener('playing', onFrame);
     media.removeEventListener('timeupdate', onFrame);
     media.removeEventListener('error', onError);
     media.removeEventListener('stalled', onStalled);
@@ -121,6 +146,8 @@ export function startInspectionPlayback(
 
   media.addEventListener('canplay', onCanPlay);
   media.addEventListener('loadeddata', onFrame);
+  // `playing` is the earliest sign that frames are on screen; `timeupdate` can lag it by 250 ms.
+  media.addEventListener('playing', onFrame);
   media.addEventListener('timeupdate', onFrame);
   media.addEventListener('error', onError);
   media.addEventListener('stalled', onStalled);
@@ -128,7 +155,7 @@ export function startInspectionPlayback(
   if (totalMs !== null) totalTimer = setTimeout(() => fail('timeout'), totalMs);
 
   try {
-    media.load();
+    if (inspectionClipNeedsLoad(media)) media.load();
     if (media.readyState >= 3) onCanPlay();
   } catch {
     fail('load');

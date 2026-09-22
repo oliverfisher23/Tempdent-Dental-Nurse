@@ -35,8 +35,9 @@ stream was losslessly remuxed with its original 720 × 1280, 24 fps
 H.264/yuv420p portrait framing, all audio was removed, and the MP4 `moov` atom
 was moved before media data for browser fast start. A silent 720 × 1280, 24 fps
 VP9 WebM alternative was encoded at CRF 28 for browsers without proprietary
-H.264 decoding. Matching WebP posters are quality-88 frames sampled at 2.5
-seconds.
+H.264 decoding. Matching WebP posters are quality-88 frames: the `closed`
+still is the clip's first frame (0 s), the shut door the opening clip starts
+from; the `open` still is sampled at 2.5 seconds.
 
 Interior clips were checked with contact sheets sampled at 0, 1, 2, 3, 4, and
 5 seconds. Motion is slight and the relevant contents stay in stable shelf

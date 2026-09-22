@@ -8,8 +8,8 @@
     "decodedSha256": "97f5a4075fff51d357254c45aed7bab14cb2fff53283bf15124871c5ba4b94c9"
   },
   "fish-closed.webp": {
-    "sha256": "1d44f50d572e71f00000a29c9890c1c444316b9cb140561ad8533530bb9e6674",
-    "decodedSha256": "089466bfce54c3109e67da852701a4ae3d7256d0e5a9541db10401544893dfbe"
+    "sha256": "42d1415fb3cdc0e92338a7a1bb996cf2d0ec9070b67132c3dcec7ecbc9345a11",
+    "decodedSha256": "040a29d12c6f66e3f136d1fa8a84c8ffb03ed3a37fe40111bdc8b3da98051dc5"
   },
   "fish-open.mp4": {
     "sha256": "3488b3de8f6870f9e89935aa8e1c128908e9ca29ad41e97753c31d7b36e54d05",
@@ -32,8 +32,8 @@
     "decodedSha256": "8de2123e07a440f2ecd6aebb6bcdfb015853973cbd18ffc80b2e7440525e0d42"
   },
   "freezer-1-closed.webp": {
-    "sha256": "529972dc34ff6f125b5dd9cee7b133ee0c9490feb3d5fc7a28f5272957a14791",
-    "decodedSha256": "46d7db38e895a40944b6b7443e25e6b03517ce14fdce80f483d6e64dacfdad29"
+    "sha256": "2339297d5eebd4df2d0bd93cb0faad2e662b21d3436f3f6f829ca19e2d75f1e4",
+    "decodedSha256": "b135bc02ec20a8cdcf3b270805ce2ba77ef4825da3d94fbabad112a2c4b9ab47"
   },
   "freezer-1-open.mp4": {
     "sha256": "4ad05d55df6cbd800ef85d10eab1b4437756f18698c7e69ce3b5725a7e901076",
@@ -56,8 +56,8 @@
     "decodedSha256": "fec013fa0d1d0d283fc5a408a155977707d65a4d195c2359036403d0973ac243"
   },
   "larder-2-closed.webp": {
-    "sha256": "f1f993b2de6bb55de7be441e1bc944f5950ea1db848cec3331548e5d2cd2bf08",
-    "decodedSha256": "db621d0bee7336de2703f0390dacbd7887559dfd14b28f3890a49b19960148f5"
+    "sha256": "044a6db6b3e51cc0105de6d89257a1950dfa9cdce446a2be90fa0366b16a5729",
+    "decodedSha256": "646b981ba2678dc6d4aa9065b3e72b7a950377e804ba90d3741d8c8d078a2047"
   },
   "larder-2-open.mp4": {
     "sha256": "810cc8ddbd0712b25f07f00c9e9adc1b6a6636dcdf6cbca8cd0c651a69683e74",
@@ -80,8 +80,8 @@
     "decodedSha256": "26647926ccff7429790d9b46c3c0de60d6492f4674d35d4141f3140e265fc89c"
   },
   "walk-in-closed.webp": {
-    "sha256": "67a7c325d3957d5bc7613b084bfc165095bbbf727aab55e9a02e7bf032ddba60",
-    "decodedSha256": "e0cf22730f99cd0897247cfdfe42d47ffcb794f63bda28b2fca5cf63bf337f3a"
+    "sha256": "e08159946043c8c4eb3d16af8538f8cc3d583c82859b3189d473dc2b19d89ec1",
+    "decodedSha256": "72d74e695cb0770b4c518b1af61378f9cd1bc961aeb74b1c62a73d828b6d56eb"
   },
   "walk-in-open.mp4": {
     "sha256": "4de1fca627f294b6bd57ac34e0f4cb17d966f8328169e5a8cc43751d63dbd6f3",
