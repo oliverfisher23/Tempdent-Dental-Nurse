@@ -10,12 +10,17 @@ import {
   PATTERN_COPY,
   TASK_BRIEFING_VIDEO,
   TASK_DEVICE_ADVICE,
-  TASK_ID,
   WELCOME_COPY,
   WORKPLACE,
 } from '@client/content/client';
 import ClosePage from '@client/pages/close';
-import DraftTaskPage from '@client/pages/task';
+import SetupTaskPage from '@client/pages/setup';
+import WelcomeTaskPage from '@client/pages/welcome';
+import FillingTaskPage from '@client/pages/filling';
+import ResetTaskPage from '@client/pages/reset';
+import ChangeTaskPage from '@client/pages/change';
+import CloseTaskPage from '@client/pages/close-task';
+
 import logo from '@client/assets/logo.svg';
 import hero from '@client/assets/hero.svg';
 import mentor from '@client/assets/mentor.svg';
@@ -27,16 +32,16 @@ kitchenAudio.configure({
 export const tryClient: TryClient<TaskStates> = {
   day,
   brand: {
-    name: "TempDent",
+    name: "Tempdent",
     logo,
-    logoAlt: "TempDent DRAFT logo",
+    logoAlt: "Tempdent logo",
     documentTitle: "Dental Nurse Try Day",
   },
   mentor: {
-    name: 'DRAFT mentor',
+    name: 'Priya Nair',
     personId: MENTOR_ID,
     photo: mentor,
-    photoAlt: 'DRAFT mentor portrait',
+    photoAlt: 'Priya Nair portrait',
   },
   workplace: WORKPLACE,
   welcome: {
@@ -53,6 +58,13 @@ export const tryClient: TryClient<TaskStates> = {
   briefingVideos: BRIEFING_VIDEOS,
   mainBriefingVideo: 'main',
   taskBriefingVideo: TASK_BRIEFING_VIDEO,
-  taskPages: { [TASK_ID]: DraftTaskPage },
+  taskPages: {
+    setup: SetupTaskPage,
+    welcome: WelcomeTaskPage,
+    filling: FillingTaskPage,
+    reset: ResetTaskPage,
+    change: ChangeTaskPage,
+    close: CloseTaskPage,
+  },
   ClosePage,
 };

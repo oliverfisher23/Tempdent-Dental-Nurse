@@ -13,48 +13,146 @@ import hero from '@client/assets/hero.svg';
 import map from '@client/assets/map.svg';
 import mentor from '@client/assets/mentor.svg';
 
-export const TASK_ID = "draft-task";
-export const PLACE_ID = "workplace";
 export const MENTOR_ID = "mentor";
 
 export const WORKPLACE: Workplace = {
   places: {
-    [PLACE_ID]: {
-      id: PLACE_ID,
-      name: 'DRAFT workplace',
-      description: 'DRAFT: Describe this place.',
-      map: { x: 50, y: 50 },
+    reception: {
+      id: 'reception',
+      name: 'Reception and waiting room',
+      description: 'Bright front room off the street with a reception desk and a row of chairs.',
+      map: { x: 20, y: 80 },
+      backdrop: hero,
+    },
+    surgery2: {
+      id: 'surgery2',
+      name: 'Surgery 2',
+      description: 'A compact clinical room with a dental chair and work surface.',
+      map: { x: 40, y: 50 },
+      backdrop: hero,
+    },
+    decon: {
+      id: 'decon',
+      name: 'Decontamination room',
+      description: 'A narrow room laid out dirty-to-clean with sinks and an autoclave.',
+      map: { x: 80, y: 20 },
+      backdrop: hero,
+    },
+    stock: {
+      id: 'stock',
+      name: 'Stock room',
+      description: 'A small room off the corridor with shelving and lockable cupboards.',
+      map: { x: 60, y: 50 },
       backdrop: hero,
     },
   },
   map: {
     image: map,
-    alt: 'DRAFT workplace map',
+    alt: 'Bramley Road Dental Practice map',
     crossing: { x: 50, y: 50 },
   },
   taskRoutes: {
-    [TASK_ID]: {
-      start: PLACE_ID,
-      places: [PLACE_ID],
+    setup: {
+      start: 'surgery2',
+      places: ['surgery2'],
       light: 'morning',
-      whatIsHere: { [PLACE_ID]: 'DRAFT placeholder task' },
+      whatIsHere: { surgery2: 'Morning checks and tray set-up' },
+    },
+    welcome: {
+      start: 'reception',
+      places: ['reception', 'surgery2'],
+      light: 'morning',
+      whatIsHere: { reception: 'Welcome Amira', surgery2: 'Bring Amira in' },
+    },
+    filling: {
+      start: 'surgery2',
+      places: ['surgery2'],
+      light: 'morning',
+      whatIsHere: { surgery2: 'Support Dr Reid with the filling' },
+    },
+    reset: {
+      start: 'surgery2',
+      places: ['surgery2', 'reception'],
+      light: 'morning',
+      whatIsHere: { surgery2: 'Explain aftercare and reset surgery', reception: 'Handover notes' },
+    },
+    change: {
+      start: 'decon',
+      places: ['decon', 'reception', 'stock', 'surgery2'],
+      light: 'midday',
+      whatIsHere: { decon: 'Process instruments', reception: 'Manage changes', stock: 'Check delivery', surgery2: 'Update Dr Reid' },
+    },
+    close: {
+      start: 'reception',
+      places: ['reception', 'surgery2'],
+      light: 'afternoon',
+      whatIsHere: { reception: 'Welcome Graham', surgery2: 'Support examination and close down' },
     },
   },
   people: [
     {
       id: MENTOR_ID,
-      speaker: 'DRAFT mentor',
-      name: 'DRAFT mentor',
-      role: 'DRAFT mentor role',
+      speaker: 'Priya',
+      name: 'Priya Nair',
+      role: 'Senior Dental Nurse',
       portrait: mentor,
+    },
+    {
+      id: 'dentist',
+      speaker: 'Dr Reid',
+      name: 'Dr Hannah Reid',
+      role: 'Dentist',
+      portrait: null,
+    },
+    {
+      id: 'manager',
+      speaker: 'Joanne',
+      name: 'Joanne Whitfield',
+      role: 'Practice Manager',
+      portrait: null,
+    },
+    {
+      id: 'receptionist',
+      speaker: 'Sam',
+      name: 'Sam Leigh',
+      role: 'Receptionist',
+      portrait: null,
+    },
+    {
+      id: 'amira',
+      speaker: 'Amira',
+      name: 'Amira Hassan',
+      role: 'Patient (10)',
+      portrait: null,
+    },
+    {
+      id: 'karim',
+      speaker: 'Karim',
+      name: 'Karim Hassan',
+      role: 'Amira\'s dad',
+      portrait: null,
+    },
+    {
+      id: 'graham',
+      speaker: 'Graham',
+      name: 'Graham Ellis',
+      role: 'Patient (54)',
+      portrait: null,
+    },
+    {
+      id: 'tutor',
+      speaker: 'Nadia',
+      name: 'Nadia Brooks',
+      role: 'Tutor Assessor',
+      portrait: null,
     },
   ],
 };
 
 export const WELCOME_COPY: WelcomeCopy = {
   title: "Dental Nurse Try Day",
-  subtitle: "TempDent",
-  shortBrief: "TempDent DRAFT: Introduce the role and workplace in one short paragraph.",
+  subtitle: "Tempdent",
+  shortBrief: "REVIEW PROTOTYPE: Not clinically approved. All clinical details are pending SME validation and are simulated only, not real-world instructions. Tempdent is a specialist dental recruitment agency and training provider. Step into a realistic, supportive apprentice dental-nurse shift.",
   launchButton: 'Open the try day',
   inlineButton: 'Continue here',
   startButton: 'Start',
@@ -62,22 +160,22 @@ export const WELCOME_COPY: WelcomeCopy = {
   launchHintFramed: 'Continue to the briefing.',
   returnButton: 'Return to the welcome',
   close: 'Close',
-  briefingTitle: 'Your DRAFT briefing',
-  briefing: 'DRAFT: Explain what the learner will practise during this try day.',
+  briefingTitle: 'Your briefing',
+  briefing: 'REVIEW PROTOTYPE: Not clinically approved. You are an apprentice dental nurse. Follow your mentor before, during and after appointments to understand the role.',
   instructions: [
     'Work through the task in order.',
     'Use the information in the workplace before making a decision.',
     'Check your work before signing off.',
   ],
   controls: 'Use Tab to move through controls and Enter or Space to choose.',
-  fullBrief: 'Read the full DRAFT brief',
+  fullBrief: 'Read the full brief',
   shift: 'Shift',
   nameLabel: 'What should we call you?',
   nameHelp: 'Your name stays on this device and is used on your work.',
   namePlaceholder: 'Your name',
   start: 'Start the try day',
   welcomeBack: (name) => `Welcome back, ${name}.`,
-  completed: 'You have completed this DRAFT try day.',
+  completed: 'You have completed this try day.',
   resume: (time, title) => `Continue at ${time}: ${title}.`,
   resumeFallback: 'Continue where you left off.',
   continue: 'Continue',
@@ -86,7 +184,7 @@ export const WELCOME_COPY: WelcomeCopy = {
   resetWarning: 'Starting again removes the progress saved on this device.',
   confirmReset: 'Remove my progress',
   cancelReset: 'Keep my progress',
-  mentorRole: 'DRAFT mentor role',
+  mentorRole: 'Senior Dental Nurse & Mentor',
 };
 
 export const ACCESSIBILITY_COPY: AccessibilityCopy = {
@@ -106,7 +204,7 @@ export const MEDIA_COPY: MediaCopy = {
   openMain: 'Open mentor briefing',
   eyebrow: 'Briefing film',
   pendingTitle: 'Film pending',
-  placeholderLabel: 'DRAFT film placeholder',
+  placeholderLabel: 'Film placeholder',
   placeholderHint: 'The approved film will appear here. Use the transcript for now.',
   pendingDescription: 'This briefing film has not been supplied.',
   releaseNote: 'Replace this placeholder when the approved film is ready.',
@@ -137,30 +235,35 @@ export const INTERACTION_PATTERNS: Record<InteractionPattern['id'], InteractionP
 };
 
 export const TASK_DEVICE_ADVICE: Record<string, TaskDeviceAdvice> = {
-  [TASK_ID]: {
-    title: 'DRAFT task',
-    interaction: 'Choose one labelled button.',
-    advice: 'Choose “Mark placeholder complete” to exercise the scaffold done-when check.',
-  },
+  setup: { title: 'Set up', interaction: 'Choose one labelled button.', advice: 'Choose items to mark them done.' },
+  welcome: { title: 'Welcome', interaction: 'Choose one labelled button.', advice: 'Select conversation options.' },
+  filling: { title: 'Filling', interaction: 'Choose one labelled button.', advice: 'Hand over instruments in time.' },
+  reset: { title: 'Reset', interaction: 'Choose one labelled button.', advice: 'Complete list in order.' },
+  change: { title: 'Change', interaction: 'Choose one labelled button.', advice: 'Prioritise tasks.' },
+  close: { title: 'Close', interaction: 'Choose one labelled button.', advice: 'Log notes and finish.' },
 };
 
 export const BRIEFING_VIDEOS: Record<string, BriefingVideo> = {
   main: {
     id: 'main',
-    title: 'DRAFT mentor briefing',
+    title: 'Mentor briefing',
     duration: '00:00',
-    filename: 'draft-main-briefing.mp4',
-    transcript: ['DRAFT: Add the approved opening briefing transcript.'],
+    filename: 'main-briefing.mp4',
+    transcript: ['Morning. I’m Priya, senior dental nurse here — I’m your mentor, so today you’re with me, 08:15 to half five. Here’s the list. Six patients this morning for Dr Reid, four this afternoon. First in is Amira — ten years old, first filling, coming with her dad. Before anyone sits in that chair the surgery has to be clean, working and stocked, the emergency kit checked, and a tray ready for her. Then we look after Amira, then we reset, then we go again. You don’t need to know any of the kit yet — I’ll show you as we go, and if you’re not sure about anything, ask. That’s not a weakness in this job. It’s the job.'],
   },
-  [TASK_ID]: {
-    id: TASK_ID,
-    title: 'DRAFT task briefing',
-    duration: '00:00',
-    filename: 'draft-task-briefing.mp4',
-    transcript: ['DRAFT: Add the approved task briefing transcript.'],
-  },
+  setup: { id: 'setup', title: 'Task briefing', duration: '00:00', filename: 'task.mp4', transcript: ['Set up the surgery for the morning.'] },
+  welcome: { id: 'welcome', title: 'Task briefing', duration: '00:00', filename: 'task.mp4', transcript: ['Welcome Amira and her dad.'] },
+  filling: { id: 'filling', title: 'Task briefing', duration: '00:00', filename: 'task.mp4', transcript: ['Support the filling.'] },
+  reset: { id: 'reset', title: 'Task briefing', duration: '00:00', filename: 'task.mp4', transcript: ['The job isn’t finished — notes, aftercare and reset.'] },
+  change: { id: 'change', title: 'Task briefing', duration: '00:00', filename: 'task.mp4', transcript: ['The morning changes.'] },
+  close: { id: 'close', title: 'Task briefing', duration: '00:00', filename: 'task.mp4', transcript: ['Graham’s first visit in ten years — and closing the day.'] },
 };
 
 export const TASK_BRIEFING_VIDEO: Record<string, string> = {
-  [TASK_ID]: TASK_ID,
+  setup: 'setup',
+  welcome: 'welcome',
+  filling: 'filling',
+  reset: 'reset',
+  change: 'change',
+  close: 'close',
 };

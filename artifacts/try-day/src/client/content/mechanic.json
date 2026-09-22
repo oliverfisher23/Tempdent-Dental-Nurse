@@ -6,44 +6,129 @@
     "mechanic": "try-day-app",
     "version": 1,
     "id": "tempdent-try-day",
-    "employer": "TempDent",
+    "employer": "Tempdent",
     "locale": "en-GB",
     "frame": {
-      "role": "DRAFT learner role",
-      "workplace": "DRAFT workplace at TempDent",
+      "role": "Apprentice Dental Nurse",
+      "workplace": "Bramley Road Dental Practice",
       "shift": {
-        "start": "09:00",
-        "end": "17:00",
-        "rhythm": "DRAFT: Describe how the working day changes from start to finish."
+        "start": "08:15",
+        "end": "17:30",
+        "rhythm": "The day starts with setting up the surgery, gets busier through treatments and turnarounds, includes handling unexpected changes, and finishes by closing down."
       },
       "people": [
         {
-          "name": "DRAFT mentor",
-          "role": "DRAFT mentor role",
-          "note": "DRAFT: Explain how this person supports the learner."
+          "name": "Priya Nair",
+          "role": "Senior Dental Nurse & Mentor",
+          "note": "Supervises you, explains routines, and supports your learning."
+        },
+        {
+          "name": "Dr Hannah Reid",
+          "role": "Dentist",
+          "note": "The clinician you are assisting today in Surgery 2."
         }
       ],
-      "morningBrief": "DRAFT: Add the approved opening briefing for this try day.",
-      "closeOfDay": "DRAFT: Add the approved close-of-day message.",
-      "tone": "DRAFT: Describe the employer voice and register."
+      "morningBrief": "Morning. I’m Priya, senior dental nurse here — I’m your mentor, so today you’re with me, 08:15 to half five. Here’s the list. Six patients this morning for Dr Reid, four this afternoon. First in is Amira — ten years old, first filling, coming with her dad. Before anyone sits in that chair the surgery has to be clean, working and stocked, the emergency kit checked, and a tray ready for her. Then we look after Amira, then we reset, then we go again. You don’t need to know any of the kit yet — I’ll show you as we go, and if you’re not sure about anything, ask. That’s not a weakness in this job. It’s the job.",
+      "closeOfDay": "Half five. Good shift. You checked the safety critical stuff, you listened to the patients, and you adapted when the morning went sideways. It’s not just passing instruments, is it? We’re managing the people, the infection control, and the clinician’s time all at once. Some days it is exhausting, but it’s real healthcare. Have a think tonight if this is what you want to do. If it is, you’ve got the right attitude for it. I’ll sign off your day. (REVIEW PROTOTYPE: Not clinically approved. Simulated only.)",
+      "tone": "Clear, warm, professional. The mentor is calm, practical and encouraging, using short sentences."
     },
     "tasks": [
       {
-        "id": "draft-task",
-        "time": "09:00",
-        "place": "DRAFT workplace",
-        "title": "DRAFT task",
-        "situation": "DRAFT: Explain what is happening when this task begins.",
-        "job": "DRAFT: State what the learner needs to do.",
+        "id": "setup",
+        "time": "08:15",
+        "place": "Surgery 2",
+        "title": "Set up the surgery for the morning",
+        "situation": "The practice has just opened. Surgeries are cold and quiet. Today's check sheets are blank.",
+        "job": "Set up the surgery safely by completing the morning checks and preparing the tray for the first patient.",
         "materials": [
           {
-            "name": "DRAFT material",
-            "description": "DRAFT: Describe the information or equipment the learner uses."
+            "name": "Morning check sheet",
+            "description": "The daily safety checks for the surgery."
           }
         ],
-        "interaction": "DRAFT: Describe who the learner works with.",
-        "doneWhen": "The learner marks the placeholder task as complete.",
-        "whatHappensNext": "The placeholder day closes."
+        "interaction": "You are supervised by Priya, who guides you through the morning checks.",
+        "doneWhen": "You complete all items on the morning check sheet.",
+        "whatHappensNext": "You prepare to welcome the first patient."
+      },
+      {
+        "id": "welcome",
+        "time": "08:55",
+        "place": "Waiting room",
+        "title": "Welcome Amira and her dad",
+        "situation": "Amira (10) and her dad are waiting. It's her first filling.",
+        "job": "Escort them to Surgery 2, answer their questions, and help Amira feel at ease.",
+        "materials": [],
+        "interaction": "You communicate directly with Amira and her dad.",
+        "doneWhen": "You answer their questions appropriately and guide them into the surgery.",
+        "whatHappensNext": "Dr Reid begins the procedure."
+      },
+      {
+        "id": "filling",
+        "time": "09:05",
+        "place": "Surgery 2",
+        "title": "Support the filling",
+        "situation": "Dr Reid is preparing to start Amira's filling.",
+        "job": "Support the clinician chairside, anticipate needs, and watch the patient.",
+        "materials": [
+          {
+            "name": "Tray set-up",
+            "description": "Instruments and materials ready for the filling."
+          }
+        ],
+        "interaction": "You assist Dr Reid and keep a close eye on Amira.",
+        "doneWhen": "You hand over the correct items and pause when Amira signals.",
+        "whatHappensNext": "The filling is completed successfully."
+      },
+      {
+        "id": "reset",
+        "time": "09:35",
+        "place": "Surgery 2",
+        "title": "The job isn't finished — notes, aftercare and reset",
+        "situation": "The filling is done, but the notes need recording and the room needs resetting.",
+        "job": "Record the notes, explain aftercare to Amira's dad, and reset the surgery.",
+        "materials": [
+          {
+            "name": "Decontamination guide",
+            "description": "Steps to safely wipe down and reset the surgery."
+          }
+        ],
+        "interaction": "You speak to Amira's dad and then follow the reset sequence with Priya.",
+        "doneWhen": "Aftercare is explained, notes are recorded, and the room is fully reset in the right order.",
+        "whatHappensNext": "You move to the decontamination room."
+      },
+      {
+        "id": "change",
+        "time": "10:20",
+        "place": "Decontamination room",
+        "title": "The morning changes",
+        "situation": "Mid-morning, a cancellation, an emergency patient, and a stock delivery all happen at once.",
+        "job": "Prioritise tasks sensibly, update the team, and keep things moving safely.",
+        "materials": [
+          {
+            "name": "Day list",
+            "description": "The updated schedule."
+          }
+        ],
+        "interaction": "You communicate with the practice manager and receptionist to manage the flow.",
+        "doneWhen": "You decide the correct priority order for handling the urgent changes.",
+        "whatHappensNext": "The morning continues smoothly."
+      },
+      {
+        "id": "close",
+        "time": "16:30",
+        "place": "Waiting room",
+        "title": "Graham's first visit in ten years — and closing the day",
+        "situation": "Graham (54) hasn't seen a dentist in over ten years and is extremely anxious.",
+        "job": "Take the lead in welcoming him calmly, record the charting notes, and then close down the surgery for the day.",
+        "materials": [
+          {
+            "name": "Charting record",
+            "description": "Dental charting you must log as Dr Reid speaks."
+          }
+        ],
+        "interaction": "You welcome Graham with empathy, record notes for Dr Reid, and reflect on the day.",
+        "doneWhen": "You reassure Graham, log the charting accurately, and complete the end-of-day reflection.",
+        "whatHappensNext": "The shift ends."
       }
     ],
     "gate": {

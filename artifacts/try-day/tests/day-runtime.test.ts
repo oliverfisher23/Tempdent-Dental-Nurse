@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
-import { register } from 'node:module';
-import test from 'node:test';
-import { day, STORAGE_KEY, TASK_ID } from '@client/lib/simulation';
+import { test } from 'vitest';
+import { day, STORAGE_KEY } from '@client/lib/simulation';
 import { clientProblems } from '@shell/lib/client';
 
 test('the generated client uses its own storage key', () => {
@@ -15,20 +14,32 @@ test('designer fixtures preserve blank, finished and in-progress meanings', () =
   assert.equal(blank.completedAt, null);
 
   const finished = day.testProgress(null);
-  assert.deepEqual(finished.completed, [TASK_ID]);
+  assert.deepEqual(finished.completed, ['setup', 'welcome', 'filling', 'reset', 'change', 'close']);
   assert.ok(finished.completedAt);
 
-  const running = day.testProgress(TASK_ID);
+  const running = day.testProgress('setup');
   assert.deepEqual(running.completed, []);
-  assert.equal(running.clock, day.spec.getTask(TASK_ID).time);
+  assert.equal(running.clock, day.spec.getTask('setup').time);
   assert.equal(running.completedAt, null);
+  
+  const mid = day.testProgress('filling');
+  assert.deepEqual(mid.completed, ['setup', 'welcome']);
+  assert.equal(mid.clock, day.spec.getTask('filling').time);
 
   const unknown = day.testProgress('not-a-task');
   assert.deepEqual(unknown.completed, []);
   assert.equal(unknown.completedAt, null);
+  assert.equal(unknown.clock, day.spec.getTask('setup').time);
 });
 
-register('./support/asset-loader.mjs', import.meta.url);
+test('evaluator correctly processes test fixtures', () => {
+  const finished = day.testProgress(null);
+  const evaluation = day.model.evaluateTask('setup', finished.tasks);
+  assert.equal(evaluation.done, true);
+  assert.equal(evaluation.checklist.length, 2);
+  assert.equal(evaluation.checklist[0].met, true);
+  assert.equal(evaluation.checklist[1].met, true);
+});
 
 test('the generated client has every entry the shell looks up', async () => {
   const {
@@ -42,8 +53,15 @@ test('the generated client has every entry the shell looks up', async () => {
   const client = {
     day,
     workplace: WORKPLACE,
-    mentor: { name: 'DRAFT mentor', personId: MENTOR_ID, photo: '', photoAlt: '' },
-    taskPages: { [TASK_ID]: Page },
+    mentor: { name: 'Priya Nair', personId: MENTOR_ID, photo: '', photoAlt: '' },
+    taskPages: {
+      setup: Page,
+      welcome: Page,
+      filling: Page,
+      reset: Page,
+      change: Page,
+      close: Page,
+    },
     taskDeviceAdvice: TASK_DEVICE_ADVICE,
     briefingVideos: BRIEFING_VIDEOS,
     mainBriefingVideo: 'main',
