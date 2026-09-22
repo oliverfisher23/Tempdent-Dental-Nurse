@@ -25,6 +25,10 @@ description: Lessons from driving the try-day app headlessly (CDP/Playwright) fo
   style tag first: `pointer-events: none` swallows even forced clicks.
 - playwright-core is not a workspace dependency; install it in a scratch dir and pass a Page into the
   `e2e/*-verification.mjs` modules, which is why they take a Page rather than launching a browser.
+- A Playwright package can be present while its managed browser cache is empty. Use the Replit system
+  Chromium executable at `/repl/tools/bin/chromium` via `executablePath` for scratch-copy checks instead of
+  downloading another browser. **Why:** isolated `/tmp` proofs should not mutate dependencies or rely on a
+  package cache that may not contain Playwright's exact browser revision.
 - Kitchen modals and close-ups animate out for a few hundred ms. `isVisible()` straight after Escape or a
   close click still says true, and a click on the closing button dies with "element detached". Assert with
   `waitFor({ state: 'hidden' })` instead, or a QA script logs "Escape does not close X" as a false bug.
