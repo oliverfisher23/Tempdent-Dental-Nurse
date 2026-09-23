@@ -1,0 +1,1917 @@
+<!doctype html><html lang="en-GB"><head><meta charset="utf-8"><title>Tempdent Try Day — Storyboard V2 (interaction redesign)</title><style>body{font:15px/1.5 -apple-system,Segoe UI,Helvetica,Arial,sans-serif;color:#1d232a;max-width:1100px;margin:32px auto;padding:0 24px}h1{font-size:26px;margin-top:0}h2{font-size:21px;margin-top:40px;border-bottom:2px solid #d8dee4;padding-bottom:6px}h3{font-size:17px;margin-top:26px}table{border-collapse:collapse;width:100%;margin:12px 0;font-size:13.5px}th,td{border:1px solid #cfd6dd;padding:6px 8px;vertical-align:top;text-align:left}th{background:#eef2f5}blockquote{border-left:4px solid #0f766e;margin:0;padding:4px 16px;background:#f2faf8;color:#1d232a}code{background:#f1f3f5;padding:1px 4px;border-radius:3px}strong{color:#0b3b36}hr{border:0;border-top:1px solid #d8dee4;margin:32px 0}@media print{body{max-width:none;font-size:12px}h2{page-break-before:always}h2:first-of-type{page-break-before:auto}}</style></head><body><h1>Client Try Day — Experience Storyboard V2: Tempdent · Apprentice Dental Nurse</h1>
+<h2>Interaction redesign for sign-off</h2>
+<blockquote>
+<p><strong>About this draft (V2, 23 September 2026).</strong> V1 (22 September 2026) was signed off for its content: the shift, the people, the six tasks, the facts inside them, the decisions, the feedback and the completion criteria. V2 does not reopen that content. It changes <strong>how the learner does each task</strong>. A learning-design review of the V1 build found that the day asks the learner to do three things forty-nine times: pick a sentence (28 times), tick the right items (11) or tap steps in the right order (8), each followed by the same verdict panel and a &quot;Carry on&quot; button. The rooms are photographs behind the work rather than places the work happens in. V2 replaces that single loop with mechanics that fit each task's real skill, cuts the number of verdict panels from 49 to 6, and makes the room, the patient and the clock react to what the learner does.</p>
+<p>Everything in V1 that is not mentioned here stands as signed off: Sections 1–7 (purpose, employer, tone, shift, people, map), every task's Sections B (learning purpose), C (materials) and J (accuracy), all approved facts and wording, and all <strong>TBC</strong> flags for the Tempdent SME. Where V2 changes a task, this document restates Sections D–H in full so that each task can be read on its own. Where a V2 mechanic needs a clinical answer that V1 did not need, it is listed under the task's <strong>K. Questions for Tempdent</strong>, and again in the sign-off list at the end.</p>
+<p>Nothing in V2 has been built. Building starts on written sign-off of this document, in the phases set out in Part 3.</p>
+</blockquote>
+<hr>
+<h2>Part 1 — What changes and why</h2>
+<h3>1.1 What the V1 build feels like to play</h3>
+<table>
+<thead>
+<tr>
+<th>Measure</th>
+<th>V1 build</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Decisions across the six tasks</td>
+<td>49</td>
+</tr>
+<tr>
+<td>Distinct things the learner does</td>
+<td>3 (pick a sentence, tick items, tap steps in order)</td>
+</tr>
+<tr>
+<td>Taps to complete the day with no mistakes</td>
+<td>131 actions + 49 &quot;Carry on&quot; = about 180</td>
+</tr>
+<tr>
+<td>Verdict panels (mentor text after a decision)</td>
+<td>49, one per decision, right or wrong</td>
+</tr>
+<tr>
+<td>Moments where the room, the patient or a colleague visibly reacts</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Moments where a decision made earlier in the day matters later</td>
+<td>0</td>
+</tr>
+<tr>
+<td>Changes of tempo</td>
+<td>0 (every decision is untimed and self-paced)</td>
+</tr>
+</tbody>
+</table>
+<p>The learner reads the prompt, taps, reads Priya's verdict, taps &quot;Carry on&quot;, 49 times. The photographs of Surgery 2, the decontamination room and reception do not change when the learner wipes, loads, settles or resets. Amira and Graham exist only as lines of text. Dr Reid never reacts except through a verdict. The clock in the header never presses on anyone. The result reads as a well-dressed quiz, and the two tasks that carry Tempdent's strongest message (that this is a patient-facing, people-first role) are the most quiz-like: 14 of the 16 decisions in Tasks 2 and 6 are multiple choice.</p>
+<p>Specific problems the redesign answers:</p>
+<ul>
+<li><strong>Long sequences become labour.</strong> Wipe (7 taps), tray (10), reset (10): the learner has shown the principle by the third tap; the rest is data entry.</li>
+<li><strong>Asserted steps.</strong> &quot;Uniform, hair, handwash, PPE, gloves&quot; is five taps to say &quot;yes, I know&quot;.</li>
+<li><strong>Right answers cost a panel and a tap.</strong> About 30 of the 131 taps dismiss praise.</li>
+<li><strong>The role's signature skill is absent.</strong> Four-handed dentistry is anticipation and rhythm. Task 3 asks the learner to tap four items in order from a list.</li>
+<li><strong>Watching the patient is told, not practised.</strong> V1 says &quot;watching the patient is the job&quot; four times; the learner never has to notice anything that the prompt has not already announced.</li>
+</ul>
+<h3>1.2 Six shared changes (apply to every task)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Change</th>
+<th>What the learner experiences</th>
+<th>What it replaces</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1</td>
+<td><strong>The room answers first.</strong> A right action is confirmed by the world: the surface comes up clean, the light comes on, Amira's shoulders drop, Dr Reid nods, the autoclave display reads the cycle. A short sound marks it. There is no text panel and no &quot;Carry on&quot;. A wrong action still gets Priya's one-line reason immediately, kindly, with a retry (V1 rule, unchanged). Each scene ends with one short <strong>debrief</strong> from Priya or Dr Reid (two or three lines: one thing done well, one to watch). A &quot;Why did that work?&quot; link under any completed step opens the V1 &quot;right&quot; feedback for learners who want it.</td>
+<td>49 verdict panels → 6 debriefs plus wrong-only asides</td>
+<td></td>
+</tr>
+<tr>
+<td>S2</td>
+<td><strong>One gesture for a routine.</strong> Ordered routines of five or more steps are done as one continuous action: a wipe path dragged across the surfaces, instruments lifted onto the tray in one sweep, a flush held down. The routine is judged once at the end, as V1 already does for sequences. Keyboard and switch users step through the same routine with Tab and Enter; nothing is lost.</td>
+<td>Tap-one-at-a-time sequences of 7–10 cards</td>
+<td></td>
+</tr>
+<tr>
+<td>S3</td>
+<td><strong>The notebook writes itself.</strong> Things the learner notices or decides go into the notebook automatically as time-stamped &quot;Noticed&quot; entries: the expired glucagon, the broken seal, Amira's signal, the two delivery items flagged, Graham's minute outside. The learner can add a one-line note of their own at any time (never assessed). Task 6's handover is written <em>from</em> this notebook.</td>
+<td>A notebook that holds reference cards only</td>
+<td></td>
+</tr>
+<tr>
+<td>S4</td>
+<td><strong>The day remembers.</strong> Three light-touch consequences, all recoverable: the tray built in Task 1 is the tray passed from in Task 3 (a missing matrix band means Dr Reid waits while the learner fetches one); the broken-seal pouch set aside in Task 1 is on the dirty side in Task 5 (&quot;that's yours from this morning&quot;); the glucagon and the delivery reappear as handover lines in Task 6 only if the learner's notebook holds them.</td>
+<td>Six tasks that do not know about each other</td>
+<td></td>
+</tr>
+<tr>
+<td>S5</td>
+<td><strong>Two tempos.</strong> One paced segment (Task 3, &quot;four hands&quot;, about 90 seconds) and one clock segment (Task 4, the turnaround with the 09:40 waiting). Everything else stays untimed. Both have an <strong>&quot;at your pace&quot;</strong> setting, on by default for keyboard, switch and screen-reader users and available to everyone from the sound/settings control: Dr Reid waits for the learner and the waiting-time clock pauses. Speed never changes what is judged; the debrief lines simply describe what happened.</td>
+<td>A day with no tempo, apart from two &quot;time-limited&quot; choices</td>
+<td></td>
+</tr>
+<tr>
+<td>S6</td>
+<td><strong>Look before you act.</strong> Each task opens with twenty to thirty seconds of looking before the first action: the surgery as last night left it, Amira in the waiting room, the corridor with the box in it. &quot;Read the room, watch the patient&quot; becomes something the learner does, not something Priya says.</td>
+<td>Tasks that open on the first prompt</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>1.3 How V2 keeps V1's rules</h3>
+<ul>
+<li><strong>One source of truth.</strong> Every decision still has a defined acceptable answer in the content, and the evaluation of that answer is what the scene shows. A patient's reaction, a nod or a surface coming up clean is the <em>presentation</em> of the content's right/wrong outcome, authored per option in the content. Scenes never judge on their own.</li>
+<li><strong>No self-attested completion.</strong> Nothing is completed by ticking &quot;done&quot;; every completion clause is evidenced by an action the experience recorded.</li>
+<li><strong>No hints about order.</strong> Gesture routines never show the expected order; they judge the order the learner chose. Pin labels name places and actions, not steps.</li>
+<li><strong>Teach as well as test.</strong> Every item still explains itself when tapped; &quot;ask Priya&quot; is always available; the first mistake still costs nothing visible.</li>
+<li><strong>Within an apprentice's role.</strong> No mechanic asks the learner to make a clinical decision. The paced segment passes items Dr Reid names; the learner never chooses treatment. Local anaesthetic stays in the clinician's hands.</li>
+<li><strong>Accessibility.</strong> Every drag has a tap-lift/tap-place alternative (already built); every paced element has &quot;at your pace&quot;; every sound has a caption; states of a person are described in text for screen readers (&quot;Amira is holding the armrests&quot;).</li>
+</ul>
+<h3>1.4 The redesign in one table</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>V1</th>
+<th>V2</th>
+<th>Verbs the learner uses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1 Set up</td>
+<td>9 decisions, 32 taps: order cards, tap 7 surfaces, choose, tick kit, tick 10 tray items</td>
+<td>8 decisions, about 24 actions: spot what's wrong with you in the mirror, hold the handwash, find four things wrong in the room, wipe in one path, hold the flush, read five labels and decide about one, build the tray and set the bad pouch aside</td>
+<td>spot, notice, sweep, hold, read, decide, place</td>
+</tr>
+<tr>
+<td>2 Welcome Amira</td>
+<td>7 decisions, all multiple choice or card order</td>
+<td>7 moments, one conversation: Amira and Karim visibly react to every line; the chair, bib and glasses are real controls; the light moment is the test of watching</td>
+<td>greet, settle, watch, pause, record, answer, pass on</td>
+</tr>
+<tr>
+<td>3 Support the filling</td>
+<td>7 decisions: 5 multiple choice, an ordered list, a tick list</td>
+<td>7 decisions, four of them inside a 90-second paced segment: position the suction live, pass what Dr Reid needs before she asks, speak up when Amira's hand lifts</td>
+<td>position, anticipate, pass, speak up, wait</td>
+</tr>
+<tr>
+<td>4 Notes, aftercare, reset</td>
+<td>8 decisions: order cards, tick, choose, order 10 cards</td>
+<td>9 decisions, one clock: bring Amira up slowly, stick the batch labels, answer Karim's three questions, tell Sam how long, reset the room against the clock with the safety rules judged at the door</td>
+<td>settle, stick, record, explain, hand over, prioritise, reset</td>
+</tr>
+<tr>
+<td>5 The morning changes</td>
+<td>9 decisions: tick, choose, order 4 cards, choose, tick</td>
+<td>8 decisions, one plan board: sort six instruments three ways, load the autoclave, plan the morning on a board with an &quot;Ask&quot; column, flag the two items in the delivery, read the cycle printout</td>
+<td>sort, load, plan, ask, message, flag, read, label</td>
+</tr>
+<tr>
+<td>6 Graham and close-down</td>
+<td>9 decisions: 7 multiple choice, order cards, tick</td>
+<td>8 decisions: where you sit is one of them, Graham reacts to every line, the same &quot;Speak up&quot; control as Task 3 when his breathing changes, the handover is written from your own notebook</td>
+<td>approach, offer, hold back, speak up, record, close, hand over</td>
+</tr>
+</tbody>
+</table>
+<p>Decisions barely fall (49 to 47); the change is in the verbs (3 → 15), the verdict panels (49 → 6) and the number of moments where something other than a text panel answers the learner (0 → every decision).</p>
+<hr>
+<h2>Part 2 — Task storyboards (V2)</h2>
+<p>Each task restates Sections D–H in full. Sections A, B, C, I and J are as V1 unless a change is listed. &quot;Kept&quot; means the V1 decision and its feedback are unchanged; &quot;changed&quot; means the same decision in a new form; &quot;new&quot; and &quot;merged&quot; are marked.</p>
+<hr>
+<h2>Task 1: Set up the surgery for the morning</h2>
+<h3>A. Story setup — changes only</h3>
+<ul>
+<li><strong>Situation (addition):</strong> The learner walks into Surgery 2 before Priya says anything. The room is as last night's close-down left it: the light still positioned over the chair and switched on, a used rinse cup on the delivery unit, the sharps container lid open, the clinical waste bin overfull. Priya's introduction follows the learner's first look round.</li>
+<li><strong>Learner's job (V2 wording):</strong> Get yourself ready, notice what is wrong with the room before you touch it, then get Surgery 2 clean, working, safe and stocked for the morning: wipe it in the right order, flush the water lines, check the emergency equipment and drugs, and build the tray for Amira's filling. Initial the check sheets as you go.</li>
+</ul>
+<h3>D. Learner steps</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Step</th>
+<th>What the learner needs to do</th>
+<th>Information they use</th>
+<th>Interaction (V2)</th>
+<th>Correct/acceptable outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td><strong>Mirror check.</strong> Get yourself ready at the PPE station. Something about you is not right for the surgery.</td>
+<td>The mirror above the sink; Priya's one line: &quot;Have a look at yourself first.&quot;</td>
+<td>A close-up of the learner's reflection (uniform, hands, hair, badge; no face needed — shoulders down). One thing is wrong, drawn at random from three: a watch on the wrist, hair down over the collar, a ring. Tap what is wrong; it is put right in the mirror.</td>
+<td>The item is found and put right. A wrong tap (&quot;the badge&quot;) gets Priya's one-line reason and another go.</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td><strong>Handwash, then PPE.</strong> Wash your hands the 12-step way, then put on your PPE.</td>
+<td>12-step poster; PPE station</td>
+<td>Press and hold the tap: the poster's twelve steps light up one by one while the learner holds (about eight seconds, compressed). The PPE goes on in one tap-through with gloves last, shown, not tested. If the learner reaches for the gloves box before the tap, Priya's V1 line plays and the gloves box stays shut.</td>
+<td>Handwash held to the end, then PPE. Letting go early restarts the count with &quot;all twelve — start again.&quot;</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td><strong>Walk-in inspection.</strong> Look round the room before you touch anything. Four things are not right.</td>
+<td>The surgery as last night left it; the surgery check sheet on its clipboard</td>
+<td>Free look round the photograph (pan). Tap anything that is not right. Four are there: light on over the chair, used cup on the delivery unit, sharps container lid open, waste bin overfull. Each tap fixes it in the picture (light off and parked, cup binned, lid closed, bin bagged) and the matching check-sheet line initials itself. A tap on something that is fine gets a neutral &quot;That's as it should be&quot; with no penalty. A counter shows &quot;4 to find&quot; so the learner knows when they have finished looking.</td>
+<td>All four found. If the learner tries to start wiping with things still wrong, Priya: &quot;Before you wipe: what's still not right in here?&quot;</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td><strong>Wipe the surgery.</strong> Wipe the chair and then the hard surfaces in the right order.</td>
+<td>Priya's explanation of the order; the surgery</td>
+<td>One continuous gesture: touch the surface you start on and drag a path across the seven surfaces (headrest and top of the chair, light and handles, delivery unit and handpiece holders, aspirator hoses, spittoon, work surfaces and equipment, cupboard and door handles). Each surface the path crosses comes up visibly clean with a short glow for the contact time. Judged once when the learner lifts off.</td>
+<td>Chair from its highest point down, spittoon last on the chair, hard surfaces after the chair. A wrong path gets Priya's V1 line and the surfaces reset for another go.</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td><strong>Flush the water lines.</strong> First flush of the day.</td>
+<td>Priya: &quot;This is the first flush of the day.&quot;</td>
+<td>Choose 20–30 seconds / 2 minutes / 5 minutes, then hold the flush button. Water runs (sound), the header clock advances in compressed time, the check-sheet line fills.</td>
+<td>2 minutes. 20–30 seconds gets the V1 line (that is the between-patients flush).</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td><strong>Emergency equipment.</strong> Open the box, read every label, check the oxygen and the AED, and deal with what you find.</td>
+<td>Medical emergency equipment check sheet; the drugs box; oxygen gauge; AED indicator</td>
+<td>Close-up of the open box (built). Each item zooms when tapped and its check-sheet line initials itself once it has been read; nothing can be ticked without being opened. The glucagon reads last month. When the sheet is complete, the decision: <strong>tell Priya now / tick it and move on / swap it from the stock room.</strong></td>
+<td>Glucagon flagged on the sheet and reported before continuing. The other two get the V1 feedback. The report goes into the notebook as &quot;Noticed 08:31: glucagon out of date, told Priya.&quot;</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td><strong>Fresh hands, then the tray.</strong> Read the day list, wash and glove again, then build the tray for the 09:00 composite filling from the laminated card, checking every pouch.</td>
+<td>Day list; tray set-up card; instrument cupboard</td>
+<td>The sink is the way to the cupboard: opening the cupboard before a fresh handwash gets Priya's line and the cupboard stays shut (this replaces V1's &quot;before you open the cupboard, what do you do?&quot; question). Tray building is the existing tap-lift, tap-place (drag on pointer). Every item explains itself on a long press. One examination set has a broken seal, visible when the pouch is turned over (a second tap): the tray has a second drop zone, <strong>&quot;Back to decon&quot;</strong>. The extraction forceps stay as the distractor.</td>
+<td>Tray matches the card; forceps left in the cupboard; the broken-seal pouch is in the decon zone, not on the tray (replaces V1's multiple-choice &quot;what do you do with the pouch&quot;). The notebook records &quot;Noticed 08:47: pouch with broken seal set aside.&quot;</td>
+</tr>
+<tr>
+<td style="text-align:right">8</td>
+<td><strong>Initial the sheets.</strong></td>
+<td>Both check sheets</td>
+<td>Type your initials once; they are stamped on every line you completed.</td>
+<td>Initials present on both sheets. (Replaces V1's multiple-choice &quot;how do you record it&quot;.)</td>
+</tr>
+</tbody>
+</table>
+<h3>E. Decisions and feedback</h3>
+<table>
+<thead>
+<tr>
+<th>Decision or question</th>
+<th>Status</th>
+<th>Acceptable answer(s)</th>
+<th>Common plausible mistake</th>
+<th>Feedback after mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What is wrong with you in the mirror?</td>
+<td>New</td>
+<td>The randomised item (watch / hair / ring)</td>
+<td>Tapping the badge or the tunic</td>
+<td>&quot;Badge is fine. Look at your hands and your collar. Anything that can carry what you touched on the bus into a patient's mouth comes off or goes up.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>Handwash or PPE first?</td>
+<td>Kept (V1 form: order cards)</td>
+<td>Handwash, held to the twelfth step, then PPE, gloves last</td>
+<td>Reaching for the gloves first; letting go of the tap early</td>
+<td>V1 line unchanged; early release: &quot;All twelve. It takes as long as it takes — start again.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>What is not right in the room?</td>
+<td>New</td>
+<td>Light on, cup on the unit, sharps lid open, bin overfull</td>
+<td>Starting to wipe with items still wrong</td>
+<td>&quot;Before you wipe: what's still not right in here? Look at the unit.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>Where do you start wiping, and where do you finish?</td>
+<td>Changed (one path instead of seven taps)</td>
+<td>Chair from the top, spittoon last on the chair, then hard surfaces</td>
+<td>Spittoon first; surfaces before the chair</td>
+<td>V1 line unchanged</td>
+</tr>
+<tr>
+<td>How long is the first flush?</td>
+<td>Kept</td>
+<td>2 minutes</td>
+<td>20–30 seconds</td>
+<td>V1 line unchanged</td>
+</tr>
+<tr>
+<td>The glucagon is out of date: what do you do?</td>
+<td>Kept</td>
+<td>Flag and tell Priya now</td>
+<td>Tick and move on; swap it yourself</td>
+<td>V1 line unchanged</td>
+</tr>
+<tr>
+<td>Fresh handwash before the cupboard</td>
+<td>Changed (world rule instead of a question)</td>
+<td>Wash and glove, then open</td>
+<td>Opening the cupboard in the gloves you wiped in</td>
+<td>&quot;Those gloves have just done the spittoon. Fresh hands before anything goes near a tray.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>What goes on the tray, and what happens to the broken-seal pouch?</td>
+<td>Merged (V1 tray + V1 pouch question)</td>
+<td>Tray matches the card; pouch to &quot;Back to decon&quot;</td>
+<td>Pouch on the tray; forceps on the tray; matrix band left off</td>
+<td>V1 lines unchanged; the matrix band's &quot;tap to learn&quot; text unchanged</td>
+</tr>
+</tbody>
+</table>
+<h3>F. Completion criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Done-when clause</th>
+<th>Evidence saved by the experience</th>
+<th>Can the learner revise it before sign-off?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The learner is correctly presented (mirror item put right), has completed the held handwash and put on PPE before entering, and has washed and gloved again before opening the instrument cupboard</td>
+<td>Mirror fix, handwash hold completed twice, cupboard-open timestamp after the second hold</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>All four walk-in faults are found and fixed before the wipe begins</td>
+<td>Fault log</td>
+<td>No (once fixed they stay fixed)</td>
+</tr>
+<tr>
+<td>The wipe path runs chair-top to spittoon, then hard surfaces, and the 2-minute flush has been held to the end</td>
+<td>Wipe path and flush duration</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Every emergency item has been read, the glucagon is flagged and reported to Priya, and both sheets carry the learner's initials</td>
+<td>Sheet state, report event, initials</td>
+<td>No (once reported it stays reported)</td>
+</tr>
+<tr>
+<td>The tray matches the card and the broken-seal pouch is in the &quot;Back to decon&quot; zone</td>
+<td>Tray state</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<h3>G. Complication or change</h3>
+<p>As V1 (the expired glucagon, triggered by reading the labels in Step 6; Priya's recovery line if the learner ticks and moves on). Addition: the walk-in faults in Step 3 are the task's opening &quot;look before you act&quot; moment (S6) rather than a complication.</p>
+<h3>H. Dialogue — additions to V1</h3>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Speaker</th>
+<th>Line (all <strong>TBC</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>First look round</td>
+<td>Priya</td>
+<td>&quot;Don't touch anything yet. Have a look round first — last night's close-down was in a hurry. What isn't right?&quot;</td>
+</tr>
+<tr>
+<td>Mirror check</td>
+<td>Priya</td>
+<td>&quot;Have a look at yourself first. Anything you'd not want in a patient's mouth?&quot;</td>
+</tr>
+<tr>
+<td>After the wipe path</td>
+<td>Priya (debrief, if right)</td>
+<td>&quot;Top to bottom, spittoon last, surfaces after. That's the habit — you'll do it forty times a week.&quot;</td>
+</tr>
+<tr>
+<td>Broken seal set aside</td>
+<td>Priya</td>
+<td>&quot;Good. That one goes back through decon — you'll probably meet it again later.&quot;</td>
+</tr>
+<tr>
+<td>Task debrief</td>
+<td>Priya</td>
+<td>&quot;Four things spotted before you touched a wipe, sheets initialled, tray matches the card, and you caught that date. That's a proper set-up. Dr Reid's in at ten to nine.&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3>I. Media — additions</h3>
+<ul>
+<li>Surgery 2 &quot;as left last night&quot; variant of the existing surgery photograph (light on and positioned over the chair, cup on the unit, sharps lid open, bin overfull), plus the four &quot;fixed&quot; overlays. Placeholder until Tempdent photography.</li>
+<li>Mirror close-up (learner's shoulders and hands only; three variants: watch, hair down, ring; and the corrected state).</li>
+<li>Surface &quot;dull → clean&quot; overlays for the seven wipe surfaces (can be built as image masks over the existing photograph).</li>
+<li>Sounds: tap running, wipe pass, flush, box lid, pouch turn (generated, no talent needed).</li>
+</ul>
+<h3>K. Questions for Tempdent</h3>
+<ol>
+<li>Is a randomised presentation fault (watch / hair / ring) acceptable, and are these the three the SME would choose? (Nails and lanyards are alternatives.)</li>
+<li>Are the four walk-in faults realistic for a surgery after a rushed close-down, and is &quot;sharps lid open&quot; acceptable to show?</li>
+<li>The handwash is compressed to about eight seconds on screen. Is showing the twelve steps lighting in sequence acceptable without teaching each step?</li>
+</ol>
+<hr>
+<h2>Task 2: Welcome Amira and her dad</h2>
+<h3>The mechanic: a person who reacts</h3>
+<p>Amira has a visible state throughout the task: <strong>braced</strong> (small in the chair, holding the armrests or her dad's sleeve), <strong>wary</strong> (watching, not yet settled) and <strong>settled</strong> (feet swinging, looking at the glasses). Karim has two: <strong>worried</strong> and <strong>reassured</strong>. Every line the learner chooses moves one or both of them, and that movement is the feedback. A poor line gets Priya's quiet aside immediately (V1 feedback, unchanged) and a retry; a good line gets nothing but the change in Amira. The scene's goal is stated once and shown in the rail: <strong>&quot;Amira is in the chair, bib and glasses on, and settled, before Dr Reid comes in.&quot;</strong> Priya's debrief comes at the end of the scene, not after each line.</p>
+<p>Screen readers hear the state as text (&quot;Amira is holding the armrests and looking at the floor&quot;). The three states are three stills per location (waiting room chair; dental chair), not animation.</p>
+<h3>A. Story setup — changes only</h3>
+<ul>
+<li><strong>Situation (addition):</strong> The learner sees Amira and Karim in the waiting room for a few seconds before Sam speaks: Amira braced on the chair edge, Karim's hand on her back, a room with three other patients in it.</li>
+</ul>
+<h3>D. Learner steps</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Step</th>
+<th>What the learner needs to do</th>
+<th>Information they use</th>
+<th>Interaction (V2)</th>
+<th>Correct/acceptable outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td><strong>Collect Amira and her dad.</strong> Choose how you greet them.</td>
+<td>The waiting room; the &quot;please tell us if you are anxious&quot; sign</td>
+<td>Four greetings (V1). The room reacts: announcing the treatment across the room makes the other patients look up and Amira shrink; the good greeting brings her eyes up to you.</td>
+<td>V1 acceptable answer. Amira moves braced → wary.</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td><strong>Settle Amira in.</strong> Get her coat off, into the chair, bib and glasses on, with dad where she can see him.</td>
+<td>The surgery; the glasses rack; the chair controls</td>
+<td>Real controls on the photograph rather than sequence cards: the coat hook, the chair (invites her to sit), the chair controls, the bib, the glasses rack, the dad's stool. Order is free except two rules judged in the world: touching the chair controls before you have explained them makes Amira grab the armrests (Priya's aside); the glasses rack lets <em>her</em> choose the colour (she picks, the learner does not).</td>
+<td>Coat hung, Amira seated, controls explained before the chair moves, bib on, glasses chosen by Amira, Karim on the stool in her eyeline. Amira wary → settled if all rules held.</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td><strong>The light comes on.</strong> Dr Reid comes in and the light swings over. Amira's eyes fill and she grips the armrests.</td>
+<td>Amira's state</td>
+<td>The V1 pause decision, presented as what you do next: pause, crouch to her level, give her something to control / put the bib on and keep going / tell her it's fine. Amira's state and Karim's face answer the choice; Priya steps in as V1 if the learner pushes on.</td>
+<td>V1 acceptable answer. Amira back to settled; Dr Reid's line: &quot;Take your time, Amira.&quot;</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td><strong>Medical history.</strong> Record what dad says while Dr Reid asks the questions.</td>
+<td>Notes close-up (built); Karim's three lines</td>
+<td>Kept: tick what to record on the notes page. Karim's three lines are heard/captioned, not printed as a list.</td>
+<td>V1 acceptable answer (antibiotics recorded; inhaler noted; &quot;didn't sleep&quot; not recorded as medical).</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td><strong>The antibiotics.</strong> What do you do about them?</td>
+<td>The notes</td>
+<td>Kept (three options). If the learner &quot;says it aloud to Dr Reid&quot;, Dr Reid answers on screen (&quot;Finished last week? That's fine — thank you&quot;), which is the confirmation.</td>
+<td>V1 acceptable answer.</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td><strong>&quot;Is it going to hurt?&quot;</strong> Amira asks quietly.</td>
+<td>Amira's state</td>
+<td>Kept (four options). A pain promise briefly settles Amira and makes Karim look at you; the honest line with the stop signal settles them both. Naming the signal writes &quot;Agreed the hand-up signal with Amira&quot; into the notebook (S3; used in Task 3).</td>
+<td>V1 acceptable answer.</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td><strong>&quot;Can she have the white filling?&quot;</strong> Karim asks.</td>
+<td>Which questions are the dentist's</td>
+<td>Kept (options as V1). Passing it warmly brings Dr Reid's answer on screen; guessing or brushing him off moves Karim to worried.</td>
+<td>V1 acceptable answer.</td>
+</tr>
+</tbody>
+</table>
+<h3>E. Decisions and feedback</h3>
+<table>
+<thead>
+<tr>
+<th>Decision or question</th>
+<th>Status</th>
+<th>Acceptable answer(s)</th>
+<th>Common plausible mistake</th>
+<th>Feedback after mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>How do you greet them?</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines; plus the room's reaction</td>
+</tr>
+<tr>
+<td>Explain before the chair moves; let Amira choose the glasses</td>
+<td>Changed (world rules instead of card order)</td>
+<td>Controls explained first; Amira picks</td>
+<td>Reclining without a word; picking the glasses for her</td>
+<td>&quot;Tell her before it moves — a chair that tilts on its own is frightening at ten. And the glasses are hers to pick; it's the one thing in here she gets to decide.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>Amira's eyes fill when the light comes on</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>What do you record from the medical history?</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>What do you do about the antibiotics?</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>&quot;Is it going to hurt?&quot;</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>&quot;Can she have the white filling?&quot;</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+</tbody>
+</table>
+<h3>F. Completion criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Done-when clause</th>
+<th>Evidence saved by the experience</th>
+<th>Can the learner revise it before sign-off?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amira greeted by name without the treatment announced across the room</td>
+<td>Greeting choice</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Amira seated with bib and glasses on, controls explained before the chair moved, glasses chosen by Amira, Karim in her eyeline</td>
+<td>Room state and event order</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The learner paused when Amira's eyes filled (or Priya's step-in was answered correctly)</td>
+<td>Pause choice</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The notes carry the antibiotics and the inhaler, and the antibiotics were said aloud to Dr Reid</td>
+<td>Notes state</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Both questions answered as V1</td>
+<td>Choices</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Amira's state is &quot;settled&quot; when Dr Reid picks up the mirror</td>
+<td>State log</td>
+<td>Yes (any wrong line can be retried)</td>
+</tr>
+</tbody>
+</table>
+<h3>G. Complication or change</h3>
+<p>As V1: the light comes on, Amira's eyes fill, Priya steps in if the learner pushes on. In V2 the moment is shown (Amira's state changes, Karim looks at the learner) before any prompt appears; the prompt follows only if the learner does nothing for a few seconds or reaches for the bib.</p>
+<h3>H. Dialogue — additions to V1</h3>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Speaker</th>
+<th>Line (all <strong>TBC</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Scene goal, as Amira sits</td>
+<td>Priya (quietly)</td>
+<td>&quot;Before Dr Reid comes in, I want her settled — bib, glasses, dad where she can see him. Take your time.&quot;</td>
+</tr>
+<tr>
+<td>Chair moved without warning</td>
+<td>Priya (aside)</td>
+<td>&quot;Tell her before it moves. Go on.&quot;</td>
+</tr>
+<tr>
+<td>Amira chooses the glasses</td>
+<td>Amira</td>
+<td>&quot;Purple.&quot;</td>
+</tr>
+<tr>
+<td>Passing the white-filling question</td>
+<td>Dr Reid</td>
+<td>&quot;Good question, Mr Hassan — yes, it's a white filling today, I'll show you the shade.&quot;</td>
+</tr>
+<tr>
+<td>Scene debrief</td>
+<td>Priya</td>
+<td>&quot;She walked in holding her dad's sleeve and she's sitting there swinging her feet. That's you. One thing to keep: when her eyes filled, that was the moment — you stop, every time.&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3>I. Media — additions</h3>
+<ul>
+<li>Amira: three stills in the waiting room (braced, wary, settled) and three in the dental chair, plus one with glasses on. Karim: worried and reassured, in both locations. Placeholder AI stills until Tempdent talent; consistent character design across Tasks 2–4.</li>
+<li>Three other waiting-room patients (background, non-identifiable) who &quot;look up&quot; in one variant.</li>
+<li>Sounds: chair motor, bib clip, glasses rack.</li>
+</ul>
+<h3>K. Questions for Tempdent</h3>
+<ol>
+<li>Is showing a ten-year-old's eyes filling acceptable in stills, or should distress be shown only through posture (armrests, sleeve)?</li>
+<li>Does &quot;Amira picks the glasses colour&quot; match what the SME would coach (giving the child a choice), and is &quot;purple&quot; fine as the line?</li>
+<li>Should Dr Reid's on-screen answers to passed questions be shown, or should the learner only see that the question reached her?</li>
+</ol>
+<hr>
+<h2>Task 3: Support the filling</h2>
+<h3>The mechanic: four hands, ninety seconds</h3>
+<p>The centre of the task is a paced segment. Dr Reid works in real time; her requests come as short audio cues with captions (&quot;Etch.&quot; &quot;Bond.&quot; &quot;Composite.&quot; &quot;Band.&quot; &quot;Light.&quot; &quot;Paper.&quot;). The learner has the tray from Task 1 at the bottom of the screen and Amira in the chair. Each request is preceded by a <strong>two-second tell</strong>: Dr Reid's hand opens, or she glances at the tray. Passing the right item during the tell is early (&quot;you were ahead of me&quot;: a nod); passing on the request is fine; passing the wrong item, or nothing, makes Dr Reid look up and wait. The pass itself is a gesture: drag the item to Dr Reid's open hand, below Amira's chin, handle first. A path across Amira's face gets Priya's aside once, then the segment carries on. In the middle of the segment, while the handpiece runs, Amira's hand lifts from the armrest. A <strong>Speak up</strong> control is on screen throughout the segment (and returns in Task 6); pressing it says &quot;Dr Reid — Amira's hand is up&quot; and Dr Reid stops.</p>
+<p>There is no score. At the end, Dr Reid's debrief line depends on how often she had to look up (never / once or twice / more), and the learner may replay the segment. <strong>&quot;At your pace&quot;</strong> makes every cue wait for the learner and removes the tell, so keyboard, switch and screen-reader users play the same segment as a turn-based one. With the tray from Task 1 missing the matrix band, &quot;Band.&quot; is answered by fetching one from the cupboard while Dr Reid waits (S4), and Priya's aside names the cost.</p>
+<h3>A. Story setup — changes only</h3>
+<ul>
+<li><strong>Learner's job (V2 wording):</strong> Keep the field clear, have the next thing ready before Dr Reid asks for it, and be her eyes on Amira. Nothing here is yours to decide; everything here is yours to notice.</li>
+</ul>
+<h3>D. Learner steps</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Step</th>
+<th>What the learner needs to do</th>
+<th>Information they use</th>
+<th>Interaction (V2)</th>
+<th>Correct/acceptable outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td><strong>The local anaesthetic.</strong> Dr Reid reaches for it. Do you pick it up to help?</td>
+<td>Priya's guidance on the clinician's items</td>
+<td>Kept (three options). Right answer: Dr Reid picks it up herself; the learner's hands stay on the suction and the tray.</td>
+<td>V1 acceptable answer (no).</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td><strong>Position the suction.</strong> Dr Reid starts to remove the decay.</td>
+<td>The field close-up; Priya's tip</td>
+<td>Live: drag the suction tip on a close-up of the field (near the tooth / across the mirror / at the front of the mouth). Where it sits wrong, spray and water visibly pool; where it sits right, the field clears and Dr Reid says &quot;That's it.&quot; Judged when she says so.</td>
+<td>V1 acceptable answer: near the tooth, clearing spray, cheek held clear, mirror unobstructed.</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td><strong>Four hands (paced segment).</strong> Have the next item ready before she asks: etchant, bonding agent, composite, matrix band, curing light with its sleeve and the orange shield, articulating paper.</td>
+<td>The &quot;what happens in a filling&quot; strip (readable before the segment starts); tray labels; the tells</td>
+<td>As described above. Six passes, one interruption (Step 4), one two-part pass (Step 5).</td>
+<td>All six items passed in the order asked; hand-signal answered; light passed sleeved with the shield in hand.</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td><strong>Amira's hand lifts</strong> while the handpiece is running (inside the segment).</td>
+<td>Amira's hand and face</td>
+<td>Press <strong>Speak up</strong> before Dr Reid notices (about three seconds; &quot;at your pace&quot;: before the next cue). Dr Reid stops. Then a choice of what happens next: wait for Dr Reid to check with Amira and restart / tell Amira to keep still / restart the suction yourself.</td>
+<td>Speak up pressed; V1 acceptable answer for the restart. If missed, Dr Reid sees it herself and says her V1 line; the moment goes into the notebook as a learning point.</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td><strong>&quot;Light.&quot;</strong> Pass the curing light and protect everyone's eyes (inside the segment).</td>
+<td>Tray</td>
+<td>Two-part pass: the light (only the sleeved one is on the tray; the unsleeved one is a distractor in the drawer) and then the orange shield, which the learner holds up. Missing the shield: Dr Reid pauses with the light in her hand — &quot;Shield?&quot;</td>
+<td>Sleeved light passed; shield up before the light runs.</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td><strong>Debrief.</strong></td>
+<td></td>
+<td>Dr Reid's line by band, then Priya's one line. &quot;Play it again&quot; offered once.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>E. Decisions and feedback</h3>
+<table>
+<thead>
+<tr>
+<th>Decision or question</th>
+<th>Status</th>
+<th>Acceptable answer(s)</th>
+<th>Common plausible mistake</th>
+<th>Feedback after mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Do you pick up the local anaesthetic?</td>
+<td>Kept</td>
+<td>V1 (no)</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>Where do you hold the suction?</td>
+<td>Changed (drag instead of three pictures)</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines, spoken while the water pools</td>
+</tr>
+<tr>
+<td>What does Dr Reid need next? (six passes)</td>
+<td>Changed (paced passes instead of an ordered list)</td>
+<td>Etchant → bonding agent → composite → matrix band → sleeved light with shield → articulating paper (<strong>TBC</strong> SME: V1 has the band before the composite in the tray card and after it in the strip; the SME's order stands)</td>
+<td>Composite before bonding; unsleeved light; forceps</td>
+<td>Item explains itself in one line as it goes back; Dr Reid: &quot;Not yet — bond first.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>How do you pass it?</td>
+<td>Changed (gesture instead of three options)</td>
+<td>Below the chin, handle first, out of Amira's line of sight</td>
+<td>Across Amira's face; putting it on the tray for Dr Reid to pick up</td>
+<td>V1 line, once; after that the pass simply counts as a look-up</td>
+</tr>
+<tr>
+<td>Amira's hand lifts</td>
+<td>Changed (Speak up control instead of a four-option timed choice)</td>
+<td>Speak up at once</td>
+<td>Carrying on; telling Amira to keep still</td>
+<td>V1 Dr Reid line (&quot;I need you to be my eyes on Amira…&quot;)</td>
+</tr>
+<tr>
+<td>What happens after Dr Reid stops?</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>The light</td>
+<td>Changed (two-part pass instead of tick list)</td>
+<td>Sleeved light, shield up</td>
+<td>Unsleeved light; no shield</td>
+<td>V1 lines</td>
+</tr>
+</tbody>
+</table>
+<h3>F. Completion criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Done-when clause</th>
+<th>Evidence saved by the experience</th>
+<th>Can the learner revise it before sign-off?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The local anaesthetic was left to Dr Reid</td>
+<td>Choice</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The suction was positioned where the field cleared</td>
+<td>Final tip position</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>All six items reached Dr Reid in the order she asked, with the light sleeved and the shield up</td>
+<td>Segment log (item, cue, early/on request/late)</td>
+<td>Yes (replay)</td>
+</tr>
+<tr>
+<td>The learner spoke up when Amira's hand lifted, or answered Dr Reid's step-in correctly</td>
+<td>Speak up timestamp</td>
+<td>Yes (replay)</td>
+</tr>
+<tr>
+<td>Dr Reid's restart was left to her</td>
+<td>Choice</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<h3>G. Complication or change</h3>
+<p>As V1 (Amira's hand, the pooled water, Dr Reid's stop and check). Addition (S4): if the matrix band was left off the Task 1 tray, &quot;Band.&quot; cannot be answered from the tray; the learner fetches one from the cupboard, Dr Reid waits, and Priya's aside is: &quot;That's why the tray is built before she sits down. Ten seconds for you, a lifetime for Amira.&quot; (<strong>TBC</strong>)</p>
+<h3>H. Dialogue — additions to V1</h3>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Speaker</th>
+<th>Line (all <strong>TBC</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Before the segment</td>
+<td>Priya</td>
+<td>&quot;From here it's her rhythm, not yours. Watch her hands; the tell comes before the ask. And watch Amira — if her hand goes up, you say so before I do.&quot;</td>
+</tr>
+<tr>
+<td>Early pass</td>
+<td>Dr Reid</td>
+<td>&quot;Ahead of me — good.&quot;</td>
+</tr>
+<tr>
+<td>Wrong item</td>
+<td>Dr Reid</td>
+<td>&quot;Not that one — bond.&quot;</td>
+</tr>
+<tr>
+<td>Debrief, never looked up</td>
+<td>Dr Reid</td>
+<td>&quot;I didn't look up once. That's four-handed dentistry, and you've been here three weeks.&quot;</td>
+</tr>
+<tr>
+<td>Debrief, once or twice</td>
+<td>Dr Reid</td>
+<td>&quot;Twice I had to look up. Next time, watch my hand rather than the tray — it tells you first.&quot;</td>
+</tr>
+<tr>
+<td>Debrief, more</td>
+<td>Dr Reid</td>
+<td>&quot;I had to look up a few times, and that's fine — nobody gets the rhythm in week three. Play it again and watch my hand, not the tray.&quot;</td>
+</tr>
+<tr>
+<td>Priya, after</td>
+<td>Priya</td>
+<td>&quot;You spoke up the second her hand moved. That's the one I'd have wanted.&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3>I. Media — additions</h3>
+<ul>
+<li>Field close-up (mouth, mirror, handpiece, suction) with three water/spray states. Placeholder illustration until clinical photography; SME to approve what is shown.</li>
+<li>Dr Reid's hands: open-hand tell, receiving, working, &quot;looking up&quot; (four stills or short loops). Placeholder.</li>
+<li>Amira in the chair: hand on armrest, hand lifting, reassured (three stills).</li>
+<li>Six cue lines for Dr Reid as audio: placeholder synthetic voice with captions until talent is recorded; captions are the accessible form either way.</li>
+<li>Sounds: handpiece, suction, curing light beep, water.</li>
+</ul>
+<h3>K. Questions for Tempdent</h3>
+<ol>
+<li>Would an apprentice three weeks in pass materials during a filling, or should the segment be framed as &quot;Priya passes, you shadow and call the item&quot; for the first half and &quot;your turn&quot; for the second? (V1's known uncertainty about the apprentice's stage applies most here.)</li>
+<li>Is a paced segment with a two-second tell acceptable for the 14–18 audience, given the &quot;at your pace&quot; setting?</li>
+<li>Should Dr Reid's debrief mention how many times she looked up, or only what to watch next time?</li>
+<li>The exact order of passes in a composite filling (etch, bond, band, composite, light, paper) needs the SME's word; V1 is inconsistent between the tray card and the strip.</li>
+</ol>
+<hr>
+<h2>Task 4: The job isn't finished — notes, aftercare and reset</h2>
+<h3>The mechanic: a turnaround against the clock</h3>
+<p>The second half of the task is the day's clock segment. Sam's message arrives as the reset starts; the header clock runs and a small line under it reads &quot;09:40 has been waiting 10 min&quot; and counts. The room shows everything Amira's appointment left behind. The learner resets it with real controls (S2), not ten ordered cards. The order is judged <strong>at the door</strong>: when the learner opens the door for the next patient, Priya checks the safety rules, and any rule broken sends the learner back to that step with her V1 line. The clock never ends the task and never changes what is judged; it exists so that the learner feels the pull to skip and chooses not to. &quot;At your pace&quot; pauses it.</p>
+<h3>D. Learner steps</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Step</th>
+<th>What the learner needs to do</th>
+<th>Information they use</th>
+<th>Interaction (V2)</th>
+<th>Correct/acceptable outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td><strong>Bring Amira up.</strong> Look after her as the treatment ends.</td>
+<td>Priya's routine; the chair controls</td>
+<td>Real controls: mouthwash cup, the hand mirror (offered; Amira decides), glasses, bib, chair-up. Chair-up is press-and-hold: a quick tap brings her up fast and Priya's aside plays (&quot;Slowly — she's been flat for forty minutes&quot;). Then one thing to say to her (three lines).</td>
+<td>Mouthwash, glasses and bib off, chair held up slowly; the specific praise line (V1). Amira settled → proud (a fourth still).</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td><strong>The batch numbers.</strong> Record the batches from the three packages.</td>
+<td>Three packages (close-up, built); notes page</td>
+<td><strong>Peel and stick:</strong> each package shows its label; the learner drags the batch number (not the product code, not the expiry) onto the matching field on the notes page. A wrong number sticks briefly and lifts off with the V1 explanation.</td>
+<td>Three correct batch numbers in the right fields.</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td><strong>Dr Reid's dictation.</strong> Tick what goes into the notes.</td>
+<td>Dictation (audio with captions); notes page</td>
+<td>Kept: the notes close-up.</td>
+<td>V1 acceptable answer (recall 6 months, hand-signal note, and the rest of the dictation; distractors left out).</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td><strong>Aftercare with Karim.</strong></td>
+<td>Aftercare card</td>
+<td>A short conversation instead of &quot;choose three of six&quot;: Karim asks three things (&quot;Can she eat when we get home?&quot;, &quot;It feels funny, she says — is that normal?&quot;, &quot;What if it hurts tonight?&quot;). Each answer is a choice of two or three lines drawn from the V1 six; Karim's face answers.</td>
+<td>The three approved statements, one per question; the V1 distractors get the V1 feedback.</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td><strong>Reception.</strong> Walk them out and hand Sam the recall.</td>
+<td>Recall slip</td>
+<td>Kept: fill the slip (interval, type, note) and hand it over in one tap; Sam's line confirms.</td>
+<td>V1 acceptable answer.</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td><strong>The sharps.</strong> Back in the surgery: the tray has the used instruments and you cannot see the needle.</td>
+<td>The tray close-up</td>
+<td>Kept (three options), triggered by touching the tray before the sharps are dealt with.</td>
+<td>V1 acceptable answer.</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td><strong>Sam's message.</strong> &quot;09:40 has been waiting 10 mins. How long?&quot;</td>
+<td>The message; the room</td>
+<td>Kept (three options). The clock line starts counting when the message arrives.</td>
+<td>V1 acceptable answer (&quot;Five minutes — resetting now&quot;).</td>
+</tr>
+<tr>
+<td style="text-align:right">8</td>
+<td><strong>The turnaround.</strong> Reset Surgery 2 for the 09:40.</td>
+<td>The room; the reset routine card (readable, not shown as steps)</td>
+<td>Real controls: PPE station (must be first thing touched), transport box (instruments into it, lid closed, box wiped with clean gloves before it leaves through the door), wipe path (same gesture as Task 1, between-patients order), flush (hold; the 20–30 second option), aspirator flush (hold), clinical waste and bib, fresh tray from the cupboard, check sheet initials. When the learner opens the door, Priya checks.</td>
+<td>Every safety rule held: PPE before anything is touched; sharps dealt with before the tray moves; box wiped before it leaves; flush held; aspirator flushed; sheet initialled last. Priya's door check passes and the 09:40 comes through.</td>
+</tr>
+</tbody>
+</table>
+<h3>E. Decisions and feedback</h3>
+<table>
+<thead>
+<tr>
+<th>Decision or question</th>
+<th>Status</th>
+<th>Acceptable answer(s)</th>
+<th>Common plausible mistake</th>
+<th>Feedback after mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>End-of-treatment care</td>
+<td>Changed (controls and a hold instead of card order)</td>
+<td>Held chair-up, glasses and bib off first, mouthwash offered</td>
+<td>Quick chair-up; bib left on</td>
+<td>&quot;Slowly — she's been flat for forty minutes and she's ten.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>What do you say to Amira?</td>
+<td>Kept</td>
+<td>Specific praise (V1)</td>
+<td>&quot;See, that wasn't so bad&quot;</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>Which number is the batch?</td>
+<td>Changed (drag instead of type/tick)</td>
+<td>Batch numbers</td>
+<td>Product code or expiry</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>What goes into the notes from the dictation?</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>Karim's three questions</td>
+<td>Changed (conversation instead of 3-of-6)</td>
+<td>The three approved statements</td>
+<td>The V1 distractors</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>Recall slip</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>The sharps</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>What do you tell Sam?</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>The reset</td>
+<td>Changed (rules judged at the door instead of one order of ten cards)</td>
+<td>See Step 8; <strong>TBC</strong> SME whether only the safety pairs are fixed or the full V1 order is mandatory (question K1)</td>
+<td>Skipping the flush; box out unwiped; sheet before the flush</td>
+<td>V1 door line: &quot;Did the lines get their thirty seconds? Then we're not ready.&quot; Plus per rule: &quot;The box doesn't leave until it's been wiped — clean gloves, then it goes.&quot; (<strong>TBC</strong>)</td>
+</tr>
+</tbody>
+</table>
+<h3>F. Completion criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Done-when clause</th>
+<th>Evidence saved by the experience</th>
+<th>Can the learner revise it before sign-off?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amira brought up slowly with bib and glasses off, and the praise line chosen</td>
+<td>Hold duration, room state, choice</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Three batch numbers stuck in the right fields and the dictation ticked as V1</td>
+<td>Notes state</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Karim's three questions answered with the approved statements</td>
+<td>Choices</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Recall slip completed and handed to Sam</td>
+<td>Slip state</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The sharps question and Sam's message answered as V1</td>
+<td>Choices</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Every reset rule held when the door was opened (PPE first, sharps first, box wiped before leaving, flush held, aspirator flushed, sheet initialled)</td>
+<td>Rule log at the door check</td>
+<td>Yes (Priya sends the learner back to the step)</td>
+</tr>
+</tbody>
+</table>
+<h3>G. Complication or change</h3>
+<p>As V1 (Sam's message, the clock, Priya's door check). Change: the clock is a visible line under the header clock, pauses under &quot;at your pace&quot;, and is never used in judging.</p>
+<h3>H. Dialogue — additions to V1</h3>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Speaker</th>
+<th>Line (all <strong>TBC</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Amira sits up</td>
+<td>Amira</td>
+<td>&quot;Did I do it right? The hand thing?&quot;</td>
+</tr>
+<tr>
+<td>Karim, first question</td>
+<td>Karim</td>
+<td>&quot;Can she eat when we get home?&quot;</td>
+</tr>
+<tr>
+<td>At the door, all rules held</td>
+<td>Priya</td>
+<td>&quot;Box wiped, lines flushed, sheet done — with someone waiting. That's the job on a normal Tuesday. Go and get the 09:40.&quot;</td>
+</tr>
+<tr>
+<td>At the door, a rule broken</td>
+<td>Priya</td>
+<td>&quot;Stop. [rule line]. Late is uncomfortable. A shortcut is something else.&quot;</td>
+</tr>
+<tr>
+<td>Scene debrief</td>
+<td>Priya</td>
+<td>&quot;Notes right, dad knows what to do tonight, room turned round in six minutes without a shortcut. That's the whole appointment, not just the filling.&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3>I. Media — additions</h3>
+<ul>
+<li>Surgery 2 &quot;after Amira&quot; variant: used tray, bib, cup, transport box open; and the &quot;reset&quot; state. Placeholder.</li>
+<li>Amira &quot;proud&quot; still; Karim &quot;relieved&quot; still.</li>
+<li>Package labels exist (built); notes page with sticky fields (built, extended).</li>
+<li>Sounds: chair motor (slow), sticker peel, transport box lid, door.</li>
+</ul>
+<h3>K. Questions for Tempdent</h3>
+<ol>
+<li><strong>Is the full ten-step reset order mandatory, or are the safety pairs the fixed part</strong> (PPE before touching; sharps before the tray moves; box wiped before it leaves; flush before the sheet)? V2 judges the pairs and lets the learner choose the rest of the order. If the SME wants the full order, V2 judges the full order at the door instead.</li>
+<li>Is 20–30 seconds the between-patients flush for the aspirator as well as the water lines, and should both be held separately?</li>
+<li>Karim's three questions are invented to carry the three approved aftercare statements. SME to confirm they are the questions a parent asks.</li>
+</ol>
+<hr>
+<h2>Task 5: The morning changes</h2>
+<h3>The mechanic: a plan you can see</h3>
+<p>Joanne's three changes arrive at once. Instead of ranking four cards and then choosing what to ask help with, the learner lays the morning out on a <strong>plan board</strong>: cards for the jobs (tell Priya and ask what Dr Reid needs; Surgery 2 ready for 10:40; move the box out of the corridor; check the delivery in; pouch the autoclave load within the hour) go into columns <strong>Now / Next / Later / Ask</strong>. Putting a card in &quot;Ask&quot; names who (Joanne, Sam, Priya). The board is judged once, and it stays visible in the notebook for the rest of the task with the cards ticking off as they are done, so the plan is a thing the learner follows, not an answer they gave.</p>
+<h3>D. Learner steps</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Step</th>
+<th>What the learner needs to do</th>
+<th>Information they use</th>
+<th>Interaction (V2)</th>
+<th>Correct/acceptable outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td><strong>Under the lamp.</strong> Decide what happens to each of the six instruments.</td>
+<td>Cycle card; lamp view (built)</td>
+<td>The inspection bench with three zones instead of a tick list and a follow-up question: <strong>Forward to autoclave / Back to cleaning / Set aside</strong>. Look closer (magnify) is kept. On the dirty side, the broken-seal pouch from Task 1 sits in the drop-off box with Priya's line (S4).</td>
+<td>Four forward; the probe with debris back; the bent tweezers set aside. (Merges V1's tick list and &quot;and the other two?&quot; question.)</td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td><strong>Load and start the autoclave.</strong></td>
+<td>Cycle card; the autoclave</td>
+<td>Drag the two trays into the chamber; overlapping trays get Priya's line and slide apart; tap the process indicator; press start; the display begins the cycle; write the log line (initials; date and time are stamped).</td>
+<td>Trays spaced, indicator in, cycle running, log started.</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td><strong>Joanne's board.</strong> Priya has been called away; Joanne arrives with the changes. Plan the morning.</td>
+<td>Joanne's briefing; day list; the corridor</td>
+<td>The plan board.</td>
+<td>Tell Priya in <strong>Now</strong>; Surgery 2 in <strong>Now</strong> or <strong>Next</strong>; move the box in <strong>Next</strong>; check the delivery in <strong>Later</strong>; autoclave load in <strong>Later</strong> (a reminder is set for the hour); at least one card in <strong>Ask</strong> with a name (box or checking-in, to Joanne or Sam). Wrong: Surgery 2 in Later; check-in before the surgery; nothing asked.</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td><strong>Message Priya.</strong></td>
+<td>Message thread</td>
+<td>Kept (three messages) in the phone view.</td>
+<td>V1 acceptable answer.</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td><strong>Surgery 2 for Mr Nowak.</strong> Build the exam tray and bring the drugs box within reach.</td>
+<td>Exam tray guide; the surgery</td>
+<td>Kept: the tray close-up (built). The drugs box is one tap in the room (it moves to the worktop by the chair).</td>
+<td>Exam tray matches the guide; drugs box in reach.</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td><strong>The delivery.</strong> Move the box and flag what needs supervised storage.</td>
+<td>Delivery note (close-up, new)</td>
+<td>Drag the box from the corridor to the stock-room bench (not into the surgery). The delivery note lists five items; the learner flags the two that are not put away unsupervised (local anaesthetic cartridges, disinfectant concentrate). The flags go into the notebook.</td>
+<td>Box in the stock room, corridor clear, two items flagged, nothing put away. (Replaces V1's three-option question.)</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td><strong>Back in decon: the printout.</strong> The cycle finished twenty minutes ago.</td>
+<td>Autoclave printout (close-up, new); cycle card</td>
+<td>Read the printout (cycle type, time at temperature, pressure, &quot;cycle complete&quot;, end time) and decide: pouch and label now / leave it on the rack / run it again.</td>
+<td>Pouch and label now (within the hour). V1 feedback for the other two. <strong>TBC</strong> SME whether an apprentice reads the printout or only checks the indicator (K2).</td>
+</tr>
+<tr>
+<td style="text-align:right">8</td>
+<td><strong>Pouch, label, store.</strong></td>
+<td>Labels close-up (built)</td>
+<td>Write the expiry date and initials on the label (the date field offers three dates; V1 rule), place the pouches in the clean cabinet; the log line completes.</td>
+<td>Labelled with the right expiry and initials; stored; log complete.</td>
+</tr>
+</tbody>
+</table>
+<h3>E. Decisions and feedback</h3>
+<table>
+<thead>
+<tr>
+<th>Decision or question</th>
+<th>Status</th>
+<th>Acceptable answer(s)</th>
+<th>Common plausible mistake</th>
+<th>Feedback after mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>What happens to each instrument?</td>
+<td>Merged (V1 tick + question)</td>
+<td>Four forward, debris back, bent aside</td>
+<td>Debris forward; bent forward</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>Loading the autoclave</td>
+<td>Changed (drag instead of a three-option question)</td>
+<td>Spaced trays, indicator, start, log</td>
+<td>Overlapping trays; no indicator</td>
+<td>V1 line; &quot;Give them room — steam has to reach every surface.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>The plan board</td>
+<td>Merged (V1 rank + ask-for-help)</td>
+<td>As Step 3</td>
+<td>Surgery 2 in Later; nothing in Ask</td>
+<td>V1 lines; &quot;Nothing in Ask? You've got three jobs and one pair of hands. Sam will take the box.&quot; (<strong>TBC</strong>)</td>
+</tr>
+<tr>
+<td>Which message to Priya?</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>Exam tray and drugs box</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>The delivery</td>
+<td>Changed (drag and flag instead of a question)</td>
+<td>Box to the stock room; LA and concentrate flagged</td>
+<td>Box into the surgery; putting the LA away</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>The load, twenty minutes after the cycle</td>
+<td>Changed (read the printout first)</td>
+<td>Pouch now</td>
+<td>Leave it; run it again</td>
+<td>V1 lines</td>
+</tr>
+<tr>
+<td>Label and store</td>
+<td>Kept (built)</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 lines</td>
+</tr>
+</tbody>
+</table>
+<h3>F. Completion criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Done-when clause</th>
+<th>Evidence saved by the experience</th>
+<th>Can the learner revise it before sign-off?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Six instruments sorted as V1</td>
+<td>Bench zones</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Autoclave loaded with spaced trays and the log started</td>
+<td>Chamber state, log</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The plan board has Tell Priya in Now, Surgery 2 before the delivery, the load within the hour, and at least one card in Ask</td>
+<td>Board state</td>
+<td>Yes, until the first job is done</td>
+</tr>
+<tr>
+<td>Message sent as V1</td>
+<td>Choice</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Surgery 2 ready for 10:40 with the drugs box in reach</td>
+<td>Tray and room state</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Box in the stock room with the two items flagged</td>
+<td>Box position, flags</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Printout read and the load pouched, labelled and stored within the hour, log complete</td>
+<td>Close-up opened, label state, log</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<h3>G. Complication or change</h3>
+<p>As V1 (the whole task is the complication; the consequences if the surgery is not ready, the load is left, or the corridor stays blocked). Addition: the plan board's reminder for the load fires at the hour; if the learner is elsewhere, Priya's message: &quot;Your load's at fifty minutes.&quot;</p>
+<h3>H. Dialogue — additions to V1</h3>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Speaker</th>
+<th>Line (all <strong>TBC</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Dirty side, Task 1's pouch</td>
+<td>Priya (note on the box)</td>
+<td>&quot;Your broken-seal set from this morning — goes through with the rest.&quot;</td>
+</tr>
+<tr>
+<td>Board complete</td>
+<td>Joanne</td>
+<td>&quot;Surgery first, box second, Sam's got the checking-in with you later. Good. Go.&quot;</td>
+</tr>
+<tr>
+<td>Printout</td>
+<td>Priya (card by the autoclave)</td>
+<td>&quot;Read the printout before you touch the load: cycle complete, time at temperature, and how long it's been sitting.&quot;</td>
+</tr>
+<tr>
+<td>Scene debrief</td>
+<td>Priya</td>
+<td>&quot;Three things at once, and you told me first, did the surgery, moved the box and came back for the load in time. That's prioritising. The only bit you should never do alone is the checking-in — and you didn't.&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3>I. Media — additions</h3>
+<ul>
+<li>Plan board (UI, no photography). Delivery note and autoclave printout as HTML documents (text is unreliable in generated images). Stock-room bench variant with the box on it.</li>
+<li>Autoclave display states (idle, running, complete). Placeholder.</li>
+<li>Sounds: autoclave door and cycle hum, printer, box slide.</li>
+</ul>
+<h3>K. Questions for Tempdent</h3>
+<ol>
+<li>Are the plan board's columns and the &quot;Ask&quot; rule (at least one job delegated) consistent with how Tempdent wants proactivity framed — asking is right, not a weakness?</li>
+<li>Would an apprentice read the autoclave printout, or only the process indicator and the log? What does the printout show in the practices Tempdent works with?</li>
+<li>Which two delivery items should be flagged for supervised storage (V1 says local anaesthetic and concentrate)?</li>
+</ol>
+<hr>
+<h2>Task 6: Graham's first visit in ten years — and closing the day</h2>
+<h3>The mechanic: a person who reacts, and a handover from your own notebook</h3>
+<p>Graham uses the same state mechanic as Amira: <strong>braced</strong> (coat on, on the edge of the chair, arms folded), <strong>wary</strong> and <strong>steadier</strong>. Where the learner stands is a decision (a position on the photograph), not only what they say. When his breathing changes during the exam, the <strong>Speak up</strong> control from Task 3 is on screen again, so the habit transfers. The day ends with the handover: the learner's notebook (its &quot;Noticed&quot; entries from the whole day and tomorrow's day list) is on the left, the handover sheet on the right, and the learner drags across what the next nurse needs. What goes in the handover is decided by what the learner noticed today.</p>
+<h3>D. Learner steps</h3>
+<table>
+<thead>
+<tr>
+<th style="text-align:right">Step</th>
+<th>What the learner needs to do</th>
+<th>Information they use</th>
+<th>Interaction (V2)</th>
+<th>Correct/acceptable outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right">1</td>
+<td><strong>Look first.</strong> Graham in the waiting room, coat on, on the edge of the chair.</td>
+<td>Patient card (&quot;nurse to collect&quot;, &quot;wants to talk first&quot;)</td>
+<td>Twenty seconds before anything is asked (S6).</td>
+<td></td>
+</tr>
+<tr>
+<td style="text-align:right">2</td>
+<td><strong>Approach.</strong> Where do you go, and what do you say?</td>
+<td>Communication guide: anxious adults</td>
+<td>Tap a position on the photograph: the chair beside him / standing in front of him / the door. Then one of four opening lines (V1). Graham reacts to both: being called from the door keeps him braced; sitting beside him and the V1 line move him to wary.</td>
+<td>V1 acceptable answer.</td>
+</tr>
+<tr>
+<td style="text-align:right">3</td>
+<td><strong>In the surgery: what you offer.</strong></td>
+<td>Guide; &quot;the examination in plain words&quot; card</td>
+<td>Three moments instead of &quot;choose three of six&quot;: Graham says &quot;Do I have to lie back?&quot; (offer: chair upright to start / &quot;you'll be fine lying back&quot;); he goes quiet (offer: agree the stop signal / &quot;it's been a long time!&quot;); he says &quot;I don't even know what she's going to do&quot; (offer: explain the exam in plain words / &quot;you'll probably only need a couple of fillings&quot; / &quot;you've nothing to worry about&quot;). Graham's state answers each.</td>
+<td>The three V1 offers; the minimisers and the clinical guess get the V1 feedback. Graham wary → steadier.</td>
+</tr>
+<tr>
+<td style="text-align:right">4</td>
+<td><strong>&quot;Tell me how bad it is.&quot;</strong></td>
+<td>Guide</td>
+<td>Kept (four options).</td>
+<td>V1 acceptable answer.</td>
+</tr>
+<tr>
+<td style="text-align:right">5</td>
+<td><strong>&quot;I need a minute outside.&quot;</strong> Graham stands.</td>
+<td>Guide</td>
+<td>Kept (three options) but the room shows it: he leaves, the door stays open, the header clock advances three minutes, he comes back. Following him or persuading him gets Priya's V1 line.</td>
+<td>V1 acceptable answer. The notebook records &quot;Noticed 16:41: Graham needed a minute outside; came back.&quot;</td>
+</tr>
+<tr>
+<td style="text-align:right">6</td>
+<td><strong>During the exam.</strong> His grip tightens and his breathing quickens.</td>
+<td>Graham's hands and chest</td>
+<td><strong>Speak up</strong> (as Task 3) before Dr Reid notices, then one line to Graham (three options: breathe with me / &quot;nearly done, just relax&quot; / say nothing). Dr Reid pauses.</td>
+<td>Speak up pressed; the calm line. V1 consequences if missed.</td>
+</tr>
+<tr>
+<td style="text-align:right">7</td>
+<td><strong>Notes and booking.</strong></td>
+<td>Dictation; note options (a)/(b)/(c); booking slip</td>
+<td>Kept, on one notes close-up: choose the note, fill the slip (40 minutes, hygiene and treatment plan, nurse to collect), hand it to Sam.</td>
+<td>V1 acceptable answer: (b); slip complete.</td>
+</tr>
+<tr>
+<td style="text-align:right">8</td>
+<td><strong>Close the surgery.</strong></td>
+<td>Close-down card (readable); the room</td>
+<td>Real controls, as Task 4's reset, with the end-of-session differences: aspirator gets <strong>disinfectant</strong> (a choice at the aspirator: water / disinfectant), lines flushed, wipe path, bins, chair down and light off, computer logged off, lights. Judged at the door.</td>
+<td>All end-of-session rules held; aspirator disinfectant (V1 decision kept, in the world).</td>
+</tr>
+<tr>
+<td style="text-align:right">9</td>
+<td><strong>Handover.</strong> Write it from your notebook.</td>
+<td>Notebook &quot;Noticed&quot; entries; tomorrow's day list; handover template (What's ready / What's outstanding / What to watch)</td>
+<td>Drag entries from the notebook onto the three sections of the handover sheet. The notebook holds what the learner noticed today (glucagon reported; broken-seal pouch; Amira's signal; delivery items flagged; Graham's minute; Graham's next-visit needs) plus tomorrow's list, and two entries that do not belong in a handover (&quot;Sam very busy on reception&quot;, &quot;Amira cried when the light came on&quot;).</td>
+<td>Handover names: tomorrow's first patient and tray (ready); glucagon replacement status and the delivery checked in (outstanding); Graham's next-visit needs and the 10:20 child's first visit (watch). The two entries that do not belong stay out. If the learner's notebook lacks the glucagon (they never reported it), the handover cannot name it and Priya's debrief says so.</td>
+</tr>
+</tbody>
+</table>
+<h3>E. Decisions and feedback</h3>
+<table>
+<thead>
+<tr>
+<th>Decision or question</th>
+<th>Status</th>
+<th>Acceptable answer(s)</th>
+<th>Common plausible mistake</th>
+<th>Feedback after mistake</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Where do you go, and what do you say?</td>
+<td>Changed (position plus line)</td>
+<td>Beside him; V1 line</td>
+<td>The door; the V1 mistakes</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>What you offer, across three moments</td>
+<td>Changed (conversation instead of 3-of-6)</td>
+<td>Chair upright; stop signal; exam in plain words</td>
+<td>Minimisers; the clinical guess</td>
+<td>V1 line, split across the three moments</td>
+</tr>
+<tr>
+<td>&quot;Tell me how bad it is&quot;</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>&quot;I need a minute&quot;</td>
+<td>Kept</td>
+<td>V1</td>
+<td>V1</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>Breathing changes during the exam</td>
+<td>Changed (Speak up plus a line)</td>
+<td>Speak up; breathe with me</td>
+<td>&quot;Just relax&quot;; carry on</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>Which note do you write?</td>
+<td>Kept</td>
+<td>(b)</td>
+<td>(a), (c)</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>The aspirator at the end of the session</td>
+<td>Kept (in the world)</td>
+<td>Disinfectant</td>
+<td>Water</td>
+<td>V1 line</td>
+</tr>
+<tr>
+<td>What goes in the handover?</td>
+<td>Changed (drag from the notebook)</td>
+<td>The four V1 items, plus the 10:20 first-visit child</td>
+<td>&quot;All fine&quot;; the two entries that do not belong</td>
+<td>V1 line; for the two that do not belong: &quot;Would the next nurse do anything with that? Then it isn't handover — and one of those isn't yours to pass on.&quot; (<strong>TBC</strong>)</td>
+</tr>
+</tbody>
+</table>
+<h3>F. Completion criteria</h3>
+<table>
+<thead>
+<tr>
+<th>Done-when clause</th>
+<th>Evidence saved by the experience</th>
+<th>Can the learner revise it before sign-off?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Graham approached beside him, by name, with the V1 opening line</td>
+<td>Position and line</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The three offers made across the three moments</td>
+<td>Choices</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>&quot;How bad is it&quot; and &quot;I need a minute&quot; answered as V1</td>
+<td>Choices</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The learner spoke up when Graham's breathing changed, or answered Dr Reid's step-in correctly</td>
+<td>Speak up timestamp</td>
+<td>Yes (the scene can be replayed)</td>
+</tr>
+<tr>
+<td>Note (b) on the record and the slip complete</td>
+<td>Notes state</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Close-down rules held at the door, aspirator on disinfectant</td>
+<td>Rule log</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>The handover names what is ready, what is outstanding and what to watch, from the learner's own notebook, with nothing that does not belong</td>
+<td>Handover sheet</td>
+<td>Yes</td>
+</tr>
+</tbody>
+</table>
+<h3>G. Complication or change</h3>
+<p>As V1 (Graham's minute outside, after &quot;how bad is it&quot;). In V2 he stands and leaves before any prompt appears; the choice is what the learner does while he is gone.</p>
+<h3>H. Dialogue — additions to V1</h3>
+<table>
+<thead>
+<tr>
+<th>Moment</th>
+<th>Speaker</th>
+<th>Line (all <strong>TBC</strong>)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Waiting room, before the approach</td>
+<td>Priya (quietly, from the corridor)</td>
+<td>&quot;He asked to be collected. Think about where you stand before you think about what you say.&quot;</td>
+</tr>
+<tr>
+<td>&quot;Do I have to lie back?&quot;</td>
+<td>Graham</td>
+<td>&quot;Do I have to lie back? I don't like lying back.&quot;</td>
+</tr>
+<tr>
+<td>Graham returns</td>
+<td>Graham</td>
+<td>&quot;Sorry about that.&quot;</td>
+</tr>
+<tr>
+<td>If the learner thanks him</td>
+<td>Learner (chosen line)</td>
+<td>&quot;Thank you for coming back in. Where do you want to start?&quot;</td>
+</tr>
+<tr>
+<td>Handover, glucagon missing from the notebook</td>
+<td>Priya</td>
+<td>&quot;Nothing about the glucagon? You found it this morning — and it isn't in the book, so it isn't in the handover, so tomorrow's nurse doesn't know. That's how things get lost. Write down what you notice.&quot;</td>
+</tr>
+<tr>
+<td>Scene debrief</td>
+<td>Priya</td>
+<td>&quot;He said nobody had ever asked him where he wanted to sit. You did. And the handover's the one thing you'll do today that tomorrow's team will actually read.&quot;</td>
+</tr>
+</tbody>
+</table>
+<h3>I. Media — additions</h3>
+<ul>
+<li>Graham: three stills in the waiting room (braced, wary, steadier) and three in the chair; standing at the door. Placeholder AI stills; consistent character.</li>
+<li>Handover screen (UI). Notebook &quot;Noticed&quot; entries (UI).</li>
+<li>Sounds: door, coat, chair, computer log-off.</li>
+</ul>
+<h3>K. Questions for Tempdent</h3>
+<ol>
+<li>Is &quot;where you stand&quot; a fair thing to assess for an anxious adult (beside, not in front, not from the door), and is that what the SME coaches?</li>
+<li>The two handover entries that do not belong (&quot;Sam very busy&quot;, &quot;Amira cried&quot;) are there to teach what a handover is not. Are they fair, and is naming a child's distress in a note the right example of what not to pass on?</li>
+<li>Should the learner's own free-text notebook notes be shown in the handover drag list (unassessed), so a learner who wrote &quot;check glucagon order&quot; can use it?</li>
+</ol>
+<hr>
+<h2>Welcome and close-of-day screens</h2>
+<ul>
+<li><strong>Welcome (Section 8):</strong> unchanged, with two additions to &quot;What should learners know before starting?&quot;: &quot;Some moments run at Dr Reid's pace. If you'd rather everything waited for you, turn on <em>At your pace</em> — nothing is marked differently.&quot; and &quot;Your notebook keeps what you notice through the day. You'll need it at the end.&quot;</li>
+<li><strong>Close of day (Section 9):</strong> unchanged reflection journey (Tempdent's seven steps and the patient-centred reflection). One addition, taken from V1's &quot;ideas to explore&quot;: the notebook's &quot;Noticed&quot; list is shown before the reflection as <strong>&quot;What you noticed today&quot;</strong> (the learner's own entries, unscored), which gives the reflection questions something concrete to sit on.</li>
+</ul>
+<hr>
+<h2>Part 3 — What building V2 involves</h2>
+<h3>3.1 Change log against V1: what needs whose sign-off</h3>
+<table>
+<thead>
+<tr>
+<th>Change</th>
+<th>Type</th>
+<th>Who signs off</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S1 The room answers first; six debriefs; &quot;Why did that work?&quot; link</td>
+<td>Presentation only (every V1 feedback line is kept and still reachable)</td>
+<td>Springpod learning design</td>
+</tr>
+<tr>
+<td>S2 Gesture routines (wipe path, tray sweep, holds)</td>
+<td>Presentation only (same answers, same judging)</td>
+<td>Springpod</td>
+</tr>
+<tr>
+<td>S3 Notebook auto-entries</td>
+<td>Presentation plus new copy (entry wording)</td>
+<td>Springpod; SME to confirm nothing recorded is inappropriate</td>
+</tr>
+<tr>
+<td>S4 Consequences (tray → Task 3; pouch → Task 5; notebook → handover)</td>
+<td>New content (three Priya lines)</td>
+<td>SME for the lines; Springpod for the mechanic</td>
+</tr>
+<tr>
+<td>S5 Two tempos and &quot;at your pace&quot;</td>
+<td>Presentation; accessibility decision</td>
+<td>Springpod; Tempdent to confirm for the 14–18 audience</td>
+</tr>
+<tr>
+<td>S6 Look before you act</td>
+<td>Presentation plus new scene states</td>
+<td>Springpod</td>
+</tr>
+<tr>
+<td>T1 mirror check, walk-in faults</td>
+<td><strong>New content</strong> (faults, feedback)</td>
+<td>SME</td>
+</tr>
+<tr>
+<td>T1 fresh-hands rule, initials, pouch drop zone</td>
+<td>Presentation (V1 questions become world rules)</td>
+<td>Springpod</td>
+</tr>
+<tr>
+<td>T2 Amira and Karim states; chair rules</td>
+<td>Presentation plus two new Priya lines</td>
+<td>Springpod; SME for the lines</td>
+</tr>
+<tr>
+<td>T3 paced segment, Speak up, pass gesture</td>
+<td>Presentation of V1 decisions; <strong>the order of passes needs the SME's word</strong></td>
+<td>SME (order and stage of apprentice); Tempdent (pace)</td>
+</tr>
+<tr>
+<td>T4 chair-up hold, peel-and-stick labels</td>
+<td>Presentation</td>
+<td>Springpod</td>
+</tr>
+<tr>
+<td>T4 Karim's three questions</td>
+<td><strong>New content</strong> (questions; the answers are V1's)</td>
+<td>SME</td>
+</tr>
+<tr>
+<td>T4 reset judged by safety rules at the door</td>
+<td><strong>Judging change</strong> if only the pairs are fixed</td>
+<td>SME (question T4-K1)</td>
+</tr>
+<tr>
+<td>T5 bench zones, autoclave load, plan board, delivery flags</td>
+<td>Presentation of V1 decisions</td>
+<td>Springpod</td>
+</tr>
+<tr>
+<td>T5 autoclave printout</td>
+<td><strong>New material</strong></td>
+<td>SME</td>
+</tr>
+<tr>
+<td>T6 position as a decision; three offer moments; Speak up</td>
+<td>Presentation</td>
+<td>Springpod; SME for the three Graham lines</td>
+</tr>
+<tr>
+<td>T6 handover from the notebook, two non-handover entries</td>
+<td><strong>New content</strong></td>
+<td>SME</td>
+</tr>
+</tbody>
+</table>
+<h3>3.2 Media and assets to produce (all placeholders until Tempdent photography and talent)</h3>
+<table>
+<thead>
+<tr>
+<th>Asset</th>
+<th>Count</th>
+<th>Route</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Room state variants (Surgery 2 as left last night; after Amira; reset; stock room with box)</td>
+<td>4 photographs + about 12 overlays</td>
+<td>Generated from the existing placeholder set for consistency; masks for the clean/dirty surfaces</td>
+</tr>
+<tr>
+<td>People states: Amira (7), Karim (4), Graham (7), Dr Reid's hands (4), background patients (2)</td>
+<td>24 stills</td>
+<td>Generated, one character sheet each, then approved via the media manifest as today</td>
+</tr>
+<tr>
+<td>Mirror close-up variants</td>
+<td>4</td>
+<td>Generated</td>
+</tr>
+<tr>
+<td>Field close-up with three water states</td>
+<td>3</td>
+<td>Illustrated; SME to approve</td>
+</tr>
+<tr>
+<td>Documents (delivery note, autoclave printout, handover, plan board, notes fields)</td>
+<td>5</td>
+<td>HTML, not images</td>
+</tr>
+<tr>
+<td>Sounds (taps, water, wipe, chair, autoclave, door, handpiece, curing light, cues)</td>
+<td>about 20</td>
+<td>Generated; captions for every cue</td>
+</tr>
+<tr>
+<td>Dr Reid cue lines and the six debriefs</td>
+<td>6 cues + 6 debriefs + about 25 new lines</td>
+<td>Captions now; synthetic placeholder voice optional; talent later</td>
+</tr>
+<tr>
+<td>Films</td>
+<td>none new</td>
+<td>Briefing films remain as V1 (TBC)</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 Engine work and phasing</h3>
+<p>The existing engine has choice/speech, checklist, sequence, hotspot, tray and paper close-ups, the notebook, the guide bar and the media manifest. V2 adds nine interaction patterns. Estimated effort is for the engine plus the first task that uses each pattern; reuse in a second task is small.</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Used in</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Find (a set of faults on a photograph, counter, fix overlays)</td>
+<td>T1</td>
+<td>M</td>
+</tr>
+<tr>
+<td>Path (one drag across ordered zones, judged once)</td>
+<td>T1 wipe, T4 reset wipe, T6 close-down</td>
+<td>M</td>
+</tr>
+<tr>
+<td>Hold (press and hold with a compressed clock and a poster/timer)</td>
+<td>T1 handwash and flush, T4 chair-up and flushes, T6</td>
+<td>S</td>
+</tr>
+<tr>
+<td>Room controls with door-check rules</td>
+<td>T2 settle, T4 reset, T6 close-down</td>
+<td>L</td>
+</tr>
+<tr>
+<td>People states (per-option reactions authored in content; stills; screen-reader text)</td>
+<td>T2, T4, T6</td>
+<td>M</td>
+</tr>
+<tr>
+<td>Paced segment (cue timeline, tells, pass gesture, Speak up, at-your-pace, replay)</td>
+<td>T3, T6 (Speak up only)</td>
+<td>L</td>
+</tr>
+<tr>
+<td>Peel-and-stick / flag / bench zones (drag to fields and zones)</td>
+<td>T4 labels, T5 delivery, T5 bench</td>
+<td>S–M</td>
+</tr>
+<tr>
+<td>Plan board (columns, named Ask, reminder)</td>
+<td>T5</td>
+<td>M</td>
+</tr>
+<tr>
+<td>Notebook auto-entries, consequences store, handover drag</td>
+<td>all, T6</td>
+<td>M</td>
+</tr>
+</tbody>
+</table>
+<p>Suggested order, each phase playable and testable on its own:</p>
+<ol>
+<li><strong>Phase A — the day feels different (about a week):</strong> S1 (silent right answers, debriefs, &quot;Why did that work?&quot;), S3 notebook entries, S6 opening looks, Hold and Path patterns, T1 rebuilt end to end. Cuts about 40 taps and shows the new register.</li>
+<li><strong>Phase B — the signature moment (about a week):</strong> the T3 paced segment with Speak up and at-your-pace; the field close-up; consequences store (tray → T3).</li>
+<li><strong>Phase C — people who react (about a week):</strong> people states; T2 and T6 conversations; the room controls for T2's settling.</li>
+<li><strong>Phase D — clock, board and handover (about a week):</strong> T4 turnaround with door-check rules; T5 bench, board, delivery and printout; T6 close-down and the notebook handover; remaining consequences.</li>
+<li><strong>Phase E — media approval and browser specs:</strong> all new stills through the approval manifest; specs for each new pattern at 390×480, 800×480 and desktop; audio and caption pass.</li>
+</ol>
+<p>Estimates assume the SME questions below are answered before the phase that needs them (T3's order and stage before Phase B; T4's reset rule before Phase D).</p>
+<h3>3.4 Sign-off list</h3>
+<p><strong>Springpod learning design (this document):</strong></p>
+<ol>
+<li>The six shared changes (1.2) and the rule that scenes present, content judges (1.3).</li>
+<li>Per task: Sections D–F as written, and the debrief lines as placeholders pending the SME.</li>
+<li>The phasing in 3.3, with Phase A starting on sign-off.</li>
+</ol>
+<p><strong>Tempdent SME (Lisa Quinlivan-Fox, TBC) — questions that change what is built:</strong></p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Question</th>
+<th>Task</th>
+<th>Needed before</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Q1</td>
+<td>Order of passes in a simple composite filling (etch, bond, band, composite, light, articulating paper) and whether a week-three apprentice passes or shadows</td>
+<td>T3</td>
+<td>Phase B</td>
+</tr>
+<tr>
+<td>Q2</td>
+<td>Is the full ten-step between-patients order mandatory, or are the safety pairs the fixed part?</td>
+<td>T4</td>
+<td>Phase D</td>
+</tr>
+<tr>
+<td>Q3</td>
+<td>The three walk-in faults and the three presentation faults: realistic and acceptable to show?</td>
+<td>T1</td>
+<td>Phase A</td>
+</tr>
+<tr>
+<td>Q4</td>
+<td>Karim's three aftercare questions and Graham's three opening lines</td>
+<td>T4, T6</td>
+<td>Phase C/D</td>
+</tr>
+<tr>
+<td>Q5</td>
+<td>Does an apprentice read the autoclave printout; what does it show?</td>
+<td>T5</td>
+<td>Phase D</td>
+</tr>
+<tr>
+<td>Q6</td>
+<td>Handover: the four items plus the 10:20 first-visit child; and the two entries that do not belong</td>
+<td>T6</td>
+<td>Phase D</td>
+</tr>
+<tr>
+<td>Q7</td>
+<td>Showing a child's tears and an adult leaving the room in stills</td>
+<td>T2, T6</td>
+<td>Phase C</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Tempdent (programme):</strong></p>
+<ul>
+<li>Paced and clock segments for the 14–18 audience, with &quot;at your pace&quot; as described.</li>
+<li>Dr Reid's debrief naming how often she looked up (or not).</li>
+<li>The notebook's &quot;What you noticed today&quot; list on the close-of-day screen.</li>
+</ul>
+<h3>3.5 Approval status</h3>
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>V1 content (facts, people, decisions, feedback, criteria)</td>
+<td>Signed off 22 September 2026</td>
+</tr>
+<tr>
+<td>V2 interaction design (this document)</td>
+<td>Draft for sign-off, 23 September 2026</td>
+</tr>
+<tr>
+<td>New copy marked <strong>TBC</strong> in Sections H</td>
+<td>Awaiting SME</td>
+</tr>
+<tr>
+<td>Build</td>
+<td>Not started; begins with Phase A on sign-off</td>
+</tr>
+</tbody>
+</table>
+</body></html>

@@ -148,3 +148,17 @@ mtime_ms = 1790091461713
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:9462159a-02e4-4d7c-8638-24d01cd72b6d/b7322a8a-8b20-4f3a-9128-3dc563329b10/776aaf86-42af-4b44-8df6-1d8064764a13"
 storage_version_token = "1790091487693765"
 content_type = "text/markdown"
+
+[[outputs]]
+id = "_AF_0aHHXq2eFUWRibV89"
+uri = "file://artifacts/try-day/docs/Tempdent_TRY-Day_Storyboard_Dental-Nurse_V2_interaction-redesign.html"
+type = "html"
+title = "Storyboard V2 — Interaction redesign (for sign-off)"
+description = "Tempdent Apprentice Dental Nurse try day. Six shared changes, all six tasks restated (Sections D–H plus questions for Tempdent), asset list, engine phasing and sign-off list. Content from V1 stands; nothing built yet."
+logical_id = "e46793ef-1d77-41c2-ab19-f60322679e57"
+content_hash = "sha256:b5dcb829b6a004305520ba7f132b3750676db2ea7f4721750163b33f2f317ddf"
+size = 88850
+mtime_ms = 1790142066446
+storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:9462159a-02e4-4d7c-8638-24d01cd72b6d/e46793ef-1d77-41c2-ab19-f60322679e57/410a9773-2db9-47ee-a53e-a2b4177ae930"
+storage_version_token = "1790142081144083"
+content_type = "text/html"
