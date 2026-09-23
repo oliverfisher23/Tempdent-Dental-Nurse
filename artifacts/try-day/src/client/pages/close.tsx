@@ -4,6 +4,7 @@ import { DraftNotice } from '@client/components/draft-notice';
 import { CLOSE_COPY } from '@client/content/client';
 import { useProgress } from '@client/lib/progress';
 import { day } from '@client/lib/simulation';
+import { noticed } from '@client/lib/consequences';
 import { Button } from '@kit/ui/button';
 
 export default function ClosePage() {
@@ -15,6 +16,7 @@ export default function ClosePage() {
   }, [currentTaskId, dayComplete, setLocation]);
 
   if (!dayComplete) return null;
+  const noticedEntries = noticed(progress);
 
   return (
     <main id="main-activity" tabIndex={-1} className="flex min-h-[100dvh] items-center justify-center bg-background px-6 py-12">
@@ -23,6 +25,17 @@ export default function ClosePage() {
         <DraftNotice />
         <h1 className="mt-3 text-4xl font-bold">{CLOSE_COPY.title(progress.studentName.split(' ')[0])}</h1>
         <p className="mt-5 text-lg leading-relaxed text-muted-foreground">{day.spec.FRAME.closeOfDay}</p>
+
+        <section className="mt-8 rounded-md border border-border bg-muted/40 p-4">
+          <h2 className="font-bold">What you noticed today</h2>
+          {noticedEntries.length > 0 ? (
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-sm">
+              {noticedEntries.map((entry) => <li key={entry.id}>{entry.value}</li>)}
+            </ul>
+          ) : (
+            <p className="mt-2 text-sm text-muted-foreground">No Noticed entries were recorded.</p>
+          )}
+        </section>
 
         <div className="mt-8 border-l-4 border-primary pl-4 text-sm text-muted-foreground">
           <p className="font-semibold text-foreground">{CLOSE_COPY.tutorHeading}</p>

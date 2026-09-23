@@ -30,8 +30,16 @@ export function locateAll(task: TaskContent): Located[] {
  */
 export function currentDecision(task: TaskContent, answers: DecisionAnswers, scene?: TaskScene): Located | null {
   const pool = locateAll(task).filter((item) => !scene || item.scene === scene);
-  const open = pool.find((item) => isVisible(item.decision, answers) && !isAnswered(answers[item.decision.id]));
-  if (open) return open;
+  for (const item of pool) {
+    if (!isVisible(item.decision, answers) || isAnswered(answers[item.decision.id])) continue;
+    const blocker = item.decision.blockedBy?.decision;
+    if (!blocker) return item;
+    const blocking = pool.find((candidate) => candidate.decision.id === blocker)
+      ?? locateAll(task).find((candidate) => candidate.decision.id === blocker);
+    if (!blocking || (isAnswered(answers[blocker]) && isCorrect(blocking.decision, answers[blocker] ?? null))) return item;
+    // A world rule never lets later work jump ahead of the thing that unlocks it.
+    if (isVisible(blocking.decision, answers)) return blocking;
+  }
   return pool.find((item) =>
     isVisible(item.decision, answers)
     && isAnswered(answers[item.decision.id])

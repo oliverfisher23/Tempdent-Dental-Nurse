@@ -4,6 +4,41 @@
     "bytes": 85324,
     "status": "placeholder"
   },
+  "closeups/field-dry.jpg": {
+    "sha256": "919e46eec5049093b201caae4cd4147f862f09f6b9e365c0a1c9ef1f57027b06",
+    "bytes": 65558,
+    "status": "placeholder"
+  },
+  "closeups/field-flooded.jpg": {
+    "sha256": "dfdf1b59fb58e8cbe484621085b5e58a4c2da40ab16208f69c663483d7725f5d",
+    "bytes": 77448,
+    "status": "placeholder"
+  },
+  "closeups/field-pooling.jpg": {
+    "sha256": "b681f3753f6a21669c49571f2aa02c2067847c1279529fb269d912780752a728",
+    "bytes": 67309,
+    "status": "placeholder"
+  },
+  "closeups/mirror-hair.jpg": {
+    "sha256": "6863f80f8416a0d4fde3d97cd69326246e54e7e3d6f2a2c0e57eb55beb608743",
+    "bytes": 48014,
+    "status": "placeholder"
+  },
+  "closeups/mirror-ready.jpg": {
+    "sha256": "a9ca827e19ceb12fdaab492b7250e8b85bf2da4141d6da2a5bf1897df3a0a51f",
+    "bytes": 42468,
+    "status": "placeholder"
+  },
+  "closeups/mirror-ring.jpg": {
+    "sha256": "c8f821fdffead63aa5ddf15d5bb9e8d58bf89c79f31a3f477296e7f4a0770aed",
+    "bytes": 43529,
+    "status": "placeholder"
+  },
+  "closeups/mirror-watch.jpg": {
+    "sha256": "148017d9ef3e0870da6e33f195bcccb9c856c1fbd48cea1e51a94eaace9da971",
+    "bytes": 44104,
+    "status": "placeholder"
+  },
   "closeups/packages.jpg": {
     "sha256": "01d3108f61b7f7f85fc6ff986d98d4796960c1093e4aa51ca5121f7ef2d0de79",
     "bytes": 46986,
@@ -39,14 +74,29 @@
     "bytes": 28523,
     "status": "placeholder"
   },
+  "items/delivery-box.png": {
+    "sha256": "a0fa00dc30897892c7f42f473a6935d0caf2798bbf3a983ffb768411fc573da0",
+    "bytes": 75474,
+    "status": "placeholder"
+  },
   "items/excavator.png": {
     "sha256": "edc90b4e9449a27a03d3eea2c75f5af347bc999c1aa537c767a80ea539a245fc",
     "bytes": 15895,
     "status": "placeholder"
   },
+  "items/forceps.png": {
+    "sha256": "cac6f92a55789dae915a12ec2ccd8694cdd74dc1fe798c5a569d3f4bb23cd82e",
+    "bytes": 32975,
+    "status": "placeholder"
+  },
   "items/glasses.png": {
     "sha256": "d27088c143ef54994bbf9253466e832b25d7894c6aceca5f2b2b62ef02d1fc6c",
     "bytes": 51429,
+    "status": "placeholder"
+  },
+  "items/gloves-box.png": {
+    "sha256": "de556e026502ecbe25087c9c0879dcb8c6fdfc3a0cb980748a221346a5fdbff1",
+    "bytes": 65637,
     "status": "placeholder"
   },
   "items/matrix.png": {
@@ -62,6 +112,16 @@
   "items/plastic.png": {
     "sha256": "a9f519b48136b700af8446fc393b0dd6b2ee1a88184e81d00db658c6d4cec128",
     "bytes": 16376,
+    "status": "placeholder"
+  },
+  "items/pouch-broken.png": {
+    "sha256": "e5a519340b5b4ec3f1af8c164d859b14467e9a5db29ece12dde661aad4f09f1e",
+    "bytes": 63971,
+    "status": "placeholder"
+  },
+  "items/pouch-sealed.png": {
+    "sha256": "192ad2828a5fde6a5a5379149219599535fb2d16b0e8a15fc71254b33fb879c5",
+    "bytes": 48888,
     "status": "placeholder"
   },
   "items/probe.png": {
@@ -94,6 +154,11 @@
     "bytes": 29329,
     "status": "placeholder"
   },
+  "items/wipes.png": {
+    "sha256": "6713de52f15b7164b52af9e8cd5c3b461e1d2201f7458ee3ca8e8aa83e032c9e",
+    "bytes": 46144,
+    "status": "placeholder"
+  },
   "map.svg": {
     "sha256": "2d2213729541341656d62336a60fc97fa61816ca9df1dda829e814ae09ff9cc7",
     "bytes": 758,
@@ -119,6 +184,126 @@
     "bytes": 15417,
     "status": "placeholder"
   },
+  "people/states/amira-braced.jpg": {
+    "sha256": "bd6448dd79f8fae4055af2349083bcff603fa32083072fcd7604d73755e17db6",
+    "bytes": 118611,
+    "status": "placeholder"
+  },
+  "people/states/amira-hand-up.jpg": {
+    "sha256": "b6d732083e7de6f9e1b17e6793a4f74f41ecfc646e9a1855f8468843767b754b",
+    "bytes": 112916,
+    "status": "placeholder"
+  },
+  "people/states/amira-listening.jpg": {
+    "sha256": "e04be34cda8c26bf8833446e4c01e939faa029663ffcd35d3fe618c65d7e33f2",
+    "bytes": 107819,
+    "status": "placeholder"
+  },
+  "people/states/amira-settled.jpg": {
+    "sha256": "b53f640541b9bdb58211d48c66d349b2e4d8ff445acdcf137743b9c5d67eed03",
+    "bytes": 118374,
+    "status": "placeholder"
+  },
+  "people/states/amira-tears.jpg": {
+    "sha256": "53a1c0bb63d1b7511c4f7e664a0b03c493257817c717f46200aaffd9bdd812b7",
+    "bytes": 99513,
+    "status": "placeholder"
+  },
+  "people/states/amira-thumbs-up.jpg": {
+    "sha256": "07014275e45ab6382c212bb5f318e10f7a05c5682f01cb7b38e7d6ceb252d37b",
+    "bytes": 106977,
+    "status": "placeholder"
+  },
+  "people/states/amira-wary.jpg": {
+    "sha256": "178f9192df159cf6b1a6f6636395a7b130d2665cca4ecdeaa704bc4bd39bc5b2",
+    "bytes": 116964,
+    "status": "placeholder"
+  },
+  "people/states/graham-breathing.jpg": {
+    "sha256": "cf488e6838afc2bc3d908ac8e2f70e1af968f803169eeeb2b8dfe38ca3965028",
+    "bytes": 119311,
+    "status": "placeholder"
+  },
+  "people/states/graham-easing.jpg": {
+    "sha256": "e329b7cfcc0c5899f8ffc5ee86d29c057a8478a2ae9dffd53cfdb5e9e08bce18",
+    "bytes": 132832,
+    "status": "placeholder"
+  },
+  "people/states/graham-guarded.jpg": {
+    "sha256": "c605e15f9c1b2e84af18476e4e5df4f754856376ee876b2b9ad8570a97c3e848",
+    "bytes": 118963,
+    "status": "placeholder"
+  },
+  "people/states/graham-outside.jpg": {
+    "sha256": "0d8c9ebb7f32a91e8ee0c2dfc2799e9dc56c80c3c7ab3830428e2aa0402dfdf6",
+    "bytes": 121048,
+    "status": "placeholder"
+  },
+  "people/states/graham-relieved.jpg": {
+    "sha256": "9bca54c2a28f6f1d166d915862c01f38e1564bd820f07197e9fbdde3adc06f8a",
+    "bytes": 126665,
+    "status": "placeholder"
+  },
+  "people/states/graham-talking.jpg": {
+    "sha256": "815f2d38aa701c64f0dd7aeb8cff15c1146271aba6d612025f109cf2dbf55c45",
+    "bytes": 112679,
+    "status": "placeholder"
+  },
+  "people/states/graham-waiting.jpg": {
+    "sha256": "020d77b73a1416a8dd740b621b487bbfa40b8d8b6e015d0a2c29a792142e6da8",
+    "bytes": 134441,
+    "status": "placeholder"
+  },
+  "people/states/karim-asking.jpg": {
+    "sha256": "6d90c767a43ceb7bc1296002045978e67fbcb60ece5da9f81551c39bc5de1ab7",
+    "bytes": 108059,
+    "status": "placeholder"
+  },
+  "people/states/karim-leaving.jpg": {
+    "sha256": "7318991077bd749d4927ebb66d029214db325498ebac732379536e1a7cd0a304",
+    "bytes": 108818,
+    "status": "placeholder"
+  },
+  "people/states/karim-reassured.jpg": {
+    "sha256": "717db3a5aed122b4fc6aee52955fad9fe5e73ca06dfc1abf197749b1d37826d0",
+    "bytes": 111477,
+    "status": "placeholder"
+  },
+  "people/states/karim-worried.jpg": {
+    "sha256": "9f71b1e28726b0b7a7e4d240868450d6d4423a7f17ef5f34afea9aa27590dc5b",
+    "bytes": 121690,
+    "status": "placeholder"
+  },
+  "people/states/reception-patient-1.jpg": {
+    "sha256": "3e724a86fc7ab6a3c40151912113dc6ffcc1c684bfbb1fa4cd6c2048f0875b4d",
+    "bytes": 133054,
+    "status": "placeholder"
+  },
+  "people/states/reception-patient-2.jpg": {
+    "sha256": "dcceaadd851ad609686c81d58a91d58ae17ad86ede0764fc42b227d140fbdfc7",
+    "bytes": 118275,
+    "status": "placeholder"
+  },
+  "people/states/reid-looking-up.jpg": {
+    "sha256": "5258202f271ecd44820c8ba3530a8926bf8b36bcf0a3adaa215583f83b41386e",
+    "bytes": 94247,
+    "status": "placeholder"
+  },
+  "people/states/reid-nod.jpg": {
+    "sha256": "fc2ab72832883888edcc495fb0e74d2a0a0c95035860f085136cb44af16fe411",
+    "bytes": 93875,
+    "status": "placeholder"
+  },
+  "people/states/reid-waiting.jpg": {
+    "sha256": "2c7d080c4e1e7520284dcd59eba231f22a7555151a6c6e0a041f21694c06d2cb",
+    "bytes": 110288,
+    "status": "placeholder"
+  },
+  "people/states/reid-working.jpg": {
+    "sha256": "54ff965073578c1d2b22342a9cc203a056182ea619c40f6a3d60fc087c97a738",
+    "bytes": 87061,
+    "status": "placeholder"
+  },
   "places/decon.jpg": {
     "sha256": "b9bde0b8e91fdc3f4efcc83d896dc0eb53bfdc749d43cec401c57a28c0d5df93",
     "bytes": 90129,
@@ -129,14 +314,94 @@
     "bytes": 85702,
     "status": "placeholder"
   },
+  "places/stock-delivery.jpg": {
+    "sha256": "1a869a649d9aca8a611737e28c376a3df10aa9f57c268446d4faaea4af5c7185",
+    "bytes": 65989,
+    "status": "placeholder"
+  },
   "places/stock.jpg": {
     "sha256": "2c4771f1d26365ace0db463689cc09c477759f8ccf381fcd77dd97b2712d21a8",
     "bytes": 73989,
     "status": "placeholder"
   },
+  "places/surgery2-after-patient.jpg": {
+    "sha256": "40dc93493de95228d8c40ffb3cf739746dfa8cf46e76b275a1dbd54436e16da2",
+    "bytes": 65014,
+    "status": "placeholder"
+  },
+  "places/surgery2-last-night.jpg": {
+    "sha256": "482aa704f0bba337b0003289056c11a37c27ac81a8661e769c09b3290a7689ff",
+    "bytes": 66106,
+    "status": "placeholder"
+  },
   "places/surgery2.jpg": {
     "sha256": "ca3c02c1417e192583d553675b8e5a9a9b3c75ce41658737fb4d6ca613cd7542",
     "bytes": 66366,
+    "status": "placeholder"
+  },
+  "sounds/autoclave.mp3": {
+    "sha256": "b25b1d1d89e5724878c7fae87642299c6e30088f954a1fc7e3d3230ce6d88fb8",
+    "bytes": 18408,
+    "status": "placeholder"
+  },
+  "sounds/box-lid.mp3": {
+    "sha256": "880a1cc0f58f7790d1f882dd5c11ebbd2f50522f42e6621a4c514e7400a0b6d1",
+    "bytes": 6496,
+    "status": "placeholder"
+  },
+  "sounds/chair.mp3": {
+    "sha256": "b57ae53cfcb45616fa5dfc46dacb4b35164135774ade99a8d3946d7f66d5a307",
+    "bytes": 18408,
+    "status": "placeholder"
+  },
+  "sounds/cue.mp3": {
+    "sha256": "f3a4b97d19c14fd5fa3af64e00522fc1a83d5387150e13eb301f1d8708bbe1fd",
+    "bytes": 6496,
+    "status": "placeholder"
+  },
+  "sounds/curing-light.mp3": {
+    "sha256": "3283692cf5bfc88f56b90647e22ec63cd96dcc8ec3993081974a5d6442b51b8d",
+    "bytes": 6496,
+    "status": "placeholder"
+  },
+  "sounds/door.mp3": {
+    "sha256": "f301816b7b6fc6254fdf3494a0e57d1e7d13022f4bbc2f0c1344027437e1d66a",
+    "bytes": 12452,
+    "status": "placeholder"
+  },
+  "sounds/flush.mp3": {
+    "sha256": "8e3f888937a80e5a5df8e6cdcc34f20b4dbd79641ec27cd3cd9cd5332ffcad96",
+    "bytes": 18408,
+    "status": "placeholder"
+  },
+  "sounds/handpiece.mp3": {
+    "sha256": "a3d4351c8b83064ee2656e03589241a19b798c93d5ec99e9b565f79e93e6a222",
+    "bytes": 12452,
+    "status": "placeholder"
+  },
+  "sounds/pouch.mp3": {
+    "sha256": "2d20aef4c9c50429780c5bf239db86242969428dcf4217edd409aa7607ab41d7",
+    "bytes": 6496,
+    "status": "placeholder"
+  },
+  "sounds/right.mp3": {
+    "sha256": "ea5da1c9321be20c5186626fea9b04cbc7716a951926172dc464afcee28e479e",
+    "bytes": 6496,
+    "status": "placeholder"
+  },
+  "sounds/water-run.mp3": {
+    "sha256": "a601c86ab13789ef2ba097408ca06e1f043023829a015a776f55b7bbde405c86",
+    "bytes": 18408,
+    "status": "placeholder"
+  },
+  "sounds/wipe.mp3": {
+    "sha256": "465514f18496438d5d69f50722bd70a069ccc63c1f543efa2feeb193f7ab329a",
+    "bytes": 6496,
+    "status": "placeholder"
+  },
+  "sounds/wrong.mp3": {
+    "sha256": "bc15fdefb8f6de9989f8416ca8f49cffa404a97b0226ecdc92d7132129e06006",
+    "bytes": 6496,
     "status": "placeholder"
   },
   "tempdent-logo-reverse.png": {

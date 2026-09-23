@@ -162,3 +162,94 @@ mtime_ms = 1790142066446
 storage_uri = "gcs://replit-rams-assets-riker/rams/assets/repl:9462159a-02e4-4d7c-8638-24d01cd72b6d/e46793ef-1d77-41c2-ab19-f60322679e57/410a9773-2db9-47ee-a53e-a2b4177ae930"
 storage_version_token = "1790142081144083"
 content_type = "text/html"
+
+[[outputs]]
+id = "Ee2qdVOvCfg0JsH7Z21bY"
+uri = "file://artifacts/try-day/src/client/assets/sounds/flush.mp3"
+type = "audio"
+title = "flush"
+description = "Generated sound effect: Short quiet dental waterline flush into a sink, controlled water hiss and drain, no voices."
+
+[[outputs]]
+id = "NfFOW2h3tF3fKu-AVyIrM"
+uri = "file://artifacts/try-day/src/client/assets/sounds/handpiece.mp3"
+type = "audio"
+title = "handpiece"
+description = "Generated sound effect: Very short quiet dental handpiece whirr in a clinical room, clean controlled tone, no patient sounds."
+
+[[outputs]]
+id = "kBJlOBdCEplqnOSU519kX"
+uri = "file://artifacts/try-day/src/client/assets/sounds/door.mp3"
+type = "audio"
+title = "door"
+description = "Generated sound effect: Quiet interior surgery door opening and closing gently with a soft latch, no footsteps or voices."
+
+[[outputs]]
+id = "qBhLigoFC-KDYzGovv7fO"
+uri = "file://artifacts/try-day/src/client/assets/sounds/chair.mp3"
+type = "audio"
+title = "chair"
+description = "Generated sound effect: Quiet dental chair electric motor hum moving slowly upward, smooth mechanism then stop, no beep."
+
+[[outputs]]
+id = "17BV7aJ8kA5dXHwt9_Xru"
+uri = "file://artifacts/try-day/src/client/assets/sounds/curing-light.mp3"
+type = "audio"
+title = "curing-light"
+description = "Generated sound effect: Single soft clean electronic curing-light completion beep, clinical device, no speech."
+
+[[outputs]]
+id = "61-nV0KWg6y54WR8O8cd8"
+uri = "file://artifacts/try-day/src/client/assets/sounds/box-lid.mp3"
+type = "audio"
+title = "box-lid"
+description = "Generated sound effect: Small plastic clinical transport box lid closing with a restrained click, no voices."
+
+[[outputs]]
+id = "LCLwPiY1ZkY5_5Hlxqecp"
+uri = "file://artifacts/try-day/src/client/assets/sounds/cue.mp3"
+type = "audio"
+title = "cue"
+description = "Generated sound effect: Soft two-note attention cue for an accessible learning interface, neutral gentle marimba-like tones, no music bed."
+
+[[outputs]]
+id = "GOx4R_WaPKrvKaEUJjXxq"
+uri = "file://artifacts/try-day/src/client/assets/sounds/pouch.mp3"
+type = "audio"
+title = "pouch"
+description = "Generated sound effect: A sterilisation paper pouch turned over once by hand, light paper and plastic rustle, no tearing."
+
+[[outputs]]
+id = "ubwTtkyd3YZ13G0F8ODEP"
+uri = "file://artifacts/try-day/src/client/assets/sounds/wipe.mp3"
+type = "audio"
+title = "wipe"
+description = "Generated sound effect: One quiet pass of a disposable clinical wipe across a smooth worktop, soft damp swish, no voices."
+
+[[outputs]]
+id = "Y4-xLouyqZidx_Ejr_rLc"
+uri = "file://artifacts/try-day/src/client/assets/sounds/autoclave.mp3"
+type = "audio"
+title = "autoclave"
+description = "Generated sound effect: Compact clinical autoclave door closes with a soft metal latch, followed by one restrained cycle-start beep and a brief low machine hum."
+
+[[outputs]]
+id = "A2LfhL6EKH95FchBuvOwV"
+uri = "file://artifacts/try-day/src/client/assets/sounds/water-run.mp3"
+type = "audio"
+title = "water-run"
+description = "Generated sound effect: Quiet close-miked clinical sink tap water running steadily, clean small stream, no room voices, seamless loop point."
+
+[[outputs]]
+id = "Ibjq9oHZHxTWiPQlQTqc4"
+uri = "file://artifacts/try-day/src/client/assets/sounds/wrong.mp3"
+type = "audio"
+title = "wrong"
+description = "Generated sound effect: Soft restrained low note for an incorrect action in a learning interface, kind and non-alarming, no buzz."
+
+[[outputs]]
+id = "MA5FZ49sCeuxwOnrCbh61"
+uri = "file://artifacts/try-day/src/client/assets/sounds/right.mp3"
+type = "audio"
+title = "right"
+description = "Generated sound effect: Soft restrained confirmation sound for a learning interface, one warm clean high tone, no flourish."

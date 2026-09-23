@@ -51,7 +51,7 @@ test('decisions are well formed: unique ids, answers among the options, gates th
       } else {
         assert.ok(Array.isArray(decision.correct), `${where}: ${decision.kind} needs an array answer`);
         assert.ok(correct.length >= 2, `${where}: a ${decision.kind} needs at least two steps`);
-        assert.ok(optionIds.length > correct.length || decision.kind === 'sequence', `${where}: checklist with no distractor`);
+        assert.ok(optionIds.length > correct.length || decision.kind === 'sequence' || decision.present?.kind === 'find' || decision.present?.kind === 'kit', `${where}: checklist with no distractor`);
       }
       assert.ok(decision.clause.length > 0 && decision.prompt.length > 0, `${where} is missing copy`);
       assert.ok(decision.feedback.right && decision.feedback.wrong && decision.feedback.speaker, `${where} is missing feedback`);

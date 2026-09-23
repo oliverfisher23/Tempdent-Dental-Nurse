@@ -42,7 +42,15 @@ export const decision = (page, id) => page.locator(`[data-testid=decision-${id}]
 export const option = (page, decisionId, optionId) => page.locator(`[data-testid=option-${decisionId}-${optionId}]`).first();
 export const feedback = (page, id) => page.locator(`[data-testid=feedback-${id}]`).first();
 
+async function finishOpening(page) {
+  const opening = page.locator('[data-testid^=opening-]').first();
+  if (await opening.isVisible().catch(() => false)) {
+    await opening.getByRole('button', { name: "I've had a look", exact: true }).click();
+  }
+}
+
 export async function tap(page, decisionId, optionId) {
+  await finishOpening(page);
   const target = option(page, decisionId, optionId);
   await target.scrollIntoViewIfNeeded();
   await target.click();
@@ -54,6 +62,7 @@ export async function taps(page, decisionId, optionIds) {
 
 /** Open a close-up from the panel; following the step guide into a room may already have opened it. */
 export async function openCloseUp(page, decisionId) {
+  await finishOpening(page);
   const dialog = page.locator('[role=dialog]').first();
   if (await dialog.isVisible()) return;
   await page.locator(`[data-testid=open-${decisionId}]`).click();
@@ -68,6 +77,7 @@ export async function goTo(page, placeId) {
   await page.locator('[data-testid=guide-action]').click();
   await page.locator(`[data-testid=scene-${placeId}]`).waitFor({ state: 'visible', timeout: 15000 });
   await settled(page);
+  await finishOpening(page);
 }
 
 /** The stage has measured itself: the photo box has a size and either a decision panel or a close-up is showing. */
@@ -81,13 +91,23 @@ export async function settled(page) {
 }
 
 export const confirm = (page, id) => page.locator(`[data-testid=confirm-${id}]`).click();
-export const done = (page) => page.getByRole('button', { name: 'Done', exact: true }).first().click();
-export const carryOn = (page) => page.getByRole('button', { name: 'Carry on', exact: true }).first().click();
+export async function done(page) {
+  const button = page.getByRole('button', { name: 'Done', exact: true }).first();
+  if (await button.isVisible().catch(() => false)) await button.click();
+}
+export async function carryOn(page) {
+  const button = page.getByRole('button', { name: 'Carry on', exact: true }).first();
+  if (await button.isVisible().catch(() => false)) await button.click();
+}
 
 /** Wait for the feedback of a decision and return 'right' | 'wrong'. */
 export async function judged(page, id) {
-  await feedback(page, id).waitFor({ state: 'visible', timeout: 5000 });
-  return decision(page, id).first().getAttribute('data-state');
+  const result = page.locator(
+    `[data-testid=decision-${id}][data-state=right], [data-testid=decision-${id}][data-state=wrong], `
+    + `[data-testid=rail-${id}][data-state=right], [data-testid=rail-${id}][data-state=wrong]`,
+  ).first();
+  await result.waitFor({ state: 'attached', timeout: 5000 });
+  return result.getAttribute('data-state');
 }
 
 export async function shot(page, name) {

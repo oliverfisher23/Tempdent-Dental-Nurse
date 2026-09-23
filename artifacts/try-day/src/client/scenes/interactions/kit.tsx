@@ -7,8 +7,10 @@ import { CheckFeedback } from '@kit/check-feedback';
 import { kitchenAudio } from '@kit/lib/audio';
 import { isAnswered, isCorrect } from '@client/content/tasks';
 import type { InteractionProps } from './types';
+import { useProgress } from '@client/lib/progress';
 
 export function KitInteraction({ decision, presentation, answer, frozen, onAnswer, isOpen, onClose }: InteractionProps<'kit'>) {
+  const { progress } = useProgress();
   const saved = Array.isArray(answer) && isAnswered(answer) ? answer : null;
   const [draft, setDraft] = useState<string[] | null>(saved ? null : []);
   const answered = isAnswered(answer);
@@ -25,10 +27,12 @@ export function KitInteraction({ decision, presentation, answer, frozen, onAnswe
     if (isOpen) kitchenAudio.play('page');
   }, [isOpen]);
 
-  const toggle = (id: string) => {
+  const [zoomed, setZoomed] = useState<string | null>(null);
+  const read = (id: string) => {
     if (!editing) return;
-    kitchenAudio.play('write');
-    setDraft(ticked.includes(id) ? ticked.filter((item) => item !== id) : [...ticked, id]);
+    kitchenAudio.play('page');
+    setZoomed(id);
+    if (!ticked.includes(id)) setDraft([...ticked, id]);
   };
 
   return (
@@ -60,20 +64,17 @@ export function KitInteraction({ decision, presentation, answer, frozen, onAnswe
                 <button
                   key={option.id}
                   type="button"
-                  role="checkbox"
-                  aria-checked={selected}
+                  aria-pressed={selected}
                   disabled={!editing}
                   data-testid={`option-${decision.id}-${option.id}`}
                   className="flex min-h-14 w-full items-start gap-3 border-b border-zinc-300 px-1 py-3 text-left disabled:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-                  onClick={() => toggle(option.id)}
+                  onClick={() => read(option.id)}
                 >
-                  <span className="kitchen-input flex h-5 w-5 shrink-0 items-center justify-center rounded-sm border-2 border-foreground/60 text-base font-bold leading-none" aria-hidden="true">
-                    {selected && '✓'}
-                  </span>
                   <span className="min-w-0 flex-1">
                     <span className="block font-semibold">{option.label}</span>
-                    <span className="block text-sm text-zinc-600">{item?.detail}</span>
+                    <span className="block text-sm text-zinc-600">{selected ? item?.detail : 'Open to read'}</span>
                   </span>
+                  {selected && <span className="font-hand text-sm font-bold" aria-label={`Initialled ${progress.initials}`}>{progress.initials}</span>}
                   {answered && !editing && item && (
                     <span className={`flex shrink-0 items-center gap-1 text-xs font-bold ${
                       item.status === 'expired' ? 'text-red-700' : item.status === 'missing' ? 'text-amber-700' : 'text-emerald-700'
@@ -88,10 +89,18 @@ export function KitInteraction({ decision, presentation, answer, frozen, onAnswe
             })}
           </div>
 
+          {zoomed && editing && (
+            <div className="rounded-lg border-2 border-zinc-800 bg-white p-4" role="status">
+              <p className="font-bold">{decision.options.find((item) => item.id === zoomed)?.label}</p>
+              <p className="mt-1 text-lg">{presentation.items[zoomed]?.detail}</p>
+              <Button type="button" variant="secondary" className="mt-3" onClick={() => setZoomed(null)}>Back to the kit</Button>
+            </div>
+          )}
+
           {editing && (
             <Button
               type="button"
-              disabled={ticked.length === 0}
+              disabled={ticked.length !== decision.options.length}
               data-testid={`confirm-${decision.id}`}
               className="self-start"
               onClick={() => {

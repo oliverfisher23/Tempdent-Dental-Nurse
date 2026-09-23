@@ -616,4 +616,4 @@ Estimates assume the SME questions below are answered before the phase that need
 | V1 content (facts, people, decisions, feedback, criteria) | Signed off 22 September 2026 |
 | V2 interaction design (this document) | Draft for sign-off, 23 September 2026 |
 | New copy marked **TBC** in Sections H | Awaiting SME |
-| Build | Not started; begins with Phase A on sign-off |
+| Build | Phases A–E built 23 September 2026 against this draft; SME questions Q1–Q7 open, TBC copy flagged `// TBC SME` in content, all new pictures and sounds AI placeholders (see `docs/media-log.md`, `docs/V2-BUILD.md`) |

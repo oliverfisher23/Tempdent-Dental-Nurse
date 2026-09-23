@@ -177,6 +177,8 @@ export const WELCOME_COPY: WelcomeCopy = {
     'Work through the task in order.',
     'Use the information in the workplace before making a decision.',
     'Check your work before signing off.',
+    "Some moments run at Dr Reid's pace. If you'd rather everything waited for you, turn on At your pace — nothing is marked differently.",
+    "Your notebook keeps what you notice through the day. You'll need it at the end.",
   ],
   controls: 'Use Tab to move through controls and Enter or Space to choose.',
   fullBrief: 'Read the full brief',

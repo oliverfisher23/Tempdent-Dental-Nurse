@@ -20,9 +20,11 @@ export function TrayInteraction(props: InteractionProps<'tray'>) {
   );
 }
 
-function TrayWorkspace({ decision, presentation, answer, frozen, onAnswer, onClose }: InteractionProps<'tray'>) {
+function TrayWorkspace({ decision, presentation, answer, answers, frozen, onAnswer, onAnswerOther, onClose }: InteractionProps<'tray'>) {
   const saved = Array.isArray(answer) && isAnswered(answer) ? answer : null;
   const [draft, setDraft] = useState<string[] | null>(saved ? null : []);
+  const [turned, setTurned] = useState(false);
+  const [about, setAbout] = useState<string | null>(null);
   const answerKey = JSON.stringify(answer);
 
   useEffect(() => {
@@ -34,6 +36,7 @@ function TrayWorkspace({ decision, presentation, answer, frozen, onAnswer, onClo
   const moveToTray = (id: string) => {
     if (!editing || onTray.includes(id)) return;
     kitchenAudio.play('tap');
+    if (decision.id === 'tray' && id === 'exam' && turned && answers.pouch !== 'aside') onAnswerOther('pouch', 'use');
     setDraft([...onTray, id]);
   };
   const moveToShelf = (id: string) => {
@@ -46,6 +49,17 @@ function TrayWorkspace({ decision, presentation, answer, frozen, onAnswer, onClo
     label: 'Tray',
     accepts: acceptsTrayItem,
     onDrop: moveToTray,
+    disabled: !editing,
+  });
+  const deconZone = useDropZone({
+    id: `${decision.id}-decon`,
+    label: 'Back to decon',
+    accepts: acceptsTrayItem,
+    onDrop: (id) => {
+      if (id !== 'exam' || !turned) return;
+      kitchenAudio.play('tap');
+      onAnswerOther('pouch', 'aside');
+    },
     disabled: !editing,
   });
   const answered = saved !== null;
@@ -106,7 +120,31 @@ function TrayWorkspace({ decision, presentation, answer, frozen, onAnswer, onClo
               {onTray.length === 0 && <p className="text-sm text-slate-400">{trayZone.carrying ? `Put ${trayZone.carrying} here` : 'Move items here'}</p>}
             </div>
           </div>
+          {decision.id === 'tray' && (
+            <div ref={deconZone.ref as React.Ref<HTMLDivElement>} {...deconZone.props}
+              className={`min-h-24 rounded-lg border-2 border-dashed p-3 ${deconZone.isOver || deconZone.isTarget ? 'border-amber-300 bg-amber-950' : 'border-slate-500 bg-slate-900'}`}>
+              <h3 className="text-sm font-bold uppercase tracking-wider">Back to decon</h3>
+              <p className="mt-2 text-sm text-slate-300">{turned ? 'Broken seal found. Put the pouch here.' : 'Turn pouches over before placing them.'}</p>
+            </div>
+          )}
         </div>
+        {decision.id === 'tray' && editing && (
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" variant="secondary" onClick={() => { setTurned(true); kitchenAudio.play('page'); }}>Turn over examination pouch</Button>
+            {decision.options.map((option) => (
+              <Button key={option.id} type="button" size="sm" variant="secondary" onClick={() => setAbout(option.id)}>
+                About {option.label.split(' ')[0]}
+              </Button>
+            ))}
+          </div>
+        )}
+        {about && <p className="mt-3 rounded border border-slate-600 p-3 text-sm">
+          {about === 'matrix'
+            ? 'The matrix band is the thin metal strip that wraps round the tooth so the filling sets to the right shape.'
+            : about === 'forceps'
+              ? 'Extraction forceps are for taking a tooth out. They are not on today’s composite card.'
+              : decision.options.find((option) => option.id === about)?.label}
+        </p>}
 
         {answered && (
           <CheckFeedback

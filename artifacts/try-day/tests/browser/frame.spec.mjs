@@ -1,42 +1,71 @@
-import { spec, startTask, taps, openCloseUp, done, carryOn, judged, decision, shot, expect } from './harness.mjs';
+import { spec, startTask, tap, openCloseUp, confirm, judged, decision, shot, expect, settled } from './harness.mjs';
 
 // The try day runs inside an embedded frame that can be as small as 390x480. Every
-// pin on the photograph must be reachable by keyboard and visible above the panel.
-const prep = ['uniform', 'hair', 'handwash', 'ppe', 'gloves'];
+// spot on the photograph (V2 find faults and wipe-path zones) must be reachable by
+// keyboard and sit fully inside the frame above the panel.
+const faults = ['light', 'cup', 'sharps', 'bin'];
 const wipe = ['headrest', 'light', 'delivery', 'aspirator', 'spittoon', 'surfaces', 'handles'];
 
-async function tabToPin(page, id) {
-  const pin = page.locator(`[data-testid=option-wipe-${id}] button`).first();
-  for (let presses = 0; presses < 40; presses += 1) {
-    if (await pin.evaluate((el) => el === document.activeElement)) return pin;
-    await page.keyboard.press('Tab');
-  }
-  throw new Error(`could not reach pin ${id} by keyboard`);
+async function right(page, id) {
+  expect(await judged(page, id) === 'right', `${id} should be right`);
+}
+
+async function holdByKeyboard(page, id) {
+  await openCloseUp(page, id);
+  const control = page.getByRole('button', { name: /Hold the tap/ }).last();
+  await control.focus();
+  await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: 'Finish hold' }).focus();
+  await page.keyboard.press('Enter');
+  await right(page, id);
+}
+
+async function checkSpot(page, locator, decisionId, label, viewport) {
+  // The guide bar's height changes between steps, so measure the stage afresh for every spot.
+  await settled(page);
+  await page.waitForTimeout(250);
+  await locator.focus();
+  await page.waitForTimeout(150);
+  const stageBox = await page.locator('[data-testid=scene-surgery2]').boundingBox();
+  const spotBox = await locator.boundingBox();
+  const panelBox = await decision(page, decisionId).boundingBox();
+  expect(spotBox && panelBox && spotBox.y >= stageBox.y - 1 && spotBox.y + spotBox.height <= panelBox.y + 1,
+    `${label} sits fully above the panel at ${viewport.width}x${viewport.height} (spot bottom ${spotBox && Math.round(spotBox.y + spotBox.height)}, panel top ${panelBox && Math.round(panelBox.y)})`);
+  expect(spotBox && spotBox.x >= stageBox.x - 1 && spotBox.x + spotBox.width <= stageBox.x + stageBox.width + 1,
+    `${label} is inside the frame horizontally at ${viewport.width}x${viewport.height}`);
 }
 
 async function playFrame(page, viewport) {
-  await openCloseUp(page, 'prep');
-  await taps(page, 'prep', prep);
-  await done(page);
-  expect(await judged(page, 'prep') === 'right', 'prep should be right');
-  await carryOn(page);
+  const pace = page.locator('[data-testid=own-pace]');
+  if (await pace.getAttribute('aria-checked') !== 'true') await pace.click();
+
+  await openCloseUp(page, 'mirror');
+  await tap(page, 'mirror', 'watch');
+  await right(page, 'mirror');
+  await holdByKeyboard(page, 'handwash');
 
   const stage = page.locator('[data-testid=scene-surgery2]');
   const stageBox = await stage.boundingBox();
   expect(stageBox && stageBox.height <= viewport.height, 'the stage fits inside the frame');
 
-  // Focus the first pin, then tab through every one and check it is visible above the panel.
-  await page.locator('[data-testid=option-wipe-headrest] button').first().focus();
+  // The four walk-in faults on the room photograph.
+  for (const id of faults) {
+    const spot = page.locator(`[data-testid=option-faults-${id}]`).first();
+    await checkSpot(page, spot, 'faults', `fault ${id}`, viewport);
+    await shot(page, `frame-fault-${id}-${viewport.width}x${viewport.height}`);
+    await page.keyboard.press('Enter');
+  }
+  await right(page, 'faults');
+
+  // The wipe path's zones by keyboard: focus each zone, Enter, then lift off.
   for (const id of wipe) {
-    const pin = await tabToPin(page, id);
-    const pinBox = await pin.boundingBox();
-    const panelBox = await decision(page, 'wipe').boundingBox();
-    expect(pinBox && panelBox && pinBox.y >= stageBox.y && pinBox.y + pinBox.height <= panelBox.y + 1, `pin ${id} sits fully above the panel at ${viewport.width}x${viewport.height} (pin bottom ${pinBox && Math.round(pinBox.y + pinBox.height)}, panel top ${panelBox && Math.round(panelBox.y)})`);
-    expect(pinBox && pinBox.x >= stageBox.x - 1 && pinBox.x + pinBox.width <= stageBox.x + stageBox.width + 1, `pin ${id} is inside the frame horizontally`);
+    const zone = page.locator(`[data-testid=option-wipe-${id}]`).first();
+    await checkSpot(page, zone, 'wipe', `zone ${id}`, viewport);
     await shot(page, `frame-wipe-${id}-${viewport.width}x${viewport.height}`);
     await page.keyboard.press('Enter');
   }
-  expect(await judged(page, 'wipe') === 'right', 'the wipe tapped in order by keyboard should be right');
+  await confirm(page, 'wipe');
+  await right(page, 'wipe');
 }
 
 spec('embedded frame sizes', async (browser) => {

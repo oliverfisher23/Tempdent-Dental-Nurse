@@ -1,7 +1,6 @@
 import { mkdirSync } from 'node:fs';
 import {
-  spec, startTask, tap, taps, openCloseUp, confirm, done, carryOn,
-  judged, decision, option, feedback, shot, expect,
+  spec, startTask, tap, openCloseUp, judged, decision, feedback, shot, expect,
 } from './harness.mjs';
 
 mkdirSync('/tmp/shots', { recursive: true });
@@ -10,73 +9,78 @@ async function expectRight(page, id) {
   expect(await judged(page, id) === 'right', `${id} should be judged right`);
 }
 
-async function moveToTray(page, decisionId, optionId) {
-  await tap(page, decisionId, optionId);
-  await page.getByRole('heading', { name: 'Tray', exact: true }).locator('..').click();
+async function liftAndPlace(page, item, zone = 'next-hand') {
+  await page.locator(`[data-testid=option-next-${item}]`).click();
+  await page.locator(`[data-drop-zone=${zone}]`).click();
 }
 
-async function playFilling(page) {
-  await tap(page, 'la', 'pass');
-  expect(await judged(page, 'la') === 'wrong', 'the unsafe local anaesthetic answer should be wrong');
-  expect(await decision(page, 'la').getAttribute('data-state') === 'wrong', 'la should expose its wrong state');
-  expect(await feedback(page, 'la').isVisible(), 'wrong-answer feedback should be visible');
-  await page.locator('[data-testid=change-la]').click();
-  await tap(page, 'la', 'leave');
-  await expectRight(page, 'la');
-  await carryOn(page);
+async function passWithKeyboard(page, item) {
+  const control = page.locator(`[data-testid=option-next-${item}]`);
+  await control.focus();
+  await control.press('Space');
+  await control.press('Enter');
+}
 
-  await shot(page, 'filling-suction-1280x720');
-  await tap(page, 'suction', 'near');
-  await expectRight(page, 'suction');
-  await carryOn(page);
-
+async function playSegment(page) {
   await openCloseUp(page, 'next');
-  await shot(page, 'filling-next-items-1280x720');
-  await taps(page, 'next', ['etchant', 'bond', 'composite', 'paper']);
-  expect(await decision(page, 'next').last().getAttribute('data-state') === 'right', 'next-item order should be right');
-  await done(page);
+  await shot(page, 'filling-four-hands-desktop');
+
+  await page.locator('[data-testid=option-next-suction]').click();
+  await page.locator('[data-drop-zone=next-near]').click();
+  await page.getByRole('button', { name: 'Start the segment', exact: true }).click();
+
+  // Keyboard route: lift Etchant with Space and place it in Dr Reid's hand with Enter.
+  await passWithKeyboard(page, 'etchant');
+  await liftAndPlace(page, 'bond');
+  await liftAndPlace(page, 'composite');
+
+  expect(await page.getByText('Amira lifts her hand from the armrest.').isVisible(), 'Amira’s signal should be visible');
+  await page.locator('[data-testid=paced-speak-up]').click();
+  await liftAndPlace(page, 'matrix');
+
+  await liftAndPlace(page, 'light');
+  await page.getByRole('button', { name: 'Hold up the orange shield', exact: true }).click();
+  await liftAndPlace(page, 'paper');
+
+  expect(await page.locator('[data-testid=paced-debrief]').isVisible(), 'paced debrief should be visible');
+  await page.getByRole('button', { name: 'Finish segment', exact: true }).click();
   await expectRight(page, 'next');
-  await carryOn(page);
-
-  await tap(page, 'transfer', 'chin');
+  await expectRight(page, 'suction');
   await expectRight(page, 'transfer');
-  await carryOn(page);
-
-  await tap(page, 'signal', 'say');
   await expectRight(page, 'signal');
-  await carryOn(page);
-
-  await tap(page, 'restart', 'clear');
-  await expectRight(page, 'restart');
-  await carryOn(page);
-
-  await openCloseUp(page, 'light');
-  await moveToTray(page, 'light', 'sleeved');
-  await moveToTray(page, 'light', 'shield');
-  await confirm(page, 'light');
-  expect(await decision(page, 'light').last().getAttribute('data-state') === 'right', 'light tray should be right');
-  await done(page);
   await expectRight(page, 'light');
-  await carryOn(page);
 }
 
-spec('filling content and presentations', async (browser) => {
+spec('filling V2 paced segment and sign-off', async (browser) => {
   const desktop = await startTask(browser, 3);
-  await playFilling(desktop.page);
+  await tap(desktop.page, 'la', 'pass');
+  expect(await judged(desktop.page, 'la') === 'wrong', 'unsafe local anaesthetic answer should be wrong');
+  expect(await decision(desktop.page, 'la').getAttribute('data-state') === 'wrong', 'la should expose its wrong state');
+  expect(await feedback(desktop.page, 'la').isVisible(), 'wrong feedback should be visible');
+  await desktop.page.locator('[data-testid=change-la]').click();
+  await tap(desktop.page, 'la', 'leave');
+  await expectRight(desktop.page, 'la');
+
+  const pace = desktop.page.locator('[data-testid=own-pace]');
+  if ((await pace.getAttribute('aria-checked')) !== 'true') await pace.click();
+  await playSegment(desktop.page);
+
+  await tap(desktop.page, 'restart', 'clear');
+  await expectRight(desktop.page, 'restart');
+  await desktop.page.getByText(/Bite's good/).waitFor({ state: 'visible' });
+  await shot(desktop.page, 'filling-sign-off-desktop');
   expect(desktop.errors.length === 0, `desktop browser errors: ${desktop.errors.join('; ')}`);
   await desktop.context.close();
 
   const mobile = await startTask(browser, 3, { viewport: { width: 390, height: 844 } });
   await tap(mobile.page, 'la', 'leave');
-  await expectRight(mobile.page, 'la');
-  await carryOn(mobile.page);
-  await shot(mobile.page, 'filling-suction-390x844');
-  await tap(mobile.page, 'suction', 'near');
-  await expectRight(mobile.page, 'suction');
-  await carryOn(mobile.page);
+  const mobilePace = mobile.page.locator('[data-testid=own-pace]');
+  if ((await mobilePace.getAttribute('aria-checked')) !== 'true') await mobilePace.click();
   await openCloseUp(mobile.page, 'next');
-  await shot(mobile.page, 'filling-next-items-390x844');
-  expect(await option(mobile.page, 'next', 'etchant').isVisible(), 'mobile close-up options should not be clipped');
+  await mobile.page.locator('[data-testid=option-next-suction]').click();
+  await mobile.page.locator('[data-drop-zone=next-near]').click();
+  await shot(mobile.page, 'filling-four-hands-390x844');
+  expect(await mobile.page.getByRole('button', { name: 'Start the segment', exact: true }).isVisible(), 'mobile close-up controls should remain reachable');
   expect(mobile.errors.length === 0, `mobile browser errors: ${mobile.errors.join('; ')}`);
   await mobile.context.close();
 });

@@ -4,7 +4,7 @@
   "mechanicId": "try-day-app",
   "config": {
     "mechanic": "try-day-app",
-    "version": 2,
+    "version": 3,
     "id": "tempdent-try-day",
     "employer": "Tempdent",
     "locale": "en-GB",

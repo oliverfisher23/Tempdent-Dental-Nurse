@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useRef, useState, type CSSProperties, type RefObject } from 'react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
 import { Button } from '@kit/ui/button';
 import { kitchenAudio } from '@kit/lib/audio';
 import {
   TASKS,
+  blankAnswer,
   isAnswered,
   isCorrect,
   type Decision,
@@ -12,10 +13,14 @@ import {
   type PresentationOf,
   type TaskScene,
 } from '@client/content/tasks';
-import { WORKPLACE } from '@client/content/client';
+import { MENTOR_ID, WORKPLACE } from '@client/content/client';
 import { currentDecision, isVisible } from './current';
 import { BACKDROP_ASPECT, presentationFor } from './presentation';
-import { INTERACTIONS } from './interactions';
+import { INTERACTIONS, STAGE_LAYERS } from './interactions';
+import { SoundCaptions } from './sound-captions';
+import type { DayMemory } from '@client/lib/consequences';
+import { useProgress } from '@client/lib/progress';
+import { openingStorageKey, shortInstruction } from '@client/lib/guide';
 import { Hotspot } from '@shell/frame/hotspot';
 import { useKitchenAction, useWorkspaceOpen } from '@shell/frame/kitchen-context';
 import { ChevronDown, Check, X } from 'lucide-react';
@@ -25,6 +30,11 @@ interface StageSceneProps {
   scene: TaskScene;
   answers: DecisionAnswers;
   frozen: boolean;
+  memory: DayMemory;
+  ownPace: boolean;
+  onOwnPace: (value: boolean) => void;
+  openingActive: boolean;
+  onOpeningComplete: () => void;
   onAnswer: (decisionId: string, answer: DecisionAnswers[string]) => void;
 }
 
@@ -34,15 +44,19 @@ const PANEL_SCROLL_GAP = 28;
 const RAIL_SCROLL_PADDING = 60;
 let RAIL_EXPANDED = false;
 
-export function StageScene({ taskId, scene, answers, frozen, onAnswer }: StageSceneProps) {
+export function StageScene({
+  taskId, scene, answers, frozen, memory, ownPace, onOwnPace,
+  openingActive, onOpeningComplete, onAnswer,
+}: StageSceneProps) {
   const task = TASKS[taskId];
+  const { progress, jot, unjot } = useProgress();
   const next = currentDecision(task, answers, scene);
   const [focusId, setFocusId] = useState<string | null>(null);
   const [railOpen, setRailOpen] = useState(() => RAIL_EXPANDED);
   const visible = scene.decisions.filter((decision) => isVisible(decision, answers));
   const focused = focusId ? visible.find((decision) => decision.id === focusId) : undefined;
   const decision = focused ?? next?.decision ?? null;
-  const backdrop = WORKPLACE.places[scene.place]?.backdrop;
+  const backdrop = scene.backdrop ?? WORKPLACE.places[scene.place]?.backdrop;
   const stageRef = useRef<HTMLElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const photoRef = useRef<HTMLDivElement>(null);
@@ -51,6 +65,33 @@ export function StageScene({ taskId, scene, answers, frozen, onAnswer }: StageSc
   const learnerPanned = useRef(false);
   const centring = useRef(false);
   const [panHint, setPanHint] = useState(false);
+  const completeOpening = useCallback(() => {
+    try { sessionStorage.setItem(openingStorageKey(taskId, scene.place), '1'); } catch { /* session storage may be unavailable */ }
+    onOpeningComplete();
+  }, [onOpeningComplete, scene.place, taskId]);
+
+  useKitchenAction(`opening-${scene.place}`, completeOpening);
+  useEffect(() => {
+    if (!openingActive || ownPace) return;
+    const timer = window.setTimeout(completeOpening, (scene.opening?.seconds ?? 6) * 1000);
+    return () => window.clearTimeout(timer);
+  }, [completeOpening, openingActive, ownPace, scene.opening?.seconds]);
+
+  useEffect(() => {
+    if (frozen) return;
+    for (const item of scene.decisions) {
+      if (!item.noticed) continue;
+      const answer = answers[item.id];
+      const shouldExist = isAnswered(answer)
+        && (item.noticed.when !== 'right' || isCorrect(item, answer ?? null));
+      const existing = progress.notepad.find((entry) => entry.taskId === taskId && entry.ref?.decision === item.id);
+      if (shouldExist && !existing) {
+        jot({ taskId, label: item.noticed.label ?? 'Noticed', value: item.noticed.value, ref: { decision: item.id } });
+      } else if (!shouldExist && existing) {
+        unjot(existing.id);
+      }
+    }
+  }, [answers, frozen, jot, progress.notepad, scene.decisions, taskId, unjot]);
 
   useEffect(() => {
     if (focusId && !visible.some((item) => item.id === focusId)) setFocusId(null);
@@ -171,6 +212,7 @@ export function StageScene({ taskId, scene, answers, frozen, onAnswer }: StageSc
 
   return (
     <section ref={stageRef} className="absolute inset-0 overflow-clip bg-zinc-900 text-foreground" data-testid={`scene-${scene.place}`}>
+      <SoundCaptions />
       <div
         ref={scrollerRef}
         className="absolute inset-0 overflow-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
@@ -202,6 +244,9 @@ export function StageScene({ taskId, scene, answers, frozen, onAnswer }: StageSc
         visible={visible}
         currentId={decision?.id}
         open={railOpen}
+        ownPace={ownPace}
+        onOwnPace={onOwnPace}
+        taskId={taskId}
         onToggle={() => setRailOpen((value) => {
           RAIL_EXPANDED = !value;
           return RAIL_EXPANDED;
@@ -211,22 +256,47 @@ export function StageScene({ taskId, scene, answers, frozen, onAnswer }: StageSc
           setRailOpen(false);
         }}
       />
-      {decision ? (
+      <CastCards scene={scene} answers={answers} />
+      {openingActive && scene.opening ? (
+        <SimplePanel
+          testId={`opening-${scene.place}`}
+          speaker={scene.opening.speaker ?? mentorName()}
+          text={scene.opening.text}
+          onPanelHeight={setPanelHeight}
+        >
+          <Button type="button" size="sm" onClick={completeOpening}>I've had a look</Button>
+        </SimplePanel>
+      ) : decision ? (
         <DecisionPanel
           key={decision.id}
           taskId={taskId}
           decision={decision}
           answer={answers[decision.id] ?? null}
+          answers={answers}
+          memory={memory}
+          ownPace={ownPace}
           photoBox={photoRef.current}
           panHint={panHint}
           compact={stageSize.height < 320}
           onPanelHeight={setPanelHeight}
           frozen={frozen}
           onAnswer={(answer) => {
-            setFocusId(decision.id);
+            const right = isCorrect(decision, answer);
+            if (right) kitchenAudio.play('confirm');
+            setFocusId(right && decision.silent !== false && !frozen ? null : decision.id);
             onAnswer(decision.id, answer);
           }}
+          onAnswerOther={onAnswer}
           onCarryOn={() => setFocusId(null)}
+        />
+      ) : scene.debrief && scene.decisions.every((item) =>
+        isAnswered(answers[item.id]) && isCorrect(item, answers[item.id] ?? null)
+      ) ? (
+        <SimplePanel
+          testId={`debrief-${scene.place}`}
+          speaker={scene.debrief.speaker}
+          text={scene.debrief.text}
+          onPanelHeight={setPanelHeight}
         />
       ) : visible.length === 0 && scene.decisions.length > 0 ? (
         <div className="absolute bottom-4 left-1/2 z-20 w-[min(92%,40rem)] -translate-x-1/2 rounded-md border border-white/20 bg-white/95 p-4 shadow-2xl">
@@ -251,6 +321,9 @@ function ProgressRail({
   visible,
   currentId,
   open,
+  ownPace,
+  onOwnPace,
+  taskId,
   onToggle,
   onFocus,
 }: {
@@ -259,9 +332,15 @@ function ProgressRail({
   visible: Decision[];
   currentId?: string;
   open: boolean;
+  ownPace: boolean;
+  onOwnPace: (value: boolean) => void;
+  taskId: string;
   onToggle: () => void;
   onFocus: (id: string) => void;
 }) {
+  const { jot } = useProgress();
+  const [why, setWhy] = useState<string | null>(null);
+  const [note, setNote] = useState('');
   const allRight = scene.decisions.every((item) =>
     isAnswered(answers[item.id]) && isCorrect(item, answers[item.id] ?? null)
   );
@@ -270,15 +349,27 @@ function ProgressRail({
     : Math.max(1, scene.decisions.findIndex((item) => item.id === currentId) + 1);
   return (
     <nav aria-label={`${scene.title} progress`} className="absolute left-3 top-3 z-20 max-w-[min(20rem,calc(100%-1.5rem))]">
-      <button
-        type="button"
-        aria-expanded={open}
-        onClick={onToggle}
-        className="flex min-h-10 items-center gap-2 rounded-md border border-white/30 bg-black/75 px-3 text-sm font-bold text-white shadow-lg"
-      >
-        {currentNumber} of {scene.decisions.length}
-        <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
-      </button>
+      <div className="flex items-center gap-1 rounded-md border border-white/30 bg-black/75 p-1 text-white shadow-lg">
+        <button
+          type="button"
+          aria-expanded={open}
+          onClick={onToggle}
+          className="flex min-h-9 items-center gap-2 px-2 text-sm font-bold"
+        >
+          {currentNumber} of {scene.decisions.length}
+          <ChevronDown className={`h-4 w-4 transition-transform ${open ? 'rotate-180' : ''}`} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={ownPace}
+          data-testid="own-pace"
+          onClick={() => onOwnPace(!ownPace)}
+          className={`min-h-9 rounded px-2 text-xs font-bold ${ownPace ? 'bg-primary text-primary-foreground' : 'bg-white/10'}`}
+        >
+          At your pace
+        </button>
+      </div>
       <ol className={`${open ? 'mt-1 flex' : 'hidden'} max-h-48 flex-col gap-1 overflow-y-auto rounded-md border border-white/20 bg-black/75 p-2 shadow-xl`}>
         {(scene.people?.length ?? 0) > 0 && (
           <li
@@ -308,13 +399,13 @@ function ProgressRail({
           const right = answered && isCorrect(item, answers[item.id] ?? null);
           const state = answered ? (right ? 'right' : 'wrong') : 'open';
           return (
-            <li key={item.id}>
+            <li key={item.id} className="rounded">
               <button
                 type="button"
                 data-testid={`rail-${item.id}`}
                 data-state={state}
                 aria-current={item.id === currentId ? 'step' : undefined}
-                disabled={!answered}
+                disabled={!answered && !item.blockedBy}
                 onClick={() => onFocus(item.id)}
                 className={`flex w-full items-start gap-2 rounded px-2 py-1.5 text-left text-xs text-white outline-none focus-visible:ring-2 focus-visible:ring-primary ${
                   item.id === currentId ? 'bg-white/20' : 'hover:bg-white/10'
@@ -325,11 +416,126 @@ function ProgressRail({
                 </span>
                 <span>{item.clause}</span>
               </button>
+              {right && (
+                <>
+                  <button
+                    type="button"
+                    data-testid={`why-${item.id}`}
+                    aria-expanded={why === item.id}
+                    onClick={() => setWhy((id) => id === item.id ? null : item.id)}
+                    className="ml-6 px-2 py-1 text-left text-[11px] font-bold text-white underline"
+                  >
+                    Why did that work?
+                  </button>
+                  {why === item.id && (
+                    <p className="ml-6 border-l-2 border-primary px-2 pb-2 text-xs leading-relaxed text-white">
+                      <strong>{item.feedback.speaker}: </strong>{item.feedback.right}
+                    </p>
+                  )}
+                </>
+              )}
             </li>
           );
         })}
+        <li className="mt-1 border-t border-white/20 pt-2">
+          <label className="sr-only" htmlFor={`note-${scene.place}`}>Write a note</label>
+          <div className="flex gap-1">
+            <input
+              id={`note-${scene.place}`}
+              data-testid="note-input"
+              value={note}
+              maxLength={160}
+              placeholder="Write a note"
+              onChange={(event) => setNote(event.target.value)}
+              className="min-w-0 flex-1 rounded bg-white px-2 py-1 text-xs text-foreground"
+            />
+            <button
+              type="button"
+              data-testid="note-add"
+              disabled={!note.trim()}
+              onClick={() => {
+                const value = note.trim();
+                if (!value) return;
+                jot({ taskId, label: 'Note', value });
+                setNote('');
+              }}
+              className="rounded bg-primary px-2 py-1 text-xs font-bold text-primary-foreground disabled:opacity-50"
+            >
+              Add
+            </button>
+          </div>
+        </li>
       </ol>
     </nav>
+  );
+}
+
+function mentorName(): string {
+  return WORKPLACE.people.find((person) => person.id === MENTOR_ID)?.name ?? 'Priya';
+}
+
+function CastCards({ scene, answers }: { scene: TaskScene; answers: DecisionAnswers }) {
+  if (!scene.cast) return null;
+  return (
+    <div className="absolute right-3 top-3 z-20 flex max-w-[55%] gap-2 max-sm:bottom-[54%] max-sm:left-3 max-sm:right-3 max-sm:top-auto max-sm:max-w-none">
+      {Object.entries(scene.cast).map(([personId, member]) => {
+        let state = member.initial;
+        let text = '';
+        for (const decision of scene.decisions) {
+          const answer = answers[decision.id];
+          const ids = Array.isArray(answer) ? answer : typeof answer === 'string' ? [answer] : [];
+          for (const id of ids) {
+            const reaction = decision.options.find((option) => option.id === id)?.reaction;
+            if (reaction?.person === personId) {
+              state = reaction.state;
+              text = reaction.text;
+            }
+          }
+        }
+        const person = WORKPLACE.people.find((item) => item.id === personId);
+        const still = member.states[state] ?? member.states[member.initial];
+        return (
+          <div
+            key={personId}
+            data-testid={`cast-${personId}`}
+            data-state={state}
+            className="flex min-w-0 items-center gap-2 rounded-md border border-white/25 bg-black/75 p-1.5 text-white shadow-lg"
+          >
+            {still?.image && <img src={still.image} alt={still.alt} className="h-10 w-10 shrink-0 rounded object-cover" />}
+            <div className="min-w-0">
+              <p className="truncate text-xs font-bold">{member.name ?? person?.name ?? personId}</p>
+              <p aria-live="polite" className="line-clamp-1 text-[11px]">{text}</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function SimplePanel({
+  testId, speaker, text, children, onPanelHeight,
+}: {
+  testId: string;
+  speaker: string;
+  text: string;
+  children?: ReactNode;
+  onPanelHeight: (height: number) => void;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!ref.current) return;
+    const measure = () => onPanelHeight(ref.current?.getBoundingClientRect().height ?? 0);
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [onPanelHeight]);
+  return (
+    <div ref={ref} data-testid={testId} role="status" className="absolute bottom-4 left-1/2 z-20 max-h-[52%] w-[min(94%,46rem)] -translate-x-1/2 overflow-y-auto rounded-md border border-white/20 border-t-4 border-t-primary bg-white/95 p-4 shadow-2xl">
+      <p className="text-sm leading-relaxed"><strong>{speaker}: </strong>{text}</p>
+      {children && <div className="mt-3">{children}</div>}
+    </div>
   );
 }
 
@@ -337,32 +543,55 @@ function DecisionPanel({
   taskId,
   decision,
   answer,
+  answers,
+  memory,
+  ownPace,
   photoBox,
   panHint,
   compact,
   onPanelHeight,
   frozen,
   onAnswer,
+  onAnswerOther,
   onCarryOn,
 }: {
   taskId: string;
   decision: Decision;
   answer: DecisionAnswer;
+  answers: DecisionAnswers;
+  memory: DayMemory;
+  ownPace: boolean;
   photoBox: HTMLDivElement | null;
   panHint: boolean;
   compact: boolean;
   onPanelHeight: (height: number) => void;
   frozen: boolean;
   onAnswer: (answer: DecisionAnswer) => void;
+  onAnswerOther: (decisionId: string, answer: DecisionAnswer) => void;
   onCarryOn: () => void;
 }) {
   const presentation = presentationFor(decision);
   const answered = isAnswered(answer);
   const right = answered && isCorrect(decision, answer);
+  const blocker = decision.blockedBy?.decision;
+  const blockingDecision = blocker
+    ? TASKS[taskId].scenes.flatMap((item) => item.decisions).find((item) => item.id === blocker)
+    : undefined;
+  const blocked = Boolean(blocker && blockingDecision
+    && !(isAnswered(answers[blocker]) && isCorrect(blockingDecision, answers[blocker] ?? null)));
   const [editing, setEditing] = useState(!answered);
+  /**
+   * The learner is working on the photograph itself (hotspots being picked, or a V2 stage
+   * layer): the panel only restates the step, so it drops to the foot of the stage, lets
+   * pointer events through and, in a tiny embedded frame, shrinks so the room stays visible.
+   */
+  const onStage = editing && (presentation.kind === 'hotspots'
+    || presentation.kind === 'find' || presentation.kind === 'path' || presentation.kind === 'controls');
+  const promptRest = decision.prompt.slice(shortInstruction(decision.prompt).length).trim();
   const savedList = Array.isArray(answer) ? answer : [];
   const [hotspotDraft, setHotspotDraft] = useState<string[]>(savedList);
   const [workspaceOpen, setWorkspaceOpen] = useState(false);
+  const [panelSlot, setPanelSlot] = useState<HTMLElement | null>(null);
   const feedbackRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const [panelHeight, setPanelHeight] = useState(0);
@@ -372,8 +601,10 @@ function DecisionPanel({
   }, [answer]);
   useEffect(() => setHotspotDraft(savedList), [JSON.stringify(savedList)]);
   useEffect(() => {
-    if (answered && !editing) feedbackRef.current?.focus({ preventScroll: true });
-  }, [answered, editing, answer]);
+    if (answered && !editing && (!right || decision.silent === false)) {
+      feedbackRef.current?.focus({ preventScroll: true });
+    }
+  }, [answered, decision.silent, editing, answer, right]);
   useEffect(() => {
     const panel = panelRef.current;
     if (!panel) return;
@@ -388,7 +619,10 @@ function DecisionPanel({
     return () => observer.disconnect();
   }, [onPanelHeight]);
 
-  const change = () => setEditing(true);
+  const change = () => {
+    onAnswer(blankAnswer(decision));
+    setEditing(true);
+  };
   const finish = (value: DecisionAnswer) => {
     onAnswer(value);
     setEditing(false);
@@ -411,7 +645,7 @@ function DecisionPanel({
 
   return (
     <>
-      {presentation.kind === 'hotspots' && editing && photoBox && createPortal(
+       {presentation.kind === 'hotspots' && editing && !blocked && photoBox && createPortal(
         <HotspotLayer
           decision={decision}
           presentation={presentation}
@@ -426,7 +660,7 @@ function DecisionPanel({
         className={`pointer-events-none absolute left-1/2 z-20 -translate-x-1/2 rounded-full bg-black/75 px-3 py-1.5 text-xs font-bold text-white shadow-lg transition-opacity duration-500 ${
           panHint ? 'opacity-100' : 'opacity-0'
         }`}
-        style={{ bottom: panelHeight + (presentation.kind === 'hotspots' && editing ? 20 : 76) }}
+        style={{ bottom: panelHeight + (onStage ? 20 : 76) }}
       >
         Swipe to look around
       </div>
@@ -436,34 +670,52 @@ function DecisionPanel({
         role="group"
         data-testid={`decision-${decision.id}`}
         data-state={answered ? (right ? 'right' : 'wrong') : 'open'}
-        className={`absolute left-1/2 z-20 max-h-[52%] w-[min(94%,46rem)] -translate-x-1/2 overflow-y-auto rounded-md border border-white/20 border-t-4 border-t-primary bg-white/95 p-4 shadow-2xl backdrop-blur-sm sm:max-h-[56%] short:max-h-[62%] short:p-3 ${
-          presentation.kind === 'hotspots' && editing ? 'bottom-3' : 'bottom-[4.25rem]'
-        } ${presentation.kind === 'hotspots' && editing ? 'pointer-events-none' : ''} ${
-          workspaceOpen ? 'invisible pointer-events-none' : ''
-        }`}
+        className={`absolute z-20 max-h-[52%] overflow-y-auto rounded-md border border-white/20 border-t-4 border-t-primary bg-white/95 shadow-2xl backdrop-blur-sm sm:max-h-[56%] short:max-h-[62%] ${
+          onStage ? 'bottom-3 left-[7.75rem] right-3' : 'bottom-[4.25rem] left-1/2 w-[min(94%,46rem)] -translate-x-1/2'
+        } ${onStage && !blocked ? 'pointer-events-none' : ''} ${
+          onStage && compact ? 'p-2' : 'p-4 short:p-3'
+        } ${workspaceOpen ? 'invisible pointer-events-none' : ''}`}
       >
         {(presentation.kind === 'speech' || presentation.kind === 'hotspots') && (
           <InlineGuideAction action={decision.id} target={panelRef} />
         )}
-        {answered && !editing ? (
+        {blocked && decision.blockedBy ? (
+          <div data-testid={`aside-${decision.id}`} role="status">
+            <p className="border-l-4 border-primary pl-3 text-sm leading-relaxed">
+              <strong>{decision.blockedBy.aside.speaker}: </strong>{decision.blockedBy.aside.text}
+            </p>
+          </div>
+        ) : answered && !editing && (!right || decision.silent === false || frozen) ? (
           <div ref={feedbackRef} tabIndex={-1} role="status" data-testid={`feedback-${decision.id}`} className="outline-none">
             <p className={`border-l-4 pl-3 text-sm leading-relaxed ${right ? 'border-primary' : 'border-destructive'}`}>
               <strong>{decision.feedback.speaker}: </strong>
               {right ? decision.feedback.right : decision.feedback.wrong}
             </p>
             <div className="mt-3 flex flex-wrap gap-2">
-              <Button type="button" size="sm" onClick={onCarryOn}>Carry on</Button>
-              {!frozen && (
-                <Button type="button" size="sm" variant="secondary" data-testid={`change-${decision.id}`} onClick={change}>
-                  Change answer
-                </Button>
+              {!right && !frozen ? (
+                <>
+                  <Button type="button" size="sm" variant="secondary" data-testid={`change-${decision.id}`} onClick={change}>
+                    Try again
+                  </Button>
+                  <Button type="button" size="sm" data-testid={`carry-${decision.id}`} onClick={onCarryOn}>
+                    Leave it for now
+                  </Button>
+                </>
+              ) : decision.silent === false && (
+                <Button type="button" size="sm" onClick={onCarryOn}>Carry on</Button>
               )}
             </div>
           </div>
         ) : (
           <>
-            {decision.context && <p className="mb-1 text-xs italic text-muted-foreground">{decision.context}</p>}
-            <p className="font-semibold">{decision.prompt}</p>
+            {decision.context && <p className={`mb-1 italic text-muted-foreground ${onStage && compact ? 'text-[11px] leading-snug' : 'text-xs'}`}>{decision.context}</p>}
+            {onStage && compact ? (
+              // In a tiny frame the guide bar directly above already states the prompt's first
+              // sentence, so the panel only adds what the guide leaves out.
+              promptRest && <p className="text-sm font-semibold leading-snug">{promptRest}</p>
+            ) : (
+              <p className="font-semibold">{decision.prompt}</p>
+            )}
             {presentation.kind === 'hotspots' && decision.kind !== 'choice' && (
               <HotspotLog decision={decision} picked={hotspotDraft} compact={compact} />
             )}
@@ -510,15 +762,39 @@ function DecisionPanel({
                   onAnswer={finish}
                 />
               )}
-              {presentation.kind !== 'speech' && presentation.kind !== 'hotspots' && (
+              {(presentation.kind === 'find' || presentation.kind === 'path' || presentation.kind === 'controls') && (
+                <>
+                  <div ref={setPanelSlot} className="pointer-events-auto empty:hidden" />
+                  <StageLayerDecision
+                  taskId={taskId}
+                  decision={decision}
+                  presentation={presentation}
+                  answer={answer}
+                  answers={answers}
+                  memory={memory}
+                  ownPace={ownPace}
+                  photoBox={photoBox}
+                  panelSlot={panelSlot}
+                  frozen={frozen}
+                  onAnswer={finish}
+                  onAnswerOther={onAnswerOther}
+                  />
+                </>
+              )}
+              {presentation.kind !== 'speech' && presentation.kind !== 'hotspots'
+                && presentation.kind !== 'find' && presentation.kind !== 'path' && presentation.kind !== 'controls' && (
                 <CloseUpDecision
                   taskId={taskId}
                   decision={decision}
                   presentation={presentation}
                   answer={answer}
+                  answers={answers}
+                  memory={memory}
+                  ownPace={ownPace}
                   frozen={frozen}
                   initiallyOpen={answered}
                   onAnswer={onAnswer}
+                  onAnswerOther={onAnswerOther}
                   onFinished={() => setEditing(false)}
                   onOpenChange={setWorkspaceOpen}
                 />
@@ -739,19 +1015,30 @@ function CloseUpDecision({
   decision,
   presentation,
   answer,
+  answers,
+  memory,
+  ownPace,
   frozen,
   initiallyOpen,
   onAnswer,
+  onAnswerOther,
   onFinished,
   onOpenChange,
 }: {
   taskId: string;
   decision: Decision;
-  presentation: Exclude<ReturnType<typeof presentationFor>, PresentationOf<'speech'> | PresentationOf<'hotspots'>>;
+  presentation: Exclude<
+    ReturnType<typeof presentationFor>,
+    PresentationOf<'speech'> | PresentationOf<'hotspots'> | PresentationOf<'find'> | PresentationOf<'path'> | PresentationOf<'controls'>
+  >;
   answer: DecisionAnswer;
+  answers: DecisionAnswers;
+  memory: DayMemory;
+  ownPace: boolean;
   frozen: boolean;
   initiallyOpen: boolean;
   onAnswer: (answer: DecisionAnswer) => void;
+  onAnswerOther: (decisionId: string, answer: DecisionAnswer) => void;
   onFinished: () => void;
   onOpenChange: (open: boolean) => void;
 }) {
@@ -787,6 +1074,10 @@ function CloseUpDecision({
         decision={decision}
         presentation={presentation as never}
         answer={answer}
+        answers={answers}
+        onAnswerOther={onAnswerOther}
+        memory={memory}
+        ownPace={ownPace}
         frozen={frozen}
         onAnswer={onAnswer}
         isOpen={open}
@@ -794,4 +1085,52 @@ function CloseUpDecision({
       />
     </>
   );
+}
+
+function StageLayerDecision({
+  taskId,
+  decision,
+  presentation,
+  answer,
+  answers,
+  memory,
+  ownPace,
+  photoBox,
+  panelSlot,
+  frozen,
+  onAnswer,
+  onAnswerOther,
+}: {
+  taskId: string;
+  decision: Decision;
+  presentation: PresentationOf<'find'> | PresentationOf<'path'> | PresentationOf<'controls'>;
+  answer: DecisionAnswer;
+  answers: DecisionAnswers;
+  memory: DayMemory;
+  ownPace: boolean;
+  photoBox: HTMLDivElement | null;
+  panelSlot: HTMLElement | null;
+  frozen: boolean;
+  onAnswer: (answer: DecisionAnswer) => void;
+  onAnswerOther: (decisionId: string, answer: DecisionAnswer) => void;
+}) {
+  const Interaction = STAGE_LAYERS[presentation.kind];
+  const layer = (
+    <Interaction
+      taskId={taskId}
+      decision={decision}
+      presentation={presentation as never}
+      answer={answer}
+      answers={answers}
+      onAnswerOther={onAnswerOther}
+      memory={memory}
+      ownPace={ownPace}
+      frozen={frozen}
+      onAnswer={onAnswer}
+      isOpen
+      onClose={() => {}}
+      panelSlot={panelSlot}
+    />
+  );
+  return photoBox ? createPortal(layer, photoBox) : null;
 }

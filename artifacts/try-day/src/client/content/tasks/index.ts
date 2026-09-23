@@ -6,9 +6,15 @@ import { RESET_TASK } from './reset';
 import { CHANGE_TASK } from './change';
 import { CLOSE_TASK } from './close';
 
-export type { Decision, DecisionAnswer, DecisionAnswers, DecisionKind, DecisionOption, TaskContent, TaskScene } from './types';
-export type { Presentation, PresentationKind, PresentationOf, PaperKind, Spot, LabelField, LabelPackage } from './presentation';
-export { CLOSE_UP_KINDS } from './presentation';
+export type {
+  BlockedBy, CastMember, Decision, DecisionAnswer, DecisionAnswers, DecisionKind, DecisionOption, Noticed, PersonReaction, PersonState,
+  SceneOpening, TaskContent, TaskScene,
+} from './types';
+export type {
+  ControlSpec, FindFault, FineSpot, FlagLine, LabelField, LabelPackage, OfferMoment, PacedCue, PacedSegment, PaperKind, PathZone,
+  Presentation, PresentationKind, PresentationOf, PrintoutDoc, ReflectionVariant, Region, Spot, StickLabel, TurnaroundControl, ZoneItem,
+} from './presentation';
+export { CLOSE_UP_KINDS, STAGE_LAYER_KINDS } from './presentation';
 
 /** Every task's content, keyed by the task id used in mechanic.json. */
 export const TASKS: Record<string, TaskContent> = {

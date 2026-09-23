@@ -21,10 +21,26 @@ const ALLOWED: Record<Presentation['kind'], Decision['kind'][]> = {
   hotspots: ['choice', 'checklist', 'sequence'],
   paper: ['checklist', 'sequence'],
   order: ['sequence'],
-  tray: ['checklist'],
+  tray: ['choice', 'checklist'],
   labels: ['checklist'],
   bench: ['checklist'],
   kit: ['checklist'],
+  reflection: ['choice'],
+  find: ['checklist'],
+  hold: ['choice'],
+  path: ['sequence'],
+  controls: ['checklist', 'sequence'],
+  initials: ['choice'],
+  paced: ['choice', 'checklist', 'sequence'],
+  offers: ['checklist'],
+  zones: ['checklist'],
+  autoclave: ['checklist', 'sequence'],
+  board: ['sequence'],
+  flags: ['checklist'],
+  printout: ['choice'],
+  stick: ['checklist'],
+  turnaround: ['sequence'],
+  handover: ['checklist'],
 };
 
 function* presented(): Generator<{ taskId: string; place: string; decision: Decision; present: Presentation }> {
@@ -52,6 +68,56 @@ test('every presentation fits its decision kind and names only real options', ()
       if (closeUp.picture !== undefined) assert.equal(typeof closeUp.picture, 'string', `${where}: picture must be an imported file`);
     }
     switch (present.kind) {
+      case 'reflection': {
+        for (const [id, spot] of Object.entries(present.spots)) {
+          assert.ok(ids.includes(id), `${where}: reflection spot for unknown option ${id}`);
+          assert.ok(spot.x >= 8 && spot.x <= 92 && spot.y >= 15 && spot.y <= 75, `${where}: reflection spot ${id} is outside the safe photograph area`);
+        }
+        break;
+      }
+      case 'find': {
+        for (const [id, fault] of Object.entries(present.faults)) {
+          assert.ok(ids.includes(id), `${where}: find fault for unknown option ${id}`);
+          assert.ok(fault.spot.x >= 8 && fault.spot.x <= 92 && fault.spot.y >= 15 && fault.spot.y <= 75, `${where}: find fault ${id} is outside the safe photograph area`);
+        }
+        for (const fine of present.fine) {
+          assert.ok(fine.spot.x >= 8 && fine.spot.x <= 92 && fine.spot.y >= 15 && fine.spot.y <= 75, `${where}: fine spot is outside the safe photograph area`);
+        }
+        break;
+      }
+      case 'path': {
+        for (const [id, spot] of Object.entries(present.zones)) {
+          assert.ok(ids.includes(id), `${where}: path zone for unknown option ${id}`);
+          assert.ok(spot.x >= 8 && spot.x <= 92 && spot.y >= 15 && spot.y <= 75, `${where}: path zone ${id} is outside the safe photograph area`);
+        }
+        break;
+      }
+      case 'controls': {
+        for (const [id, control] of Object.entries(present.controls)) {
+          assert.ok(ids.includes(id), `${where}: control for unknown option ${id}`);
+          assert.ok(control.spot.x >= 8 && control.spot.x <= 92 && control.spot.y >= 15 && control.spot.y <= 75, `${where}: control ${id} is outside the safe photograph area`);
+        }
+        if (present.commit.spot) {
+          assert.ok(present.commit.spot.x >= 8 && present.commit.spot.x <= 92 && present.commit.spot.y >= 15 && present.commit.spot.y <= 75, `${where}: commit control is outside the safe photograph area`);
+        }
+        break;
+      }
+      case 'hold': {
+        assert.ok(ids.includes(present.commits), `${where}: hold commits unknown option ${present.commits}`);
+        if (present.distractor) assert.ok(ids.includes(present.distractor.optionId), `${where}: hold distractor names unknown option`);
+        for (const id of present.choose?.optionIds ?? []) assert.ok(ids.includes(id), `${where}: hold choice names unknown option ${id}`);
+        break;
+      }
+      case 'paced': {
+        const decisions = new Map(TASKS[taskId].scenes.flatMap((scene) => scene.decisions).map((item) => [item.id, item]));
+        for (const id of present.segment.decisions) assert.ok(decisions.has(id), `${where}: paced segment names unknown decision ${id}`);
+        for (const cue of present.segment.cues) {
+          const cueDecision = decisions.get(cue.decision);
+          assert.ok(cueDecision, `${where}: cue names unknown decision ${cue.decision}`);
+          assert.ok(cueDecision?.options.some((option) => option.id === cue.option), `${where}: cue names unknown option ${cue.option}`);
+        }
+        break;
+      }
       case 'hotspots': {
         const offstage = present.offstage ?? [];
         for (const id of [...Object.keys(present.spots), ...offstage]) assert.ok(ids.includes(id), `${where}: hotspot for unknown option ${id}`);
@@ -89,8 +155,7 @@ test('every presentation fits its decision kind and names only real options', ()
       case 'kit': {
         assert.ok(same(Object.keys(present.items), ids), `${where}: ${present.kind} items must match the options exactly`);
         if (present.kind === 'kit') {
-          const ready = Object.entries(present.items).filter(([, item]) => item.status === 'ok').map(([id]) => id);
-          assert.ok(same(ready, [...(decision.correct as readonly string[])]), `${where}: kit lines marked ready must be the answer set`);
+          assert.ok(same(Object.keys(present.items), [...(decision.correct as readonly string[])]), `${where}: reading every kit item must be the answer set`);
         }
         break;
       }

@@ -21,6 +21,55 @@ export type DecisionKind =
 export interface DecisionOption {
   id: string;
   label: string;
+  /**
+   * V2 people states: answering with this option puts `person` into `state` (a still from
+   * content/people.ts) and reads `text` to screen readers ("Amira is holding the armrests").
+   */
+  reaction?: PersonReaction;
+}
+
+export interface PersonReaction {
+  person: string;
+  state: string;
+  text: string;
+}
+
+/** V2 (S3): a line the notebook writes itself once the decision is answered (or answered right). */
+export interface Noticed {
+  value: string;
+  /** Defaults to "Noticed". */
+  label?: string;
+  /** Defaults to 'answered'. */
+  when?: 'answered' | 'right';
+}
+
+/** V2: a world rule. While `decision` is not yet right, starting this one shows `aside` and the controls stay shut. */
+export interface BlockedBy {
+  decision: string;
+  aside: Line;
+}
+
+/** V2 people states: one still per state, with the text a screen reader gets instead of the picture. */
+export interface PersonState {
+  image: string;
+  alt: string;
+}
+
+/** V2: a person in the room whose state the learner's answers change (Amira, Karim, Graham). */
+export interface CastMember {
+  /** Display name; defaults to the workplace person's name. */
+  name?: string;
+  /** State shown before any option with a reaction has been chosen. */
+  initial: string;
+  states: Record<string, PersonState>;
+}
+
+/** V2 (S6): the scene opens with a look round before the first decision's controls appear. */
+export interface SceneOpening {
+  text: string;
+  speaker?: string;
+  /** Seconds before the first controls appear (the learner can always tap "I've had a look" sooner). Default 6. */
+  seconds?: number;
 }
 
 export interface Decision {
@@ -48,16 +97,36 @@ export interface Decision {
   revealsComplication?: boolean;
   /** Where and how the decision is worked on the stage; see presentation.ts for the default per kind. */
   present?: Presentation;
+  /** V2 (S3): the notebook entry this decision writes. */
+  noticed?: Noticed;
+  /** V2: a world rule gating this decision on another being right. */
+  blockedBy?: BlockedBy;
+  /**
+   * V2 (S1): right answers are silent by default (the room answers; `feedback.right` sits behind
+   * "Why did that work?"). Set false where the right line must still appear as a panel.
+   */
+  silent?: boolean;
 }
 
 export interface TaskScene {
   /** A place id from the workplace map. */
   place: string;
+  /** Optional imported variant of the place photograph for this scene. */
+  backdrop?: string;
   eyebrow: string;
   title: string;
   intro: string;
   /** Person ids (from the client's people) who are in the room for this scene. */
   people?: string[];
+  /** V2 (S6): the look round before the first decision. */
+  opening?: SceneOpening;
+  /**
+   * V2 people states, keyed by person id (a subset of `people`). The stage shows each cast
+   * member as a portrait card whose still and text follow the last chosen option's `reaction`.
+   */
+  cast?: Record<string, CastMember>;
+  /** V2 (S1): the scene's debrief, shown once every decision in the scene is right. */
+  debrief?: Line;
   decisions: Decision[];
 }
 

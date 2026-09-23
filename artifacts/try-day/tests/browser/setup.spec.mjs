@@ -1,91 +1,98 @@
 import {
-  spec, startTask, tap, taps, openCloseUp, confirm, done, carryOn,
-  judged, decision, feedback, shot, expect,
+  spec, startTask, tap, openCloseUp, confirm, done, judged, feedback, shot, expect,
 } from './harness.mjs';
 
-const prep = ['uniform', 'hair', 'handwash', 'ppe', 'gloves'];
 const wipe = ['headrest', 'light', 'delivery', 'aspirator', 'spittoon', 'surfaces', 'handles'];
-const kit = ['oxygen', 'aed', 'adrenaline', 'aspirin'];
+const kit = ['oxygen', 'aed', 'adrenaline', 'aspirin', 'glucagon'];
 const tray = ['exam', 'aspirator', 'anaesthetic', 'bond', 'composite', 'matrix', 'light', 'finish', 'bib'];
 
-async function expectRight(page, id) {
+async function right(page, id) {
   expect(await judged(page, id) === 'right', `${id} should be right`);
 }
 
-async function finishCloseUp(page, id) {
-  await done(page);
-  await expectRight(page, id);
-  await carryOn(page);
+async function hold(page, id) {
+  await openCloseUp(page, id);
+  const control = page.getByRole('button', { name: /Hold the tap|Hold to flush/ }).last();
+  await control.focus();
+  await page.keyboard.press('Enter');
+  await page.getByRole('button', { name: 'Finish hold' }).focus();
+  await page.keyboard.press('Enter');
+  await right(page, id);
 }
 
-async function moveToTray(page, optionId) {
-  await tap(page, 'tray', optionId);
-  await page.locator('[data-drop-zone=tray-tray]').click();
+async function move(page, id, zone = 'tray') {
+  await tap(page, 'tray', id);
+  await page.locator(`[data-drop-zone=tray-${zone}]`).click();
 }
 
-spec('setup task', async (browser) => {
+spec('setup V2 task', async (browser) => {
   const { page, context, errors } = await startTask(browser, 1);
+  const pace = page.locator('[data-testid=own-pace]');
+  if (await pace.getAttribute('aria-checked') !== 'true') await pace.click();
 
-  await openCloseUp(page, 'prep');
-  await taps(page, 'prep', prep);
-  await finishCloseUp(page, 'prep');
+  await openCloseUp(page, 'mirror');
+  await tap(page, 'mirror', 'watch');
+  await right(page, 'mirror');
 
-  await shot(page, 'setup-wipe-desktop');
-  await taps(page, 'wipe', wipe);
-  await expectRight(page, 'wipe');
-  await carryOn(page);
+  await hold(page, 'handwash');
 
+  for (const id of ['light', 'cup', 'sharps', 'bin']) await tap(page, 'faults', id);
+  await right(page, 'faults');
+
+  // Keyboard route for the continuous wipe: focus each zone and press Enter.
+  for (const id of wipe) {
+    const zone = page.locator(`[data-testid=option-wipe-${id}]`);
+    await zone.focus();
+    await page.keyboard.press('Enter');
+  }
+  await confirm(page, 'wipe');
+  await right(page, 'wipe');
+  await shot(page, 'setup-v2-desktop');
+
+  await openCloseUp(page, 'flush');
   await tap(page, 'flush', 'short');
-  expect(await judged(page, 'flush') === 'wrong', 'the short flush should be wrong');
-  expect(await feedback(page, 'flush').isVisible(), 'wrong feedback should be visible');
-  expect(await decision(page, 'flush').first().getAttribute('data-state') === 'wrong', 'wrong feedback state should be exposed');
+  let control = page.getByRole('button', { name: 'Hold to flush' }).last();
+  await control.click(); await page.getByRole('button', { name: 'Finish hold' }).click();
+  expect(await judged(page, 'flush') === 'wrong', 'short first flush should be wrong');
+  await done(page);
+  await feedback(page, 'flush').waitFor({ state: 'visible' });
+  expect(await feedback(page, 'flush').isVisible(), 'wrong flush feedback should be visible');
   await page.locator('[data-testid=change-flush]').click();
+  await openCloseUp(page, 'flush');
   await tap(page, 'flush', 'two');
-  await expectRight(page, 'flush');
-  await carryOn(page);
-
-  await tap(page, 'signoff', 'initials');
-  await expectRight(page, 'signoff');
-  await carryOn(page);
+  control = page.getByRole('button', { name: 'Hold to flush' }).last();
+  await control.click(); await page.getByRole('button', { name: 'Finish hold' }).click();
+  await right(page, 'flush');
 
   await openCloseUp(page, 'kit');
-  await taps(page, 'kit', kit);
+  for (const id of kit) await tap(page, 'kit', id);
   await confirm(page, 'kit');
-  await finishCloseUp(page, 'kit');
+  await right(page, 'kit');
+  await done(page);
 
   await tap(page, 'glucagon', 'report');
-  await expectRight(page, 'glucagon');
-  await carryOn(page);
-
-  await tap(page, 'fresh', 'wash_fresh');
-  await expectRight(page, 'fresh');
-  await carryOn(page);
+  await right(page, 'glucagon');
+  await hold(page, 'fresh');
 
   await openCloseUp(page, 'tray');
-  for (const optionId of tray) await moveToTray(page, optionId);
+  await page.getByRole('button', { name: 'Turn over examination pouch' }).click();
+  await move(page, 'exam', 'decon');
+  await move(page, 'exam');
+  for (const id of tray.slice(1)) await move(page, id);
   await confirm(page, 'tray');
-  await finishCloseUp(page, 'tray');
+  await right(page, 'tray');
+  await right(page, 'pouch');
+  await done(page);
 
-  await tap(page, 'pouch', 'aside');
-  await expectRight(page, 'pouch');
+  await openCloseUp(page, 'initials');
+  await page.getByLabel('Your initials').fill('LD');
+  await confirm(page, 'initials');
+  await right(page, 'initials');
   expect(errors.length === 0, `browser errors: ${errors.join(' | ')}`);
   await context.close();
 
   const mobile = await startTask(browser, 1, { viewport: { width: 390, height: 844 } });
-  await openCloseUp(mobile.page, 'prep');
-  await taps(mobile.page, 'prep', prep);
-  await finishCloseUp(mobile.page, 'prep');
-  await taps(mobile.page, 'wipe', wipe);
-  await expectRight(mobile.page, 'wipe');
-  await carryOn(mobile.page);
-  await tap(mobile.page, 'flush', 'two');
-  await expectRight(mobile.page, 'flush');
-  await carryOn(mobile.page);
-  await tap(mobile.page, 'signoff', 'initials');
-  await expectRight(mobile.page, 'signoff');
-  await carryOn(mobile.page);
-  await openCloseUp(mobile.page, 'kit');
-  await shot(mobile.page, 'setup-kit-mobile');
+  await shot(mobile.page, 'setup-v2-mobile');
   expect(mobile.errors.length === 0, `mobile browser errors: ${mobile.errors.join(' | ')}`);
   await mobile.context.close();
 });

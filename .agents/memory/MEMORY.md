@@ -14,3 +14,5 @@
 - [Storyboard-driven task content](storyboard-decisions.md) — every clause needs a real decision (no asserted steps), wrong feedback coaches rather than lists, shuffle sequence options, set answers default to [].
 - [Stage photo box and hotspots](stage-photo-box.md) — pins are % of the 1.6 photo inside a pannable box; hints are the pin labels (<= 20 chars); tray = tap-lift then tap the drop zone; guide walks and opens.
 - [Media approval manifest](media-approval.md) — fingerprints of every client picture; UPDATE_MEDIA_FINGERPRINTS=1 to accept; asset-importing content needs a dynamic import after the loader hook in node tests.
+- [On-stage panel and panel slot](stage-panel-on-stage.md) — panel drops to the stage foot while working on the photo; layers render status/finish into `panelSlot`; 390x480 leaves a ~215px stage.
+- [Reading order and gesture refusals](reading-order-and-gesture-refusals.md) — render content-map spots in reading order (DOM order leaks routine order); refuse incomplete gestures only, storyboard exceptions pinned by tests.

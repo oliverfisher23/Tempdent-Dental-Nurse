@@ -17,6 +17,7 @@ import {
   type ProgressModel,
   type TaskId,
 } from '@shell/lib/day';
+import { noticedEntriesFromAnswers } from '@client/content/noticed';
 
 /**
  * Every task's record is the learner's answers keyed by decision id, so the
@@ -116,6 +117,11 @@ export function testProgress(
     initials: initialsFromName('Learning Designer'),
     startedAt: new Date().toISOString(),
     tasks,
+    notepad: noticedEntriesFromAnswers(
+      tasks,
+      completed,
+      (taskId) => mechanic.config.tasks.find((task) => task.id === taskId)?.time ?? clock,
+    ),
     completed,
     completedAt: finished ? new Date().toISOString() : null,
     clock,
