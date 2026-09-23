@@ -89,9 +89,18 @@ export type Presentation =
    * is a control that answers with another option when used before the hold (the gloves box).
    * `choose` offers a preface choice (flush duration) and the hold then commits the chosen option.
    */
-  | ({ kind: 'hold'; control: string; seconds: number; commits: string; steps?: string[]; early?: string;
+  | ({ kind: 'hold'; control: string; seconds: number; commits: string; early?: string;
       distractor?: { optionId: string; label: string }; choose?: { prompt: string; optionIds: string[]; secondsById?: Record<string, number> };
-      clockMinutes?: number; after?: string[]; sound?: 'water-run' | 'chair' | 'flush' } & CloseUpBase)
+      clockMinutes?: number; sound?: 'water-run' | 'chair' | 'flush' } & CloseUpBase)
+  /**
+   * A sequence recorded as what the learner's hands touch, in order, at the sink and PPE station
+   * (Task 1's handwashes). The wash itself is a hold on the tap; every other option is a spot on the
+   * photograph. Touching a `dirty` spot with clean hands marks them and the learner carries on; the
+   * route is committed when `commits` (the gloves) is touched and the content judges it whole.
+   * Nothing is refused here and nothing is judged here.
+   */
+  | ({ kind: 'touches'; hands: { image: string; alt: string }; hold: TouchHold; spots: Record<string, TouchSpot>;
+      commits: string; poster: TouchPoster; startGloved?: boolean } & CloseUpBase)
   /**
    * A sequence done as one continuous drag across zones on the photograph, judged once when the
    * pointer lifts (the answer is the zones crossed, in order). Keyboard: Enter on each zone, then `finish`.
@@ -165,6 +174,52 @@ export interface TurnaroundControl {
 }
 
 /** One cue in the paced segment: what Dr Reid asks for and when, with the tell that precedes it. */
+export interface TouchHold {
+  /** The option recorded when the tap has been held to the end. */
+  optionId: string;
+  control: string;
+  seconds: number;
+  /** Where the tap is on the photograph; the running tap is a spot here after the wash. */
+  spot: Spot;
+  /** Shown when the tap is let go early (nothing is recorded). */
+  early: string;
+  /** The world's line when the tap is held with the gloves from the last job still on (TBC SME). */
+  whileGloved?: string;
+}
+
+export interface TouchPoster {
+  /** Poster steps that light one by one while the tap is held. */
+  hold: string[];
+  /** Poster steps that light when one of the named options is recorded (Dry, Turn tap off). */
+  then: { label: string; lit: string[] }[];
+}
+
+export interface TouchSpot extends Spot {
+  /** The object's name (the spot's accessible name and its chip). */
+  label: string;
+  /** Option recorded when touched; `withTowel` instead while the paper towel is still in hand. */
+  records: string;
+  withTowel?: string;
+  /** Touching it bare-handed after the wash marks the hands at `marks` (percent of the hands picture). */
+  dirty?: boolean;
+  marks?: { x: number; y: number }[];
+  /** Before the wash this touch changes nothing and is not recorded; the line says why. */
+  beforeWash?: string;
+  /** The world's one line when touched (TBC SME), and the line while the towel is in hand. */
+  line?: string;
+  lineWithTowel?: string;
+  /** The touch leaves the paper towel in hand for the next touch. */
+  holds?: boolean;
+  /** The touch dries the hands (towel, tunic). */
+  dries?: boolean;
+  /** The touch takes the last job's gloves and apron off. */
+  strips?: boolean;
+  /** Items put on one tap at a time, shown not tested; the option is recorded when the last is on. */
+  tapThrough?: string[];
+  /** A looping world sound this touch stops (the tap turned off). */
+  stopsSound?: 'water-run';
+}
+
 export interface PacedCue {
   /** Decision id and option id this cue answers when the learner acts. */
   decision: string;
@@ -219,7 +274,7 @@ export type PresentationOf<K extends PresentationKind> = Extract<Presentation, {
 /** Close-up presentations open a workspace; the others happen on the stage itself. */
 export const CLOSE_UP_KINDS: readonly PresentationKind[] = [
   'paper', 'order', 'tray', 'labels', 'bench', 'kit',
-  'reflection', 'hold', 'initials', 'paced', 'offers', 'zones', 'autoclave', 'board', 'flags', 'printout', 'stick', 'turnaround', 'handover',
+  'reflection', 'hold', 'touches', 'initials', 'paced', 'offers', 'zones', 'autoclave', 'board', 'flags', 'printout', 'stick', 'turnaround', 'handover',
 ];
 /** Presentations drawn on the room photograph and in the panel (a stage layer, not a close-up). */
 export const STAGE_LAYER_KINDS: readonly PresentationKind[] = ['find', 'path', 'controls'];

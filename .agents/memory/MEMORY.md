@@ -16,3 +16,4 @@
 - [Media approval manifest](media-approval.md) — fingerprints of every client picture; UPDATE_MEDIA_FINGERPRINTS=1 to accept; asset-importing content needs a dynamic import after the loader hook in node tests.
 - [On-stage panel and panel slot](stage-panel-on-stage.md) — panel drops to the stage foot while working on the photo; layers render status/finish into `panelSlot`; 390x480 leaves a ~215px stage.
 - [Reading order and gesture refusals](reading-order-and-gesture-refusals.md) — render content-map spots in reading order (DOM order leaks routine order); refuse incomplete gestures only, storyboard exceptions pinned by tests.
+- [Touches route and hold lifecycle](touches-route-and-holds.md) — handwash route rules (rewash allowed, gloved wash ≠ washed, dedupe repeats); holds cancel on close, one own-pace toggle; percent spots need the frame whole.

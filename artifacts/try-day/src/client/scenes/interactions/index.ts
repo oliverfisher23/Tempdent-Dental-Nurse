@@ -19,6 +19,7 @@ import { HandoverInteraction } from './handover';
 import { ReflectionInteraction } from './reflection';
 import { FindInteraction } from './find';
 import { HoldInteraction } from './hold';
+import { TouchesInteraction } from './touches';
 import { PathInteraction } from './path';
 import { InitialsInteraction } from './initials';
 import { StickInteraction } from './stick';
@@ -46,6 +47,7 @@ export const INTERACTIONS: Record<CloseUpKind, AnyInteraction> = {
   kit: as(KitInteraction),
   reflection: as(ReflectionInteraction),
   hold: as(HoldInteraction),
+  touches: as(TouchesInteraction),
   initials: as(InitialsInteraction),
   paced: as(PacedInteraction),
   offers: as(OffersInteraction),

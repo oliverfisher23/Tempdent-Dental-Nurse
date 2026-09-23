@@ -28,6 +28,7 @@ const ALLOWED: Record<Presentation['kind'], Decision['kind'][]> = {
   reflection: ['choice'],
   find: ['checklist'],
   hold: ['choice'],
+  touches: ['sequence'],
   path: ['sequence'],
   controls: ['checklist', 'sequence'],
   initials: ['choice'],
@@ -106,6 +107,27 @@ test('every presentation fits its decision kind and names only real options', ()
         assert.ok(ids.includes(present.commits), `${where}: hold commits unknown option ${present.commits}`);
         if (present.distractor) assert.ok(ids.includes(present.distractor.optionId), `${where}: hold distractor names unknown option`);
         for (const id of present.choose?.optionIds ?? []) assert.ok(ids.includes(id), `${where}: hold choice names unknown option ${id}`);
+        break;
+      }
+      case 'touches': {
+        // Every option is reachable as a touch (or the hold); every touch records a real option; the
+        // route ends on `commits`, which is also the last step of the answer key.
+        const recorded = new Set([present.hold.optionId]);
+        for (const [id, spot] of Object.entries(present.spots)) {
+          for (const optionId of [spot.records, spot.withTowel]) {
+            if (optionId === undefined) continue;
+            assert.ok(ids.includes(optionId), `${where}: touch ${id} records unknown option ${optionId}`);
+            recorded.add(optionId);
+          }
+          assert.ok(spot.x >= 5 && spot.x <= 92 && spot.y >= 10 && spot.y <= 93, `${where}: touch ${id} is outside the photograph`);
+          assert.ok(spot.label.length <= 24, `${where}: touch ${id} name over 24 characters`);
+          if (spot.withTowel) assert.ok(spot.stopsSound, `${where}: only the tap is turned off through the towel`);
+        }
+        assert.ok(same([...recorded], ids), `${where}: touches must record the options exactly`);
+        assert.ok(ids.includes(present.hold.optionId), `${where}: hold records unknown option`);
+        assert.equal((decision.correct as string[]).at(-1), present.commits, `${where}: the route must end on the touch that commits it`);
+        assert.ok(present.spots.tap?.stopsSound, `${where}: the tap must stop the running water`);
+        for (const step of present.poster.then) for (const id of step.lit) assert.ok(ids.includes(id), `${where}: poster step lit by unknown option ${id}`);
         break;
       }
       case 'paced': {

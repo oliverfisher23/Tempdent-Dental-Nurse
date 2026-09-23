@@ -78,7 +78,7 @@ as written and flagged in code comments as `// TBC SME` (never invent replacemen
 | Owner | Files |
 |---|---|
 | engine-core | `scenes/stage-scene.tsx`, `scenes/current.ts`, `scenes/interactions/{types,index}.ts` (registry plumbing), `lib/{pace,consequences,guide}.ts`, `content/people.ts`, `content/tasks/types.ts`, `scenes/README.md`, `tests/v2-engine.test.ts` |
-| task-1 | `content/tasks/setup.ts`, `scenes/interactions/{reflection,find,hold,path,initials}.tsx`, tray zone + kit read-gate changes in `tray.tsx`/`kit.tsx`, `tests/browser/setup.spec.mjs`, `tests/v2-setup.test.ts`, mechanic version bump |
+| task-1 | `content/tasks/setup.ts`, `scenes/interactions/{reflection,find,hold,touches,path,initials}.tsx`, tray zone + kit read-gate changes in `tray.tsx`/`kit.tsx`, `tests/browser/setup.spec.mjs`, `tests/v2-setup.test.ts`, mechanic version bump |
 | task-3 | `content/tasks/filling.ts`, `scenes/interactions/{paced,field}.tsx`, `tests/browser/filling.spec.mjs`, `tests/v2-filling.test.ts` |
 | task-2-6 | `content/tasks/{welcome,close}.ts`, `scenes/interactions/{controls,offers,handover}.tsx`, people stills wiring, `tests/browser/{welcome,close}.spec.mjs`, `tests/v2-people.test.ts` |
 | task-5 | `content/tasks/change.ts`, `scenes/interactions/{zones,autoclave,board,flags,printout}.tsx`, `tests/browser/change.spec.mjs`, `tests/v2-change.test.ts` |
@@ -103,6 +103,12 @@ suite (`tests/browser/run.mjs`: setup, welcome, filling, reset, change, close, f
 
 - Every V2 presentation is registered; `hold` may name a `sound` that loops while the hold runs, and
   `paced` accepts `cues: []` for a speak-up-only segment.
+- Task 1's two handwashes are `touches` ("what touches what", `interactions/touches.tsx`): a
+  `sequence` recorded as what the hands touch, in order, on the sink and PPE station photograph. The
+  wash is a hold on the tap (`use-hold.ts`, shared with `hold`); every other option is a spot. Dirty
+  touches mark the hands picture and are recorded, never refused; the route commits on the gloves
+  and the content judges it whole (`tests/v2-invariants.test.ts`). The hands state is derived from
+  the recorded route (`readHands`), so a reload or a signed-off task shows the same picture.
 - World sounds (`lib/sounds.ts`) are generated placeholders with a caption each; the stage's
   caption line (`scenes/sound-captions.tsx`) shows them whether or not sound is on.
 - Stage layers receive `panelSlot` for their status and finish controls; the on-stage panel drops to

@@ -42,7 +42,9 @@ every one has a caption. `SoundCaptions` (`sound-captions.tsx`) is mounted
 first inside the stage and shows the bracketed caption in an `aria-live`
 line, whether or not sound is on, under the rail header on a narrow stage
 and top-centre on a wide one. A `hold` presentation may name a `sound` to
-loop while the hold runs.
+loop while the hold runs. The `touches` close-up (the handwashes) keeps the
+running-water loop going from the end of the wash until a touch turns the
+tap off, the route is committed, or the close-up closes.
 
 ## V2 scene flow
 

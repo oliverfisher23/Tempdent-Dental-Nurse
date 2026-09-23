@@ -10,13 +10,25 @@ async function right(page, id) {
   expect(await judged(page, id) === 'right', `${id} should be right`);
 }
 
-async function holdByKeyboard(page, id) {
+/** The handwash route by keyboard alone: the hold, then every touch by focus and Enter, inside the frame. */
+async function washByKeyboard(page, id, viewport) {
   await openCloseUp(page, id);
   const control = page.getByRole('button', { name: /Hold the tap/ }).last();
   await control.focus();
   await page.keyboard.press('Enter');
   await page.getByRole('button', { name: 'Finish hold' }).focus();
   await page.keyboard.press('Enter');
+  const press = async (locator, label) => {
+    await locator.focus();
+    await page.waitForTimeout(100);
+    const box = await locator.boundingBox();
+    expect(box && box.x >= 0 && box.y >= 0 && box.x + box.width <= viewport.width && box.y + box.height <= viewport.height,
+      `${label} sits inside the ${viewport.width}x${viewport.height} frame when focused`);
+    await page.keyboard.press('Enter');
+  };
+  for (const spot of ['towel', 'tap', 'ppe']) await press(page.locator(`[data-testid=touch-${id}-${spot}]`), `touch ${spot}`);
+  for (const item of ['Apron', 'Mask', 'Visor']) await press(page.getByRole('button', { name: `${item} on` }), `${item} on`);
+  await press(page.locator(`[data-testid=touch-${id}-gloves]`), 'touch gloves');
   await right(page, id);
 }
 
@@ -42,7 +54,7 @@ async function playFrame(page, viewport) {
   await openCloseUp(page, 'mirror');
   await tap(page, 'mirror', 'watch');
   await right(page, 'mirror');
-  await holdByKeyboard(page, 'handwash');
+  await washByKeyboard(page, 'handwash', viewport);
 
   const stage = page.locator('[data-testid=scene-surgery2]');
   const stageBox = await stage.boundingBox();

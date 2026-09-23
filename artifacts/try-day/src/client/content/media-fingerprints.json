@@ -19,6 +19,11 @@
     "bytes": 67309,
     "status": "placeholder"
   },
+  "closeups/hands-clean.jpg": {
+    "sha256": "7df04bf5d4c7a4ef5b2cce2d59b23170adfdde774177511430eb0806d13c4eaa",
+    "bytes": 41624,
+    "status": "placeholder"
+  },
   "closeups/mirror-hair.jpg": {
     "sha256": "6863f80f8416a0d4fde3d97cd69326246e54e7e3d6f2a2c0e57eb55beb608743",
     "bytes": 48014,
@@ -42,6 +47,11 @@
   "closeups/packages.jpg": {
     "sha256": "01d3108f61b7f7f85fc6ff986d98d4796960c1093e4aa51ca5121f7ef2d0de79",
     "bytes": 46986,
+    "status": "placeholder"
+  },
+  "closeups/sink-station.jpg": {
+    "sha256": "9e4bd0d9cee95aadefea0f2c0fc86068baa8eeb6a292d2c2bbcec4a010a68917",
+    "bytes": 57159,
     "status": "placeholder"
   },
   "closeups/tray-card.jpg": {

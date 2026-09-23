@@ -21,6 +21,15 @@ Common tap spots across the final 16:10 crops: wrist `(43,87)`, collar or hair `
 | `closeups/mirror-hair.jpg` | The same reflection with long hair down over the collar | AI edit of `mirror-ready.jpg`, centre-cropped to 16:10, JPEG quality 80 | Preserve character and framing; let long dark hair fall over the scrub collar. |
 | `closeups/mirror-ring.jpg` | The same reflection with a ring hand raised clearly | AI edit of `mirror-ready.jpg`, centre-cropped to 16:10, JPEG quality 80 | Preserve character and setting; raise one hand and show one unmistakable plain ring. |
 
+## Sink and PPE station (Task 1 handwashes)
+
+Spots are percentages of the final 16:10 crop: tap `(68,36)`, paper towels `(61,12)`, tunic `(7,50)`, phone `(76,91)`, PPE station `(89,27)`, gloves box `(88,76)`, the learner's own gloves for the second wash `(36,68)`. Hand marks are percentages of `hands-clean.jpg`: tap by hand `(62,66)`, tunic `(40,58)` and `(64,60)`, phone `(46,84)` and `(60,84)`.
+
+| File | What it shows | Generation route | Prompt summary |
+|---|---|---|---|
+| `closeups/sink-station.jpg` | The clinical hand-wash basin from the learner's eye level: lever tap running, soap and paper towel dispensers, the PPE rack (mask box, visor, gloves box), a phone on the worktop, the learner's tunic and forearms at the edge of frame | AI image generation at 1024 square, centre-cropped to 16:10 at 1024×640, JPEG quality 80 | Realistic first-person photograph at a UK dental surgery hand-wash station; no faces, no text. The placeholder shows the tap running in every state and has no apron box on the rack: final photography should show the tap off (with a running-water variant if wanted) and the aprons on the rack. |
+| `closeups/hands-clean.jpg` | The learner's own bare hands, palms up, over the basin | AI image generation at 1024 square, centre-cropped to 16:10 at 800×500, JPEG quality 80 | Clean bare hands from the owner's viewpoint, no jewellery, tunic sleeves above the elbow. Dirty touches are drawn over it as marks; gloves as a blue tint. |
+
 ## People states
 
 | File | What it shows | Generation route | Prompt summary |

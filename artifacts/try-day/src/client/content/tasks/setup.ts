@@ -1,10 +1,13 @@
 import type { TaskContent } from './types';
+import type { TouchPoster, TouchSpot } from './presentation';
 import emergencyKitPicture from '@client/assets/closeups/emergency-kit.jpg';
 import trayCardPicture from '@client/assets/closeups/tray-card.jpg';
 import mirrorReady from '@client/assets/closeups/mirror-ready.jpg';
 import mirrorWatch from '@client/assets/closeups/mirror-watch.jpg';
 import mirrorHair from '@client/assets/closeups/mirror-hair.jpg';
 import mirrorRing from '@client/assets/closeups/mirror-ring.jpg';
+import sinkStation from '@client/assets/closeups/sink-station.jpg';
+import handsClean from '@client/assets/closeups/hands-clean.jpg';
 import lastNight from '@client/assets/places/surgery2-last-night.jpg';
 import aspiratorImage from '@client/assets/items/aspirator.png';
 import bibImage from '@client/assets/items/bib.png';
@@ -20,6 +23,35 @@ import pouchBroken from '@client/assets/items/pouch-broken.png';
 import forcepsImage from '@client/assets/items/forceps.png';
 import glovesBox from '@client/assets/items/gloves-box.png';
 import wipesImage from '@client/assets/items/wipes.png';
+
+// The 12-step poster above the sink: ten steps light while the tap is held, the last two when the hands do them.
+const HANDWASH_POSTER: TouchPoster = {
+  hold: ['Wet hands', 'Apply soap', 'Palm to palm', 'Backs of hands', 'Between fingers', 'Backs of fingers', 'Thumbs', 'Fingertips', 'Wrists', 'Rinse'],
+  then: [{ label: 'Dry', lit: ['towel', 'tunic'] }, { label: 'Turn tap off', lit: ['tap_towel', 'tap_hand'] }],
+};
+
+// What clean hands can touch at the sink, shared by both handwashes. Positions are percentages of
+// closeups/sink-station.jpg; marks are percentages of closeups/hands-clean.jpg. World lines TBC SME.
+const SINK_SPOTS: Record<string, TouchSpot> = {
+  tap: {
+    x: 68, y: 36, label: 'Tap', records: 'tap_hand', withTowel: 'tap_towel', dirty: true, marks: [{ x: 62, y: 66 }], stopsSound: 'water-run',
+    line: 'Dirty hands turned that tap on. Clean ones have just touched it.', // TBC SME
+    lineWithTowel: 'Tap off with the towel, towel in the bin.', // TBC SME
+  },
+  towel: {
+    x: 61, y: 12, label: 'Paper towels', records: 'towel', holds: true, dries: true,
+    beforeWash: 'Nothing to dry yet.', line: 'Single use. Pat dry, wrists too.', // TBC SME
+  },
+  tunic: {
+    x: 7, y: 50, label: 'Your tunic', records: 'tunic', dirty: true, dries: true, marks: [{ x: 40, y: 58 }, { x: 64, y: 60 }],
+    beforeWash: "A tunic isn't a towel.", line: 'That tunic came in on the bus with you.', // TBC SME
+  },
+  phone: {
+    x: 76, y: 91, label: 'Your phone', records: 'phone', dirty: true, marks: [{ x: 46, y: 84 }, { x: 60, y: 84 }],
+    beforeWash: 'Nothing new. Away it goes.', line: 'A phone goes everywhere you do, and it is never clean.', // TBC SME
+  },
+};
+const GLOVES_SPOT: TouchSpot = { x: 88, y: 76, label: 'Gloves box', records: 'gloves' };
 
 // Storyboard Task 1. Clinical detail is draft, pending SME validation.
 export const SETUP_TASK: TaskContent = {
@@ -79,21 +111,31 @@ export const SETUP_TASK: TaskContent = {
         },
       },
       {
-        id: 'handwash', kind: 'choice', prompt: 'Wash your hands the 12-step way, then put on your PPE.',
+        // The route is recorded as what the hands touch, in order (option ids); the options are listed out of order on purpose.
+        id: 'handwash', kind: 'sequence', prompt: 'Wash your hands the 12-step way, then put on your PPE.',
         context: 'The 12-step handwashing poster is above the sink, next to the PPE station.',
-        options: [{ id: 'wash_first', label: 'Wash first' }, { id: 'gloves_first', label: 'Reach for the gloves box' }],
-        correct: 'wash_first', clause: 'Handwash completed before PPE, with gloves last',
+        options: [
+          { id: 'ppe', label: 'Apron, mask and visor on' }, { id: 'tap_hand', label: 'Tap off with your hand' },
+          { id: 'towel', label: 'Dry with a paper towel' }, { id: 'gloves', label: 'Gloves on' },
+          { id: 'phone', label: 'Check your phone' }, { id: 'wash', label: 'Wash at the sink, all twelve steps' },
+          { id: 'tunic', label: 'Dry your hands on your tunic' }, { id: 'tap_towel', label: 'Tap off with the paper towel' },
+        ],
+        correct: ['wash', 'towel', 'tap_towel', 'ppe', 'gloves'], clause: 'Handwash completed before PPE, with gloves last',
         feedback: {
           speaker: 'Priya',
           right: 'Clean hands first, then the PPE over them, gloves last. Nothing touches them on the way on.',
           wrong: 'Think about what touches what. Anything you put on after your hands are clean has to go on without touching them, and gloves are the last thing on, not a substitute for washing. Go again.',
         },
         present: {
-          kind: 'hold', title: 'Handwash and PPE', open: 'Wash your hands', control: 'Hold the tap', seconds: 8, commits: 'wash_first',
-          steps: ['Wet hands', 'Apply soap', 'Palm to palm', 'Backs of hands', 'Between fingers', 'Backs of fingers', 'Thumbs', 'Fingertips', 'Wrists', 'Rinse', 'Dry', 'Turn tap off'],
-          early: 'All twelve. It takes as long as it takes — start again.', // TBC SME
-          distractor: { optionId: 'gloves_first', label: 'Gloves box' }, after: ['Apron', 'Mask', 'Visor', 'Gloves last'],
-          picture: glovesBox,
+          kind: 'touches', title: 'Handwash and PPE', open: 'Wash your hands', picture: sinkStation,
+          hands: { image: handsClean, alt: 'Your hands, palms up' },
+          hold: {
+            optionId: 'wash', control: 'Hold the tap', seconds: 5, spot: { x: 68, y: 36 },
+            early: 'All twelve. It takes as long as it takes — start again.', // TBC SME
+          },
+          poster: { ...HANDWASH_POSTER },
+          commits: 'gloves',
+          spots: { ...SINK_SPOTS, ppe: { x: 89, y: 27, label: 'PPE station', records: 'ppe', tapThrough: ['Apron', 'Mask', 'Visor'] }, gloves: GLOVES_SPOT },
         },
       },
       {
@@ -197,20 +239,36 @@ export const SETUP_TASK: TaskContent = {
         present: { kind: 'speech' }, noticed: { when: 'right', value: 'glucagon out of date, told Priya' },
       },
       {
-        id: 'fresh', kind: 'choice', prompt: 'Wash and glove again before opening the instrument cupboard.',
+        // The same sink, this time arriving in the gloves and apron from the wipe; options listed out of order on purpose.
+        id: 'fresh', kind: 'sequence', prompt: 'Wash and glove again before opening the instrument cupboard.',
         options: [
-          { id: 'wash_fresh', label: 'Fresh handwash and fresh PPE' }, { id: 'same_gloves', label: 'Open the cupboard' },
-          { id: 'wash_keep', label: 'Wash and put the same gloves back on' }, { id: 'new_gloves', label: 'Change gloves without washing' },
+          { id: 'gloves', label: 'Fresh gloves on' }, { id: 'wash', label: 'Wash at the sink, all twelve steps' },
+          { id: 'phone', label: 'Check your phone' }, { id: 'ppe_off', label: 'Used gloves and apron off, into clinical waste' },
+          { id: 'tap_hand', label: 'Tap off with your hand' }, { id: 'apron', label: 'Fresh apron on' },
+          { id: 'tunic', label: 'Dry your hands on your tunic' }, { id: 'towel', label: 'Dry with a paper towel' },
+          { id: 'tap_towel', label: 'Tap off with the paper towel' },
         ],
-        correct: 'wash_fresh', clause: 'A fresh handwash and fresh PPE precede the tray set-up',
+        correct: ['ppe_off', 'wash', 'towel', 'tap_towel', 'apron', 'gloves'], clause: 'A fresh handwash and fresh PPE precede the tray set-up',
         feedback: {
           speaker: 'Priya', right: 'Dirty job done, dirty PPE off, clean hands, clean PPE, then the sterile stuff. That rhythm runs the whole day.',
           wrong: "Those gloves have just cleaned a surgery. Ask yourself what is about to touch sterile pouches, and whether it should be the same pair. Hands are washed between, not just re-covered.",
         },
         present: {
-          kind: 'hold', title: 'Fresh hands', open: 'Wash again', control: 'Hold the tap', seconds: 8, commits: 'wash_fresh',
-          early: 'Those gloves have just done the spittoon. Fresh hands before anything goes near a tray.', // TBC SME
-          distractor: { optionId: 'same_gloves', label: 'Open the cupboard' },
+          kind: 'touches', title: 'Fresh hands', open: 'Wash again', picture: sinkStation, startGloved: true,
+          hands: { image: handsClean, alt: 'Your hands, palms up' },
+          hold: {
+            optionId: 'wash', control: 'Hold the tap', seconds: 5, spot: { x: 68, y: 36 },
+            early: 'All twelve. It takes as long as it takes — start again.', // TBC SME
+            whileGloved: "That's washing the gloves, not your hands.", // TBC SME
+          },
+          poster: { ...HANDWASH_POSTER },
+          commits: 'gloves',
+          spots: {
+            ...SINK_SPOTS,
+            used: { x: 36, y: 68, label: 'Your gloves and apron', records: 'ppe_off', strips: true, line: 'Gloves and apron into the clinical waste, inside out.' }, // TBC SME
+            ppe: { x: 89, y: 27, label: 'PPE station', records: 'apron', tapThrough: ['Apron'] },
+            gloves: GLOVES_SPOT,
+          },
         },
       },
       {
